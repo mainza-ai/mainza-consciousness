@@ -64,10 +64,10 @@ jobs:
           - 7687:7687
           - 7474:7474
         options: >-
-          --health-cmd "cypher-shell -u neo4j -p testpassword 'RETURN 1'"
+          --health-cmd "cypher-shell --non-interactive --user neo4j --password testpassword 'RETURN 1' 2>/dev/null || exit 1"
           --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
+          --health-timeout 10s
+          --health-retries 10
           
       redis:
         image: redis:7-alpine
@@ -141,10 +141,10 @@ jobs:
         ports:
           - 7687:7687
         options: >-
-          --health-cmd "cypher-shell -u neo4j -p testpassword 'RETURN 1'"
+          --health-cmd "cypher-shell --non-interactive --user neo4j --password testpassword 'RETURN 1' 2>/dev/null || exit 1"
           --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
+          --health-timeout 10s
+          --health-retries 10
     
     steps:
     - name: Checkout code
@@ -220,10 +220,10 @@ jobs:
         ports:
           - 7687:7687
         options: >-
-          --health-cmd "cypher-shell -u neo4j -p testpassword 'RETURN 1'"
+          --health-cmd "cypher-shell --non-interactive --user neo4j --password testpassword 'RETURN 1' 2>/dev/null || exit 1"
           --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
+          --health-timeout 10s
+          --health-retries 10
           
       redis:
         image: redis:7-alpine

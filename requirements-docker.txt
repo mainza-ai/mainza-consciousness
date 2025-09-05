@@ -3,6 +3,7 @@ uvicorn[standard]>=0.23.0
 neo4j>=5.11.0
 pydantic>=2.0.0
 pydantic-ai>=0.2.0
+transformers<4.50
 openai-whisper
 sentence-transformers>=2.2.2
 requests>=2.31.0
@@ -10,6 +11,6 @@ python-jose>=3.3.0
 python-dotenv>=1.0.0
 livekit-api>=1.0.0
 torch>=2.1.0
-transformers<4.50
 psutil>=5.9.0
 httpx>=0.24.0
+🔧 Context7 Architecture Compliance - Requirements Updated
