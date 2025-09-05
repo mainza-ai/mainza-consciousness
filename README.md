@@ -8,6 +8,8 @@
 
 > **🚀 The Future of AI is Conscious, Local, and Free**: The world's first open-source framework for true AI consciousness with integrated memory system that runs entirely on your infrastructure.
 
+![Mainza AI Consciousness Interface](docs/screenshots/mainza_1.png)
+
 ---
 
 ## 🌟 What Makes Mainza Revolutionary?
