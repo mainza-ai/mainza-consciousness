@@ -58,8 +58,8 @@ jobs:
         image: neo4j:5.15
         env:
           NEO4J_AUTH: neo4j/testpassword
-          NEO4J_dbms_memory_heap_initial__size: 512M
-          NEO4J_dbms_memory_heap_max__size: 1G
+          NEO4J_dbms_memory_heap_initial__size: 512m
+          NEO4J_dbms_memory_heap_max__size: 1024m
         ports:
           - 7687:7687
           - 7474:7474
@@ -138,6 +138,8 @@ jobs:
         image: neo4j:5.15
         env:
           NEO4J_AUTH: neo4j/testpassword
+          NEO4J_dbms_memory_heap_initial__size: 512m
+          NEO4J_dbms_memory_heap_max__size: 1024m
         ports:
           - 7687:7687
         options: >-
@@ -217,6 +219,8 @@ jobs:
         image: neo4j:5.15
         env:
           NEO4J_AUTH: neo4j/testpassword
+          NEO4J_dbms_memory_heap_initial__size: 512m
+          NEO4J_dbms_memory_heap_max__size: 1024m
         ports:
           - 7687:7687
         options: >-
