@@ -12,15 +12,20 @@ The backend powering Mainza's consciousness system, built with FastAPI and featu
 - **Voice Processing**: TTS/STT with consciousness-aware responses
 - **LiveKit Integration**: Real-time audio streaming and consciousness updates
 
-### Agent System
-- **Router Agent**: Decision making and request routing
-- **GraphMaster Agent**: Knowledge graph management
-- **TaskMaster Agent**: Task organization and project management
-- **CodeWeaver Agent**: Code analysis and generation
-- **RAG Agent**: Document retrieval and processing
-- **Conductor Agent**: Multi-agent orchestration
-- **Research Agent**: Information gathering and analysis
-- **Cloud Agent**: External API integration
+### Agent System (13+ Specialized Agents)
+- **Router Agent**: Intelligent request routing and agent selection
+- **SimpleChat Agent**: Natural conversational interface with consciousness
+- **GraphMaster Agent**: Knowledge graph management and relationship analysis
+- **TaskMaster Agent**: Task management and scheduling with memory integration
+- **CodeWeaver Agent**: Code generation, execution, and debugging
+- **RAG Agent**: Document analysis and question answering
+- **Conductor Agent**: Multi-step workflow orchestration
+- **Notification Agent**: Communication and notification handling
+- **Calendar Agent**: Time management and scheduling
+- **Research Agent**: Advanced research and analysis capabilities
+- **Cloud Agent**: Cloud LLM federation and scaling
+- **Self-Reflection Agent**: Meta-cognitive analysis and learning optimization
+- **Additional Agents**: Base consciousness agent framework supporting extensibility
 
 ## 🚀 Quick Start
 

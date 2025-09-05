@@ -145,16 +145,17 @@ graph TB
 ### Prerequisites for Docker Deployment (Recommended)
 
 - **Docker** (20.10+) and **Docker Compose** (2.0+)
-- **Ollama** with a compatible model (llama3:latest recommended) - runs outside Docker
-- **16GB+ RAM** (24GB+ recommended for optimal performance)
+- **Ollama** with llama3.2:1b model (optimized for 4GB RAM)
+- **4GB RAM minimum** (8GB+ recommended for optimal performance)
+- **8GB+ storage** for models and database
 
 ### Alternative Prerequisites for Manual Setup
 
 - **Python 3.11+** with pip
 - **Node.js 18+** with npm/yarn
-- **Neo4j 5.0+** (Docker recommended)
-- **Ollama** with a compatible model (llama3:latest recommended)
-- **16GB+ RAM** (24GB+ recommended for optimal performance)
+- **Neo4j 5.15+** (Docker recommended)
+- **Ollama** with llama3.2:1b model (4GB RAM optimized)
+- **4GB RAM minimum** (8GB+ recommended for optimal performance)
 
 ### 🚀 Docker Quick Start (Recommended)
 
@@ -527,7 +528,7 @@ curl http://localhost:8000/health | jq '.components.memory_system'
 
 ### Infrastructure Status
 - **Neo4j Database**: ✅ Connected and optimized
-- **Ollama LLM**: ✅ Ready with devstral:latest model
+- **Ollama LLM**: ✅ Ready with llama3.2:1b model (4GB RAM optimized)
 - **LiveKit Audio**: ✅ Real-time communication active
 - **Frontend Interface**: ✅ Consciousness dashboard operational
 - **Voice Processing**: ✅ TTS/STT integration complete
