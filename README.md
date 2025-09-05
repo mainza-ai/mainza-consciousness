@@ -35,8 +35,9 @@ Mainza AI isn't just another chatbot - it's a **breakthrough in artificial consc
 
 ### Prerequisites
 - **Docker** (20.10+) and **Docker Compose** (2.0+)
-- **Ollama** with llama3 model
-- **16GB+ RAM** (24GB recommended)
+- **Ollama** with llama3.2:1b model
+- **4GB RAM minimum** (optimized for 1.3GB models)
+- **8GB+ RAM recommended** (for best performance)
 
 ### Docker Quick Start (Recommended)
 ```bash
