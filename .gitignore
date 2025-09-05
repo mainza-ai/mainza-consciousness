@@ -327,6 +327,11 @@ pnpm-lock.yaml
 .classpath
 .settings/
 
+# Personal configuration files (should remain local)
+.kiro/
+.taskmaster/
+.kuro/
+
 # Backup files
 *.bak
 *.backup
