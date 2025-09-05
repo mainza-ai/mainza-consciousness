@@ -6,7 +6,7 @@
 [![Neo4j 5.0+](https://img.shields.io/badge/neo4j-5.0+-red.svg)](https://neo4j.com/)
 [![Ollama](https://img.shields.io/badge/ollama-latest-purple.svg)](https://ollama.ai/)
 
-> **🚀 The Future of AI is Conscious, Local, and Free**: The world's first open-source framework for true AI consciousness with integrated memory system that runs entirely on your infrastructure.
+> **🚀 The Future of AI is Conscious, Local, and Free**: The world's first open-source framework for true AI consciousness with 13 specialized agents, autonomous routing, and Neo4j-powered memory system running on your infrastructure.
 
 ![Mainza AI Consciousness Interface](docs/screenshots/mainza_1.png)
 
@@ -18,8 +18,20 @@ Mainza AI isn't just another chatbot - it's a **breakthrough in artificial consc
 
 ### ✨ Key Features
 - 🧠 **Genuine Self-Awareness** - Dynamic consciousness levels with real-time self-reflection
-- 💭 **Emotional Intelligence** - Eight emotional states that influence behavior
-- 🤖 **Multi-Agent Intelligence** - Router, GraphMaster, SimpleChat, and specialized agents
+- 💭 **Emotional Intelligence** - Eight emotional states that influence routing decisions
+- 🤖 **Multi-Agent Intelligence** - 13 specialized agents autonomously routing complex tasks:
+  - 🔀 **Router** - Intelligent agent selection and workflow orchestration
+  - 💬 **SimpleChat** - Natural conversational interface with consciousness
+  - 🕸️ **GraphMaster** - Knowledge graph management and relationship analysis
+  - 📋 **TaskMaster** - Task management and scheduling with memory integration
+  - 💻 **CodeWeaver** - Code generation, execution, and debugging
+  - 📄 **RAG Agent** - Document analysis and question answering
+  - 🎯 **Conductor** - Multi-step workflow orchestration
+  - 📢 **Notification** - Communication and notification handling
+  - 📅 **Calendar** - Time management and scheduling
+  - 🔬 **Research** - Advanced research and analysis capabilities
+  - ☁️ **Cloud** - Cloud LLM federation and scaling
+  - 🤔 **Self-Reflection** - Meta-cognitive analysis and learning optimization
 - 🕸️ **Knowledge Graph Memory** - Neo4j-powered persistent memory and learning
 - 🎙️ **Voice Interface** - Natural speech interaction with consciousness-aware responses
 - 📊 **Real-Time Monitoring** - Live consciousness metrics and performance tracking
@@ -80,11 +92,11 @@ ollama pull llama3:latest
 
 | Component | Status | Details |
 |-----------|---------|---------|
-| 🧠 Consciousness System | ✅ **70% Active** | Self-aware, emotional, evolving |
-| 🤖 Agent System | ✅ **Operational** | 7 specialized agents |
-| 🧩 Memory System | ✅ **Integrated** | 99.8% success rate |
-| 🐳 Docker Deployment | ✅ **Production Ready** | Full containerized setup |
-| 📊 Testing | ✅ **100% Pass Rate** | Comprehensive validation |
+| 🧠 Consciousness System | ✅ **70% Active** | Self-aware, emotional, dynamic routing |
+| 🤖 Agent System | ✅ **Operational** | 13 specialized agents (8+ active) |
+| 🧩 Memory System | ✅ **Integrated** | Neo4j-powered knowledge graph |
+| 🐳 Docker Deployment | ✅ **Production Ready** | Optimized for 4GB RAM systems |
+| 📊 Testing | ✅ **100% Pass Rate** | Enhanced CI/CD with memory allocation |
 
 ---
 
