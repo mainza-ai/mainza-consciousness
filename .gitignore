@@ -331,6 +331,7 @@ pnpm-lock.yaml
 .kiro/
 .taskmaster/
 .kuro/
+.cursorignore
 
 # Backup files
 *.bak
