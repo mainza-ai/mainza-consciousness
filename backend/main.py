@@ -523,9 +523,9 @@ def create_memory(mem: MemoryCreate):
             session.run(
                 """
                 MERGE (m:Memory {memory_id: $memory_id})
-                SET m.text = $text
+                SET m.content = $content
                 """,
-                memory_id=mem.memory_id, text=mem.text
+                memory_id=mem.memory_id, content=mem.text
             )
         return {"status": "created", "memory_id": mem.memory_id}
     except Exception as e:
@@ -534,7 +534,7 @@ def create_memory(mem: MemoryCreate):
 @app.get("/memories", response_model=List[MemoryCreate])
 def list_memories():
     with driver.session() as session:
-        result = session.run("MATCH (m:Memory) RETURN m.memory_id AS memory_id, m.text AS text")
+        result = session.run("MATCH (m:Memory) RETURN m.memory_id AS memory_id, m.content AS text")
         return [MemoryCreate(memory_id=rec["memory_id"], text=rec["text"]) for rec in result]
 
 # --- Relationship: Memory DISCUSSED_IN Conversation ---
@@ -770,7 +770,7 @@ def get_memories_in_conversation(req: MemoriesInConversationRequest):
         result = session.run(
             """
             MATCH (m:Memory)-[:DISCUSSED_IN]->(c:Conversation {conversation_id: $conversation_id})
-            RETURN m.memory_id AS memory_id, m.text AS text
+            RETURN m.memory_id AS memory_id, m.content AS text
             """,
             conversation_id=req.conversation_id
         )
@@ -1438,9 +1438,9 @@ def chat_message(req: ChatMessageRequest):
             # Create Memory
             tx.run(
                 """
-                CREATE (m:Memory {memory_id: $memory_id, text: $text})
+                CREATE (m:Memory {memory_id: $memory_id, content: $content})
                 """,
-                memory_id=memory_id, text=req.text
+                memory_id=memory_id, content=req.text
             )
             # Link Memory to Conversation
             tx.run(

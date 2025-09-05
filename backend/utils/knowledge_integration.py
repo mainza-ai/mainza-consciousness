@@ -320,12 +320,12 @@ class KnowledgeIntegrationManager:
             # Also get direct memory matches
             memory_cypher = """
             MATCH (u:User {user_id: $user_id})-[:DISCUSSED_IN]-(m:Memory)
-            WHERE any(term IN $query_terms WHERE toLower(m.text) CONTAINS toLower(term))
+            WHERE any(term IN $query_terms WHERE toLower(m.content) CONTAINS toLower(term))
             
             OPTIONAL MATCH (m)-[:RELATES_TO]->(c:Concept)
             
-            WITH m.text AS content, m.created_at AS timestamp, m.source AS source,
-                 size([term IN $query_terms WHERE toLower(m.text) CONTAINS toLower(term)]) AS term_matches,
+            WITH m.content AS content, m.created_at AS timestamp, m.source AS source,
+                 size([term IN $query_terms WHERE toLower(m.content) CONTAINS toLower(term)]) AS term_matches,
                  collect(DISTINCT c.name) AS related_concepts
             
             RETURN {

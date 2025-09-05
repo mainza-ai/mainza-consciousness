@@ -75,9 +75,9 @@ class SchemaManager:
         # Define required indexes
         self.required_indexes = [
             {
-                "name": "memory_text_index",
+                "name": "memory_content_index",
                 "type": "BTREE",
-                "query": "CREATE INDEX memory_text_index IF NOT EXISTS FOR (m:Memory) ON (m.text)"
+                "query": "CREATE INDEX memory_content_index IF NOT EXISTS FOR (m:Memory) ON (m.content)"
             },
             {
                 "name": "entity_name_index",
@@ -154,9 +154,9 @@ class SchemaManager:
         # Define full-text indexes
         self.fulltext_indexes = [
             {
-                "name": "memory_text_search",
+                "name": "memory_content_search",
                 "type": "FULLTEXT",
-                "query": "CREATE FULLTEXT INDEX memory_text_search IF NOT EXISTS FOR (m:Memory) ON EACH [m.text]"
+                "query": "CREATE FULLTEXT INDEX memory_content_search IF NOT EXISTS FOR (m:Memory) ON EACH [m.content]"
             },
             {
                 "name": "document_content_search",

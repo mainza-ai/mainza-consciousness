@@ -181,8 +181,8 @@ async def cleanup_database(
                 RETURN count(ch) AS deleted_count
             """,
             "empty_memories": """
-                MATCH (m:Memory) 
-                WHERE m.text IS NULL OR trim(m.text) = ''
+                MATCH (m:Memory)
+                WHERE m.content IS NULL OR trim(m.content) = ''
                 DELETE m
                 RETURN count(m) AS deleted_count
             """,
@@ -343,7 +343,7 @@ async def get_performance_metrics(hours_back: int = 24) -> Dict[str, Any]:
         
         test_queries = {
             "simple_count": "MATCH (n) RETURN count(n) AS total_nodes",
-            "memory_search": "MATCH (m:Memory) WHERE m.text CONTAINS 'test' RETURN count(m) AS matches",
+            "memory_search": "MATCH (m:Memory) WHERE m.content CONTAINS 'test' RETURN count(m) AS matches",
             "relationship_count": "MATCH ()-[r]->() RETURN count(r) AS total_relationships"
         }
         

@@ -335,7 +335,8 @@ def create_memory_batch(ctx: RunContext, memories: List[Dict[str, Any]]) -> Grap
             CREATE (m)-[:RELATES_TO {created_at: memory_data.created_at}]->(co)
         )
         
-        RETURN m.memory_id AS memory_id, m.text AS text, m.source AS source
+
+        RETURN m.memory_id AS memory_id, m.content AS text, m.source AS source
         """
         
         created_memories = neo4j_manager.execute_write_query(cypher, {"memories": processed_memories})
@@ -417,7 +418,8 @@ def get_system_health_comprehensive(ctx: RunContext) -> GraphQueryOutput:
             "memory_distribution": """
             MATCH (m:Memory) 
             RETURN m.source AS source, count(m) AS count, 
-                   avg(size(m.text)) AS avg_text_length
+
+                   avg(size(m.content)) AS avg_text_length
             ORDER BY count DESC
             """,
             "recent_activity": """
