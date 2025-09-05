@@ -6,7 +6,11 @@ Provides environment-based configuration with validation and type safety.
 import os
 import logging
 from typing import Dict, Any, Optional, List, Union
-from pydantic import BaseSettings, Field, validator
+from pydantic_settings import BaseSettings
+from pydantic import Field
+from pydantic.v1 import validator
+from dotenv import load_dotenv
+import os
 from enum import Enum
 import json
 
@@ -27,7 +31,9 @@ class EnvironmentType(str, Enum):
 
 class Neo4jConfig(BaseSettings):
     """Neo4j database configuration."""
-    
+
+    model_config = {"env_file": ".env", "extra": "ignore"}
+
     uri: str = Field(default="bolt://localhost:7687", env="NEO4J_URI")
     user: str = Field(default="neo4j", env="NEO4J_USER")
     password: str = Field(env="NEO4J_PASSWORD")  # Required - no default for security

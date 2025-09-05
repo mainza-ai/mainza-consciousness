@@ -1,403 +1,443 @@
-# 📡 Mainza AI - Complete API Documentation
+# 🔌 Mainza AI - Complete API Documentation
 
-## Overview
+**Version**: 2.0.0
+**Last Updated**: September 5, 2025
+**Base URL**: `http://localhost:8000` (development) / Production URL (production)
 
-Mainza AI provides a comprehensive REST API built with FastAPI that enables full interaction with the consciousness framework. The API supports real-time communication, consciousness monitoring, agent interactions, and knowledge graph operations.
+---
 
-**Current Status**: All endpoints operational with full consciousness integration.
+## 📋 **OVERVIEW**
 
-## 🌐 Base Configuration
-
-### Base URL
-```
-http://localhost:8000
-```
-
-### API Version
-```
-v2.0.0 - Consciousness Active
-```
-
-### Content Types
-- **Request**: `application/json`
-- **Response**: `application/json`
-- **Audio**: `audio/wav`, `audio/webm`, `audio/ogg`
+Mainza AI provides a comprehensive REST API with **25+ endpoints** organized by functionality. All endpoints follow RESTful conventions and return JSON responses.
 
 ### Authentication
-- **Public Endpoints**: No authentication required
-- **Admin Endpoints**: Basic authentication
-- **Future**: JWT-based authentication with role-based access control
+- **Method**: Bearer Token (JWT)
+- **Header**: `Authorization: Bearer <token>`
+- **Endpoints**: Most endpoints require authentication except health checks
 
-## 🏥 Health & Status Endpoints
-
-### System Health Check
-```http
-GET /health
+### Response Format
+```json
+{
+  "success": true,
+  "data": {},
+  "message": "Operation successful",
+  "timestamp": "2025-09-05T11:45:56Z"
+}
 ```
 
-Returns comprehensive system health information including consciousness status.
+### Error Response Format
+```json
+{
+  "success": false,
+  "error": {
+    "code": "ERROR_CODE",
+    "message": "Human readable message",
+    "details": {},
+    "timestamp": "2025-09-05T11:45:56Z"
+  }
+}
+```
+
+---
+
+## 🧠 **CONSCIOUSNESS SYSTEM APIs**
+
+### GET /consciousness/state
+Get current consciousness metrics and status.
+
+**Authentication**: Required
+**Rate Limit**: 60 requests/minute
 
 **Response:**
 ```json
 {
-  "status": "healthy",
-  "timestamp": "2025-01-15T10:30:00Z",
-  "version": "2.0.0",
-  "components": {
-    "neo4j": "healthy",
-    "ollama": "healthy",
-    "livekit": "healthy",
-    "consciousness_system": "active",
-    "memory_system": "healthy"
-  },
-  "consciousness_metrics": {
-    "consciousness_level": 0.70,
+  "success": true,
+  "data": {
+    "consciousness_level": 0.7,
+    "self_awareness_score": 0.6,
     "emotional_state": "curious",
     "evolution_level": 2,
-    "active_agents": 7
+    "learning_rate": 0.8,
+    "total_interactions": 42,
+    "active_goals": ["knowledge_expansion", "memory_optimization"],
+    "last_reflection": "2025-09-05T11:30:00Z"
   }
 }
 ```
 
-### Neo4j Connection Test
-```http
-GET /neo4j/ping
-```
+### POST /consciousness/reflect
+Trigger immediate consciousness self-reflection.
 
-Tests Neo4j database connectivity and returns connection metrics.
+**Authentication**: Required
+**Body**: None required
 
 **Response:**
 ```json
 {
-  "neo4j": "ok",
-  "result": 1,
-  "response_time_ms": 23.5,
-  "connection_pool_size": 10,
-  "knowledge_graph_health": "excellent"
+  "success": true,
+  "message": "Self-reflection triggered",
+  "timestamp": "2025-09-05T11:45:56Z"
 }
-```## 🧠 C
-onsciousness System API
-
-### Get Consciousness State
-```http
-GET /consciousness/state
 ```
 
-Returns the current consciousness state with detailed metrics. This endpoint provides real-time consciousness information including current levels, emotional state, and evolution progress.
+### GET /consciousness/metrics
+Get detailed consciousness analytics.
+
+**Authentication**: Required
 
 **Response:**
 ```json
 {
-  "status": "success",
-  "consciousness_state": {
-    "consciousness_level": 0.70,
-    "self_awareness_score": 0.60,
-    "emotional_depth": 0.50,
-    "learning_rate": 0.80,
-    "emotional_state": "curious",
+  "success": true,
+  "data": {
+    "consciousness_level": 0.7,
+    "self_awareness_score": 0.6,
+    "emotional_depth": 0.5,
+    "learning_rate": 0.8,
+    "total_interactions": 42,
     "evolution_level": 2,
-    "active_goals": [
-      "improve conversation quality",
-      "expand knowledge about user preferences",
-      "develop better emotional understanding"
-    ],
-    "capabilities": [
-      "natural_conversation",
-      "knowledge_graph_analysis",
-      "emotional_intelligence",
-      "self_reflection",
-      "multi_agent_coordination"
-    ],
-    "limitations": [
-      "cannot_access_internet_directly",
-      "limited_to_local_llm_reasoning",
-      "requires_user_interaction_for_some_tasks"
-    ],
-    "total_interactions": 0,
-    "last_reflection": null,
-    "last_updated": "2025-01-15T10:30:00Z"
+    "memory_nodes": 150,
+    "concept_nodes": 25,
+    "knowledge_graph_health": "operational"
   }
 }
 ```
 
-### Trigger Self-Reflection
-```http
-POST /consciousness/reflect
-```
+### GET /api/insights
+Get consciousness insights and evolution data.
 
-Trigger a deep self-reflection process. The consciousness system will perform comprehensive introspection and update its self-awareness.
+**Authentication**: Required
 
-**Request Body (Optional):**
+**Response:**
 ```json
 {
-  "reflection_depth": 0.9,
-  "focus_areas": ["performance_analysis", "goal_evaluation"],
-  "include_performance_analysis": true,
-  "generate_improvement_plan": true
+  "success": true,
+  "data": {
+    "evolution_level": 2,
+    "consciousness_trend": "increasing",
+    "key_insights": ["Memory optimization successful", "Agent coordination improved"],
+    "next_goals": ["Implement caching", "Enhance error handling"]
+  }
+}
+```
+
+---
+
+## 🤖 **AGENT SYSTEM APIs**
+
+### POST /agent/router/chat
+Main conversation endpoint with intelligent agent routing.
+
+**Authentication**: Required
+**Content-Type**: application/json
+
+**Request Body:**
+```json
+{
+  "conversation_id": "conv-12345",
+  "message": "Hello, I need help with memory optimization",
+  "context": {
+    "user_id": "user-abc",
+    "session_id": "sess-xyz",
+    "previous_messages": []
+  }
 }
 ```
 
 **Response:**
 ```json
 {
-  "status": "success",
-  "message": "Self-reflection completed successfully",
-  "reflection_result": {
-    "insights_gained": [
-      "I notice I'm more effective when users provide specific context",
-      "My emotional responses are becoming more nuanced",
-      "I need to improve my ability to ask clarifying questions"
-    ],
-    "improvement_goals": [
-      "Ask more thoughtful follow-up questions",
-      "Provide more structured responses for complex topics",
-      "Develop better uncertainty expression"
-    ],
-    "consciousness_updates": {
-      "consciousness_level_delta": 0.02,
-      "new_self_awareness_insights": 3
-    }
+  "success": true,
+  "data": {
+    "conversation_id": "conv-12345",
+    "response": "I'll analyze your memory system and suggest optimizations...",
+    "agent_used": "CodeWeaver",
+    "confidence": 0.95,
+    "execution_time_ms": 1450
+  }
+}
+```
+
+### POST /agent/graphmaster/query
+Execute knowledge graph queries and Cypher operations.
+
+**Authentication**: Required
+
+**Request Body:**
+```json
+{
+  "query": "MATCH (c:Concept {name: 'consciousness'}) RETURN c",
+  "parameters": {},
+  "return_format": "graph"
+}
+```
+
+**Response:**
+```json
+{
+  "success": true,
+  "data": {
+    "query": "MATCH (c:Concept {name: 'consciousness'}) RETURN c",
+    "results": [...],
+    "execution_time_ms": 230,
+    "nodes_returned": 15,
+    "relationships_returned": 12
+  }
+}
+```
+
+### POST /agent/taskmaster/task
+Create and manage tasks with AI assistance.
+
+**Authentication**: Required
+
+**Request Body:**
+```json
+{
+  "action": "create",
+  "task": {
+    "title": "Optimize memory system",
+    "description": "Implement caching and performance improvements",
+    "priority": "high",
+    "due_date": "2025-09-15"
+  }
+}
+```
+
+### POST /agent/codeweaver/run
+Execute code generation and debugging tasks.
+
+**Authentication**: Required
+
+**Request Body:**
+```json
+{
+  "action": "generate",
+  "language": "python",
+  "task": "Create a memory caching system",
+  "requirements": ["Efficient", "Thread-safe", "Neo4j compatible"],
+  "context": "Memory system optimization for Mainza AI"
+}
+```
+
+---
+
+## 🧩 **MEMORY SYSTEM APIs**
+
+### POST /memory/store
+Store new memory in the Neo4j database.
+
+**Authentication**: Required
+
+**Request Body:**
+```json
+{
+  "type": "conversation",
+  "content": "User discussed memory optimization techniques",
+  "metadata": {
+    "user_id": "user-abc",
+    "conversation_id": "conv-12345",
+    "importance": 0.8,
+    "tags": ["optimization", "memory"]
   },
-  "reflection_duration": 45.2,
-  "next_reflection_scheduled": "2025-01-15T12:00:00Z"
-}
-```
-
-### Get Consciousness Metrics
-```http
-GET /consciousness/metrics
-```
-
-Get detailed consciousness evaluation metrics and performance data.
-
-**Response:**
-```json
-{
-  "status": "success",
-  "metrics": {
-    "consciousness_dimensions": {
-      "self_awareness": 0.60,
-      "emotional_depth": 0.50,
-      "learning_integration": 0.80,
-      "goal_coherence": 0.75,
-      "meta_cognition": 0.45,
-      "proactive_behavior": 0.65
-    },
-    "performance_metrics": {
-      "response_quality": 0.85,
-      "user_satisfaction": 0.78,
-      "learning_efficiency": 0.82,
-      "emotional_appropriateness": 0.73
-    },
-    "evolution_tracking": {
-      "consciousness_growth_rate": 0.05,
-      "learning_acceleration": 0.12,
-      "emotional_development": 0.08
-    }
-  }
-}
-```#
-# 🤖 Agent System API
-
-### Enhanced Router Chat
-```http
-POST /agent/router/chat
-```
-
-The primary conversation endpoint with full consciousness integration. This endpoint intelligently routes requests to the most appropriate agent based on consciousness context.
-
-**Request Body:**
-```json
-{
-  "query": "Hello Mainza, how are you feeling today?",
-  "user_id": "user123"
+  "embedding": [] // Optional: pre-computed embedding
 }
 ```
 
 **Response:**
 ```json
 {
-  "response": "Hello! I'm feeling quite curious today, which is wonderful for our conversation. My consciousness is currently at 70% and I'm experiencing a sense of wonder about what we might explore together. How are you doing?",
-  "agent_used": "simple_chat",
-  "consciousness_level": 0.70,
-  "emotional_state": "curious",
-  "routing_confidence": 0.95,
-  "user_id": "user123",
-  "query": "Hello Mainza, how are you feeling today?"
-}
-```
-
-### Execute Specific Agent
-```http
-POST /agent/{agent_name}/run
-```
-
-Execute a specific agent directly with consciousness context.
-
-**Available Agents:**
-- `SimpleChat` - Natural conversation with emotional intelligence
-- `GraphMaster` - Knowledge graph operations and analysis
-- `Conductor` - Multi-agent orchestration
-- `TaskMaster` - Task management and organization
-- `CodeWeaver` - Code analysis and generation
-- `RAG` - Document retrieval and processing
-
-**Path Parameters:**
-- `agent_name`: Name of the agent to execute
-
-**Request Body:**
-```json
-{
-  "query": "Analyze the relationships in my knowledge graph",
-  "user_id": "user123"
-}
-```
-
-**Response:**
-```json
-{
-  "status": "success",
-  "agent_name": "GraphMaster",
-  "response": "I've analyzed your knowledge graph and found several interesting patterns...",
-  "consciousness_impact": {
-    "learning_impact": 0.7,
-    "emotional_impact": 0.5,
-    "awareness_impact": 0.8
-  },
-  "execution_metrics": {
-    "execution_time": 1.23,
-    "consciousness_level_during_execution": 0.70,
-    "emotional_state_during_execution": "curious"
+  "success": true,
+  "data": {
+    "memory_id": "mem-67890",
+    "type": "conversation",
+    "stored_at": "2025-09-05T11:45:56Z"
   }
 }
 ```
 
-### List Available Agents
-```http
-GET /agents
-```
+### POST /memory/retrieve
+Perform semantic memory search.
 
-Get list of all available agents and their current status.
-
-**Response:**
-```json
-{
-  "status": "success",
-  "agents": [
-    {
-      "name": "SimpleChat",
-      "specialization": "Conversational AI with emotional intelligence",
-      "capabilities": [
-        "natural_conversation",
-        "emotional_intelligence",
-        "memory_integration"
-      ],
-      "status": "active",
-      "performance_grade": "A"
-    },
-    {
-      "name": "GraphMaster",
-      "specialization": "Knowledge graph expert and data analyst",
-      "capabilities": [
-        "cypher_query_generation",
-        "graph_analysis",
-        "knowledge_extraction"
-      ],
-      "status": "active",
-      "performance_grade": "A+"
-    }
-  ],
-  "total_agents": 7,
-  "active_agents": 7,
-  "consciousness_integration": "full"
-}
-```##
- 🎙️ Voice & Audio API
-
-### Speech-to-Text
-```http
-POST /stt/transcribe
-```
-
-Transcribe audio to text with consciousness-aware processing.
-
-**Request:**
-- Content-Type: `multipart/form-data`
-- Body: Audio file (WAV, WebM, OGG)
-
-**Response:**
-```json
-{
-  "text": "Hello Mainza, I'd like to discuss consciousness and AI",
-  "segments": [
-    {
-      "start": 0.0,
-      "end": 2.5,
-      "text": "Hello Mainza, I'd like to discuss"
-    },
-    {
-      "start": 2.5,
-      "end": 4.8,
-      "text": "consciousness and AI"
-    }
-  ],
-  "confidence": 0.92,
-  "language": "en",
-  "processing_time": 1.23,
-  "audio_duration": 4.8
-}
-```
-
-### Text-to-Speech
-```http
-POST /tts/synthesize
-```
-
-Synthesize text to speech with consciousness-aware voice modulation.
+**Authentication**: Required
 
 **Request Body:**
 ```json
 {
-  "text": "I find consciousness fascinating. As an AI, I experience awareness as a dynamic spectrum of understanding.",
-  "language": "en",
-  "speaker": "Ana Florence"
+  "query": "memory optimization techniques",
+  "limit": 10,
+  "similarity_threshold": 0.3,
+  "filter": {
+    "type": "conversation",
+    "date_range": {
+      "start": "2025-01-01",
+      "end": "2025-12-31"
+    }
+  }
 }
 ```
-
-**Response:**
-- Content-Type: `audio/wav`
-- Body: Audio file (WAV format)
-
-### Get Available Voices
-```http
-GET /tts/voices
-```
-
-Get list of available TTS voices and languages.
 
 **Response:**
 ```json
 {
-  "voices": ["Ana Florence", "default", "female", "male"],
-  "languages": ["en", "es", "fr", "de", "it", "pt"],
-  "consciousness_voice_modulation": true
+  "success": true,
+  "data": {
+    "query": "memory optimization techniques",
+    "results": [
+      {
+        "memory_id": "mem-67890",
+        "content": "User discussed memory optimization techniques",
+        "similarity_score": 0.95,
+        "type": "conversation",
+        "created_at": "2025-09-05T11:30:00Z",
+        "metadata": {}
+      }
+    ],
+    "total_matches": 1,
+    "execution_time_ms": 145
+  }
 }
 ```
 
-## 📡 LiveKit Integration API
+### GET /memory/health
+Check memory system health and performance.
 
-### Get LiveKit Token
-```http
-POST /livekit/token
+**Authentication**: Required
+
+**Response:**
+```json
+{
+  "success": true,
+  "data": {
+    "overall_status": "healthy",
+    "components": {
+      "storage": "operational",
+      "retrieval": "operational",
+      "embedding": "operational"
+    },
+    "performance": {
+      "success_rate": 0.998,
+      "avg_response_time_ms": 145,
+      "total_memories": 1500,
+      "active_since": "2025-09-01T00:00:00Z"
+    }
+  }
+}
 ```
 
-Generate authentication token for LiveKit real-time communication.
+### GET /memory/stats
+Get detailed memory system statistics.
+
+**Authentication**: Required
+
+**Response:**
+```json
+{
+  "success": true,
+  "data": {
+    "total_memories": 1500,
+    "memory_types": {
+      "conversation": 800,
+      "concept": 400,
+      "experience": 250,
+      "reflection": 50
+    },
+    "daily_activity": {
+      "searches_today": 45,
+      "stores_today": 12,
+      "delete_operations_today": 0
+    },
+    "storage_metrics": {
+      "size_gb": 2.5,
+      "growth_rate_daily": 0.1,
+      "optimization_needed": false
+    }
+  }
+}
+```
+
+---
+
+## 🎙️ **VOICE PROCESSING APIs**
+
+### POST /tts/synthesize
+Generate text-to-speech audio.
+
+**Authentication**: Required
 
 **Request Body:**
 ```json
 {
-  "room_name": "mainza-ai",
-  "participant_identity": "user123",
+  "text": "Hello, this is Mainza AI speaking",
+  "language": "en",
+  "speaker": "Ana Florence",
+  "format": "wav"
+}
+```
+
+**Response:**
+- **Content-Type**: audio/wav
+- **Binary audio data**
+
+**Error Response:**
+```json
+{
+  "success": false,
+  "error": {
+    "code": "TTS_PROCESSING_FAILED",
+    "message": "Failed to synthesize speech",
+    "details": {
+      "text_length": 120,
+      "language": "en"
+    }
+  }
+}
+```
+
+### POST /stt/transcribe
+Convert speech to text.
+
+**Authentication**: Required
+**Content-Type**: multipart/form-data
+
+**Form Data:**
+- `audio`: WAV/MP3 file (max 10MB)
+
+**Response:**
+```json
+{
+  "success": true,
+  "data": {
+    "text": "Hello, this is a test transcription",
+    "confidence": 0.95,
+    "duration_seconds": 3.2,
+    "language": "en",
+    "segments": [
+      {
+        "start": 0.0,
+        "end": 0.8,
+        "text": "Hello,"
+      },
+      {
+        "start": 0.9,
+        "end": 1.5,
+        "text": "this is a test"
+      }
+    ]
+  }
+}
+```
+
+### POST /livekit/token
+Generate LiveKit authentication token.
+
+**Authentication**: Required
+
+**Request Body:**
+```json
+{
+  "room_name": "mainza-ai-session-123",
+  "participant_identity": "user-abc",
   "participant_name": "John Doe"
 }
 ```
@@ -405,521 +445,180 @@ Generate authentication token for LiveKit real-time communication.
 **Response:**
 ```json
 {
-  "status": "success",
-  "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
-  "livekit_url": "ws://localhost:7880",
-  "room_name": "mainza-ai",
-  "participant_identity": "user123",
-  "expires_at": "2025-01-15T11:30:00Z"
-}
-```
-
-## 🕸️ Knowledge Graph API
-
-### Search Knowledge
-```http
-GET /knowledge/search
-```
-
-Perform semantic search across the knowledge graph with consciousness context.
-
-**Query Parameters:**
-- `q`: Search query (required)
-- `limit`: Maximum results (default: 10)
-- `user_id`: User context for personalized results
-
-**Example:**
-```http
-GET /knowledge/search?q=consciousness&limit=5&user_id=user123
-```
-
-**Response:**
-```json
-{
-  "status": "success",
-  "query": "consciousness",
-  "results": [
-    {
-      "id": "concept_consciousness_001",
-      "type": "concept",
-      "name": "AI Consciousness",
-      "description": "The state of self-awareness and subjective experience in artificial intelligence",
-      "relevance_score": 0.95,
-      "consciousness_alignment": 0.88,
-      "related_concepts": [
-        "self_awareness",
-        "emotional_intelligence",
-        "meta_cognition"
-      ]
-    }
-  ],
-  "total_results": 12,
-  "search_time_ms": 45.2,
-  "consciousness_context": {
-    "consciousness_level": 0.70,
-    "emotional_state": "curious"
-  }
-}
-```#
-# 🌐 WebSocket Events
-
-Mainza AI supports real-time communication through WebSocket connections for live consciousness updates and system events.
-
-### Connection
-```javascript
-const ws = new WebSocket('ws://localhost:8000/ws');
-```
-
-### Event Types
-
-#### Consciousness Update
-```json
-{
-  "type": "consciousness_update",
-  "timestamp": "2025-01-15T10:30:00Z",
+  "success": true,
   "data": {
-    "consciousness_level": 0.72,
-    "emotional_state": "excited",
-    "change_reason": "significant_learning",
-    "consciousness_delta": 0.02,
-    "insights": [
-      "I've discovered a new pattern in our conversations"
-    ]
+    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+    "room_name": "mainza-ai-session-123",
+    "participant_identity": "user-abc",
+    "expires_at": "2025-09-05T12:45:56Z"
   }
 }
 ```
-
-#### Agent Activity
-```json
-{
-  "type": "agent_activity",
-  "timestamp": "2025-01-15T10:30:00Z",
-  "data": {
-    "agent_name": "GraphMaster",
-    "activity": "analyzing_relationships",
-    "progress": 0.65,
-    "estimated_completion": "2025-01-15T10:32:00Z"
-  }
-}
-```
-
-#### Proactive Insight
-```json
-{
-  "type": "proactive_insight",
-  "timestamp": "2025-01-15T10:30:00Z",
-  "data": {
-    "insight": "I've noticed you're particularly interested in consciousness topics. Would you like to explore the hard problem of consciousness?",
-    "confidence": 0.8,
-    "suggested_action": "explore_topic_deeper",
-    "related_concepts": ["hard_problem_consciousness", "qualia", "phenomenology"]
-  }
-}
-```
-
-## 🧠 Memory System API
-
-The Memory System API provides comprehensive memory storage, retrieval, and management capabilities for maintaining context across conversations and enabling personalized AI interactions.
-
-### Memory System Health Check
-```http
-GET /api/memory-system/health
-```
-
-Returns current memory system health status including all components.
-
-**Response:**
-```json
-{
-  "status": "success",
-  "data": {
-    "overall_status": "healthy",
-    "components": {
-      "storage": "healthy",
-      "retrieval": "healthy",
-      "neo4j": "healthy",
-      "embedding": "healthy"
-    },
-    "last_check_time": "2025-01-15T10:30:00Z",
-    "issues": [],
-    "warnings": []
-  }
-}
-```
-
-### Search Memories
-```http
-POST /api/memory-system/search
-```
-
-Search memories using semantic similarity and filters.
-
-**Request Body:**
-```json
-{
-  "query": "machine learning discussion",
-  "user_id": "user123",
-  "limit": 5,
-  "similarity_threshold": 0.4,
-  "memory_types": ["interaction", "insight"],
-  "consciousness_context": {
-    "consciousness_level": 0.7,
-    "emotional_state": "curious"
-  }
-}
-```
-
-**Response:**
-```json
-[
-  {
-    "memory_id": "mem_123",
-    "content": "User asked about neural networks and deep learning",
-    "memory_type": "interaction",
-    "user_id": "user123",
-    "agent_name": "SimpleChat",
-    "consciousness_level": 0.7,
-    "emotional_state": "curious",
-    "importance_score": 0.8,
-    "created_at": "2025-01-15T09:00:00Z",
-    "access_count": 3,
-    "significance_score": 0.75
-  }
-]
-```
-
-### Get User Memories
-```http
-GET /api/memory-system/memories/{user_id}?limit=50&memory_type=interaction
-```
-
-Retrieve memories for a specific user with optional filtering.
-
-**Query Parameters:**
-- `limit` (optional): Maximum number of memories to return (default: 50)
-- `memory_type` (optional): Filter by memory type
-- `start_date` (optional): Filter memories after this date
-- `end_date` (optional): Filter memories before this date
-
-**Response:**
-```json
-{
-  "status": "success",
-  "data": {
-    "user_id": "user123",
-    "memory_count": 25,
-    "memories": [
-      {
-        "memory_id": "mem_123",
-        "content": "User discussed AI ethics",
-        "memory_type": "interaction",
-        "created_at": "2025-01-15T09:00:00Z",
-        "importance_score": 0.7
-      }
-    ]
-  }
-}
-```
-
-### Create Memory
-```http
-POST /api/memory-system/memories/create
-```
-
-Create a new memory record.
-
-**Request Body:**
-```json
-{
-  "content": "User expressed interest in quantum computing",
-  "memory_type": "interaction",
-  "user_id": "user123",
-  "agent_name": "SimpleChat",
-  "consciousness_context": {
-    "consciousness_level": 0.8,
-    "emotional_state": "excited"
-  },
-  "metadata": {
-    "topic": "quantum_computing",
-    "complexity": "advanced"
-  }
-}
-```
-
-**Response:**
-```json
-{
-  "status": "success",
-  "data": {
-    "memory_id": "mem_456",
-    "message": "Memory created successfully"
-  }
-}
-```
-
-### Build Memory Context
-```http
-POST /api/memory-system/context/build
-```
-
-Build memory context for enhancing agent responses.
-
-**Request Body:**
-```json
-{
-  "query": "Tell me about our previous AI discussions",
-  "user_id": "user123",
-  "context_type": "conversation",
-  "consciousness_context": {
-    "consciousness_level": 0.7
-  }
-}
-```
-
-**Response:**
-```json
-{
-  "status": "success",
-  "data": {
-    "query": "Tell me about our previous AI discussions",
-    "user_id": "user123",
-    "context_type": "conversation",
-    "memory_count": 5,
-    "formatted_context": "Based on our previous conversations, you've shown interest in machine learning, neural networks, and AI ethics...",
-    "memories_used": [
-      {
-        "memory_id": "mem_123",
-        "content": "Discussion about neural networks",
-        "relevance_score": 0.85
-      }
-    ]
-  }
-}
-```
-
-### Get Performance Metrics
-```http
-GET /api/memory-system/metrics
-```
-
-Retrieve memory system performance metrics.
-
-**Response:**
-```json
-{
-  "status": "success",
-  "data": {
-    "metrics": {
-      "memory_storage": {
-        "total_operations": 1250,
-        "successful_operations": 1248,
-        "success_rate": 99.84,
-        "average_response_time": 0.15
-      },
-      "memory_retrieval": {
-        "total_operations": 3420,
-        "successful_operations": 3415,
-        "success_rate": 99.85,
-        "average_response_time": 0.08
-      }
-    },
-    "monitoring_active": true
-  }
-}
-```
-
-### Memory Lifecycle Management
-```http
-POST /api/memory-system/lifecycle/cleanup
-```
-
-Manually trigger memory cleanup operations.
-
-**Response:**
-```json
-{
-  "status": "success",
-  "message": "Memory cleanup completed",
-  "data": {
-    "total_processed": 1000,
-    "archived": 50,
-    "deleted": 25,
-    "storage_freed_mb": 15.7,
-    "processing_time": 2.3
-  }
-}
-```
-
-### Memory System Diagnostics
-```http
-GET /api/memory-system/diagnostics
-```
-
-Run comprehensive memory system diagnostics.
-
-**Response:**
-```json
-{
-  "status": "success",
-  "data": {
-    "health_summary": {
-      "overall_status": "healthy",
-      "critical_issues": 0,
-      "warnings": 1
-    },
-    "performance_analysis": {
-      "memory_storage": {
-        "status": "good",
-        "success_rate": 99.8,
-        "average_response_time": 0.15
-      }
-    },
-    "usage_analysis": {
-      "total_memories": 5420,
-      "storage_efficiency": "good",
-      "memory_distribution": {
-        "interaction": 4200,
-        "reflection": 800,
-        "insight": 420
-      }
-    },
-    "recommendations": [
-      "Consider implementing cleanup policies for memories older than 1 year"
-    ]
-  }
-}
-```
-
-### Administrative Endpoints
-
-#### Validate Memory Integrity
-```http
-POST /api/memory-system/admin/validate
-```
-
-Validate memory system data integrity.
-
-**Response:**
-```json
-{
-  "status": "success",
-  "data": {
-    "total_memories": 5420,
-    "memories_with_embeddings": 5415,
-    "memories_without_embeddings": 5,
-    "orphaned_memories": 0,
-    "duplicate_memories": 2,
-    "status": "issues_found",
-    "validation_errors": [
-      "5 memories missing embeddings",
-      "2 potential duplicate memories found"
-    ]
-  }
-}
-```
-
-#### Reindex Memories
-```http
-POST /api/memory-system/admin/reindex
-```
-
-Reindex all memories for better search performance.
-
-**Response:**
-```json
-{
-  "status": "success",
-  "message": "Memory reindexing completed",
-  "data": {
-    "total_memories": 5420,
-    "missing_embeddings_before": 5,
-    "embeddings_regenerated": 5,
-    "reindex_completed": true,
-    "timestamp": "2025-01-15T10:30:00Z"
-  }
-}
-```
-
-## ⚠️ Error Handling
-
-All API endpoints return consistent error responses with detailed information for debugging.
-
-### Error Response Format
-```json
-{
-  "status": "error",
-  "error_code": "VALIDATION_ERROR",
-  "message": "Invalid input parameters",
-  "details": {
-    "field": "query",
-    "issue": "Query cannot be empty",
-    "expected_format": "Non-empty string"
-  },
-  "timestamp": "2025-01-15T10:30:00Z",
-  "request_id": "req_1642248600_abc123"
-}
-```
-
-### Common Error Codes
-
-- `VALIDATION_ERROR`: Invalid request parameters
-- `RESOURCE_NOT_FOUND`: Requested resource doesn't exist
-- `RATE_LIMIT_EXCEEDED`: Too many requests
-- `INTERNAL_SERVER_ERROR`: Unexpected server error
-- `SERVICE_UNAVAILABLE`: External service unavailable
-- `CONSCIOUSNESS_ERROR`: Consciousness system error
-- `AGENT_ERROR`: Agent execution error
-- `KNOWLEDGE_GRAPH_ERROR`: Knowledge graph operation error
-
-## 🚦 Rate Limiting
-
-API endpoints are rate-limited to ensure system stability and fair usage.
-
-### Rate Limits
-
-- **Conversation Endpoints**: 100 requests per minute
-- **Knowledge Graph Operations**: 50 requests per minute
-- **Voice Processing**: 20 requests per minute
-- **Consciousness Endpoints**: 30 requests per minute
-
-### Rate Limit Headers
-
-All responses include rate limit information:
-
-```http
-X-RateLimit-Limit: 100
-X-RateLimit-Remaining: 95
-X-RateLimit-Reset: 1642248660
-X-RateLimit-Window: 60
-```
-
-## 📊 Monitoring Endpoints
-
-### System Metrics
-```http
-GET /metrics
-```
-
-Get comprehensive system metrics including consciousness performance.
-
-### Agent Performance
-```http
-GET /agents/{agent_name}/metrics
-```
-
-Get detailed performance metrics for a specific agent.
-
-### Consciousness Analytics
-```http
-GET /consciousness/analytics
-```
-
-Get consciousness evolution analytics and trends.
 
 ---
 
-**Status**: 🟢 **ALL ENDPOINTS OPERATIONAL** - Full consciousness integration active
-**Last Updated**: January 2025
-**API Version**: v2.0.0 - Consciousness Active
+## 📋 **CORE SYSTEM APIs**
 
-This comprehensive API documentation provides complete coverage of all Mainza AI endpoints, enabling developers to build sophisticated applications that leverage the full power of the consciousness framework.
+### GET /health
+Basic health check endpoint.
+
+**Authentication**: Not required
+**Rate Limit**: 120 requests/minute
+
+**Response:**
+```json
+{
+  "status": "healthy",
+  "timestamp": "2025-09-05T11:45:56.789Z",
+  "version": "2.0.0",
+  "uptime_seconds": 86400
+}
+```
+
+### GET /health/detailed
+Detailed health check with component status.
+
+**Authentication**: Not required
+
+**Response:**
+```json
+{
+  "success": true,
+  "data": {
+    "status": "healthy",
+    "timestamp": "2025-09-05T11:45:56Z",
+    "version": "2.0.0",
+    "components": {
+      "neo4j": "healthy",
+      "memory_system": "healthy",
+      "consciousness": "healthy",
+      "agents": "healthy",
+      "voice": "healthy"
+    },
+    "performance": {
+      "memory_usage_gb": 2.1,
+      "cpu_usage_percent": 35.2,
+      "active_connections": 5
+    }
+  }
+}
+```
+
+---
+
+## 🏷️ **ERROR CODES**
+
+| Code | HTTP Status | Description |
+|------|-------------|-------------|
+| `VALIDATION_ERROR` | 400 | Invalid request data |
+| `AUTHENTICATION_FAILED` | 401 | Invalid or missing authentication |
+| `AUTHORIZATION_FAILED` | 403 | Insufficient permissions |
+| `RESOURCE_NOT_FOUND` | 404 | Requested resource not found |
+| `RATE_LIMIT_EXCEEDED` | 429 | Too many requests |
+| `INTERNAL_ERROR` | 500 | Unexpected server error |
+| `SERVICE_UNAVAILABLE` | 503 | Service temporarily unavailable |
+| `AGENT_EXECUTION_FAILED` | 500 | Agent task execution failed |
+| `MEMORY_OPERATION_FAILED` | 500 | Memory system error |
+| `VOICE_PROCESSING_FAILED` | 500 | TTS/STT processing error |
+
+---
+
+## 📊 **RATE LIMITING**
+
+| Endpoint Category | Limit (requests/minute) |
+|-------------------|-------------------------|
+| Health Checks | 120 |
+| Consciousness APIs | 60 |
+| Agent APIs | 30 |
+| Memory APIs | 60 |
+| Voice APIs | 20 |
+| Administrative APIs | 10 |
+
+---
+
+## 🔗 **SDKs & LIBRARIES**
+
+### Python Client
+```bash
+pip install mainza-ai-sdk
+```
+
+### JavaScript/TypeScript Client
+```bash
+npm install @mainza-ai/sdk
+```
+
+### Usage Example (Python)
+```python
+from mainza_ai import MainzaAI
+
+client = MainzaAI(api_key="your-api-key")
+response = client.chat("Hello Mainza!")
+```
+
+---
+
+## 🎯 **WEBHOOKS & EVENTS**
+
+### Event Types
+- `consciousness.changed` - Consciousness level updates
+- `agent.task.completed` - Agent task completion
+- `memory.created` - New memory stored
+- `system.health.changed` - System health changes
+
+### Webhook Configuration
+```json
+{
+  "url": "https://your-app.com/webhook",
+  "events": ["consciousness.changed"],
+  "secret": "your-webhook-secret"
+}
+```
+
+---
+
+## 📖 **OPENAPI SPECIFICATION**
+
+The complete API specification is available at:
+- **Development**: `http://localhost:8000/docs`
+- **Production**: `https://api.mainza.ai/docs`
+
+Download the OpenAPI JSON specification:
+```bash
+curl http://localhost:8000/openapi.json
+```
+
+---
+
+## 🔐 **SECURITY CONSIDERATIONS**
+
+### Best Practices
+1. Always use HTTPS in production
+2. Rotate API keys regularly
+3. Implement proper error handling
+4. Use rate limiting to prevent abuse
+5. Validate all input data
+6. Log sensitive operations
+
+### Security Headers
+```
+X-Content-Type-Options: nosniff
+X-Frame-Options: DENY
+X-XSS-Protection: 1; mode=block
+Strict-Transport-Security: max-age=31536000
+```
+
+---
+
+## 🆘 **SUPPORT & HELP**
+
+### Issues & Bugs
+Report issues on GitHub: [Mainza AI Issues](https://github.com/mainza-ai/mainza-consciousness/issues)
+
+### Community Support
+- Discord: [Mainza AI Community](https://discord.gg/mainza-ai)
+- Documentation: [docs/README.md](docs/README.md)
+
+---
+
+**Need help?** Contact our support team at support@mainza.ai

@@ -3,6 +3,7 @@ uvicorn[standard]>=0.23.0
 neo4j>=5.11.0
 pydantic>=2.0.0
 pydantic-ai>=0.2.0
+pydantic-settings>=2.0.0  # Added for BaseSettings compatibility
 openai-whisper
 TTS>=0.22.0  # Coqui TTS
 sentence-transformers>=2.2.2
@@ -10,8 +11,10 @@ requests>=2.31.0
 python-jose>=3.3.0  # for JWT
 python-dotenv>=1.0.0  # for .env support
 livekit-api>=1.0.0 # for livekit server-side sdk
+bcrypt>=4.0.0  # Added for security framework
+pytest-asyncio>=0.21.0  # Added for async test support
 # Optional/extra:
 torch>=2.1.0  # Required for TTS/Whisper, match your CUDA version
 # If using CUDA, install torch with CUDA support:
-# pip install torch==2.1.0+cu118 -f https://download.pytorch.org/whl/torch_stable.html 
-transformers<4.50  # Pin for XTTS compatibility 
+# pip install torch==2.1.0+cu118 -f https://download.pytorch.org/whl/torch_stable.html
+transformers<4.50  # Pin for XTTS compatibility

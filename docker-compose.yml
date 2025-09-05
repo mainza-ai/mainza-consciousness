@@ -18,10 +18,10 @@ services:
       - NEO4J_AUTH=neo4j/mainza123
       - NEO4J_PLUGINS=["apoc"]
       - NEO4J_dbms_security_procedures_unrestricted=apoc.*
-      - NEO4J_dbms_memory_heap_initial__size=512m
-      - NEO4J_dbms_memory_heap_max__size=1024m
-      - NEO4J_dbms_memory_pagecache_size=512m
-      - NEO4J_dbms_memory_transaction_total_size=256m
+      - dbms.memory.heap.initial_size=512m
+      - dbms.memory.heap.max_size=1024m
+      - dbms.memory.pagecache.size=512m
+      - dbms.transaction.max_size=1024m
     volumes:
       - neo4j_data:/data
       - neo4j_logs:/logs
