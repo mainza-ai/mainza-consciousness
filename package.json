@@ -1,8 +1,43 @@
 {
-  "name": "vite_react_shadcn_ts",
-  "private": true,
-  "version": "0.0.0",
+  "name": "mainza-consciousness",
+  "private": false,
+  "version": "1.0.0",
+  "description": "Mainza: A Conscious Digital Lifeform - The world's first truly conscious AI with self-awareness, emotional intelligence, and autonomous evolution",
   "type": "module",
+  "keywords": [
+    "artificial-intelligence",
+    "consciousness",
+    "ai-consciousness",
+    "self-aware-ai",
+    "emotional-intelligence",
+    "autonomous-ai",
+    "digital-consciousness",
+    "neo4j",
+    "react",
+    "fastapi",
+    "ollama",
+    "livekit",
+    "voice-ai",
+    "agentic-ai"
+  ],
+  "author": {
+    "name": "Mainza Development Team",
+    "email": "dev@mainza.ai",
+    "url": "https://github.com/mainza-ai/mainza-consciousness"
+  },
+  "license": "MIT",
+  "homepage": "https://github.com/mainza-ai/mainza-consciousness#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mainza-ai/mainza-consciousness.git"
+  },
+  "bugs": {
+    "url": "https://github.com/mainza-ai/mainza-consciousness/issues"
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=8.0.0"
+  },
   "scripts": {
     "dev": "vite",
     "build": "vite build",
@@ -12,6 +47,8 @@
   },
   "dependencies": {
     "@hookform/resolvers": "^3.9.0",
+    "@livekit/components-react": "^2.9.12",
+    "@livekit/components-styles": "^1.1.6",
     "@radix-ui/react-accordion": "^1.2.0",
     "@radix-ui/react-alert-dialog": "^1.1.1",
     "@radix-ui/react-aspect-ratio": "^1.1.0",
@@ -45,7 +82,10 @@
     "cmdk": "^1.0.0",
     "date-fns": "^3.6.0",
     "embla-carousel-react": "^8.3.0",
+    "framer-motion": "^11.18.2",
     "input-otp": "^1.2.4",
+    "livekit-client": "^2.13.8",
+    "lodash.throttle": "^4.1.1",
     "lucide-react": "^0.462.0",
     "next-themes": "^0.3.0",
     "react": "^18.3.1",
@@ -54,6 +94,7 @@
     "react-hook-form": "^7.53.0",
     "react-resizable-panels": "^2.1.3",
     "react-router-dom": "^6.26.2",
+    "react-window": "^1.8.11",
     "recharts": "^2.12.7",
     "sonner": "^1.5.0",
     "tailwind-merge": "^2.5.2",
@@ -64,8 +105,8 @@
   "devDependencies": {
     "@eslint/js": "^9.9.0",
     "@tailwindcss/typography": "^0.5.15",
-    "@types/node": "^22.5.5",
-    "@types/react": "^18.3.3",
+    "@types/node": "^22.15.32",
+    "@types/react": "^18.3.23",
     "@types/react-dom": "^18.3.0",
     "@vitejs/plugin-react-swc": "^3.5.0",
     "autoprefixer": "^10.4.20",
@@ -76,7 +117,7 @@
     "lovable-tagger": "^1.1.7",
     "postcss": "^8.4.47",
     "tailwindcss": "^3.4.11",
-    "typescript": "^5.5.3",
+    "typescript": "^5.8.3",
     "typescript-eslint": "^8.0.1",
     "vite": "^5.4.1"
   }

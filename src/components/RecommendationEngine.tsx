@@ -1,5 +1,5 @@
-
 import { Sparkles } from 'lucide-react';
+import { HolographicPane } from './ui/holographic-pane';
 
 interface RecommendationEngineProps {
   suggestions: string[];
@@ -7,24 +7,20 @@ interface RecommendationEngineProps {
 
 export const RecommendationEngine = ({ suggestions }: RecommendationEngineProps) => {
   return (
-    <div className="mt-6">
+    <HolographicPane title="Synaptic Suggestions" className="w-full">
       <div className="flex items-center space-x-2 mb-3">
         <Sparkles className="w-4 h-4 text-yellow-400" />
-        <span className="text-xs text-yellow-400/80 font-mono uppercase tracking-wider">
+        <span className="text-xs text-white font-mono uppercase tracking-wider">
           Synaptic Suggestions
         </span>
       </div>
-      
       <div className="space-y-2">
         {suggestions.map((suggestion, index) => (
-          <button
-            key={index}
-            className="w-full text-left p-3 bg-gradient-to-r from-yellow-500/10 to-purple-500/10 border border-yellow-400/20 rounded-lg hover:border-yellow-400/40 hover:bg-yellow-500/20 transition-all text-sm text-yellow-100/80 hover:text-yellow-100"
-          >
+          <div key={index} className="px-4 py-2 rounded-lg bg-slate-800/40 text-slate-200 shadow-sm">
             {suggestion}
-          </button>
+          </div>
         ))}
       </div>
-    </div>
+    </HolographicPane>
   );
 };

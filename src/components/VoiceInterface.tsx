@@ -1,6 +1,7 @@
-
+import React from 'react';
 import { Mic, MicOff } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+// Removed LiveKit imports - connection handled by Index.tsx to avoid conflicts
 
 interface VoiceInterfaceProps {
   isListening: boolean;
@@ -8,6 +9,7 @@ interface VoiceInterfaceProps {
 }
 
 export const VoiceInterface = ({ isListening, onToggle }: VoiceInterfaceProps) => {
+  // Simplified voice interface - LiveKit connection handled by Index.tsx
   return (
     <div className="flex items-center space-x-2">
       <Button

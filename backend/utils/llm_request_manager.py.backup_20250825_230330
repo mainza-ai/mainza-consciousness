@@ -1,0 +1,369 @@
+"""
+LLM Request Manager
+Context7 MCP-compliant system for managing LLM requests with user priority
+
+This module provides:
+1. User priority queue system
+2. Background process throttling
+3. Request batching and caching
+4. Activity-based scheduling
+"""
+
+import asyncio
+import logging
+from datetime import datetime, timedelta
+from typing import Dict, Any, Optional, List, Callable
+from enum import Enum
+from dataclasses import dataclass, field
+import json
+from collections import defaultdict
+
+logger = logging.getLogger(__name__)
+
+class RequestPriority(Enum):
+    """Request priority levels"""
+    USER_CONVERSATION = 1      # Highest priority - immediate processing
+    USER_INTERACTION = 2       # High priority - quick processing  
+    SYSTEM_MAINTENANCE = 3     # Medium priority - can be delayed
+    BACKGROUND_PROCESSING = 4  # Low priority - can be paused
+    CONSCIOUSNESS_CYCLE = 5    # Lowest priority - can be heavily throttled
+
+@dataclass
+class LLMRequest:
+    """LLM request with priority and metadata"""
+    id: str
+    priority: RequestPriority
+    request_func: Callable
+    args: tuple = field(default_factory=tuple)
+    kwargs: dict = field(default_factory=dict)
+    created_at: datetime = field(default_factory=datetime.now)
+    user_id: Optional[str] = None
+    timeout: float = 30.0
+    retries: int = 0
+    max_retries: int = 2
+
+class LLMRequestManager:
+    """
+    Manages LLM requests with user priority and intelligent throttling
+    """
+    
+    def __init__(self):
+        self.request_queue = asyncio.PriorityQueue()
+        self.active_requests: Dict[str, LLMRequest] = {}
+        self.user_activity: Dict[str, datetime] = {}
+        self.background_paused = False
+        self.processing_lock = asyncio.Lock()
+        
+        # Configuration
+        self.max_concurrent_requests = 3
+        self.user_activity_timeout = 300  # 5 minutes
+        self.background_pause_duration = 60  # 1 minute after user activity
+        self.cache_ttl = 180  # 3 minutes
+        
+        # Caching
+        self.response_cache: Dict[str, Dict[str, Any]] = {}
+        self.cache_timestamps: Dict[str, datetime] = {}
+        
+        # Statistics
+        self.stats = {
+            'total_requests': 0,
+            'user_requests': 0,
+            'background_requests': 0,
+            'cached_responses': 0,
+            'paused_requests': 0
+        }
+        
+        # Processing tasks will be started when first request is submitted
+        self._processing_started = False
+    
+    def _ensure_processing_started(self):
+        """Ensure processing tasks are started"""
+        if not self._processing_started:
+            try:
+                asyncio.create_task(self._process_requests())
+                asyncio.create_task(self._cleanup_loop())
+                self._processing_started = True
+                logger.debug("LLM request manager processing started")
+            except RuntimeError:
+                # No event loop running, tasks will be started later
+                pass
+    
+    async def submit_request(
+        self,
+        request_func: Callable,
+        priority: RequestPriority,
+        user_id: Optional[str] = None,
+        cache_key: Optional[str] = None,
+        timeout: float = 30.0,
+        *args,
+        **kwargs
+    ) -> Any:
+        """
+        Submit an LLM request with priority handling
+        """
+        # Ensure processing tasks are started
+        self._ensure_processing_started()
+        # Check cache first
+        if cache_key and self._get_cached_response(cache_key):
+            self.stats['cached_responses'] += 1
+            return self._get_cached_response(cache_key)
+        
+        # Update user activity
+        if user_id and priority in [RequestPriority.USER_CONVERSATION, RequestPriority.USER_INTERACTION]:
+            self.user_activity[user_id] = datetime.now()
+            logger.debug(f"User activity detected: {user_id}")
+        
+        # Check if background requests should be paused
+        if priority in [RequestPriority.BACKGROUND_PROCESSING, RequestPriority.CONSCIOUSNESS_CYCLE]:
+            if self._should_pause_background():
+                self.stats['paused_requests'] += 1
+                logger.debug(f"Background request paused due to user activity")
+                return self._get_fallback_response(priority)
+        
+        # Create request
+        request_id = f"{priority.name}_{datetime.now().timestamp()}"
+        request = LLMRequest(
+            id=request_id,
+            priority=priority,
+            request_func=request_func,
+            args=args,
+            kwargs=kwargs,
+            user_id=user_id,
+            timeout=timeout
+        )
+        
+        # Add to queue
+        await self.request_queue.put((priority.value, request))
+        self.stats['total_requests'] += 1
+        
+        if priority in [RequestPriority.USER_CONVERSATION, RequestPriority.USER_INTERACTION]:
+            self.stats['user_requests'] += 1
+        else:
+            self.stats['background_requests'] += 1
+        
+        # Wait for result
+        result_future = asyncio.Future()
+        self.active_requests[request_id] = request
+        
+        try:
+            # Wait for processing with timeout
+            result = await asyncio.wait_for(
+                self._wait_for_result(request_id),
+                timeout=timeout
+            )
+            
+            # Cache result if cache_key provided
+            if cache_key and result:
+                self._cache_response(cache_key, result)
+            
+            return result
+            
+        except asyncio.TimeoutError:
+            logger.warning(f"LLM request {request_id} timed out")
+            self.active_requests.pop(request_id, None)
+            return self._get_fallback_response(priority)
+        
+        except Exception as e:
+            logger.error(f"LLM request {request_id} failed: {e}")
+            self.active_requests.pop(request_id, None)
+            return self._get_fallback_response(priority)
+    
+    async def _process_requests(self):
+        """Main request processing loop"""
+        while True:
+            try:
+                # Get next request from queue
+                priority_value, request = await self.request_queue.get()
+                
+                # Check if we should process this request
+                if not self._should_process_request(request):
+                    # Re-queue with delay for background requests
+                    if request.priority in [RequestPriority.BACKGROUND_PROCESSING, RequestPriority.CONSCIOUSNESS_CYCLE]:
+                        await asyncio.sleep(30)  # Wait 30 seconds before re-queuing
+                        await self.request_queue.put((priority_value, request))
+                    continue
+                
+                # Process request
+                asyncio.create_task(self._execute_request(request))
+                
+            except Exception as e:
+                logger.error(f"Request processing error: {e}")
+                await asyncio.sleep(1)
+    
+    async def _execute_request(self, request: LLMRequest):
+        """Execute a single LLM request"""
+        try:
+            async with self.processing_lock:
+                logger.debug(f"Executing LLM request: {request.id} (priority: {request.priority.name})")
+                
+                # Execute the request function
+                if asyncio.iscoroutinefunction(request.request_func):
+                    result = await request.request_func(*request.args, **request.kwargs)
+                else:
+                    result = request.request_func(*request.args, **request.kwargs)
+                
+                # Store result
+                if request.id in self.active_requests:
+                    self.active_requests[request.id].result = result
+                
+                logger.debug(f"LLM request completed: {request.id}")
+                
+        except Exception as e:
+            logger.error(f"LLM request execution failed: {request.id} - {e}")
+            if request.id in self.active_requests:
+                self.active_requests[request.id].error = str(e)
+    
+    async def _wait_for_result(self, request_id: str) -> Any:
+        """Wait for request result"""
+        while request_id in self.active_requests:
+            request = self.active_requests[request_id]
+            
+            if hasattr(request, 'result'):
+                self.active_requests.pop(request_id, None)
+                return request.result
+            
+            if hasattr(request, 'error'):
+                self.active_requests.pop(request_id, None)
+                raise Exception(request.error)
+            
+            await asyncio.sleep(0.1)
+        
+        raise Exception("Request not found or was cancelled")
+    
+    def _should_process_request(self, request: LLMRequest) -> bool:
+        """Determine if a request should be processed now"""
+        # Always process user requests
+        if request.priority in [RequestPriority.USER_CONVERSATION, RequestPriority.USER_INTERACTION]:
+            return True
+        
+        # Check if background processing is paused
+        if request.priority in [RequestPriority.BACKGROUND_PROCESSING, RequestPriority.CONSCIOUSNESS_CYCLE]:
+            if self._should_pause_background():
+                return False
+        
+        # Check concurrent request limit
+        active_count = len([r for r in self.active_requests.values() if not hasattr(r, 'result') and not hasattr(r, 'error')])
+        if active_count >= self.max_concurrent_requests:
+            # Only allow high priority requests
+            return request.priority.value <= RequestPriority.USER_INTERACTION.value
+        
+        return True
+    
+    def _should_pause_background(self) -> bool:
+        """Check if background processing should be paused due to user activity"""
+        if not self.user_activity:
+            return False
+        
+        # Check for recent user activity
+        now = datetime.now()
+        for user_id, last_activity in self.user_activity.items():
+            if (now - last_activity).seconds < self.background_pause_duration:
+                return True
+        
+        return False
+    
+    def _get_cached_response(self, cache_key: str) -> Optional[Any]:
+        """Get cached response if still valid"""
+        if cache_key not in self.response_cache:
+            return None
+        
+        cache_time = self.cache_timestamps.get(cache_key)
+        if not cache_time:
+            return None
+        
+        # Check if cache is still valid
+        if (datetime.now() - cache_time).seconds > self.cache_ttl:
+            self.response_cache.pop(cache_key, None)
+            self.cache_timestamps.pop(cache_key, None)
+            return None
+        
+        return self.response_cache[cache_key]
+    
+    def _cache_response(self, cache_key: str, response: Any):
+        """Cache a response"""
+        self.response_cache[cache_key] = response
+        self.cache_timestamps[cache_key] = datetime.now()
+    
+    def _get_fallback_response(self, priority: RequestPriority) -> Any:
+        """Get fallback response when request cannot be processed"""
+        fallback_responses = {
+            RequestPriority.USER_CONVERSATION: {
+                "response": "I'm currently processing other requests. Please try again in a moment.",
+                "status": "throttled"
+            },
+            RequestPriority.CONSCIOUSNESS_CYCLE: {
+                "consciousness_level": 0.7,
+                "emotional_state": "processing",
+                "status": "cached"
+            },
+            RequestPriority.BACKGROUND_PROCESSING: {
+                "status": "deferred",
+                "message": "Background processing paused for user activity"
+            }
+        }
+        
+        return fallback_responses.get(priority, {"status": "unavailable"})
+    
+    async def _cleanup_loop(self):
+        """Cleanup old cache entries and user activity"""
+        while True:
+            try:
+                now = datetime.now()
+                
+                # Clean old cache entries
+                expired_cache_keys = [
+                    key for key, timestamp in self.cache_timestamps.items()
+                    if (now - timestamp).seconds > self.cache_ttl
+                ]
+                
+                for key in expired_cache_keys:
+                    self.response_cache.pop(key, None)
+                    self.cache_timestamps.pop(key, None)
+                
+                # Clean old user activity
+                expired_users = [
+                    user_id for user_id, last_activity in self.user_activity.items()
+                    if (now - last_activity).seconds > self.user_activity_timeout
+                ]
+                
+                for user_id in expired_users:
+                    self.user_activity.pop(user_id, None)
+                
+                await asyncio.sleep(60)  # Cleanup every minute
+                
+            except Exception as e:
+                logger.error(f"Cleanup loop error: {e}")
+                await asyncio.sleep(60)
+    
+    def get_stats(self) -> Dict[str, Any]:
+        """Get request manager statistics"""
+        return {
+            **self.stats,
+            'active_requests': len(self.active_requests),
+            'queue_size': self.request_queue.qsize(),
+            'background_paused': self._should_pause_background(),
+            'active_users': len(self.user_activity),
+            'cache_size': len(self.response_cache)
+        }
+    
+    def pause_background_processing(self, duration: int = 60):
+        """Manually pause background processing"""
+        self.background_paused = True
+        asyncio.create_task(self._resume_background_after_delay(duration))
+    
+    async def _resume_background_after_delay(self, delay: int):
+        """Resume background processing after delay"""
+        await asyncio.sleep(delay)
+        self.background_paused = False
+        logger.info("Background processing resumed")
+    
+    async def initialize(self):
+        """Initialize the request manager with event loop"""
+        if not self._processing_started:
+            asyncio.create_task(self._process_requests())
+            asyncio.create_task(self._cleanup_loop())
+            self._processing_started = True
+            logger.info("LLM request manager initialized")
+
+# Global LLM request manager instance
+llm_request_manager = LLMRequestManager()

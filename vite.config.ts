@@ -7,7 +7,23 @@ import { componentTagger } from "lovable-tagger";
 export default defineConfig(({ mode }) => ({
   server: {
     host: "::",
-    port: 8080,
+    port: 8081,
+    proxy: {
+      '/livekit': 'http://localhost:8000',
+      '/tts': 'http://localhost:8000',
+      '/stt': 'http://localhost:8000',
+      '/recommendations': 'http://localhost:8000',
+      '/consciousness': 'http://localhost:8000',
+      // Proxy API endpoints under /api prefix to avoid conflicts with React routes
+      '/api': {
+        target: 'http://localhost:8000',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/api/, '')
+      },
+      // Proxy all backend API routes to FastAPI backend on port 8000
+      '/mainza': 'http://localhost:8000',
+      '/agent': 'http://localhost:8000',
+    },
   },
   plugins: [
     react(),
@@ -18,5 +34,9 @@ export default defineConfig(({ mode }) => ({
     alias: {
       "@": path.resolve(__dirname, "./src"),
     },
+  },
+  define: {
+    // Define environment variables for the frontend
+    'import.meta.env.VITE_LIVEKIT_URL': '"ws://localhost:7880"',
   },
 }));

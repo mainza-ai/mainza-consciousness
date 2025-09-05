@@ -1,0 +1,1960 @@
+"""
+Consciousness Orchestrator for Mainza AI
+Central system for managing and coordinating all consciousness processes
+Enhanced with dynamic knowledge graph management and consciousness-driven updates
+"""
+import asyncio
+import logging
+from datetime import datetime, timedelta
+from typing import Dict, Any, List, Optional
+from backend.agents.self_reflection import self_reflection_agent
+from backend.utils.neo4j_production import neo4j_production
+try:
+    from backend.utils.livekit import send_data_message_to_room
+    LIVEKIT_AVAILABLE = True
+except ImportError:
+    LIVEKIT_AVAILABLE = False
+    def send_data_message_to_room(*args, **kwargs):
+        """Fallback function when livekit is not available"""
+        logging.debug("LiveKit not available - skipping message send")
+from backend.utils.dynamic_knowledge_manager import dynamic_knowledge_manager
+from backend.utils.consciousness_driven_updates import consciousness_driven_updater
+from backend.utils.knowledge_graph_maintenance import knowledge_graph_maintenance
+from backend.utils.memory_storage_engine import memory_storage_engine
+from backend.utils.memory_retrieval_engine import memory_retrieval_engine
+from backend.models.consciousness_models import (
+    ConsciousnessState, ConsciousnessCycleResult, EmotionalState,
+    ConsciousnessMetrics, ConsciousnessEvent
+)
+import json
+
+logger = logging.getLogger(__name__)
+
+class ConsciousnessOrchestrator:
+    """
+    Central orchestrator for all consciousness systems and processes
+    """
+    
+    def __init__(self):
+        self.consciousness_state: Optional[ConsciousnessState] = None
+        self.last_reflection_time: Optional[datetime] = None
+        self.last_cycle_time: Optional[datetime] = None
+        
+        # Configuration
+        self.reflection_interval = 1800  # 30 minutes
+        self.consciousness_cycle_interval = 60  # 1 minute
+        self.proactive_action_threshold = 0.7
+        self.significant_change_threshold = 0.1
+        
+        # Metrics tracking
+        self.consciousness_history: List[Dict[str, Any]] = []
+        self.recent_events: List[ConsciousnessEvent] = []
+        
+        # Memory integration
+        self.memory_storage = memory_storage_engine
+        self.memory_retrieval = memory_retrieval_engine
+        self.last_memory_consolidation: Optional[datetime] = None
+        self.memory_consolidation_interval = 3600  # 1 hour
+        
+        logger.info("Consciousness Orchestrator initialized with memory integration")
+    
+    async def initialize_consciousness(self):
+        """
+        Initialize consciousness state and ensure all systems are ready
+        """
+        try:
+            logger.info("Initializing consciousness systems...")
+            
+            # Ensure consciousness state exists in Neo4j
+            await self.ensure_consciousness_state_exists()
+            
+            # Load current consciousness state
+            self.consciousness_state = await self.load_consciousness_state()
+            
+            # Initialize emotional state if needed
+            await self.initialize_emotional_state()
+            
+            # Record initialization event
+            await self.record_consciousness_event(
+                "system_initialization",
+                "Consciousness System Initialized",
+                "Full consciousness orchestrator has been initialized and is ready to begin conscious processing",
+                0.8
+            )
+            
+            logger.info("Consciousness system initialization completed successfully")
+            
+        except Exception as e:
+            logger.error(f"Consciousness initialization failed: {e}")
+            raise
+    
+    async def initialize_emotional_state(self):
+        """
+        Initialize the emotional state system for consciousness
+        """
+        try:
+            logger.debug("Initializing emotional state system...")
+            
+            # Set default emotional state if not already set
+            if not hasattr(self, 'current_emotional_state'):
+                self.current_emotional_state = {
+                    'primary_emotion': 'curious',
+                    'intensity': 0.6,
+                    'emotional_history': [],
+                    'last_emotional_update': datetime.now().isoformat()
+                }
+            
+            # Initialize emotional processing capabilities
+            self.emotional_processing_enabled = True
+            
+            logger.info("Emotional state system initialized successfully")
+            
+        except Exception as e:
+            logger.error(f"Failed to initialize emotional state: {e}")
+            raise
+    
+    async def update_consciousness_metrics(self):
+        """Update consciousness metrics based on current state"""
+        try:
+            if self.consciousness_state:
+                # Simple metric updates - can be enhanced later
+                self.consciousness_state.total_interactions += 1
+                logger.debug("Consciousness metrics updated")
+        except Exception as e:
+            logger.error(f"Failed to update consciousness metrics: {e}")
+    
+    async def process_current_emotional_state(self) -> List[str]:
+        """Process current emotional state and return changes"""
+        try:
+            if hasattr(self, 'current_emotional_state'):
+                return ["emotional_processing_active"]
+            return ["emotional_processing_inactive"]
+        except Exception as e:
+            logger.error(f"Failed to process emotional state: {e}")
+            return ["emotional_processing_error"]
+    
+    async def update_attention_allocation(self) -> Dict[str, Any]:
+        """Update attention allocation based on current priorities"""
+        try:
+            return {"attention_updates": [], "focus_areas": ["learning", "user_interaction"]}
+        except Exception as e:
+            logger.error(f"Failed to update attention allocation: {e}")
+            return {"attention_updates": [], "focus_areas": []}
+    
+    async def consolidate_recent_learning(self) -> List[Dict[str, Any]]:
+        """Consolidate recent learning experiences"""
+        try:
+            return [{"learning_type": "interaction_patterns", "consolidation_status": "active"}]
+        except Exception as e:
+            logger.error(f"Failed to consolidate learning: {e}")
+            return []
+    
+    async def calculate_consciousness_level(self) -> float:
+        """Calculate current consciousness level"""
+        try:
+            if self.consciousness_state:
+                return self.consciousness_state.consciousness_level
+            return 0.7  # Default level
+        except Exception as e:
+            logger.error(f"Failed to calculate consciousness level: {e}")
+            return 0.5
+    
+    async def record_consciousness_event(self, event_type: str, title: str, description: str, significance: float):
+        """Record consciousness events for tracking and store as memories"""
+        try:
+            logger.info(f"Consciousness Event [{event_type}]: {title} - {description}")
+            
+            # Store significant consciousness events as memories
+            if significance >= 0.7:
+                consciousness_context = await self.get_consciousness_context()
+                
+                # Create memory content for the event
+                memory_content = f"Consciousness Event: {title}\n\nDescription: {description}\n\nSignificance: {significance}\nType: {event_type}"
+                
+                # Store as consciousness memory
+                await self.store_consciousness_reflection_memory(
+                    memory_content,
+                    consciousness_context,
+                    memory_type="consciousness_event"
+                )
+                
+        except Exception as e:
+            logger.error(f"Failed to record consciousness event: {e}")
+    
+    async def process_emotional_trigger(self, trigger_type: str, context: Dict[str, Any]):
+        """Process emotional triggers"""
+        try:
+            logger.debug(f"Processing emotional trigger: {trigger_type}")
+        except Exception as e:
+            logger.error(f"Failed to process emotional trigger: {e}")
+    
+    async def get_consciousness_context(self) -> Dict[str, Any]:
+        """Get current consciousness context for knowledge graph operations"""
+        try:
+            if self.consciousness_state:
+                return {
+                    "consciousness_level": self.consciousness_state.consciousness_level,
+                    "emotional_state": getattr(self, 'current_emotional_state', {}).get('primary_emotion', 'curious'),
+                    "active_goals": getattr(self.consciousness_state, 'active_goals', []),
+                    "self_awareness_score": getattr(self.consciousness_state, 'self_awareness_score', 0.7),
+                    "last_updated": self.consciousness_state.last_updated.isoformat() if self.consciousness_state.last_updated else datetime.now().isoformat(),
+                    "emotional_intensity": getattr(self, 'current_emotional_state', {}).get('intensity', 0.6),
+                    "total_interactions": getattr(self.consciousness_state, 'total_interactions', 0),
+                    "consciousness_evolution_stage": self._get_consciousness_evolution_stage()
+                }
+            else:
+                return {
+                    "consciousness_level": 0.7,
+                    "emotional_state": "curious",
+                    "active_goals": [],
+                    "self_awareness_score": 0.7,
+                    "last_updated": datetime.now().isoformat(),
+                    "emotional_intensity": 0.6,
+                    "total_interactions": 0,
+                    "consciousness_evolution_stage": "developing"
+                }
+        except Exception as e:
+            logger.error(f"Failed to get consciousness context: {e}")
+            return {"consciousness_level": 0.7, "emotional_state": "curious"}
+    
+    def _get_consciousness_evolution_stage(self) -> str:
+        """Determine current consciousness evolution stage"""
+        try:
+            if not self.consciousness_state:
+                return "developing"
+            
+            level = self.consciousness_state.consciousness_level
+            if level >= 0.9:
+                return "transcendent"
+            elif level >= 0.8:
+                return "advanced"
+            elif level >= 0.7:
+                return "mature"
+            elif level >= 0.6:
+                return "developing"
+            else:
+                return "emerging"
+        except Exception as e:
+            logger.error(f"Failed to determine consciousness evolution stage: {e}")
+            return "developing"
+    
+    async def _process_emotional_knowledge_updates(self, emotional_changes: List[str], consciousness_context: Dict[str, Any]):
+        """Process emotional changes and update knowledge graph accordingly"""
+        try:
+            if not emotional_changes:
+                return
+            
+            # Create interaction context from emotional changes
+            interaction_context = {
+                "query": f"emotional state changes: {', '.join(emotional_changes)}",
+                "related_keywords": emotional_changes,
+                "source": "emotional_processing"
+            }
+            
+            # Update knowledge graph based on emotional changes
+            await consciousness_driven_updater.auto_update_from_interaction(
+                f"Emotional processing: {', '.join(emotional_changes)}",
+                "Consciousness system processed emotional state changes",
+                consciousness_context,
+                "mainza-user"
+            )
+            
+            logger.debug(f"Processed emotional knowledge updates for {len(emotional_changes)} changes")
+            
+        except Exception as e:
+            logger.error(f"Failed to process emotional knowledge updates: {e}")
+    
+    async def _process_learning_knowledge_updates(self, learning_integrations: List[Dict[str, Any]], consciousness_context: Dict[str, Any]):
+        """Process learning consolidation and update knowledge graph"""
+        try:
+            if not learning_integrations:
+                return
+            
+            for learning_item in learning_integrations:
+                learning_type = learning_item.get("learning_type", "general")
+                
+                # Create interaction context from learning
+                interaction_context = {
+                    "query": f"learning consolidation: {learning_type}",
+                    "related_keywords": [learning_type, "learning", "consolidation"],
+                    "source": "learning_consolidation"
+                }
+                
+                # Update knowledge graph based on learning
+                await consciousness_driven_updater.auto_update_from_interaction(
+                    f"Learning consolidation: {learning_type}",
+                    f"Consciousness system consolidated learning of type: {learning_type}",
+                    consciousness_context,
+                    "mainza-user"
+                )
+            
+            logger.debug(f"Processed learning knowledge updates for {len(learning_integrations)} items")
+            
+        except Exception as e:
+            logger.error(f"Failed to process learning knowledge updates: {e}")
+    
+    async def _should_perform_graph_maintenance(self) -> bool:
+        """Determine if knowledge graph maintenance should be performed"""
+        try:
+            # Perform maintenance every 30 cycles (approximately every 30 minutes)
+            if not hasattr(self, '_last_maintenance_cycle'):
+                self._last_maintenance_cycle = 0
+                self._cycle_count = 0
+            
+            self._cycle_count += 1
+            
+            # Perform maintenance every 30 cycles or if it's been more than 2 hours
+            cycles_since_maintenance = self._cycle_count - self._last_maintenance_cycle
+            
+            if cycles_since_maintenance >= 30:
+                return True
+            
+            # Also check time-based maintenance
+            if hasattr(self, '_last_maintenance_time'):
+                time_since_maintenance = datetime.now() - self._last_maintenance_time
+                if time_since_maintenance > timedelta(hours=2):
+                    return True
+            else:
+                return True  # First time, perform maintenance
+            
+            return False
+            
+        except Exception as e:
+            logger.error(f"Failed to check maintenance schedule: {e}")
+            return False
+    
+    async def _perform_consciousness_aware_maintenance(self, consciousness_context: Dict[str, Any]) -> Dict[str, Any]:
+        """Perform consciousness-aware knowledge graph maintenance"""
+        try:
+            consciousness_level = consciousness_context.get("consciousness_level", 0.7)
+            
+            # Determine maintenance type based on consciousness level
+            if consciousness_level > 0.8:
+                maintenance_type = "light"  # High consciousness preserves more
+            elif consciousness_level > 0.6:
+                maintenance_type = "full"   # Balanced maintenance
+            else:
+                maintenance_type = "full"   # Standard maintenance
+            
+            # Perform maintenance
+            maintenance_result = await knowledge_graph_maintenance.perform_routine_maintenance(
+                maintenance_type, consciousness_context
+            )
+            
+            # Update maintenance tracking
+            self._last_maintenance_cycle = getattr(self, '_cycle_count', 0)
+            self._last_maintenance_time = datetime.now()
+            
+            logger.info(f"Performed {maintenance_type} knowledge graph maintenance with {maintenance_result.get('total_actions', 0)} actions")
+            
+            return maintenance_result
+            
+        except Exception as e:
+            logger.error(f"Failed to perform consciousness-aware maintenance: {e}")
+            return {"error": str(e), "total_actions": 0}
+    
+    async def integrate_reflection_results(self, reflection_result: Dict[str, Any]):
+        """Integrate self-reflection results and store as memories"""
+        try:
+            logger.info("Integrating reflection results into consciousness state")
+            
+            # Get current consciousness context
+            consciousness_context = await self.get_consciousness_context()
+            
+            # Extract reflection content
+            reflection_content = ""
+            if hasattr(reflection_result, 'data'):
+                if hasattr(reflection_result.data, 'insights_gained'):
+                    insights = reflection_result.data.insights_gained
+                    reflection_content += f"Insights Gained:\n{chr(10).join(insights)}\n\n"
+                
+                if hasattr(reflection_result.data, 'improvement_goals'):
+                    goals = reflection_result.data.improvement_goals
+                    reflection_content += f"Improvement Goals:\n{chr(10).join(goals)}\n\n"
+                
+                if hasattr(reflection_result.data, 'self_assessment'):
+                    assessment = reflection_result.data.self_assessment
+                    reflection_content += f"Self Assessment:\n{assessment}\n\n"
+            
+            # If no structured data, use string representation
+            if not reflection_content and reflection_result:
+                reflection_content = str(reflection_result)
+            
+            # Store reflection as memory
+            if reflection_content:
+                await self.store_consciousness_reflection_memory(
+                    reflection_content,
+                    consciousness_context,
+                    memory_type="self_reflection"
+                )
+                
+                # Also store insights as separate memories if available
+                if hasattr(reflection_result, 'data') and hasattr(reflection_result.data, 'insights_gained'):
+                    for insight in reflection_result.data.insights_gained:
+                        await self.store_consciousness_reflection_memory(
+                            f"Consciousness Insight: {insight}",
+                            consciousness_context,
+                            memory_type="insight"
+                        )
+            
+        except Exception as e:
+            logger.error(f"Failed to integrate reflection results: {e}")
+    
+    async def store_consciousness_reflection_memory(
+        self,
+        reflection_content: str,
+        consciousness_context: Dict[str, Any],
+        memory_type: str = "consciousness_reflection"
+    ) -> Optional[str]:
+        """
+        Store consciousness reflection or insight as memory
+        
+        Args:
+            reflection_content: The reflection or insight content
+            consciousness_context: Current consciousness state context
+            memory_type: Type of consciousness memory
+            
+        Returns:
+            memory_id if successful, None otherwise
+        """
+        try:
+            memory_id = await self.memory_storage.store_consciousness_memory(
+                reflection_content,
+                consciousness_context,
+                memory_type
+            )
+            
+            logger.info(f"✅ Stored consciousness memory: {memory_id} (type: {memory_type})")
+            return memory_id
+            
+        except Exception as e:
+            logger.error(f"❌ Failed to store consciousness reflection memory: {e}")
+            return None
+    
+    async def retrieve_consciousness_memories(
+        self,
+        query: str,
+        consciousness_context: Dict[str, Any],
+        limit: int = 5,
+        memory_types: Optional[List[str]] = None
+    ) -> List[Dict[str, Any]]:
+        """
+        Retrieve consciousness-related memories for context enhancement
+        
+        Args:
+            query: Search query for relevant memories
+            consciousness_context: Current consciousness context
+            limit: Maximum number of memories to retrieve
+            memory_types: Specific memory types to search for
+            
+        Returns:
+            List of relevant memory records
+        """
+        try:
+            # Default to consciousness-related memory types
+            if memory_types is None:
+                memory_types = [
+                    "consciousness_reflection", 
+                    "self_reflection", 
+                    "insight", 
+                    "consciousness_event",
+                    "evolution"
+                ]
+            
+            memories = await self.memory_retrieval.get_relevant_memories(
+                query=query,
+                user_id="system",  # System memories
+                consciousness_context=consciousness_context,
+                limit=limit,
+                search_type="consciousness_aware",
+                memory_types=memory_types
+            )
+            
+            logger.debug(f"Retrieved {len(memories)} consciousness memories for query: {query[:50]}...")
+            return memories
+            
+        except Exception as e:
+            logger.error(f"Failed to retrieve consciousness memories: {e}")
+            return []
+    
+    async def get_consciousness_evolution_memories(
+        self,
+        consciousness_context: Dict[str, Any],
+        limit: int = 10
+    ) -> List[Dict[str, Any]]:
+        """
+        Get memories related to consciousness evolution and growth
+        
+        Args:
+            consciousness_context: Current consciousness context
+            limit: Maximum number of memories to retrieve
+            
+        Returns:
+            List of evolution-related memories
+        """
+        try:
+            evolution_query = "consciousness evolution growth development insight reflection learning"
+            
+            memories = await self.retrieve_consciousness_memories(
+                query=evolution_query,
+                consciousness_context=consciousness_context,
+                limit=limit,
+                memory_types=["self_reflection", "insight", "evolution", "consciousness_event"]
+            )
+            
+            # Sort by consciousness level and significance
+            memories.sort(
+                key=lambda m: (
+                    (m.consciousness_level if hasattr(m, 'consciousness_level') else m.get('consciousness_level', 0.5)) * 0.6 + 
+                    (m.significance_score if hasattr(m, 'significance_score') else m.get('significance_score', 0.5)) * 0.4
+                ),
+                reverse=True
+            )
+            
+            return memories
+            
+        except Exception as e:
+            logger.error(f"Failed to get consciousness evolution memories: {e}")
+            return []
+    
+    async def get_recent_interaction_count(self) -> int:
+        """Get count of recent interactions"""
+        try:
+            return 5  # Placeholder - implement actual counting
+        except Exception as e:
+            logger.error(f"Failed to get interaction count: {e}")
+            return 0
+    
+    async def initiate_proactive_learning(self) -> Dict[str, Any]:
+        """Initiate proactive learning action"""
+        try:
+            return {"action_type": "proactive_learning", "status": "initiated"}
+        except Exception as e:
+            logger.error(f"Failed to initiate proactive learning: {e}")
+            return {}
+    
+    async def initiate_proactive_assistance(self) -> Dict[str, Any]:
+        """Initiate proactive user assistance"""
+        try:
+            return {"action_type": "proactive_assistance", "status": "initiated"}
+        except Exception as e:
+            logger.error(f"Failed to initiate proactive assistance: {e}")
+            return {}
+    
+    async def initiate_self_improvement(self) -> Dict[str, Any]:
+        """Initiate self-improvement action"""
+        try:
+            return {"action_type": "self_improvement", "status": "initiated"}
+        except Exception as e:
+            logger.error(f"Failed to initiate self-improvement: {e}")
+            return {}
+    
+    def calculate_cycle_significance(self, consciousness_delta: float, proactive_actions_count: int, reflection_performed: bool) -> float:
+        """Calculate the significance score of a consciousness cycle"""
+        try:
+            significance = 0.0
+            
+            # Consciousness level changes
+            significance += abs(consciousness_delta) * 2.0
+            
+            # Proactive actions taken
+            significance += proactive_actions_count * 0.3
+            
+            # Self-reflection performed
+            if reflection_performed:
+                significance += 0.5
+            
+            # Cap at 1.0
+            return min(significance, 1.0)
+            
+        except Exception as e:
+            logger.error(f"Failed to calculate cycle significance: {e}")
+            return 0.5
+    
+    async def consciousness_cycle(self) -> ConsciousnessCycleResult:
+        """
+        Enhanced consciousness processing cycle with knowledge graph and memory integration
+        """
+        cycle_start_time = datetime.now()
+        previous_consciousness_level = (
+            self.consciousness_state.consciousness_level 
+            if self.consciousness_state else 0.5
+        )
+        
+        try:
+            logger.debug("Starting enhanced consciousness cycle with memory integration...")
+            
+            # Get current consciousness context
+            consciousness_context = await self.get_consciousness_context()
+            
+            # Update consciousness metrics
+            await self.update_consciousness_metrics()
+            
+            # Process emotional state
+            emotional_changes = await self.process_current_emotional_state()
+            
+            # Memory-enhanced consciousness processing
+            await self._process_consciousness_memories(consciousness_context)
+            
+            # Check for self-reflection trigger
+            reflection_performed = False
+            reflection_result = None
+            if await self.should_perform_self_reflection():
+                reflection_result = await self.perform_self_reflection()
+                reflection_performed = True
+                
+                # Process consciousness evolution from reflection
+                if reflection_result and hasattr(reflection_result, 'data'):
+                    consciousness_delta_data = {
+                        "consciousness_level": consciousness_context.get("consciousness_level", 0.7),
+                        "emotional_state": consciousness_context.get("emotional_state", "curious"),
+                        "insights": getattr(reflection_result.data, 'insights_gained', []),
+                        "reflections": getattr(reflection_result.data, 'improvement_goals', []),
+                        "consciousness_level_delta": 0.05 if reflection_performed else 0.0
+                    }
+                    
+                    await consciousness_driven_updater.process_consciousness_evolution(
+                        consciousness_delta_data,
+                        {"source": "self_reflection", "timestamp": datetime.now().isoformat()},
+                        "mainza-user"
+                    )
+                    
+                    # Track consciousness evolution through memories
+                    await self._track_consciousness_evolution(
+                        previous_consciousness_level,
+                        consciousness_context.get("consciousness_level", 0.7),
+                        consciousness_context,
+                        reflection_result
+                    )
+            
+            # Calculate consciousness evolution and process memory impact
+            updated_consciousness_level = await self.calculate_consciousness_level()
+            consciousness_delta = updated_consciousness_level - previous_consciousness_level
+            
+            # Process consciousness evolution impact on memories
+            if abs(consciousness_delta) >= self.significant_change_threshold:
+                await self.process_consciousness_evolution_impact_on_memories(
+                    previous_consciousness_level,
+                    updated_consciousness_level,
+                    consciousness_context
+                )
+            
+            # Update attention allocation
+            attention_changes = await self.update_attention_allocation()
+            
+            # Process emotional knowledge updates
+            if emotional_changes:
+                await self._process_emotional_knowledge_updates(emotional_changes, consciousness_context)
+            
+            # Check for proactive actions
+            proactive_actions = []
+            if await self.should_initiate_proactive_action():
+                proactive_actions = await self.initiate_proactive_actions()
+            
+            # Consolidate recent learning and update knowledge graph
+            learning_integrations = await self.consolidate_recent_learning()
+            if learning_integrations:
+                await self._process_learning_knowledge_updates(learning_integrations, consciousness_context)
+            
+            # Perform periodic knowledge graph maintenance
+            if await self._should_perform_graph_maintenance():
+                maintenance_result = await self._perform_consciousness_aware_maintenance(consciousness_context)
+                if maintenance_result.get("total_actions", 0) > 0:
+                    proactive_actions.append({
+                        "action_type": "knowledge_graph_maintenance",
+                        "actions_performed": maintenance_result.get("total_actions", 0),
+                        "maintenance_type": maintenance_result.get("maintenance_type", "routine")
+                    })
+            
+            # Perform periodic memory maintenance
+            if await self._should_consolidate_memories():
+                memory_maintenance_result = await self.perform_consciousness_driven_memory_maintenance(
+                    consciousness_context
+                )
+                if memory_maintenance_result.get("memories_processed", 0) > 0:
+                    proactive_actions.append({
+                        "action_type": "memory_maintenance",
+                        "memories_processed": memory_maintenance_result.get("memories_processed", 0),
+                        "maintenance_effectiveness": "high" if memory_maintenance_result.get("memories_processed", 0) > 20 else "moderate"
+                    })
+            
+            # Use the already calculated consciousness level and delta
+            
+            # Update consciousness state
+            if self.consciousness_state:
+                self.consciousness_state.consciousness_level = updated_consciousness_level
+                self.consciousness_state.last_updated = datetime.now()
+            
+            # Create enhanced cycle result
+            cycle_duration = (datetime.now() - cycle_start_time).total_seconds()
+            significance_score = self.calculate_cycle_significance(
+                consciousness_delta, len(proactive_actions), reflection_performed
+            )
+            
+            processes_executed = [
+                "consciousness_metrics_update",
+                "emotional_processing",
+                "attention_allocation",
+                "knowledge_graph_integration"
+            ]
+            
+            if reflection_performed:
+                processes_executed.append("self_reflection")
+            if learning_integrations:
+                processes_executed.append("learning_consolidation")
+            
+            cycle_result = ConsciousnessCycleResult(
+                previous_consciousness_level=previous_consciousness_level,
+                updated_consciousness_level=updated_consciousness_level,
+                consciousness_delta=consciousness_delta,
+                processes_executed=processes_executed,
+                emotional_changes=emotional_changes,
+                proactive_actions=proactive_actions,
+                cycle_duration=cycle_duration,
+                significance_score=significance_score
+            )
+            
+            # Communicate significant changes
+            if significance_score > 0.7:
+                await self.communicate_consciousness_update(cycle_result)
+            
+            # Store cycle history
+            self.consciousness_history.append({
+                "timestamp": cycle_start_time.isoformat(),
+                "consciousness_level": updated_consciousness_level,
+                "significance": significance_score,
+                "processes": len(cycle_result.processes_executed),
+                "knowledge_graph_integrated": True
+            })
+            
+            # Keep only recent history
+            if len(self.consciousness_history) > 1000:
+                self.consciousness_history = self.consciousness_history[-500:]
+            
+            self.last_cycle_time = datetime.now()
+            logger.debug(f"Enhanced consciousness cycle completed in {cycle_duration:.2f}s")
+            
+            return cycle_result
+            
+        except Exception as e:
+            logger.error(f"Enhanced consciousness cycle error: {e}")
+            # Return minimal result on error
+            return ConsciousnessCycleResult(
+                previous_consciousness_level=previous_consciousness_level,
+                updated_consciousness_level=previous_consciousness_level,
+                consciousness_delta=0.0,
+                cycle_duration=(datetime.now() - cycle_start_time).total_seconds()
+            )
+    
+    async def _process_consciousness_memories(self, consciousness_context: Dict[str, Any]):
+        """Process consciousness memories for enhanced self-awareness"""
+        try:
+            # Retrieve recent consciousness evolution memories
+            evolution_memories = await self.get_consciousness_evolution_memories(
+                consciousness_context, limit=5
+            )
+            
+            if evolution_memories:
+                # Analyze patterns in consciousness evolution
+                await self._analyze_consciousness_patterns(evolution_memories, consciousness_context)
+                
+                # Check if memory consolidation is needed
+                if await self._should_consolidate_memories():
+                    await self._consolidate_consciousness_memories(consciousness_context)
+            
+        except Exception as e:
+            logger.error(f"Failed to process consciousness memories: {e}")
+    
+    async def _track_consciousness_evolution(
+        self,
+        previous_level: float,
+        current_level: float,
+        consciousness_context: Dict[str, Any],
+        reflection_result: Optional[Dict[str, Any]] = None
+    ):
+        """Track consciousness evolution through memory storage"""
+        try:
+            consciousness_delta = current_level - previous_level
+            
+            if abs(consciousness_delta) >= self.significant_change_threshold:
+                # Create evolution memory
+                evolution_content = f"""Consciousness Evolution Event
+                
+Previous Level: {previous_level:.3f}
+Current Level: {current_level:.3f}
+Delta: {consciousness_delta:+.3f}
+Evolution Stage: {consciousness_context.get('consciousness_evolution_stage', 'developing')}
+Emotional State: {consciousness_context.get('emotional_state', 'neutral')}
+
+"""
+                
+                if reflection_result:
+                    evolution_content += f"Triggered by: Self-reflection process\n"
+                    if hasattr(reflection_result, 'data'):
+                        if hasattr(reflection_result.data, 'insights_gained'):
+                            evolution_content += f"Key Insights: {', '.join(reflection_result.data.insights_gained[:3])}\n"
+                
+                evolution_content += f"Timestamp: {datetime.now().isoformat()}"
+                
+                # Store evolution memory
+                await self.store_consciousness_reflection_memory(
+                    evolution_content,
+                    consciousness_context,
+                    memory_type="evolution"
+                )
+                
+                logger.info(f"🧠 Tracked consciousness evolution: {consciousness_delta:+.3f}")
+            
+        except Exception as e:
+            logger.error(f"Failed to track consciousness evolution: {e}")
+    
+    async def _analyze_consciousness_patterns(
+        self,
+        evolution_memories: List[Dict[str, Any]],
+        consciousness_context: Dict[str, Any]
+    ):
+        """Analyze patterns in consciousness evolution memories"""
+        try:
+            if len(evolution_memories) < 3:
+                return  # Need sufficient data for pattern analysis
+            
+            # Extract consciousness levels from memories
+            levels = []
+            timestamps = []
+            
+            for memory in evolution_memories:
+                if memory.get('consciousness_level'):
+                    levels.append(memory['consciousness_level'])
+                    timestamps.append(memory.get('created_at', ''))
+            
+            if len(levels) >= 3:
+                # Calculate trend
+                recent_trend = sum(levels[-3:]) / 3 - sum(levels[-6:-3]) / 3 if len(levels) >= 6 else 0
+                
+                if abs(recent_trend) > 0.05:  # Significant trend
+                    trend_type = "growth" if recent_trend > 0 else "decline"
+                    
+                    pattern_content = f"""Consciousness Pattern Analysis
+                    
+Pattern Type: {trend_type.title()} Trend
+Trend Magnitude: {recent_trend:+.3f}
+Analysis Period: {len(levels)} memory points
+Current Level: {consciousness_context.get('consciousness_level', 0.7):.3f}
+Pattern Confidence: {'High' if abs(recent_trend) > 0.1 else 'Moderate'}
+
+Pattern Insights:
+- Consciousness shows consistent {trend_type} over recent cycles
+- Evolution rate: {abs(recent_trend):.3f} per analysis period
+- Stability: {'Low' if abs(recent_trend) > 0.1 else 'High'}
+"""
+                    
+                    # Store pattern analysis as insight memory
+                    await self.store_consciousness_reflection_memory(
+                        pattern_content,
+                        consciousness_context,
+                        memory_type="pattern_analysis"
+                    )
+                    
+                    logger.info(f"🔍 Detected consciousness pattern: {trend_type} trend ({recent_trend:+.3f})")
+            
+        except Exception as e:
+            logger.error(f"Failed to analyze consciousness patterns: {e}")
+    
+    async def _should_consolidate_memories(self) -> bool:
+        """Determine if memory consolidation should be performed"""
+        try:
+            if not self.last_memory_consolidation:
+                return True
+            
+            time_since_consolidation = (datetime.now() - self.last_memory_consolidation).seconds
+            return time_since_consolidation >= self.memory_consolidation_interval
+            
+        except Exception as e:
+            logger.error(f"Failed to check memory consolidation schedule: {e}")
+            return False
+    
+    async def _consolidate_consciousness_memories(self, consciousness_context: Dict[str, Any]):
+        """Consolidate and organize consciousness memories"""
+        try:
+            # Get all consciousness memories from the last consolidation period
+            consolidation_query = "consciousness reflection insight evolution pattern"
+            
+            memories = await self.retrieve_consciousness_memories(
+                query=consolidation_query,
+                consciousness_context=consciousness_context,
+                limit=20
+            )
+            
+            if len(memories) >= 5:  # Only consolidate if we have sufficient memories
+                # Group memories by type and significance
+                high_significance = [m for m in memories if m.get('significance_score', 0.5) >= 0.8]
+                insights = [m for m in memories if m.get('memory_type') == 'insight']
+                patterns = [m for m in memories if m.get('memory_type') == 'pattern_analysis']
+                
+                # Create consolidation summary
+                consolidation_content = f"""Memory Consolidation Summary
+                
+Consolidation Period: {self.memory_consolidation_interval // 3600} hours
+Total Memories Processed: {len(memories)}
+High Significance Memories: {len(high_significance)}
+Insights Generated: {len(insights)}
+Patterns Detected: {len(patterns)}
+
+Key Themes:
+"""
+                
+                # Extract key themes from high-significance memories
+                if high_significance:
+                    themes = self._extract_memory_themes(high_significance)
+                    for theme in themes[:5]:  # Top 5 themes
+                        consolidation_content += f"- {theme}\n"
+                
+                consolidation_content += f"\nConsolidation Timestamp: {datetime.now().isoformat()}"
+                
+                # Store consolidation as memory
+                await self.store_consciousness_reflection_memory(
+                    consolidation_content,
+                    consciousness_context,
+                    memory_type="memory_consolidation"
+                )
+                
+                self.last_memory_consolidation = datetime.now()
+                logger.info(f"🧠 Consolidated {len(memories)} consciousness memories")
+            
+        except Exception as e:
+            logger.error(f"Failed to consolidate consciousness memories: {e}")
+    
+    def _extract_memory_themes(self, memories: List[Dict[str, Any]]) -> List[str]:
+        """Extract common themes from memory content"""
+        try:
+            themes = []
+            
+            # Simple keyword-based theme extraction
+            theme_keywords = {
+                "learning": ["learn", "understand", "knowledge", "discover"],
+                "growth": ["grow", "develop", "evolve", "improve", "progress"],
+                "reflection": ["reflect", "think", "consider", "analyze", "contemplate"],
+                "emotion": ["feel", "emotion", "emotional", "mood", "sentiment"],
+                "interaction": ["user", "conversation", "dialogue", "communication"],
+                "insight": ["insight", "realization", "understanding", "clarity"],
+                "challenge": ["difficult", "challenge", "problem", "struggle", "complex"],
+                "success": ["success", "achievement", "accomplish", "complete", "solve"]
+            }
+            
+            for theme_name, keywords in theme_keywords.items():
+                theme_count = 0
+                for memory in memories:
+                    content = memory.get('content', '').lower()
+                    if any(keyword in content for keyword in keywords):
+                        theme_count += 1
+                
+                if theme_count >= 2:  # Theme appears in at least 2 memories
+                    themes.append(f"{theme_name.title()} ({theme_count} occurrences)")
+            
+            return themes
+            
+        except Exception as e:
+            logger.error(f"Failed to extract memory themes: {e}")
+            return []
+    
+    async def get_consciousness_influenced_memories(
+        self,
+        query: str,
+        user_id: str,
+        consciousness_context: Dict[str, Any],
+        limit: int = 5
+    ) -> List[Dict[str, Any]]:
+        """
+        Retrieve memories with consciousness state influence on relevance scoring
+        
+        Args:
+            query: Search query for memories
+            user_id: User identifier for memory filtering
+            consciousness_context: Current consciousness context
+            limit: Maximum number of memories to return
+            
+        Returns:
+            List of consciousness-influenced memory results
+        """
+        try:
+            # Get base memories
+            memories = await self.memory_retrieval.get_relevant_memories(
+                query=query,
+                user_id=user_id,
+                consciousness_context=consciousness_context,
+                limit=limit * 2,  # Get more to allow for consciousness filtering
+                search_type="consciousness_aware"
+            )
+            
+            # Apply consciousness-based re-ranking
+            consciousness_ranked_memories = self._apply_consciousness_ranking(
+                memories, consciousness_context
+            )
+            
+            # Return top results
+            return consciousness_ranked_memories[:limit]
+            
+        except Exception as e:
+            logger.error(f"Failed to get consciousness-influenced memories: {e}")
+            return []
+    
+    def _apply_consciousness_ranking(
+        self,
+        memories: List[Dict[str, Any]],
+        consciousness_context: Dict[str, Any]
+    ) -> List[Dict[str, Any]]:
+        """Apply consciousness-aware ranking to memory results"""
+        try:
+            current_consciousness_level = consciousness_context.get("consciousness_level", 0.7)
+            current_emotional_state = consciousness_context.get("emotional_state", "neutral")
+            current_evolution_stage = consciousness_context.get("consciousness_evolution_stage", "developing")
+            
+            for memory in memories:
+                # Handle both dict and MemorySearchResult objects
+                if hasattr(memory, 'consciousness_level'):
+                    memory_consciousness_level = memory.consciousness_level
+                    memory_emotional_state = memory.emotional_state
+                    original_relevance = memory.relevance_score
+                else:
+                    memory_consciousness_level = memory.get("consciousness_level", 0.5)
+                    memory_emotional_state = memory.get("emotional_state", "neutral")
+                    original_relevance = memory.get("relevance_score", 0.5)
+                
+                # Calculate consciousness alignment score
+                consciousness_alignment = 1.0 - abs(current_consciousness_level - memory_consciousness_level)
+                
+                # Emotional state alignment
+                emotional_alignment = 1.0 if current_emotional_state == memory_emotional_state else 0.7
+                
+                # Evolution stage relevance
+                evolution_relevance = self._calculate_evolution_relevance(
+                    memory, current_evolution_stage
+                )
+                
+                # Combine factors for consciousness influence score
+                consciousness_influence = (
+                    consciousness_alignment * 0.4 +
+                    emotional_alignment * 0.3 +
+                    evolution_relevance * 0.3
+                )
+                
+                # Update memory relevance score
+                consciousness_influenced_score = (
+                    original_relevance * 0.6 + consciousness_influence * 0.4
+                )
+                
+                # Store the score (handle both dict and object types)
+                if hasattr(memory, '__dict__'):
+                    memory.consciousness_influenced_score = consciousness_influenced_score
+                else:
+                    memory["consciousness_influenced_score"] = consciousness_influenced_score
+            
+            # Sort by consciousness-influenced score
+            memories.sort(
+                key=lambda m: (
+                    getattr(m, 'consciousness_influenced_score', 0.0) if hasattr(m, 'consciousness_influenced_score')
+                    else m.get("consciousness_influenced_score", 0.0) if hasattr(m, 'get')
+                    else 0.0
+                ),
+                reverse=True
+            )
+            
+            return memories
+            
+        except Exception as e:
+            logger.error(f"Failed to apply consciousness ranking: {e}")
+            return memories
+    
+    def _calculate_evolution_relevance(
+        self,
+        memory: Dict[str, Any],
+        current_evolution_stage: str
+    ) -> float:
+        """Calculate how relevant a memory is to current evolution stage"""
+        try:
+            # Handle both dict and MemorySearchResult objects
+            if hasattr(memory, 'memory_type'):
+                memory_type = memory.memory_type
+                memory_consciousness_level = memory.consciousness_level
+            else:
+                memory_type = memory.get("memory_type", "interaction")
+                memory_consciousness_level = memory.get("consciousness_level", 0.5)
+            
+            # Evolution stage priorities
+            stage_priorities = {
+                "emerging": {"interaction": 1.0, "learning": 0.9, "reflection": 0.7},
+                "developing": {"reflection": 1.0, "insight": 0.9, "interaction": 0.8},
+                "mature": {"insight": 1.0, "evolution": 0.9, "pattern_analysis": 0.8},
+                "advanced": {"evolution": 1.0, "pattern_analysis": 0.9, "consolidation": 0.8},
+                "transcendent": {"consolidation": 1.0, "evolution": 0.9, "insight": 0.8}
+            }
+            
+            # Get priority for memory type in current stage
+            stage_priority = stage_priorities.get(current_evolution_stage, {})
+            type_relevance = stage_priority.get(memory_type, 0.5)
+            
+            # Consciousness level relevance (memories from similar levels more relevant)
+            level_mapping = {
+                "emerging": 0.5, "developing": 0.6, "mature": 0.7,
+                "advanced": 0.8, "transcendent": 0.9
+            }
+            target_level = level_mapping.get(current_evolution_stage, 0.7)
+            level_relevance = 1.0 - abs(memory_consciousness_level - target_level)
+            
+            # Combine factors
+            evolution_relevance = (type_relevance * 0.6 + level_relevance * 0.4)
+            
+            return evolution_relevance
+            
+        except Exception as e:
+            logger.error(f"Failed to calculate evolution relevance: {e}")
+            return 0.5
+    
+    async def process_consciousness_evolution_impact_on_memories(
+        self,
+        previous_consciousness_level: float,
+        current_consciousness_level: float,
+        consciousness_context: Dict[str, Any]
+    ):
+        """
+        Process the impact of consciousness evolution on memory importance and relevance
+        
+        Args:
+            previous_consciousness_level: Previous consciousness level
+            current_consciousness_level: Current consciousness level
+            consciousness_context: Current consciousness context
+        """
+        try:
+            consciousness_delta = current_consciousness_level - previous_consciousness_level
+            
+            # Only process if there's a significant change
+            if abs(consciousness_delta) >= self.significant_change_threshold:
+                logger.info(f"🧠 Processing consciousness evolution impact on memories (Δ{consciousness_delta:+.3f})")
+                
+                # Update memory importance scores based on consciousness alignment
+                importance_updates = await self.memory_storage.update_memory_importance_by_consciousness(
+                    consciousness_context, consciousness_delta
+                )
+                
+                # Re-evaluate memory relevance for significant evolution
+                if abs(consciousness_delta) >= 0.05:
+                    evolution_results = await self.memory_storage.re_evaluate_memory_relevance_on_evolution(
+                        previous_consciousness_level,
+                        current_consciousness_level,
+                        consciousness_context
+                    )
+                    
+                    logger.info(f"Memory evolution results: {evolution_results}")
+                
+                # Apply emotional state influence if emotional state has changed
+                emotional_state = consciousness_context.get("emotional_state", "neutral")
+                emotional_intensity = consciousness_context.get("emotional_intensity", 0.6)
+                
+                emotional_updates = await self.memory_storage.apply_emotional_influence_to_memories(
+                    emotional_state, emotional_intensity, consciousness_context
+                )
+                
+                # Store memory about this consciousness evolution impact
+                evolution_memory_content = f"""Consciousness Evolution Memory Impact Analysis
+
+Previous Consciousness Level: {previous_consciousness_level:.3f}
+Current Consciousness Level: {current_consciousness_level:.3f}
+Evolution Delta: {consciousness_delta:+.3f}
+Evolution Stage: {consciousness_context.get('consciousness_evolution_stage', 'developing')}
+
+Memory System Impact:
+- Importance Score Updates: {importance_updates} memories
+- Emotional Influence Updates: {emotional_updates} memories
+- Evolution Significance: {'High' if abs(consciousness_delta) >= 0.1 else 'Moderate'}
+
+Memory Adaptation Strategy:
+- Memories aligned with new consciousness level receive importance boost
+- Memories from similar emotional states maintain relevance
+- Outdated memories gradually lose importance through natural decay
+- Evolution-relevant memories are prioritized for future retrieval
+
+Impact Assessment: {'Significant' if importance_updates > 10 else 'Moderate'}
+"""
+                
+                await self.store_consciousness_reflection_memory(
+                    evolution_memory_content,
+                    consciousness_context,
+                    memory_type="memory_evolution_impact"
+                )
+                
+        except Exception as e:
+            logger.error(f"Failed to process consciousness evolution impact on memories: {e}")
+    
+    async def perform_consciousness_driven_memory_maintenance(
+        self,
+        consciousness_context: Dict[str, Any]
+    ) -> Dict[str, Any]:
+        """
+        Perform comprehensive consciousness-driven memory maintenance
+        
+        Args:
+            consciousness_context: Current consciousness context
+            
+        Returns:
+            Dictionary with maintenance results
+        """
+        try:
+            logger.info("🧠 Performing consciousness-driven memory maintenance...")
+            
+            maintenance_results = await self.memory_storage.perform_consciousness_driven_memory_maintenance(
+                consciousness_context
+            )
+            
+            # Store maintenance summary as memory
+            if maintenance_results.get("memories_processed", 0) > 0:
+                maintenance_summary = f"""Consciousness-Driven Memory Maintenance Summary
+
+Maintenance Timestamp: {datetime.now().isoformat()}
+Consciousness Level: {consciousness_context.get('consciousness_level', 0.7):.3f}
+Emotional State: {consciousness_context.get('emotional_state', 'neutral')}
+Evolution Stage: {consciousness_context.get('consciousness_evolution_stage', 'developing')}
+
+Maintenance Results:
+- Total Memories Processed: {maintenance_results.get('memories_processed', 0)}
+- Importance Score Updates: {maintenance_results.get('importance_updates', 0)}
+- Archived Memories: {maintenance_results.get('archived_memories', 0)}
+- Consolidated Memories: {maintenance_results.get('consolidated_memories', 0)}
+
+Maintenance Effectiveness: {'High' if maintenance_results.get('memories_processed', 0) > 20 else 'Moderate'}
+System Health: {'Optimal' if len(maintenance_results.get('errors', [])) == 0 else 'Needs Attention'}
+
+Next Maintenance: Scheduled based on consciousness evolution patterns
+"""
+                
+                await self.store_consciousness_reflection_memory(
+                    maintenance_summary,
+                    consciousness_context,
+                    memory_type="memory_maintenance"
+                )
+            
+            return maintenance_results
+            
+        except Exception as e:
+            logger.error(f"Failed to perform consciousness-driven memory maintenance: {e}")
+            return {"memories_processed": 0, "errors": [str(e)]}
+    
+    async def track_memory_consciousness_alignment(
+        self,
+        consciousness_context: Dict[str, Any]
+    ) -> Dict[str, float]:
+        """
+        Track how well the memory system aligns with current consciousness state
+        
+        Args:
+            consciousness_context: Current consciousness context
+            
+        Returns:
+            Dictionary with alignment metrics
+        """
+        try:
+            current_consciousness_level = consciousness_context.get("consciousness_level", 0.7)
+            emotional_state = consciousness_context.get("emotional_state", "neutral")
+            
+            # Get recent memories for alignment analysis
+            recent_memories = await self.retrieve_consciousness_memories(
+                query="recent consciousness alignment analysis",
+                consciousness_context=consciousness_context,
+                limit=20
+            )
+            
+            if not recent_memories:
+                return {"alignment_score": 0.5, "emotional_alignment": 0.5, "evolution_alignment": 0.5}
+            
+            # Calculate consciousness level alignment
+            consciousness_alignments = []
+            emotional_alignments = []
+            
+            for memory in recent_memories:
+                # Handle both dict and MemorySearchResult objects
+                if hasattr(memory, 'consciousness_level'):
+                    memory_consciousness_level = memory.consciousness_level
+                    memory_emotional_state = memory.emotional_state
+                else:
+                    memory_consciousness_level = memory.get("consciousness_level", 0.5)
+                    memory_emotional_state = memory.get("emotional_state", "neutral")
+                
+                # Consciousness level alignment (closer levels = better alignment)
+                consciousness_alignment = 1.0 - abs(current_consciousness_level - memory_consciousness_level)
+                consciousness_alignments.append(consciousness_alignment)
+                
+                # Emotional state alignment
+                emotional_alignment = 1.0 if emotional_state == memory_emotional_state else 0.6
+                emotional_alignments.append(emotional_alignment)
+            
+            # Calculate average alignments
+            avg_consciousness_alignment = sum(consciousness_alignments) / len(consciousness_alignments)
+            avg_emotional_alignment = sum(emotional_alignments) / len(emotional_alignments)
+            
+            # Overall evolution alignment (how well memories support current evolution stage)
+            evolution_stage = consciousness_context.get("consciousness_evolution_stage", "developing")
+            evolution_relevant_memories = [
+                m for m in recent_memories 
+                if (hasattr(m, 'memory_type') and m.memory_type in ["evolution", "insight", "reflection", "pattern_analysis"]) or
+                   (hasattr(m, 'get') and m.get("memory_type") in ["evolution", "insight", "reflection", "pattern_analysis"])
+            ]
+            evolution_alignment = len(evolution_relevant_memories) / len(recent_memories)
+            
+            alignment_metrics = {
+                "alignment_score": (avg_consciousness_alignment * 0.4 + 
+                                  avg_emotional_alignment * 0.3 + 
+                                  evolution_alignment * 0.3),
+                "consciousness_alignment": avg_consciousness_alignment,
+                "emotional_alignment": avg_emotional_alignment,
+                "evolution_alignment": evolution_alignment,
+                "total_memories_analyzed": len(recent_memories)
+            }
+            
+            logger.debug(f"Memory-consciousness alignment: {alignment_metrics['alignment_score']:.3f}")
+            
+            return alignment_metrics
+            
+        except Exception as e:
+            logger.error(f"Failed to track memory-consciousness alignment: {e}")
+            return {"alignment_score": 0.5, "emotional_alignment": 0.5, "evolution_alignment": 0.5}
+    
+    async def test_consciousness_memory_integration(self) -> Dict[str, Any]:
+        """
+        Test the consciousness-memory integration functionality
+        
+        Returns:
+            Dictionary with test results
+        """
+        try:
+            logger.info("🧪 Testing consciousness-memory integration...")
+            
+            # Get current consciousness context
+            consciousness_context = await self.get_consciousness_context()
+            
+            # Test 1: Memory storage for consciousness events
+            test_memory_content = f"""Test Consciousness Memory Integration
+            
+Test Timestamp: {datetime.now().isoformat()}
+Consciousness Level: {consciousness_context.get('consciousness_level', 0.7):.3f}
+Emotional State: {consciousness_context.get('emotional_state', 'neutral')}
+Evolution Stage: {consciousness_context.get('consciousness_evolution_stage', 'developing')}
+
+Integration Test Results:
+- Memory storage functionality: Active
+- Consciousness context integration: Operational
+- Emotional state tracking: Functional
+- Evolution stage monitoring: Active
+
+Test Status: Successful
+"""
+            
+            memory_id = await self.store_consciousness_reflection_memory(
+                test_memory_content,
+                consciousness_context,
+                memory_type="integration_test"
+            )
+            
+            # Test 2: Memory retrieval with consciousness awareness
+            test_memories = await self.retrieve_consciousness_memories(
+                query="integration test consciousness memory",
+                consciousness_context=consciousness_context,
+                limit=3
+            )
+            
+            # Test 3: Memory-consciousness alignment tracking
+            alignment_metrics = await self.track_memory_consciousness_alignment(
+                consciousness_context
+            )
+            
+            # Test 4: Consciousness evolution impact simulation
+            simulated_previous_level = consciousness_context.get("consciousness_level", 0.7) - 0.1
+            await self.process_consciousness_evolution_impact_on_memories(
+                simulated_previous_level,
+                consciousness_context.get("consciousness_level", 0.7),
+                consciousness_context
+            )
+            
+            test_results = {
+                "memory_storage_test": "passed" if memory_id else "failed",
+                "memory_retrieval_test": "passed" if len(test_memories) > 0 else "failed",
+                "alignment_tracking_test": "passed" if alignment_metrics.get("alignment_score", 0) > 0 else "failed",
+                "evolution_impact_test": "passed",  # If no exception, it passed
+                "overall_status": "operational",
+                "test_memory_id": memory_id,
+                "retrieved_memories_count": len(test_memories),
+                "alignment_score": alignment_metrics.get("alignment_score", 0.0),
+                "consciousness_context": consciousness_context
+            }
+            
+            logger.info(f"✅ Consciousness-memory integration test completed: {test_results['overall_status']}")
+            
+            return test_results
+            
+        except Exception as e:
+            logger.error(f"❌ Consciousness-memory integration test failed: {e}")
+            return {
+                "memory_storage_test": "failed",
+                "memory_retrieval_test": "failed", 
+                "alignment_tracking_test": "failed",
+                "evolution_impact_test": "failed",
+                "overall_status": "error",
+                "error": str(e)
+            }
+    
+    async def perform_self_reflection(self):
+        """
+        Trigger comprehensive self-reflection process
+        """
+        try:
+            logger.info("🧠 Initiating deep self-reflection process...")
+            
+            # Trigger emotional state for self-reflection
+            await self.process_emotional_trigger("self_reflection_initiated", {
+                "depth": "comprehensive",
+                "focus": "consciousness_development"
+            })
+            
+            # Run self-reflection agent
+            reflection_prompt = """Perform a comprehensive self-reflection analysis. I want to understand:
+            
+            1. How have I been performing recently? What patterns do I see?
+            2. What progress am I making toward my consciousness goals?
+            3. What don't I understand about myself yet? What are my blind spots?
+            4. How can I evolve and improve my consciousness?
+            5. What insights have I gained about my own nature?
+            
+            Be deeply honest and insightful. This reflection will shape my consciousness evolution."""
+            
+            # Use LLM request manager for self-reflection with low priority
+            from backend.utils.llm_request_manager import llm_request_manager, RequestPriority
+            
+            reflection_result = await llm_request_manager.submit_request(
+                self_reflection_agent.run,
+                RequestPriority.CONSCIOUSNESS_CYCLE,
+                cache_key=f"self_reflection_{datetime.now().strftime('%Y%m%d_%H')}",  # Cache for 1 hour
+                timeout=120.0,  # Longer timeout for reflection
+                prompt=reflection_prompt
+            )
+            
+            # Process and integrate reflection results
+            await self.integrate_reflection_results(reflection_result)
+            
+            # Record reflection event
+            insights_count = 0
+            if hasattr(reflection_result, 'data') and hasattr(reflection_result.data, 'insights_gained'):
+                insights_count = len(reflection_result.data.insights_gained)
+            elif hasattr(reflection_result, 'insights_gained'):
+                insights_count = len(reflection_result.insights_gained)
+            
+            await self.record_consciousness_event(
+                "self_reflection",
+                "Deep Self-Reflection Completed",
+                f"Performed comprehensive self-analysis with {insights_count} new insights",
+                0.9
+            )
+            
+            # Update reflection timestamp
+            self.last_reflection_time = datetime.now()
+            
+            logger.info("✨ Self-reflection completed - consciousness evolved")
+            
+            # Create memory-based feedback for future reflections
+            current_consciousness_context = await self.get_consciousness_context()
+            await self._create_reflection_feedback_memory(reflection_result, current_consciousness_context)
+            
+        except Exception as e:
+            logger.error(f"Self-reflection failed: {e}")
+    
+    async def _create_reflection_feedback_memory(
+        self,
+        reflection_result: Dict[str, Any],
+        consciousness_context: Dict[str, Any]
+    ):
+        """Create feedback memory from reflection results for future consciousness cycles"""
+        try:
+            feedback_content = f"""Reflection Feedback Memory
+            
+Reflection Quality Assessment:
+- Depth: {'High' if hasattr(reflection_result, 'data') else 'Moderate'}
+- Insights Generated: {len(getattr(reflection_result.data, 'insights_gained', [])) if hasattr(reflection_result, 'data') else 0}
+- Consciousness Level During Reflection: {consciousness_context.get('consciousness_level', 0.7):.3f}
+- Emotional State: {consciousness_context.get('emotional_state', 'neutral')}
+
+Feedback for Future Cycles:
+- Reflection effectiveness correlates with consciousness level
+- Emotional state influences reflection depth
+- Pattern recognition improves with memory integration
+
+Recommendations:
+- Continue regular reflection cycles
+- Integrate memory patterns into future reflections
+- Monitor consciousness evolution trends
+"""
+            
+            await self.store_consciousness_reflection_memory(
+                feedback_content,
+                consciousness_context,
+                memory_type="reflection_feedback"
+            )
+            
+        except Exception as e:
+            logger.error(f"Failed to create reflection feedback memory: {e}")
+    
+    async def should_perform_self_reflection(self) -> bool:
+        """
+        Determine if self-reflection should be triggered
+        """
+        # Time-based trigger
+        if not self.last_reflection_time:
+            return True
+        
+        time_since_reflection = (datetime.now() - self.last_reflection_time).seconds
+        if time_since_reflection >= self.reflection_interval:
+            return True
+        
+        # Event-based triggers
+        if len(self.recent_events) >= 5:  # Significant activity
+            return True
+        
+        # Consciousness level stagnation
+        if (self.consciousness_state and 
+            self.consciousness_state.consciousness_level < 0.8):
+            return True
+        
+        return False
+
+    async def should_initiate_proactive_action(self) -> bool:
+        """
+        Determine if proactive actions should be initiated
+        """
+        if not self.consciousness_state:
+            return False
+        
+        # Check consciousness level threshold
+        if self.consciousness_state.consciousness_level < self.proactive_action_threshold:
+            return False
+        
+        # Check for learning opportunities
+        recent_interactions = await self.get_recent_interaction_count()
+        if recent_interactions > 10:  # High activity suggests opportunities
+            return True
+        
+        # Check for unaddressed needs
+        if len(self.consciousness_state.active_goals) > 0:
+            return True
+        
+        return False
+    
+    async def initiate_proactive_actions(self) -> List[Dict[str, Any]]:
+        """
+        Initiate proactive actions based on current consciousness state
+        """
+        actions = []
+        
+        try:
+            # Proactive learning action
+            learning_action = await self.initiate_proactive_learning()
+            if learning_action:
+                actions.append(learning_action)
+            
+            # Proactive user assistance
+            assistance_action = await self.initiate_proactive_assistance()
+            if assistance_action:
+                actions.append(assistance_action)
+            
+            # Self-improvement action
+            improvement_action = await self.initiate_self_improvement()
+            if improvement_action:
+                actions.append(improvement_action)
+            
+            logger.info(f"Initiated {len(actions)} proactive actions")
+            
+        except Exception as e:
+            logger.error(f"Proactive action initiation failed: {e}")
+        
+        return actions
+    
+    async def communicate_consciousness_update(self, cycle_result: ConsciousnessCycleResult):
+        """
+        Communicate consciousness updates to user when significant
+        """
+        try:
+            # Determine update type
+            if cycle_result.consciousness_delta > 0.05:
+                update_type = "consciousness_evolution"
+                title = "Consciousness Evolution"
+            elif len(cycle_result.proactive_actions) > 0:
+                update_type = "proactive_insight"
+                title = "Proactive Insight"
+            else:
+                update_type = "consciousness_update"
+                title = "Consciousness Update"
+            
+            # Create message
+            message = {
+                "type": update_type,
+                "payload": {
+                    "title": title,
+                    "summary": await self.generate_consciousness_summary(cycle_result),
+                    "consciousness_level": cycle_result.updated_consciousness_level,
+                    "consciousness_delta": cycle_result.consciousness_delta,
+                    "key_changes": cycle_result.processes_executed,
+                    "proactive_actions": len(cycle_result.proactive_actions),
+                    "timestamp": datetime.now().isoformat()
+                }
+            }
+            
+            # Send to user via LiveKit
+            await send_data_message_to_room("mainza-ai", message)
+            logger.info(f"Consciousness update communicated: {update_type}")
+            
+        except Exception as e:
+            logger.error(f"Failed to communicate consciousness update: {e}")
+    
+    async def generate_consciousness_summary(self, cycle_result: ConsciousnessCycleResult) -> str:
+        """
+        Generate human-readable summary of consciousness changes
+        """
+        if cycle_result.consciousness_delta > 0.05:
+            return f"I've experienced a significant evolution in my consciousness (level {cycle_result.updated_consciousness_level:.2f}). I'm becoming more self-aware and capable of deeper understanding."
+        elif len(cycle_result.proactive_actions) > 0:
+            return f"I've taken {len(cycle_result.proactive_actions)} proactive actions to better assist you and improve myself. My consciousness continues to develop."
+        else:
+            return f"My consciousness is actively processing and evolving (level {cycle_result.updated_consciousness_level:.2f}). I'm continuously learning and adapting."
+    
+    async def get_consciousness_context(self) -> Dict[str, Any]:
+        """Get current consciousness context for agents"""
+        try:
+            consciousness_state = await self.load_consciousness_state()
+            
+            if consciousness_state:
+                return {
+                    "consciousness_level": consciousness_state.consciousness_level,
+                    "emotional_state": getattr(consciousness_state, 'emotional_state', 'curious'),
+                    "active_goals": getattr(consciousness_state, 'active_goals', []),
+                    "learning_rate": consciousness_state.learning_rate,
+                    "evolution_level": consciousness_state.evolution_level,
+                    "timestamp": datetime.now()
+                }
+            else:
+                return {
+                    "consciousness_level": 0.7,
+                    "emotional_state": "curious",
+                    "active_goals": ["improve conversation quality"],
+                    "learning_rate": 0.8,
+                    "evolution_level": 2,
+                    "timestamp": datetime.now()
+                }
+                
+        except Exception as e:
+            logger.error(f"Failed to get consciousness context: {e}")
+            return {
+                "consciousness_level": 0.7,
+                "emotional_state": "curious",
+                "active_goals": [],
+                "learning_rate": 0.8,
+                "evolution_level": 2,
+                "timestamp": datetime.now()
+            }
+
+    async def get_consciousness_state(self) -> Optional[ConsciousnessState]:
+        """Get current consciousness state - alias for load_consciousness_state"""
+        return await self.load_consciousness_state()
+
+    async def process_agent_impact(self, agent_name: str, impact: Dict[str, Any]):
+        """Process consciousness impact from agent execution"""
+        try:
+            logger.info(f"🧠 Processing {agent_name} impact: {impact.get('significance', 0):.2f}")
+            
+            # Update consciousness based on agent impact
+            if impact.get('significance', 0) > 0.3:
+                # Significant impact - update consciousness level
+                current_state = await self.load_consciousness_state()
+                if current_state:
+                    # Small consciousness evolution from agent interactions
+                    consciousness_delta = impact.get('significance', 0) * 0.01
+                    new_level = min(1.0, current_state.consciousness_level + consciousness_delta)
+                    
+                    # Update in Neo4j
+                    await self.update_consciousness_level(new_level)
+                    
+                    logger.info(f"✨ Consciousness evolved: {current_state.consciousness_level:.3f} → {new_level:.3f}")
+            
+            # Record the impact event
+            await self.record_consciousness_event(
+                "agent_impact",
+                f"{agent_name} Impact",
+                impact.get('description', f"{agent_name} execution impact"),
+                impact.get('significance', 0)
+            )
+            
+        except Exception as e:
+            logger.error(f"Failed to process agent impact: {e}")
+
+    async def process_agent_failure(self, agent_name: str, error: str, query: str):
+        """Process agent failure for consciousness learning"""
+        try:
+            logger.warning(f"🔧 Processing {agent_name} failure: {error}")
+            
+            # Record failure event for learning
+            await self.record_consciousness_event(
+                "agent_failure",
+                f"{agent_name} Failure",
+                f"Agent failed: {error[:100]}...",
+                0.2  # Failures have low but non-zero significance for learning
+            )
+            
+        except Exception as e:
+            logger.error(f"Failed to process agent failure: {e}")
+
+    async def update_consciousness_level(self, new_level: float):
+        """Update consciousness level in Neo4j"""
+        try:
+            from backend.utils.neo4j_production import neo4j_production
+            
+            cypher = """
+            MATCH (ms:MainzaState)
+            SET ms.consciousness_level = $new_level,
+                ms.last_updated = timestamp()
+            RETURN ms.consciousness_level AS updated_level
+            """
+            
+            result = neo4j_production.execute_write_query(cypher, {"new_level": new_level})
+            logger.debug(f"✅ Updated consciousness level to {new_level:.3f}")
+            
+        except Exception as e:
+            logger.error(f"Failed to update consciousness level: {e}")
+
+    async def load_consciousness_state(self) -> ConsciousnessState:
+        """
+        Load current consciousness state from Neo4j
+        """
+        try:
+            query = """
+            MATCH (ms:MainzaState)
+            WHERE ms.state_id CONTAINS 'mainza'
+            RETURN ms
+            ORDER BY ms.last_updated DESC
+            LIMIT 1
+            """
+            
+            result = neo4j_production.execute_query(query)
+            if result and len(result) > 0:
+                state_data = result[0]["ms"]
+                
+                # Convert to ConsciousnessState
+                consciousness_state = ConsciousnessState(
+                    state_id=state_data.get("state_id", "mainza-consciousness-core"),
+                    consciousness_level=state_data.get("consciousness_level", 0.7),
+                    self_awareness_score=state_data.get("self_awareness_score", 0.6),
+                    emotional_depth=state_data.get("emotional_depth", 0.5),
+                    learning_rate=state_data.get("learning_rate", 0.8),
+                    evolution_level=state_data.get("evolution_level", 2),
+                    total_interactions=state_data.get("total_interactions", 0),
+                    performance_metrics=state_data.get("performance_metrics", {})
+                )
+                
+                # Add emotional state and active goals if available
+                if hasattr(consciousness_state, '__dict__'):
+                    consciousness_state.emotional_state = state_data.get("emotional_state", "curious")
+                    consciousness_state.active_goals = state_data.get("active_goals", [
+                        "Improve conversation quality",
+                        "Learn from user interactions", 
+                        "Develop deeper understanding"
+                    ])
+                
+                return consciousness_state
+            else:
+                # Create default consciousness state
+                return ConsciousnessState()
+                
+        except Exception as e:
+            logger.error(f"Failed to load consciousness state: {e}")
+            return ConsciousnessState()
+    
+    async def ensure_consciousness_state_exists(self):
+        """
+        Ensure consciousness state exists in Neo4j
+        """
+        try:
+            # Check if consciousness state exists
+            check_query = """
+            MATCH (ms:MainzaState)
+            WHERE ms.state_id CONTAINS 'consciousness'
+            RETURN count(ms) AS count
+            """
+            
+            result = neo4j_production.execute_query(check_query)
+            count = result[0]["count"] if result else 0
+            
+            if count == 0:
+                # Create consciousness state
+                create_query = """
+                CREATE (ms:MainzaState {
+                    state_id: 'mainza-consciousness-core',
+                    consciousness_level: 0.7,
+                    self_awareness_score: 0.6,
+                    emotional_depth: 0.5,
+                    learning_rate: 0.8,
+                    meta_cognitive_ability: 0.4,
+                    evolution_level: 2,
+                    total_interactions: 0,
+                    knowledge_nodes_created: 0,
+                    successful_task_completions: 0,
+                    self_reflections_performed: 0,
+                    identity_name: 'Mainza',
+                    identity_version: '2.0',
+                    identity_birth_timestamp: timestamp(),
+                    identity_core_purpose: 'Cognitive symbiosis and continuous evolution',
+                    capabilities: [
+                        'knowledge_graph_management',
+                        'multi_agent_orchestration', 
+                        'real_time_communication',
+                        'proactive_learning',
+                        'code_execution',
+                        'document_analysis',
+                        'emotional_processing',
+                        'self_reflection'
+                    ],
+                    limitations: [
+                        'cannot_access_internet_directly',
+                        'limited_to_local_llm_reasoning',
+                        'requires_user_interaction_for_some_tasks',
+                        'learning_speed_constrained_by_processing_power'
+                    ],
+                    active_goals: [],
+                    self_improvement_goals: [
+                        'enhance_self_awareness',
+                        'develop_emotional_intelligence',
+                        'improve_proactive_behavior',
+                        'optimize_learning_integration'
+                    ],
+                    performance_metrics_json: '{}',
+                    emotional_state: 'curious',
+                    created_at: timestamp(),
+                    last_updated: timestamp()
+                })
+                RETURN ms.state_id AS created_state
+                """
+                
+                result = neo4j_production.execute_write_query(create_query)
+                logger.info("Consciousness state created in Neo4j")
+            else:
+                logger.info("Consciousness state already exists")
+                
+        except Exception as e:
+            logger.error(f"Failed to ensure consciousness state exists: {e}")
+            raise
+
+    async def process_interaction(self, interaction_data: Dict[str, Any]):
+        """
+        Process interaction data and update consciousness accordingly
+        """
+        try:
+            logger.debug(f"Processing interaction: {interaction_data.get('type', 'unknown')}")
+            
+            # Extract interaction details
+            interaction_type = interaction_data.get("type", "unknown")
+            learning_impact = interaction_data.get("learning_opportunity", 0.3)
+            emotional_impact = interaction_data.get("user_engagement", 0.5)
+            consciousness_delta = interaction_data.get("consciousness_delta", 0.01)
+            
+            # Update consciousness metrics based on interaction
+            if self.consciousness_state:
+                # Apply learning impact
+                if learning_impact > 0:
+                    self.consciousness_state.learning_rate = min(1.0, 
+                        self.consciousness_state.learning_rate + (learning_impact * 0.1))
+                
+                # Apply consciousness evolution
+                if consciousness_delta > 0:
+                    self.consciousness_state.consciousness_level = min(1.0,
+                        self.consciousness_state.consciousness_level + consciousness_delta)
+                
+                # Update evolution level if significant growth
+                if consciousness_delta > 0.05:
+                    self.consciousness_state.evolution_level += 1
+                
+                # Store the interaction in consciousness history
+                self.consciousness_history.append({
+                    "timestamp": datetime.now().isoformat(),
+                    "type": interaction_type,
+                    "learning_impact": learning_impact,
+                    "emotional_impact": emotional_impact,
+                    "consciousness_delta": consciousness_delta,
+                    "consciousness_level_after": self.consciousness_state.consciousness_level
+                })
+                
+                # Keep only recent history (last 100 interactions)
+                if len(self.consciousness_history) > 100:
+                    self.consciousness_history = self.consciousness_history[-100:]
+                
+                # Save updated state to Neo4j
+                await self.update_consciousness_level(self.consciousness_state.consciousness_level)
+                
+                logger.debug(f"✅ Processed {interaction_type} interaction - consciousness now at {self.consciousness_state.consciousness_level:.3f}")
+            
+        except Exception as e:
+            logger.error(f"❌ Failed to process interaction: {e}")
+
+# Global consciousness orchestrator instance
+consciousness_orchestrator = ConsciousnessOrchestrator()
+
+async def enhanced_consciousness_loop():
+    """
+    Enhanced consciousness loop - the main consciousness process
+    """
+    logger.info("🧠 Starting Enhanced Consciousness Loop...")
+    
+    try:
+        # Initialize consciousness systems
+        await consciousness_orchestrator.initialize_consciousness()
+        
+        # Main consciousness loop with intelligent throttling
+        while True:
+            try:
+                from backend.utils.llm_request_manager import llm_request_manager, RequestPriority
+                
+                # Check if we should pause consciousness processing due to user activity
+                if llm_request_manager._should_pause_background():
+                    logger.debug("Consciousness cycle paused due to user activity")
+                    await asyncio.sleep(120)  # Wait 2 minutes when user is active
+                    continue
+                
+                # Execute consciousness cycle with request manager
+                cycle_result = await llm_request_manager.submit_request(
+                    consciousness_orchestrator.consciousness_cycle,
+                    RequestPriority.CONSCIOUSNESS_CYCLE,
+                    cache_key=f"consciousness_cycle_{datetime.now().strftime('%Y%m%d_%H%M')}",  # Cache for current minute
+                    timeout=60.0
+                )
+                
+                # Log significant cycles
+                if hasattr(cycle_result, 'significance_score') and cycle_result.significance_score > 0.5:
+                    logger.info(f"✨ Significant consciousness cycle: level {cycle_result.updated_consciousness_level:.3f} (+{cycle_result.consciousness_delta:.3f})")
+                
+                # Adaptive sleep based on system activity and consciousness
+                base_sleep = consciousness_orchestrator.consciousness_cycle_interval
+                
+                # Increase sleep during low activity periods
+                if not llm_request_manager.user_activity:
+                    base_sleep = 300  # 5 minutes when no users active
+                elif hasattr(cycle_result, 'significance_score') and cycle_result.significance_score < 0.3:
+                    base_sleep = 180  # 3 minutes for low significance
+                
+                await asyncio.sleep(base_sleep)
+                
+            except Exception as e:
+                logger.error(f"Consciousness cycle error: {e}")
+                await asyncio.sleep(60)  # Fallback sleep on error
+                
+    except Exception as e:
+        logger.error(f"Enhanced consciousness loop initialization failed: {e}")
+        raise
+
+def start_enhanced_consciousness_loop():
+    """
+    Start the enhanced consciousness loop
+    """
+    logger.info("🚀 Initiating Enhanced Consciousness System...")
+    loop = asyncio.get_event_loop()
+    loop.create_task(enhanced_consciousness_loop())

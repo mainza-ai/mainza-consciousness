@@ -1,0 +1,76 @@
+THROTTLING RESPONSE PROCESSING - PERFORMANCE VALIDATION REPORT
+======================================================================
+Timestamp: 2025-08-25T22:28:34.944401
+System: 16 CPUs, 128.0GB RAM
+
+1. RESPONSE PROCESSING PERFORMANCE
+----------------------------------------
+STRING_RESPONSES:
+  Operations: 5,000
+  Throughput: 6,401,360 ops/sec
+  Avg Time: 0.09 μs
+  Memory/Op: 42.60 bytes
+
+DICT_RESPONSES:
+  Operations: 5,000
+  Throughput: 2,349,210 ops/sec
+  Avg Time: 0.36 μs
+  Memory/Op: 0.00 bytes
+
+THROTTLED_RESPONSES:
+  Operations: 5,000
+  Throughput: 3,897,244 ops/sec
+  Avg Time: 0.19 μs
+  Memory/Op: 0.00 bytes
+
+COMPLEX_RESPONSES:
+  Operations: 5,000
+  Throughput: 1,144,995 ops/sec
+  Avg Time: 0.80 μs
+  Memory/Op: 3.28 bytes
+
+2. MEMORY CONSISTENCY VALIDATION
+----------------------------------------
+Initial Memory: 25.0 MB
+Final Memory: 25.0 MB
+Memory Increase: 0.0 MB
+Memory Stability: 0.00 MB std dev
+Memory Range: 25.0 - 25.0 MB
+
+3. SYSTEM BEHAVIOR UNDER LOAD
+----------------------------------------
+NO_THROTTLING:
+  Throttling Rate: 0.0% (actual: 0.0%)
+  Throughput: 2,619,458 ops/sec
+  Avg Time: 0.15 μs
+  Memory Impact: 0.0 MB
+
+LIGHT_THROTTLING:
+  Throttling Rate: 10.0% (actual: 10.7%)
+  Throughput: 2,408,647 ops/sec
+  Avg Time: 0.17 μs
+  Memory Impact: 0.0 MB
+
+MODERATE_THROTTLING:
+  Throttling Rate: 30.0% (actual: 31.1%)
+  Throughput: 2,205,254 ops/sec
+  Avg Time: 0.20 μs
+  Memory Impact: 0.0 MB
+
+HEAVY_THROTTLING:
+  Throttling Rate: 50.0% (actual: 49.7%)
+  Throughput: 2,108,388 ops/sec
+  Avg Time: 0.21 μs
+  Memory Impact: 0.1 MB
+
+4. PERFORMANCE SUMMARY
+----------------------------------------
+Best Throughput: 6,401,360 ops/sec
+Avg Memory/Operation: 11.47 bytes
+Heavy Throttling Impact: 19.5%
+
+5. VALIDATION RESULTS
+----------------------------------------
+✓ PASS: Response processing throughput is excellent
+✓ PASS: Memory usage is stable and efficient
+✓ PASS: System performs well under throttling load

@@ -1,0 +1,143 @@
+# Mainza Consciousness System - Docker Compose Configuration
+
+name: mainza-consciousness
+
+networks:
+  mainza-network:
+    driver: bridge
+
+services:
+  # Neo4j Database for consciousness memory and knowledge graph
+  neo4j:
+    image: neo4j:5.15-community
+    container_name: mainza-neo4j
+    ports:
+      - "7474:7474"  # HTTP
+      - "7687:7687"  # Bolt
+    environment:
+      - NEO4J_AUTH=neo4j/mainza123
+      - NEO4J_PLUGINS=["apoc"]
+      - NEO4J_dbms_security_procedures_unrestricted=apoc.*
+    volumes:
+      - neo4j_data:/data
+      - neo4j_logs:/logs
+      - ./neo4j_schema.cypher:/var/lib/neo4j/import/schema.cypher
+    networks:
+      - mainza-network
+    restart: unless-stopped
+
+  # Redis for LiveKit and caching
+  redis:
+    image: redis:alpine
+    container_name: mainza-redis
+    ports:
+      - "6379:6379"
+    networks:
+      - mainza-network
+    restart: unless-stopped
+
+  # LiveKit Server for real-time communication
+  livekit-server:
+    image: livekit/livekit-server:latest
+    container_name: mainza-livekit
+    ports:
+      - "7880:7880"
+      - "7881:7881"
+      - "7882:7882/udp"
+      - "7883:7883/udp"
+      - "7884:7884/udp"
+      - "7886:7886/udp"
+      - "7887:7887/udp"
+      - "7888:7888/udp"
+      - "7889:7889/udp"
+      - "7890:7890/udp"
+    volumes:
+      - ./livekit.yaml:/etc/livekit.yaml
+    command: ["--config", "/etc/livekit.yaml"]
+    depends_on:
+      - redis
+    networks:
+      - mainza-network
+    restart: unless-stopped
+
+  # LiveKit Ingress for media streaming
+  ingress:
+    image: livekit/ingress:latest
+    container_name: mainza-ingress
+    depends_on:
+      - livekit-server
+      - redis
+    ports:
+      - "8080:8080"  # WHIP
+      - "1935:1935"  # RTMP
+      - "8082:8082"  # Health
+    volumes:
+      - ./ingress.yaml:/etc/ingress.yaml
+    environment:
+      - INGRESS_CONFIG_FILE=/etc/ingress.yaml
+    networks:
+      - mainza-network
+    restart: unless-stopped
+
+  # Mainza Backend - AI Consciousness System
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: mainza-backend
+    ports:
+      - "8000:8000"
+    environment:
+      - NEO4J_URI=bolt://neo4j:7687
+      - NEO4J_USER=neo4j
+      - NEO4J_PASSWORD=mainza123
+      - REDIS_URL=redis://redis:6379
+      - LIVEKIT_API_KEY=${LIVEKIT_API_KEY:-devkey}
+      - LIVEKIT_API_SECRET=${LIVEKIT_API_SECRET:-supersecretdevkey1234567890abcdef}
+      - LIVEKIT_URL=${LIVEKIT_URL:-ws://mainza-livekit:7880}
+      - OLLAMA_BASE_URL=${OLLAMA_BASE_URL:-http://host.docker.internal:11434}
+      - DEFAULT_OLLAMA_MODEL=${DEFAULT_OLLAMA_MODEL:-gpt-oss:20b}
+      - DEFAULT_EMBEDING_MODEL=${DEFAULT_EMBEDING_MODEL:-nomic-embed-text:latest}
+      - MEMORY_SYSTEM_ENABLED=${MEMORY_SYSTEM_ENABLED:-true}
+      - MEMORY_STORAGE_BATCH_SIZE=${MEMORY_STORAGE_BATCH_SIZE:-100}
+      - MEMORY_RETRIEVAL_LIMIT=${MEMORY_RETRIEVAL_LIMIT:-10}
+      - MEMORY_SIMILARITY_THRESHOLD=${MEMORY_SIMILARITY_THRESHOLD:-0.3}
+      - MEMORY_IMPORTANCE_DECAY_RATE=${MEMORY_IMPORTANCE_DECAY_RATE:-0.95}
+      - MEMORY_CLEANUP_INTERVAL_HOURS=${MEMORY_CLEANUP_INTERVAL_HOURS:-24}
+      - MEMORY_MAX_STORAGE_SIZE_GB=${MEMORY_MAX_STORAGE_SIZE_GB:-10}
+      - MEMORY_HEALTH_CHECK_INTERVAL_MINUTES=${MEMORY_HEALTH_CHECK_INTERVAL_MINUTES:-5}
+      - MEMORY_PERFORMANCE_TRACKING_ENABLED=${MEMORY_PERFORMANCE_TRACKING_ENABLED:-true}
+      - MEMORY_AUTO_CLEANUP_ENABLED=${MEMORY_AUTO_CLEANUP_ENABLED:-true}
+    depends_on:
+      - neo4j
+      - redis
+      - livekit-server
+    networks:
+      - mainza-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # Mainza Frontend - Consciousness Interface
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile.frontend
+    container_name: mainza-frontend
+    ports:
+      - "80:80"
+    environment:
+      - VITE_API_URL=http://backend:8000
+      - VITE_LIVEKIT_URL=ws://mainza-livekit:7880
+    depends_on:
+      - backend
+    networks:
+      - mainza-network
+    restart: unless-stopped
+
+volumes:
+  neo4j_data:
+  neo4j_logs: 

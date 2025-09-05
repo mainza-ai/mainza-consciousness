@@ -1,9 +1,10 @@
-
 import { Activity, Brain, Zap } from 'lucide-react';
+
+type IndicatorMode = 'idle' | 'listening' | 'thinking' | 'processing' | 'evolving' | 'speaking' | 'error' | 'routing';
 
 interface StatusIndicatorProps {
   state: {
-    mode: string;
+    mode: IndicatorMode;
     needs: string[];
     isListening: boolean;
   };
@@ -27,6 +28,8 @@ export const StatusIndicator = ({ state }: StatusIndicatorProps) => {
     switch (state.mode) {
       case 'thinking':
         return 'Accessing memory graph...';
+      case 'routing':
+        return 'Routing to agent...';
       case 'processing':
         return 'Synthesizing response...';
       case 'evolving':

@@ -1,0 +1,130 @@
+{
+  "timestamp": "2025-08-25T22:28:34.944401",
+  "system_info": {
+    "cpu_count": 16,
+    "memory_total_gb": 128.0
+  },
+  "performance_tests": {
+    "string_responses": {
+      "total_operations": 5000,
+      "total_time_seconds": 0.0007810840616002679,
+      "avg_time_microseconds": 0.09091568645089865,
+      "median_time_microseconds": 0.08300412446260452,
+      "min_time_microseconds": 0.040978193283081055,
+      "max_time_microseconds": 4.375004209578037,
+      "throughput_per_second": 6401359.65616314,
+      "memory_increase_mb": 0.203125,
+      "memory_per_operation_bytes": 42.5984
+    },
+    "dict_responses": {
+      "total_operations": 5000,
+      "total_time_seconds": 0.002128374995663762,
+      "avg_time_microseconds": 0.3557131392881274,
+      "median_time_microseconds": 0.333995558321476,
+      "min_time_microseconds": 0.2909218892455101,
+      "max_time_microseconds": 0.8749775588512421,
+      "throughput_per_second": 2349210.0828973907,
+      "memory_increase_mb": 0.0,
+      "memory_per_operation_bytes": 0
+    },
+    "throttled_responses": {
+      "total_operations": 5000,
+      "total_time_seconds": 0.0012829579645767808,
+      "avg_time_microseconds": 0.19092424772679806,
+      "median_time_microseconds": 0.20791776478290558,
+      "min_time_microseconds": 0.12491364032030106,
+      "max_time_microseconds": 0.5830079317092896,
+      "throughput_per_second": 3897243.8209613427,
+      "memory_increase_mb": 0.0,
+      "memory_per_operation_bytes": 0
+    },
+    "complex_responses": {
+      "total_operations": 5000,
+      "total_time_seconds": 0.004366832901723683,
+      "avg_time_microseconds": 0.8032357087358832,
+      "median_time_microseconds": 0.7919734343886375,
+      "min_time_microseconds": 0.7079215720295906,
+      "max_time_microseconds": 1.374981366097927,
+      "throughput_per_second": 1144994.5790292074,
+      "memory_increase_mb": 0.015625,
+      "memory_per_operation_bytes": 3.2768
+    }
+  },
+  "memory_validation": {
+    "initial_memory_mb": 24.984375,
+    "final_memory_mb": 25.0,
+    "memory_increase_mb": 0.015625,
+    "memory_samples": [
+      24.984375,
+      25.0,
+      25.0,
+      25.0,
+      25.0,
+      25.0,
+      25.0,
+      25.0,
+      25.0,
+      25.0,
+      25.0,
+      25.0,
+      25.0,
+      25.0,
+      25.0,
+      25.0,
+      25.0,
+      25.0,
+      25.0,
+      25.0,
+      25.0
+    ],
+    "memory_stability_std_dev": 0.003409654534937381,
+    "max_memory_mb": 25.0,
+    "min_memory_mb": 24.984375
+  },
+  "load_tests": {
+    "no_throttling": {
+      "throttling_rate": 0.0,
+      "actual_throttling_rate": 0.0,
+      "total_operations": 10000,
+      "throttled_responses": 0,
+      "normal_responses": 10000,
+      "total_time_seconds": 0.003817582968622446,
+      "throughput_per_second": 2619458.4589757966,
+      "avg_time_microseconds": 0.15332718612626195,
+      "memory_increase_mb": 0.0
+    },
+    "light_throttling": {
+      "throttling_rate": 0.1,
+      "actual_throttling_rate": 0.1071,
+      "total_operations": 10000,
+      "throttled_responses": 1071,
+      "normal_responses": 8929,
+      "total_time_seconds": 0.004151707980781794,
+      "throughput_per_second": 2408647.2474195873,
+      "avg_time_microseconds": 0.1711561344563961,
+      "memory_increase_mb": 0.03125
+    },
+    "moderate_throttling": {
+      "throttling_rate": 0.3,
+      "actual_throttling_rate": 0.3105,
+      "total_operations": 10000,
+      "throttled_responses": 3105,
+      "normal_responses": 6895,
+      "total_time_seconds": 0.004534624982625246,
+      "throughput_per_second": 2205254.026146759,
+      "avg_time_microseconds": 0.2009510062634945,
+      "memory_increase_mb": 0.0
+    },
+    "heavy_throttling": {
+      "throttling_rate": 0.5,
+      "actual_throttling_rate": 0.4974,
+      "total_operations": 10000,
+      "throttled_responses": 4974,
+      "normal_responses": 5026,
+      "total_time_seconds": 0.004742959048599005,
+      "throughput_per_second": 2108388.433788785,
+      "avg_time_microseconds": 0.21247746190056205,
+      "memory_increase_mb": 0.078125
+    }
+  }
+}

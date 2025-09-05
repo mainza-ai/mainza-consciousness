@@ -1,0 +1,25 @@
+port: 7880
+rtc:
+  tcp_port: 7881
+  udp_port: 7882
+  # Force external IP to false for development
+  use_external_ip: false
+  # Port range for WebRTC connections  
+  port_range_start: 7882
+  port_range_end: 7890
+  # Use 0.0.0.0 to bind to all interfaces within the container
+  node_ip: "0.0.0.0"
+keys:
+  devkey: supersecretdevkey1234567890abcdef
+redis:
+  # Use container name for Docker networking
+  address: mainza-redis:6379
+ingress:
+  rtmp_base_url: 'rtmp://localhost:1935/live'
+  whip_base_url: 'http://localhost:8080/whip'
+# Add logging for debugging
+logging:
+  level: debug
+# Disable TURN for development (requires TLS certs)
+turn:
+  enabled: false 
