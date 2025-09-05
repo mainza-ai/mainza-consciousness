@@ -44,7 +44,7 @@ const MainzaInterface: React.FC = () => {
   const [mainzaState, setMainzaState] = useState<MainzaState>({
     mode: 'idle',
     consciousness_level: 0.7,
-    emotional_state: 'curious',
+    emotional_state: 'curiosity',
     evolution_level: 0,  // Added missing evolution_level property
     active_agent: 'none',
     needs: []

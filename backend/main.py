@@ -82,10 +82,21 @@ def validate_memory_system_config() -> Dict[str, Any]:
 
 torch.serialization.add_safe_globals([XttsConfig, XttsAudioConfig, BaseDatasetConfig, XttsArgs])
 
-logging.basicConfig(level=logging.DEBUG, format='%(asctime)s %(levelname)s %(message)s', handlers=[
-    logging.StreamHandler(),
-    logging.FileHandler('backend/uvicorn.log', mode='a')
-])
+# Consolidated logger configuration to prevent conflicts
+logging.basicConfig(
+    level=logging.INFO,  # Changed from DEBUG to INFO to reduce noise
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+    handlers=[
+        logging.StreamHandler(),
+        logging.FileHandler('backend/uvicorn.log', mode='a')
+    ]
+)
+
+# Suppress noisy third-party loggers
+logging.getLogger('uvicorn.access').setLevel(logging.WARNING)
+logging.getLogger('uvicorn.error').setLevel(logging.ERROR)
+logging.getLogger('neo4j').setLevel(logging.WARNING)
+logging.getLogger('whisper').setLevel(logging.INFO)
 
 app = FastAPI()
 
@@ -181,7 +192,7 @@ async def startup_event():
     asyncio.create_task(llm_request_manager.initialize())
     
     # Start enhanced consciousness loop
-    start_enhanced_consciousness_loop()
+    await start_enhanced_consciousness_loop()
     logging.info("Enhanced consciousness system has been initiated.")
     
     # Initialize memory system monitoring (only if memory system is enabled)

@@ -72,7 +72,8 @@ class MemoryRecoverySystem:
     
     def __init__(self):
         self.neo4j = neo4j_manager
-        
+        self.system_ready = False
+
         # Configuration
         self.max_retry_attempts = 5
         self.base_retry_delay = 1.0  # seconds
@@ -80,24 +81,24 @@ class MemoryRecoverySystem:
         self.connection_timeout = 30.0  # seconds
         self.validation_batch_size = 100
         self.backup_retention_days = 30
-        
+
         # Recovery tracking
         self.active_operations: Dict[str, RecoveryOperation] = {}
         self.recovery_history: List[RecoveryOperation] = []
         self.max_history_size = 1000
-        
+
         # Validation rules
         self.required_memory_fields = {
             "memory_id", "content", "memory_type", "user_id", "agent_name",
             "consciousness_level", "emotional_state", "importance_score",
             "created_at"
         }
-        
+
         self.valid_memory_types = {
-            "interaction", "reflection", "insight", "concept_learning", 
+            "interaction", "reflection", "insight", "concept_learning",
             "consciousness_reflection", "evolution"
         }
-        
+
         # Auto-fix capabilities
         self.auto_fix_enabled = True
         self.auto_fix_max_issues = 50  # Max issues to auto-fix per operation
@@ -252,7 +253,7 @@ class MemoryRecoverySystem:
                 params["offset"] = offset
                 
                 memories = await self.retry_with_exponential_backoff(
-                    self.neo4j.execute_query,
+                    self.neo4j.execute_query_async,
                     "validate_memory_batch",
                     query=query,
                     parameters=params
@@ -579,7 +580,7 @@ class MemoryRecoverySystem:
             params["repair_timestamp"] = datetime.now().isoformat()
             
             result = await self.retry_with_exponential_backoff(
-                self.neo4j.execute_write_query,
+                self.neo4j.execute_write_query_async,
                 "repair_memory",
                 query=query,
                 parameters=params
@@ -662,7 +663,7 @@ class MemoryRecoverySystem:
             """
             
             result = await self.retry_with_exponential_backoff(
-                self.neo4j.execute_write_query,
+                self.neo4j.execute_write_query_async,
                 "create_memory_backup",
                 query=backup_query,
                 parameters=params
@@ -709,7 +710,7 @@ class MemoryRecoverySystem:
             """
             
             result = await self.retry_with_exponential_backoff(
-                self.neo4j.execute_write_query,
+                self.neo4j.execute_write_query_async,
                 "cleanup_old_backups",
                 query=cleanup_query,
                 parameters={"cutoff_date": cutoff_date.isoformat()}
@@ -814,7 +815,7 @@ class MemoryRecoverySystem:
             params["restore_timestamp"] = datetime.now().isoformat()
             
             result = await self.retry_with_exponential_backoff(
-                self.neo4j.execute_write_query,
+                self.neo4j.execute_write_query_async,
                 "restore_from_backup",
                 query=restore_query,
                 parameters=params
@@ -907,7 +908,7 @@ class MemoryRecoverySystem:
             """
             
             result = await self.retry_with_exponential_backoff(
-                self.neo4j.execute_query,
+                self.neo4j.execute_query_async,
                 "detect_duplicate_memories",
                 query=duplicate_query,
                 parameters=params
@@ -925,6 +926,35 @@ class MemoryRecoverySystem:
             logger.error(f"❌ Duplicate memory detection failed: {e}")
             return []
     
+    async def initialize(self) -> bool:
+        """
+        Initialize the memory recovery system
+
+        Returns:
+            bool: True if initialization successful, False otherwise
+        """
+        try:
+            logger.info("🏭 Initializing Memory Recovery System...")
+
+            # Test Neo4j connection
+            await self.retry_with_exponential_backoff(
+                self.neo4j.execute_query_async,
+                "test_connection",
+                query="RETURN 1",
+                parameters={}
+            )
+
+            # Set system as ready
+            self.system_ready = True
+
+            logger.info("✅ Memory recovery system initialized successfully")
+            return True
+
+        except Exception as e:
+            logger.error(f"❌ Failed to initialize memory recovery system: {e}")
+            self.system_ready = False
+            return False
+
     async def get_recovery_status(self) -> Dict[str, Any]:
         """Get current recovery system status"""
         try:

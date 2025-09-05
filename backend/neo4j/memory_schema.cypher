@@ -43,12 +43,12 @@ FOR (m:Memory) ON (m.user_id, m.created_at);
 // ============================================================================
 
 // Create vector index for memory embeddings (Neo4j 5.0+)
-// Note: Adjust dimensions based on your embedding model
+// Note: Dimensions updated to match current embedding model (768)
 CREATE VECTOR INDEX memory_embedding_index IF NOT EXISTS
 FOR (m:Memory) ON (m.embedding)
 OPTIONS {
   indexConfig: {
-    `vector.dimensions`: 384,
+    `vector.dimensions`: 768,
     `vector.similarity_function`: 'cosine'
   }
 };

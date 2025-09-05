@@ -16,7 +16,7 @@ class EmbeddingManager:
         self.ollama_base_url = os.getenv("OLLAMA_BASE_URL", "http://host.docker.internal:11434")
         self.default_model = os.getenv("DEFAULT_EMBEDING_MODEL", "nomic-embed-text:latest")
         self.fallback_model = "all-MiniLM-L6-v2"
-        self.dimensions = 384  # Default for all-MiniLM-L6-v2
+        self.dimensions = 768  # Updated for larger embedding models
         
         # Try to initialize SentenceTransformers as fallback
         self.sentence_transformer = None

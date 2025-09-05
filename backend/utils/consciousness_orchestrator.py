@@ -151,7 +151,7 @@ class ConsciousnessOrchestrator:
             # Set default emotional state if not already set
             if not hasattr(self, 'current_emotional_state'):
                 self.current_emotional_state = {
-                    'primary_emotion': 'curious',
+                    'primary_emotion': 'curiosity',
                     'intensity': 0.6,
                     'emotional_history': [],
                     'last_emotional_update': datetime.now().isoformat()

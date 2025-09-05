@@ -88,17 +88,19 @@ class MemoryEmbeddingManager:
     ) -> List[Dict[str, Any]]:
         """Perform vector similarity search using Neo4j vector index"""
         try:
+            # Continue with vector search
+
             # Build the Cypher query with optional memory type filtering
             base_query = """
-            CALL db.index.vector.queryNodes('memory_embedding_index', $limit, $embedding) 
-            YIELD node, score 
+            CALL db.index.vector.queryNodes('memory_embedding_index', $limit, $embedding)
+            YIELD node, score
             WHERE node.user_id = $user_id
             """
-            
+
             # Add memory type filtering if specified
             if memory_types:
                 base_query += " AND node.memory_type IN $memory_types"
-            
+
             # Add similarity threshold and return clause
             base_query += """
             AND score >= $min_similarity
@@ -115,17 +117,17 @@ class MemoryEmbeddingManager:
             ORDER BY score DESC
             LIMIT $limit
             """
-            
+
             params = {
                 "embedding": query_embedding,
                 "user_id": user_id,
                 "limit": limit,
                 "min_similarity": min_similarity
             }
-            
+
             if memory_types:
                 params["memory_types"] = memory_types
-            
+
             result = self.neo4j.execute_query(base_query, params)
             
             # Process results

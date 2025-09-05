@@ -121,38 +121,50 @@ class EnhancedLLMExecutor:
                 except json.JSONDecodeError as e:
                     logger.error(f"Failed to parse Ollama JSON response: {e}")
                     logger.error(f"Raw response: {response.text[:500]}...")
-                    
+
                     # Handle streaming response that was concatenated
                     response_text = response.text.strip()
                     if response_text:
                         try:
                             # Parse multiple JSON objects (streaming response)
                             full_response = ""
-                            for line in response_text.split('\n'):
+                            lines = response_text.split('\n')
+
+                            for line in lines:
                                 line = line.strip()
                                 if line:
                                     try:
                                         json_obj = json.loads(line)
                                         if 'response' in json_obj:
-                                            full_response += json_obj['response']
+                                            response_part = json_obj['response']
+                                            if response_part:  # Only add non-empty responses
+                                                full_response += response_part
+                                        if json_obj.get('done', False):
+                                            break  # Stop at done signal
                                     except json.JSONDecodeError:
                                         continue
-                            
+
                             if full_response:
                                 logger.info(f"✅ Reconstructed streaming response: {len(full_response)} chars")
                                 return full_response
-                            
-                            # Fallback: try to extract from concatenated JSON
+
+                            # More aggressive fallback: search for response content
                             import re
-                            response_parts = re.findall(r'"response":\s*"([^"]*)"', response_text)
-                            if response_parts:
-                                full_response = "".join(response_parts)
-                                logger.info(f"✅ Extracted response parts: {len(full_response)} chars")
-                                return full_response
-                                
+                            # Look for response field in JSON
+                            response_match = re.search(r'"response":\s*"([^"\\]*(?:\\.[^"\\]*)*)"', response_text)
+                            if response_match:
+                                extracted_response = response_match.group(1).replace('\\n', '\n').replace('\\"', '"')
+                                logger.info(f"✅ Extracted response from JSON: {len(extracted_response)} chars")
+                                return extracted_response
+
+                            # Last resort: extract any readable text
+                            clean_text = re.sub(r'[^\w\s.,!?-]', '', response_text)
+                            if len(clean_text) > 10:
+                                return clean_text[:2000]
+
                         except Exception as parse_error:
                             logger.error(f"Failed to parse streaming response: {parse_error}")
-                        
+
                         # Last resort: return raw text
                         return response_text[:1000]  # Limit length
                     raise Exception(f"Invalid JSON response from Ollama: {e}")

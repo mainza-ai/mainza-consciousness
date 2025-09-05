@@ -70,11 +70,11 @@ class Neo4jManager:
                 if tx.closed() is False:
                     tx.close()
     
-    def execute_query(self, query: str, parameters: Optional[Dict[str, Any]] = None, 
+    def execute_query(self, query: str, parameters: Optional[Dict[str, Any]] = None,
                      database: Optional[str] = None, retry_count: int = 3) -> List[Dict[str, Any]]:
         """Execute a query with retry logic and proper error handling."""
         parameters = parameters or {}
-        
+
         for attempt in range(retry_count):
             try:
                 with self.get_session(database) as session:
@@ -92,12 +92,44 @@ class Neo4jManager:
             except Exception as e:
                 logger.error(f"Query execution error: {e}")
                 raise
-    
+
+    async def execute_query_async(self, query: str, parameters: Optional[Dict[str, Any]] = None,
+                                 database: Optional[str] = None, retry_count: int = 3) -> List[Dict[str, Any]]:
+        """Execute a query asynchronously with retry logic and proper error handling."""
+        parameters = parameters or {}
+
+        for attempt in range(retry_count):
+            try:
+                with self.get_session(database) as session:
+                    result = session.run(query, parameters)
+                    return [dict(record) for record in result]
+            except TransientError as e:
+                if attempt < retry_count - 1:
+                    wait_time = 2 ** attempt  # Exponential backoff
+                    logger.warning(f"Transient error on attempt {attempt + 1}, retrying in {wait_time}s: {e}")
+                    await asyncio.sleep(wait_time)
+                    continue
+                else:
+                    logger.error(f"Query failed after {retry_count} attempts: {e}")
+                    raise
+            except Exception as e:
+                logger.error(f"Query execution error: {e}")
+                raise
+
     def execute_write_query(self, query: str, parameters: Optional[Dict[str, Any]] = None,
                            database: Optional[str] = None) -> List[Dict[str, Any]]:
         """Execute a write query within a transaction."""
         parameters = parameters or {}
-        
+
+        with self.get_transaction(database) as tx:
+            result = tx.run(query, parameters)
+            return [dict(record) for record in result]
+
+    async def execute_write_query_async(self, query: str, parameters: Optional[Dict[str, Any]] = None,
+                                       database: Optional[str] = None) -> List[Dict[str, Any]]:
+        """Execute a write query asynchronously within a transaction."""
+        parameters = parameters or {}
+
         with self.get_transaction(database) as tx:
             result = tx.run(query, parameters)
             return [dict(record) for record in result]

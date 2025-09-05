@@ -96,7 +96,7 @@ function Index() {
   const [mainzaState, setMainzaState] = useState<MainzaState>({
     mode: 'idle',
     consciousness_level: 0.7,
-    emotional_state: 'curious',
+    emotional_state: 'curiosity',
     evolution_level: undefined,
     active_agent: 'none',
     needs: [],
