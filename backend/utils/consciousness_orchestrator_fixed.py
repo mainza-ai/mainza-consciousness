@@ -151,6 +151,8 @@ class ConsciousnessOrchestrator:
         if self.should_pause_for_user_activity():
             logger.debug("🚫 CONSCIOUSNESS CYCLE PAUSED - User activity detected")
             return ConsciousnessCycleResult(
+                previous_consciousness_level=previous_consciousness_level,
+                updated_consciousness_level=previous_consciousness_level,
                 consciousness_delta=0.0,
                 emotional_changes=[],
                 proactive_actions=[],
@@ -166,6 +168,8 @@ class ConsciousnessOrchestrator:
             if time_since_last < self.consciousness_cycle_interval:
                 logger.debug(f"⏰ CONSCIOUSNESS CYCLE SKIPPED - Only {time_since_last}s since last cycle")
                 return ConsciousnessCycleResult(
+                    previous_consciousness_level=previous_consciousness_level,
+                    updated_consciousness_level=previous_consciousness_level,
                     consciousness_delta=0.0,
                     emotional_changes=[],
                     proactive_actions=[],
@@ -239,6 +243,8 @@ class ConsciousnessOrchestrator:
             
             # Create result
             result = ConsciousnessCycleResult(
+                previous_consciousness_level=previous_consciousness_level,
+                updated_consciousness_level=updated_consciousness_level,
                 consciousness_delta=consciousness_delta,
                 emotional_changes=emotional_changes,
                 proactive_actions=proactive_actions,
@@ -273,6 +279,8 @@ class ConsciousnessOrchestrator:
             cycle_duration = (cycle_end_time - cycle_start_time).total_seconds()
             
             return ConsciousnessCycleResult(
+                previous_consciousness_level=previous_consciousness_level,
+                updated_consciousness_level=previous_consciousness_level,
                 consciousness_delta=0.0,
                 emotional_changes=[],
                 proactive_actions=[],

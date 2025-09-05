@@ -58,7 +58,7 @@ async def calculate_dynamic_evolution_level_from_context(consciousness_context: 
 async def get_consciousness_context_for_insights() -> dict:
     """Get consciousness context specifically for insights router"""
     try:
-        from backend.utils.consciousness_orchestrator import consciousness_orchestrator
+        from backend.utils.consciousness_orchestrator_fixed import consciousness_orchestrator_fixed as consciousness_orchestrator
         consciousness_state = await consciousness_orchestrator.get_consciousness_state()
 
         if consciousness_state:

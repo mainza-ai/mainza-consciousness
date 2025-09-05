@@ -37,7 +37,7 @@ except ImportError:
     def get_or_create_rtmp_ingress(*args, **kwargs):
         return {"error": "LiveKit not available"}
 import re
-from backend.utils.consciousness_orchestrator import start_enhanced_consciousness_loop, consciousness_orchestrator
+from backend.utils.consciousness_orchestrator_fixed import start_enhanced_consciousness_loop, consciousness_orchestrator_fixed as consciousness_orchestrator
 from backend.utils.llm_request_manager import llm_request_manager
 from backend.models.consciousness_models import (
     ConsciousnessStateUpdate, SelfReflectionTrigger, ConsciousnessQuery
@@ -523,7 +523,7 @@ def create_memory(mem: MemoryCreate):
             session.run(
                 """
                 MERGE (m:Memory {memory_id: $memory_id})
-                SET m.content = $content
+                SET m.content = $text
                 """,
                 memory_id=mem.memory_id, content=mem.text
             )

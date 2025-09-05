@@ -393,7 +393,7 @@ class ErrorHandler:
     async def _update_consciousness_about_error(self, error_context: ErrorContext):
         """Update consciousness system about error for learning"""
         try:
-            from backend.utils.consciousness_orchestrator import consciousness_orchestrator
+            from backend.utils.consciousness_orchestrator_fixed import consciousness_orchestrator_fixed as consciousness_orchestrator
             
             await consciousness_orchestrator.process_agent_failure(
                 agent_name=error_context.component,
