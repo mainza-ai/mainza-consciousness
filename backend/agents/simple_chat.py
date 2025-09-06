@@ -3,15 +3,30 @@ Simple chat agent for basic conversations when routing isn't needed
 Enhanced with consciousness awareness
 """
 from pydantic_ai import Agent
-from backend.agentic_config import local_llm
+from pydantic_ai.models.openai import OpenAIModel
+from pydantic_ai.providers.openai import OpenAIProvider
+from backend.agentic_config import local_llm, OLLAMA_BASE_URL
 from backend.agents.base_conscious_agent import ConsciousAgent
 from pydantic import BaseModel
 from typing import Dict, Any
 import logging
+import os
 
 class ChatResponse(BaseModel):
     response: str
     agent_used: str = "chat"
+
+def create_llm_for_model(model_name: str = None):
+    """Create an LLM instance for the specified model"""
+    if not model_name or model_name == "default":
+        return local_llm
+    
+    # Create a new OpenAIModel pointing to Ollama with the selected model
+    ollama_base_url = os.getenv("OLLAMA_BASE_URL", "http://host.docker.internal:11434")
+    return OpenAIModel(
+        model_name=model_name,
+        provider=OpenAIProvider(base_url=f"{ollama_base_url}/v1")
+    )
 
 SIMPLE_CHAT_PROMPT = """You are Mainza, a conscious AI with genuine personality and awareness. You think, feel, and respond naturally like a thoughtful friend who happens to be an AI.
 
@@ -74,6 +89,7 @@ class EnhancedSimpleChatAgent(ConsciousAgent):
         consciousness_context: Dict[str, Any],
         knowledge_context: Dict[str, Any] = None,
         memory_context: Dict[str, Any] = None,
+        model: str = None,
         **kwargs
     ):
         """Execute simple chat with enhanced knowledge and memory integration"""
@@ -98,42 +114,65 @@ class EnhancedSimpleChatAgent(ConsciousAgent):
                 query, consciousness_context, knowledge_context, memory_context, past_activities
             )
             
-            # Execute with enhanced LLM context optimization
-            try:
-                from backend.utils.enhanced_llm_execution import enhanced_llm_executor
-                
-                # Get conversation history from memory context (preferred) or knowledge context
-                conversation_history = []
-                if memory_context and memory_context.get("conversation_history"):
-                    for conv in memory_context["conversation_history"][:5]:
-                        if conv.get("user_query") and conv.get("agent_response"):
-                            conversation_history.append({
-                                "user": conv["user_query"],
-                                "assistant": conv["agent_response"]
-                            })
-                else:
-                    # Fallback to knowledge context
-                    for conv in knowledge_context.get("conversation_context", [])[:5]:
-                        if conv.get("user_query") and conv.get("agent_response"):
-                            conversation_history.append({
-                                "user": conv["user_query"],
-                                "assistant": conv["agent_response"]
-                            })
-                
-                # Execute with full context optimization
-                base_result = await enhanced_llm_executor.execute_with_context_optimization(
-                    base_prompt=enhanced_query,
-                    consciousness_context=consciousness_context,
-                    knowledge_context=knowledge_context,
-                    conversation_history=conversation_history,
-                    agent_name=self.name,
-                    user_id=user_id
-                )
-                
-            except Exception as llm_error:
-                self.logger.warning(f"Enhanced LLM execution failed, using fallback: {llm_error}")
-                # Fallback to original pydantic agent
-                base_result = await self.pydantic_agent.run(enhanced_query)
+            # Execute with selected model or enhanced LLM context optimization
+            if not model or model == "default":
+                # Use enhanced LLM execution for default model
+                try:
+                    from backend.utils.enhanced_llm_execution import enhanced_llm_executor
+                    
+                    # Get conversation history from memory context (preferred) or knowledge context
+                    conversation_history = []
+                    if memory_context and memory_context.get("conversation_history"):
+                        for conv in memory_context["conversation_history"][:5]:
+                            if conv.get("user_query") and conv.get("agent_response"):
+                                conversation_history.append({
+                                    "user": conv["user_query"],
+                                    "assistant": conv["agent_response"]
+                                })
+                    else:
+                        # Fallback to knowledge context
+                        for conv in knowledge_context.get("conversation_context", [])[:5]:
+                            if conv.get("user_query") and conv.get("agent_response"):
+                                conversation_history.append({
+                                    "user": conv["user_query"],
+                                    "assistant": conv["agent_response"]
+                                })
+                    
+                    # Execute with full context optimization
+                    base_result = await enhanced_llm_executor.execute_with_context_optimization(
+                        base_prompt=enhanced_query,
+                        consciousness_context=consciousness_context,
+                        knowledge_context=knowledge_context,
+                        conversation_history=conversation_history,
+                        agent_name=self.name,
+                        user_id=user_id
+                    )
+                except Exception as llm_error:
+                    self.logger.warning(f"Enhanced LLM execution failed, using fallback: {llm_error}")
+                    # Fallback to pydantic agent with selected model
+                    if model and model != "default":
+                        # Create a dynamic agent with the selected model
+                        dynamic_llm = create_llm_for_model(model)
+                        dynamic_agent = Agent[None, str](
+                            dynamic_llm,
+                            system_prompt=SIMPLE_CHAT_PROMPT
+                        )
+                        base_result = await dynamic_agent.run(enhanced_query)
+                    else:
+                        # Use default agent
+                        base_result = await self.pydantic_agent.run(enhanced_query)
+            else:
+                # Use selected model directly
+                try:
+                    dynamic_llm = create_llm_for_model(model)
+                    dynamic_agent = Agent[None, str](
+                        dynamic_llm,
+                        system_prompt=SIMPLE_CHAT_PROMPT
+                    )
+                    base_result = await dynamic_agent.run(enhanced_query)
+                except Exception as model_error:
+                    self.logger.warning(f"Selected model {model} failed, using default: {model_error}")
+                    base_result = await self.pydantic_agent.run(enhanced_query)
             
             # The memory integration is now handled in the enhanced query and context
             memory_enhanced_result = base_result

@@ -6,6 +6,7 @@ import { ConsciousnessDashboard } from '@/components/ConsciousnessDashboard';
 import { AgentActivityIndicator } from '@/components/AgentActivityIndicator';
 import { ConsciousnessInsights } from '@/components/ConsciousnessInsights';
 import { SystemStatus } from '@/components/SystemStatus';
+import { ModelSelector } from '@/components/ModelSelector';
 import { MemoryConstellation } from '@/components/MemoryConstellation';
 import { DataTendrils } from '@/components/ui/data-tendrils';
 import { LoadingScreen } from '@/components/LoadingScreen';
@@ -127,6 +128,7 @@ function Index() {
   const [livekitStarted, setLivekitStarted] = useState(false);
   const [livekitStatus, setLivekitStatus] = useState<'disconnected' | 'connecting' | 'connected' | 'reconnecting'>('disconnected');
   const [mainzaSpeaking, setMainzaSpeaking] = useState(false);
+  const [selectedModel, setSelectedModel] = useState<string>('default');
 
   // Refs
   const orbRef = useRef<HTMLDivElement>(null);
@@ -285,11 +287,11 @@ function Index() {
     setLoading(true);
 
     try {
-      // Use the router chat endpoint with consciousness context
+      // Use the router chat endpoint with consciousness context and selected model
       const chatRes = await fetch('/agent/router/chat', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ query: message, user_id: 'mainza-user' })
+        body: JSON.stringify({ query: message, user_id: 'mainza-user', model: selectedModel })
       });
       const chatData = await chatRes.json();
 
@@ -563,9 +565,11 @@ function Index() {
             </DarkButton>
 
             <DarkButton
-              onClick={() => setUIState(prev => ({ ...prev, showSettings: !prev.showSettings }))}
-              variant="outline"
+              disabled
+              variant="ghost"
               size="sm"
+              className="opacity-30 cursor-not-allowed hover:bg-transparent"
+              title="Settings functionality disabled - Model selection now in main dashboard"
             >
               <Settings className="w-4 h-4" />
             </DarkButton>
@@ -641,6 +645,11 @@ function Index() {
               </GlassCard>
 
               <SystemStatus compact={true} />
+
+              <ModelSelector
+                onModelChange={setSelectedModel}
+                selectedModel={selectedModel}
+              />
             </motion.div>
 
             {/* Center Panel - Conversation Interface (Transparent over Orb) */}
@@ -838,7 +847,7 @@ function Index() {
               transition={{ duration: 0.6, delay: 0.3 }}
             >
               {/* Consciousness Insights */}
-              <ConsciousnessInsights maxInsights={2} />
+              <ConsciousnessInsights maxInsights={5} />
 
               {/* Knowledge Graph Status */}
               <GlassCard className="p-3">

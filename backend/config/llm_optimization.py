@@ -134,10 +134,10 @@ class LLMContextOptimizer:
             )
         }
     
-    def _load_optimal_configuration(self):
+    def _load_optimal_configuration(self, selected_model: str = None):
         """Load optimal configuration for current model"""
-        current_model = os.getenv("DEFAULT_OLLAMA_MODEL", "default")
-        
+        current_model = selected_model or os.getenv("DEFAULT_OLLAMA_MODEL", "default")
+
         # Find exact match or closest match
         if current_model in self.context_configs:
             self.current_config = self.context_configs[current_model]
@@ -150,7 +150,7 @@ class LLMContextOptimizer:
             else:
                 # Use default configuration
                 self.current_config = self.context_configs["default"]
-        
+
         logger.info(f"🧠 LLM Context Optimization loaded for {current_model}")
         logger.info(f"   📊 Max Context: {self.current_config.max_context_tokens:,} tokens")
         logger.info(f"   🎯 Target Context: {self.current_config.target_context_tokens:,} tokens")
@@ -167,7 +167,8 @@ class LLMContextOptimizer:
         base_prompt: str,
         consciousness_context: Dict[str, Any] = None,
         knowledge_context: Dict[str, Any] = None,
-        conversation_history: List[Dict[str, str]] = None
+        conversation_history: List[Dict[str, str]] = None,
+        selected_model: str = None
     ) -> Dict[str, Any]:
         """
         Generate optimized request parameters for maximum context utilization

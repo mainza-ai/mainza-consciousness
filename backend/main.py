@@ -1597,6 +1597,88 @@ def create_test_need():
     except Exception as e:
         return JSONResponse(status_code=500, content={"error": str(e), "traceback": traceback.format_exc()})
 
+@app.get("/ollama/models")
+async def get_ollama_models():
+    """Fetch available Ollama models from the local Ollama server"""
+    try:
+        ollama_base_url = os.getenv("OLLAMA_BASE_URL", "http://host.docker.internal:11434")
+        target_url = f"{ollama_base_url}/api/tags"
+
+        logging.info(f"Attempting to fetch Ollama models from: {target_url}")
+
+        # Test general connectivity first
+        try:
+            version_url = f"{ollama_base_url}/api/version"
+            version_response = requests.get(version_url, timeout=5)
+            logging.info(f"Ollama version check: {version_response.status_code}")
+        except Exception as e:
+            logging.warning(f"Ollama version check failed: {e}")
+
+        # Now try to get models
+        response = requests.get(target_url, timeout=10)
+        logging.info(f"Ollama /api/tags response status: {response.status_code}")
+
+        # Debug: Log response headers
+        logging.debug(f"Ollama response headers: {dict(response.headers) if hasattr(response, 'headers') else 'No headers'}")
+
+        if response.status_code == 200:
+            # Check content type to ensure we got JSON
+            content_type = response.headers.get('Content-Type', '')
+            logging.debug(f"Ollama response content type: {content_type}")
+
+            if 'json' in content_type.lower():
+                data = response.json()
+                models = []
+                for model in data.get("models", []):
+                    models.append({
+                        "name": model.get("name", ""),
+                        "size": model.get("size", 0),
+                        "modified_at": model.get("modified_at", ""),
+                        "digest": model.get("digest", "")
+                    })
+                logging.info(f"Successfully fetched {len(models)} models from Ollama")
+                return {"models": models, "count": len(models)}
+            else:
+                # Got HTML instead of JSON
+                logging.error(f"Got HTML instead of JSON from Ollama. Content-Type: {content_type}")
+                return JSONResponse(status_code=502, content={
+                    "error": "Ollama returned HTML instead of JSON",
+                    "details": "This usually means Ollama is running but the API endpoint is not accessible",
+                    "content_type": content_type,
+                    "models": [], "count": 0
+                })
+        else:
+            # Ollama returned an error status
+            error_text = response.text[:200]  # Truncate long responses
+            logging.error(f"Ollama returned status {response.status_code}: {error_text}")
+            return JSONResponse(status_code=502, content={
+                "error": f"Ollama returned status {response.status_code}",
+                "details": error_text,
+                "models": [], "count": 0
+            })
+
+    except requests.exceptions.ConnectionError as e:
+        logging.error(f"Connection error fetching Ollama models: {e}")
+        return JSONResponse(status_code=503, content={
+            "error": "Cannot connect to Ollama server",
+            "details": str(e),
+            "models": [], "count": 0
+        })
+    except requests.exceptions.Timeout as e:
+        logging.error(f"Timeout fetching Ollama models: {e}")
+        return JSONResponse(status_code=504, content={
+            "error": "Timeout connecting to Ollama",
+            "details": str(e),
+            "models": [], "count": 0
+        })
+    except Exception as e:
+        logging.error(f"Unexpected error fetching Ollama models: {e}")
+        return JSONResponse(status_code=500, content={
+            "error": "Unexpected error when fetching models",
+            "details": str(e),
+            "models": [], "count": 0
+        })
+
 app.include_router(agentic_router)
 app.include_router(insights_router, prefix="/api/insights")
 app.include_router(memory_system_router)

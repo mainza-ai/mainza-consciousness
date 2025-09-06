@@ -103,7 +103,7 @@ class EnhancedLLMExecutor:
             ollama_request = {
                 "model": request_params["model"],
                 "prompt": request_params["prompt"],
-                "stream": request_params.get("stream", False),
+                "stream": False,  # Disable streaming to avoid JSON parsing issues
                 "options": request_params.get("options", {})
             }
             

@@ -1,5 +1,7 @@
 from typing import Union, Dict, Any
 from pydantic_ai import Agent
+from pydantic_ai.models.openai import OpenAIModel
+from pydantic_ai.providers.openai import OpenAIProvider
 from backend.models.graphmaster_models import (
     GraphQueryOutput,
     SummarizeRecentConversationsOutput,
@@ -23,9 +25,22 @@ from backend.tools.graphmaster_tools import (
     summarize_recent_conversations,
     create_memory,
 )
-from backend.agentic_config import local_llm
+from backend.agentic_config import local_llm, OLLAMA_BASE_URL
 from backend.agents.base_conscious_agent import ConsciousAgent
+import os
 import logging
+
+def create_llm_for_model(model_name: str = None):
+    """Create an LLM instance for the specified model"""
+    if not model_name or model_name == "default":
+        return local_llm
+    
+    # Create a new OpenAIModel pointing to Ollama with the selected model
+    ollama_base_url = os.getenv("OLLAMA_BASE_URL", "http://host.docker.internal:11434")
+    return OpenAIModel(
+        model_name=model_name,
+        provider=OpenAIProvider(base_url=f"{ollama_base_url}/v1")
+    )
 
 GRAPHMASTER_PROMPT = """You are Mainza, the GraphMaster agent. Your sole purpose is to interact with the user's knowledge graph. You translate natural language queries into Cypher, execute them using your tools, and return structured JSON results.
 
@@ -92,6 +107,7 @@ class EnhancedGraphMasterAgent(ConsciousAgent):
         consciousness_context: Dict[str, Any],
         knowledge_context: Dict[str, Any] = None,
         memory_context: Dict[str, Any] = None,
+        model: str = None,
         **kwargs
     ):
         """Execute GraphMaster with enhanced knowledge, memory, and consciousness context"""
@@ -112,8 +128,19 @@ class EnhancedGraphMasterAgent(ConsciousAgent):
                 query, consciousness_context, knowledge_context, memory_context, past_activities
             )
             
-            # Execute original pydantic agent with enhanced context
-            result = await self.pydantic_agent.run(enhanced_query, user_id=user_id, **kwargs)
+            # Execute with selected model or default agent
+            if model and model != "default":
+                # Create a dynamic agent with the selected model
+                dynamic_llm = create_llm_for_model(model)
+                dynamic_agent = Agent[None, GraphQueryOutput](
+                    dynamic_llm,
+                    system_prompt=GRAPHMASTER_PROMPT,
+                    tools=tools
+                )
+                result = await dynamic_agent.run(enhanced_query, user_id=user_id, **kwargs)
+            else:
+                # Use default agent
+                result = await self.pydantic_agent.run(enhanced_query, user_id=user_id, **kwargs)
             
             # Memory integration is now handled in the enhanced query and context
             # No additional memory enhancement needed for structured results
@@ -127,8 +154,21 @@ class EnhancedGraphMasterAgent(ConsciousAgent):
             
         except Exception as e:
             self.logger.error(f"Enhanced GraphMaster execution failed: {e}")
-            # Fallback to original execution
-            result = await self.pydantic_agent.run(query, user_id=user_id, **kwargs)
+            # Fallback to original execution with selected model
+            if model and model != "default":
+                try:
+                    dynamic_llm = create_llm_for_model(model)
+                    dynamic_agent = Agent[None, GraphQueryOutput](
+                        dynamic_llm,
+                        system_prompt=GRAPHMASTER_PROMPT,
+                        tools=tools
+                    )
+                    result = await dynamic_agent.run(query, user_id=user_id, **kwargs)
+                except Exception as model_error:
+                    self.logger.warning(f"Selected model {model} failed, using default: {model_error}")
+                    result = await self.pydantic_agent.run(query, user_id=user_id, **kwargs)
+            else:
+                result = await self.pydantic_agent.run(query, user_id=user_id, **kwargs)
             return self.process_result_with_consciousness(result, consciousness_context)
     
     def enhance_query_with_full_context(
