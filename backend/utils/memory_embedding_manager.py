@@ -88,6 +88,13 @@ class MemoryEmbeddingManager:
     ) -> List[Dict[str, Any]]:
         """Perform vector similarity search using Neo4j vector index"""
         try:
+            # Check if vector index exists before attempting search
+            if not await self._check_vector_index_exists():
+                logger.warning("Vector index not found, falling back to text search")
+                return await self._fallback_text_search(
+                    await self.embedding.decode_embedding(query_embedding), user_id, memory_types, limit
+                )
+
             # Continue with vector search
 
             # Build the Cypher query with optional memory type filtering
@@ -589,6 +596,16 @@ class MemoryEmbeddingManager:
         except Exception as e:
             logger.error(f"❌ Failed to get embedding statistics: {e}")
             return {"error": str(e)}
+
+    async def _check_vector_index_exists(self) -> bool:
+        """Check if the vector index exists in Neo4j"""
+        try:
+            query = "SHOW INDEXES YIELD name WHERE name = 'memory_embedding_index' RETURN count(name) > 0 AS exists"
+            result = self.neo4j.execute_query(query, {})
+            return result and result[0]["exists"]
+        except Exception as e:
+            logger.error(f"❌ Failed to check vector index existence: {e}")
+            return False
 
 # Global instance
 memory_embedding_manager = MemoryEmbeddingManager()
