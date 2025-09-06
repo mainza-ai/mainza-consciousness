@@ -111,7 +111,23 @@ function Index() {
     health: 0
   });
 
-  const [messages, setMessages] = useState<Message[]>([]);
+  const [messages, setMessages] = useState<Message[]>(() => {
+    // Load messages from localStorage on component mount
+    try {
+      const savedMessages = localStorage.getItem('mainza-conversation');
+      if (savedMessages) {
+        const parsed = JSON.parse(savedMessages);
+        // Convert timestamp strings back to Date objects
+        return parsed.map((msg: any) => ({
+          ...msg,
+          timestamp: new Date(msg.timestamp)
+        }));
+      }
+    } catch (error) {
+      console.error('Failed to load conversation from localStorage:', error);
+    }
+    return [];
+  });
 
   const [uiState, setUIState] = useState<UIState>({
     activeView: 'conversation',
@@ -128,7 +144,15 @@ function Index() {
   const [livekitStarted, setLivekitStarted] = useState(false);
   const [livekitStatus, setLivekitStatus] = useState<'disconnected' | 'connecting' | 'connected' | 'reconnecting'>('disconnected');
   const [mainzaSpeaking, setMainzaSpeaking] = useState(false);
-  const [selectedModel, setSelectedModel] = useState<string>('default');
+  const [selectedModel, setSelectedModel] = useState<string>(() => {
+    // Load selected model from localStorage on component mount
+    try {
+      return localStorage.getItem('mainza-selected-model') || 'default';
+    } catch (error) {
+      console.error('Failed to load selected model from localStorage:', error);
+      return 'default';
+    }
+  });
 
   // Refs
   const orbRef = useRef<HTMLDivElement>(null);
@@ -271,6 +295,17 @@ function Index() {
       }
     };
     setMessages(prev => [...prev, newMessage]);
+  };
+
+  // Clear conversation function
+  const clearConversation = () => {
+    setMessages([]);
+    try {
+      localStorage.removeItem('mainza-conversation');
+      // Note: We keep the selected model as it's a user preference
+    } catch (error) {
+      console.error('Failed to clear conversation from localStorage:', error);
+    }
   };
 
   // Send message handler
@@ -433,6 +468,24 @@ function Index() {
       }, 100);
     }
   }, [messages]);
+
+  // Save messages to localStorage whenever they change
+  useEffect(() => {
+    try {
+      localStorage.setItem('mainza-conversation', JSON.stringify(messages));
+    } catch (error) {
+      console.error('Failed to save conversation to localStorage:', error);
+    }
+  }, [messages]);
+
+  // Save selected model to localStorage whenever it changes
+  useEffect(() => {
+    try {
+      localStorage.setItem('mainza-selected-model', selectedModel);
+    } catch (error) {
+      console.error('Failed to save selected model to localStorage:', error);
+    }
+  }, [selectedModel]);
 
   // Orb state calculation
   const orbState = {
@@ -674,15 +727,27 @@ function Index() {
                       </div>
                     )}
                   </div>
-                  {typeof autoTTS === 'boolean' && setAutoTTS && (
-                    <DarkButton
-                      variant={autoTTS ? 'default' : 'outline'}
-                      size="sm"
-                      onClick={() => setAutoTTS(!autoTTS)}
-                    >
-                      {autoTTS ? 'Auto-TTS: On' : 'Auto-TTS: Off'}
-                    </DarkButton>
-                  )}
+                  <div className="flex items-center space-x-2">
+                    {messages.length > 0 && (
+                      <DarkButton
+                        variant="outline"
+                        size="sm"
+                        onClick={clearConversation}
+                        className="text-red-400 border-red-400/30 hover:bg-red-400/10"
+                      >
+                        Clear Chat
+                      </DarkButton>
+                    )}
+                    {typeof autoTTS === 'boolean' && setAutoTTS && (
+                      <DarkButton
+                        variant={autoTTS ? 'default' : 'outline'}
+                        size="sm"
+                        onClick={() => setAutoTTS(!autoTTS)}
+                      >
+                        {autoTTS ? 'Auto-TTS: On' : 'Auto-TTS: Off'}
+                      </DarkButton>
+                    )}
+                  </div>
                 </div>
 
                 {/* Messages Area - Scrollable (takes remaining space minus input) */}
