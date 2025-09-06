@@ -970,6 +970,14 @@ class MemoryRecoverySystem:
         except Exception as e:
             logger.error(f"Failed to get recovery status: {e}")
             return {"error": str(e)}
+    
+    async def cleanup(self):
+        """Public cleanup method for shutdown"""
+        try:
+            await self._cleanup_old_backups()
+            logger.info("✅ Memory recovery system cleanup completed")
+        except Exception as e:
+            logger.warning(f"Failed to cleanup memory recovery system: {e}")
 
 # Global recovery system instance
 memory_recovery_system = MemoryRecoverySystem()

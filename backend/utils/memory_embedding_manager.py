@@ -198,6 +198,16 @@ class MemoryEmbeddingManager:
             LIMIT $limit
             """
             
+            # Define params for the query
+            params = {
+                "user_id": user_id,
+                "query": query_text,
+                "limit": limit
+            }
+            
+            if memory_types:
+                params["memory_types"] = memory_types
+            
             result = self.neo4j.execute_query(simple_query, params)
             logger.debug(f"✅ Simple text search found {len(result)} memories")
             return [dict(record) for record in result]
