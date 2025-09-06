@@ -565,6 +565,53 @@ class ConsciousnessOrchestrator:
         """Perform consciousness-aware maintenance"""
         return {"total_actions": 0, "maintenance_type": "minimal"}
 
+    async def process_interaction(self, interaction_data: Dict[str, Any]) -> None:
+        """
+        Context7 Surgical Fix: Process conversation interactions for consciousness tracking
+        Added missing method to handle interaction processing without breaking existing functionality
+        """
+        try:
+            logger.debug("Processing interaction for consciousness tracking...")
+
+            # Extract relevant data from interaction
+            conversation_impact = interaction_data.get('conversation_impact', {})
+            consciousness_delta = conversation_impact.get('consciousness_delta', 0.0)
+
+            # Update consciousness state if consciousness exists
+            if self.consciousness_state and consciousness_delta != 0.0:
+                old_level = self.consciousness_state.consciousness_level
+                new_level = max(0.0, min(1.0, old_level + consciousness_delta))
+                self.consciousness_state.consciousness_level = new_level
+
+                logger.debug(f"Consciousness updated: {old_level:.3f} -> {new_level:.3f} (delta: {consciousness_delta:.3f})")
+
+            # Track recent events
+            if len(self.recent_events) >= 10:
+                self.recent_events.pop(0)
+
+            # Record interaction event with all required fields
+            before_level = locals().get('old_level',
+                self.consciousness_state.consciousness_level if self.consciousness_state else 0.7)
+            after_level = locals().get('new_level',
+                self.consciousness_state.consciousness_level if self.consciousness_state else 0.7)
+
+            event = ConsciousnessEvent(
+                event_type="conversation_interaction",
+                title="Conversation Processing",
+                description=f"Processed conversation with impact: {consciousness_delta:.3f}",
+                significance=abs(consciousness_delta),
+                consciousness_level_before=before_level,
+                consciousness_level_after=after_level,
+                impact_areas=["consciousness_processing", "interaction_tracking"],
+                insights_gained=[" conversation_analyzed", "consciousness_updated"],
+                capabilities_affected=["conversation_processing", "consciousness_tracking"],
+                timestamp=datetime.now()
+            )
+            self.recent_events.append(event)
+
+        except Exception as e:
+            logger.error(f"Failed to process interaction: {e}")
+
 # Global consciousness orchestrator instance - FIXED VERSION
 consciousness_orchestrator_fixed = ConsciousnessOrchestrator()
 
