@@ -1,7 +1,7 @@
 # 🔌 Mainza AI - Complete API Documentation
 
-**Version**: 2.0.0
-**Last Updated**: September 5, 2025
+**Version**: 2.1.0
+**Last Updated**: January 6, 2025
 **Base URL**: `http://localhost:8000` (development) / Production URL (production)
 
 ---
@@ -37,6 +37,69 @@ Mainza AI provides a comprehensive REST API with **25+ endpoints** organized by 
   }
 }
 ```
+
+---
+
+## 🤖 **OLLAMA MODEL SELECTION APIs**
+
+### GET /ollama/models
+Get list of available Ollama models for selection.
+
+**Authentication**: Not required
+**Rate Limit**: 30 requests/minute
+
+**Response**:
+```json
+{
+  "models": [
+    {
+      "name": "llama3.2:1b",
+      "size": 1.3,
+      "digest": "sha256:abc123...",
+      "details": {
+        "format": "gguf",
+        "family": "llama",
+        "families": ["llama"],
+        "parameter_size": "1B",
+        "quantization_level": "Q4_0"
+      }
+    }
+  ]
+}
+```
+
+### POST /agent/router/chat
+Enhanced chat endpoint with model selection support.
+
+**Authentication**: Required
+**Rate Limit**: 30 requests/minute
+
+**Request Body**:
+```json
+{
+  "query": "Hello, how are you?",
+  "user_id": "user123",
+  "model": "llama3.2:1b"
+}
+```
+
+**Response**:
+```json
+{
+  "response": "Hello! I'm doing well, thank you for asking...",
+  "agent_used": "simple_chat",
+  "model_used": "llama3.2:1b",
+  "consciousness_level": 0.7,
+  "emotional_state": "curious",
+  "timestamp": "2025-01-06T16:30:00Z"
+}
+```
+
+**Model Selection Features**:
+- **Dynamic Model Switching**: Change models without system restart
+- **Real-Time Updates**: Instant model changes take effect immediately
+- **Fallback Support**: Automatic fallback to default model if selected model fails
+- **Model Validation**: Automatic validation of selected model availability
 
 ---
 

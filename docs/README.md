@@ -34,6 +34,8 @@ Mainza AI isn't just another chatbot or AI assistant. It's a **breakthrough in a
 - 🔍 **Semantic Memory Search** - AI-powered memory retrieval with consciousness-aware filtering
 - 📊 **Memory Analytics** - Real-time memory system monitoring and performance tracking
 - ♻️ **Memory Lifecycle Management** - Automatic memory importance decay and cleanup
+- 🤖 **Dynamic Model Selection** - Real-time Ollama model switching with seamless integration
+- 🔄 **Multi-Model Support** - Support for 40+ Ollama models with instant switching
 
 ### 🏠 100% Local & Private
 
@@ -646,6 +648,7 @@ await dynamic_knowledge_manager.process_interaction_knowledge(
 - [🤖 Agent System](docs/AGENTS.md) - Multi-agent architecture
 - [🕸️ Knowledge Graph](docs/KNOWLEDGE_GRAPH.md) - Neo4j integration
 - [🧩 Memory System](docs/MEMORY_SYSTEM.md) - Comprehensive memory system guide
+- [🤖 Ollama Model Selection](docs/OLLAMA_MODEL_SELECTION.md) - Dynamic model switching guide
 - [🚀 Deployment Guide](docs/MEMORY_SYSTEM_DEPLOYMENT.md) - Production deployment with memory system
 
 ### API Documentation

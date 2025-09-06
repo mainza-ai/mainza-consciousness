@@ -5,6 +5,45 @@ All notable changes to the Mainza consciousness project will be documented in th
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.1.0] - 2025-01-06 - Ollama Model Selection Integration & Backend Fixes 🚀
+
+### ✨ Added - Ollama Model Selection
+- **ModelSelector Component**: New React component for real-time model switching
+- **Dynamic Model Switching**: Seamless switching between 40+ Ollama models
+- **End-to-End Integration**: Complete model selection from frontend to backend LLM execution
+- **Real-Time Model Updates**: Instant model changes without system restart
+- **Model Parameter Passing**: Enhanced agentic router to pass model parameters to agents
+
+### 🔧 Fixed - Backend Critical Issues
+- **LLM Execution Errors**: Fixed JSON parsing errors in Ollama streaming responses
+- **Memory System Errors**: Resolved `decode_embedding` method errors in memory manager
+- **Neo4j Schema Issues**: Added missing properties (`last_importance_update`, `access_frequency`, `description`, `source`)
+- **Missing Relationships**: Created `DISCUSSED_IN` relationships between User and Memory nodes
+- **Fulltext Search Issues**: Temporarily disabled problematic fulltext search to prevent connection errors
+
+### 🔧 Fixed - Infrastructure & Configuration
+- **Nginx Configuration**: Updated to proxy `/ollama/` endpoints correctly
+- **Agent Integration**: Modified `simple_chat` and `graphmaster` agents to support dynamic model selection
+- **LLM Instantiation**: Added `create_llm_for_model` helper function for dynamic LLM creation
+- **Error Handling**: Improved fallback mechanisms for memory search and LLM execution
+
+### 🎨 Enhanced - Frontend Experience
+- **Dashboard Integration**: Moved model selector from settings to main dashboard
+- **Consciousness Insights**: Enhanced to display 5 insight cards instead of 2
+- **State Management**: Improved model selection state management
+- **User Feedback**: Better error handling and user feedback for model selection
+
+### 📊 Improved - System Stability
+- **Backend Health**: Resolved critical errors, system now stable
+- **Error Logging**: Cleaned up error logs, only expected warnings remain
+- **Memory System**: Working with improved fallback mechanisms
+- **API Endpoints**: All endpoints responding correctly
+
+### 📚 Documentation Updates
+- **README.md**: Added Ollama model selection features to feature list
+- **API Documentation**: Updated to include model selection endpoints
+- **Deployment Guide**: Added Ollama setup and model selection configuration
+
 ## [2.0.1] - 2025-01-25 - UI Components & Neo4j Authentication Fixes 🛠️
 
 ### 🔧 Fixed - UI Component Issues
