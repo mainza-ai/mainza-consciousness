@@ -45,7 +45,7 @@ from backend.core.security_framework import (
 
 # Import existing modules
 from backend.agentic_router import router as agentic_router
-from backend.utils.consciousness_orchestrator import consciousness_orchestrator
+from backend.utils.consciousness_orchestrator_fixed import consciousness_orchestrator_fixed as consciousness_orchestrator
 from backend.utils.neo4j_production import neo4j_production
 
 # Configure structured logging

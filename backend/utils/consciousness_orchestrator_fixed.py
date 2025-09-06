@@ -612,6 +612,28 @@ class ConsciousnessOrchestrator:
         except Exception as e:
             logger.error(f"Failed to process interaction: {e}")
 
+    async def get_consciousness_state(self):
+        """
+        Get current consciousness state for agents
+
+        Returns:
+            ConsciousnessState: Current consciousness state or default if none exists
+        """
+        try:
+            # Return current state if it exists
+            if self.consciousness_state:
+                return self.consciousness_state
+
+            # Return default state if no state exists yet
+            from backend.models.consciousness_models import ConsciousnessState
+            return ConsciousnessState(consciousness_level=0.7)
+
+        except Exception as e:
+            logger.error(f"Failed to get consciousness state: {e}")
+            # Fallback to basic default state
+            from backend.models.consciousness_models import ConsciousnessState
+            return ConsciousnessState(consciousness_level=0.5)
+
 # Global consciousness orchestrator instance - FIXED VERSION
 consciousness_orchestrator_fixed = ConsciousnessOrchestrator()
 

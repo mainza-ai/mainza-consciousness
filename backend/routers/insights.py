@@ -108,7 +108,7 @@ async def get_insights_overview() -> Dict[str, Any]:
         # Try to get real consciousness data
         consciousness_state = None
         try:
-            from backend.utils.consciousness_orchestrator import consciousness_orchestrator
+            from backend.utils.consciousness_orchestrator_fixed import consciousness_orchestrator_fixed as consciousness_orchestrator
             consciousness_state = await consciousness_orchestrator.get_consciousness_state()
         except ImportError as e:
             logger.warning(f"Consciousness orchestrator not available (missing dependencies): {e}")
@@ -349,7 +349,7 @@ async def get_consciousness_evolution() -> Dict[str, Any]:
         # Try to get real consciousness state
         current_state = None
         try:
-            from backend.utils.consciousness_orchestrator import consciousness_orchestrator
+            from backend.utils.consciousness_orchestrator_fixed import consciousness_orchestrator_fixed as consciousness_orchestrator
             current_state = await consciousness_orchestrator.get_consciousness_state()
         except ImportError as e:
             logger.warning(f"Consciousness orchestrator not available (missing dependencies): {e}")
@@ -470,7 +470,7 @@ async def get_realtime_consciousness_data() -> Dict[str, Any]:
         # Get current consciousness state
         consciousness_state = None
         try:
-            from backend.utils.consciousness_orchestrator import consciousness_orchestrator
+            from backend.utils.consciousness_orchestrator_fixed import consciousness_orchestrator_fixed as consciousness_orchestrator
             consciousness_state = await consciousness_orchestrator.get_consciousness_state()
         except Exception as e:
             logger.warning(f"Could not get consciousness state: {e}")

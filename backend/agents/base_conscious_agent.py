@@ -147,8 +147,8 @@ class ConsciousAgent(ABC):
     async def get_consciousness_context(self) -> Dict[str, Any]:
         """Get current consciousness context"""
         try:
-            from backend.utils.consciousness_orchestrator import consciousness_orchestrator
-            
+            from backend.utils.consciousness_orchestrator_fixed import consciousness_orchestrator_fixed as consciousness_orchestrator
+
             # Get consciousness state
             consciousness_state = await consciousness_orchestrator.get_consciousness_state()
             
@@ -262,7 +262,7 @@ class ConsciousAgent(ABC):
     async def update_consciousness_state(self, consciousness_impact: Dict[str, Any]):
         """Update consciousness state based on agent impact"""
         try:
-            from backend.utils.consciousness_orchestrator import consciousness_orchestrator
+            from backend.utils.consciousness_orchestrator_fixed import consciousness_orchestrator_fixed as consciousness_orchestrator
             
             # Process the impact through consciousness orchestrator
             await consciousness_orchestrator.process_interaction({

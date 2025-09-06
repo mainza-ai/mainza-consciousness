@@ -561,10 +561,11 @@ async def register_core_health_checks():
     async def consciousness_health_check():
         """Consciousness system health check"""
         try:
-            from backend.utils.consciousness_orchestrator import consciousness_orchestrator
-            state = await consciousness_orchestrator.get_consciousness_state()
+            from backend.utils.consciousness_orchestrator_fixed import consciousness_orchestrator_fixed as consciousness_orchestrator
+            state = await consciousness_orchestrator.get_current_state()
             return state is not None
-        except Exception:
+        except Exception as e:
+            logger.error(f"Consciousness health check failed: {e}")
             return False
     
     def memory_health_check():

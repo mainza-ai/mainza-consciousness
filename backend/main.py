@@ -347,7 +347,7 @@ async def health():
     
     # Check consciousness system
     try:
-        from backend.utils.consciousness_orchestrator import consciousness_orchestrator
+        from backend.utils.consciousness_orchestrator_fixed import consciousness_orchestrator_fixed as consciousness_orchestrator
         if consciousness_orchestrator and hasattr(consciousness_orchestrator, 'is_running'):
             health_status["components"]["consciousness"] = "ok" if consciousness_orchestrator.is_running else "stopped"
         else:
@@ -1489,7 +1489,7 @@ async def recommendations_needs_and_suggestions(request: Request):
         
         # Get current consciousness state for context-aware needs
         try:
-            from backend.utils.consciousness_orchestrator import consciousness_orchestrator
+            from backend.utils.consciousness_orchestrator_fixed import consciousness_orchestrator_fixed as consciousness_orchestrator
             consciousness_state = await consciousness_orchestrator.get_consciousness_state()
             consciousness_level = getattr(consciousness_state, 'consciousness_level', 0.7)
             emotional_state = getattr(consciousness_state, 'emotional_state', 'curiosity')

@@ -13,7 +13,7 @@ from backend.agents.simple_chat import EnhancedSimpleChatAgent
 from backend.utils.memory_storage_engine import MemoryStorageEngine, MemoryRecord
 from backend.utils.memory_retrieval_engine import MemoryRetrievalEngine, MemorySearchResult
 from backend.utils.memory_context_builder import MemoryContextBuilder, MemoryContext
-from backend.utils.consciousness_orchestrator import ConsciousnessOrchestrator
+from backend.utils.consciousness_orchestrator_fixed import ConsciousnessOrchestrator
 
 class TestConversationContinuity:
     """Test conversation continuity across multiple sessions"""

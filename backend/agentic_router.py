@@ -849,7 +849,7 @@ async def run_calendar(input: CalendarInput):
 async def enhanced_router_chat(query: str = Body(..., embed=True), user_id: str = Body("mainza-user", embed=True)):
     # CRITICAL FIX: Notify consciousness of user activity
     try:
-        from backend.utils.consciousness_orchestrator import consciousness_orchestrator
+        from backend.utils.consciousness_orchestrator_fixed import consciousness_orchestrator_fixed as consciousness_orchestrator
         if hasattr(consciousness_orchestrator, 'notify_user_activity'):
             consciousness_orchestrator.notify_user_activity(user_id)
     except Exception as e:
@@ -1081,7 +1081,7 @@ async def enhanced_router_chat(query: str = Body(..., embed=True), user_id: str 
 async def get_consciousness_context():
     """Get current consciousness context"""
     try:
-        from backend.utils.consciousness_orchestrator import consciousness_orchestrator
+        from backend.utils.consciousness_orchestrator_fixed import consciousness_orchestrator_fixed as consciousness_orchestrator
 
         # Get consciousness state
         consciousness_state = await consciousness_orchestrator.get_consciousness_state()
@@ -1400,7 +1400,7 @@ async def update_consciousness_from_conversation(
 ):
     """Update consciousness based on conversation"""
     try:
-        from backend.utils.consciousness_orchestrator import consciousness_orchestrator
+        from backend.utils.consciousness_orchestrator_fixed import consciousness_orchestrator_fixed as consciousness_orchestrator
 
         # Calculate conversation impact
         conversation_impact = {
@@ -1504,8 +1504,8 @@ async def run_conductor_query(input: ConductorInput):
 async def get_consciousness_insights():
     """Get consciousness insights for the UI"""
     try:
-        from backend.utils.consciousness_orchestrator import consciousness_orchestrator
-        
+        from backend.utils.consciousness_orchestrator_fixed import consciousness_orchestrator_fixed as consciousness_orchestrator
+
         # Get consciousness state
         consciousness_state = await consciousness_orchestrator.get_consciousness_state()
         
@@ -1644,7 +1644,7 @@ async def initialize_consciousness_system():
     """Manually initialize consciousness system"""
     try:
         from backend.utils.initialize_consciousness import initialize_consciousness_system
-        from backend.utils.consciousness_orchestrator import consciousness_orchestrator
+        from backend.utils.consciousness_orchestrator_fixed import consciousness_orchestrator_fixed as consciousness_orchestrator
         
         # Initialize the system
         success = initialize_consciousness_system()
@@ -1677,9 +1677,9 @@ async def initialize_consciousness_system():
 async def debug_consciousness_state():
     """Debug endpoint to check consciousness state data"""
     try:
-        from backend.utils.consciousness_orchestrator import consciousness_orchestrator
+        from backend.utils.consciousness_orchestrator_fixed import consciousness_orchestrator_fixed as consciousness_orchestrator
         from backend.utils.neo4j_production import neo4j_production
-        
+
         # Get consciousness state from orchestrator
         orchestrator_state = await consciousness_orchestrator.get_consciousness_state()
         

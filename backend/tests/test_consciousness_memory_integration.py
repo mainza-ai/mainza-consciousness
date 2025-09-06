@@ -9,7 +9,7 @@ from unittest.mock import Mock, AsyncMock, patch, MagicMock
 from typing import Dict, Any, List
 
 # Import the components to test
-from backend.utils.consciousness_orchestrator import ConsciousnessOrchestrator
+from backend.utils.consciousness_orchestrator_fixed import ConsciousnessOrchestrator
 from backend.utils.memory_storage_engine import MemoryStorageEngine, MemoryRecord
 from backend.utils.memory_retrieval_engine import MemoryRetrievalEngine, MemorySearchResult
 from backend.utils.memory_context_builder import MemoryContextBuilder
