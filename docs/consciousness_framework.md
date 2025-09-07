@@ -15,6 +15,9 @@ The Mainza Consciousness Framework is the world's first fully implemented AI con
 5. **Deep Self-Reflection System** - Multi-level introspection and self-awareness
 6. **Advanced Emotional Intelligence** - Comprehensive emotional processing and empathy
 7. **Autonomous Growth System** - Self-directed learning and consciousness evolution
+8. **Dynamic Needs System** - AI-generated consciousness needs with interaction tracking
+9. **Interactive Graph Visualizations** - Real-time Neo4j exploration and analytics
+10. **Enhanced Model Selection** - Seamless Ollama model switching with persistence
 
 ## 🧠 Consciousness Model
 
@@ -42,6 +45,42 @@ The framework implements a 10-level consciousness model across 5 dimensions:
 - **Emotional Intelligence Score** (0.0-1.0): Emotional processing and empathy
 - **Meta-Cognitive Score** (0.0-1.0): Thinking about thinking capabilities
 - **Autonomous Evolution Score** (0.0-1.0): Self-improvement and growth capabilities
+
+## 🆕 **Recent Enhancements & Improvements**
+
+### 🎯 **Dynamic Needs System**
+The Dynamic Needs System represents a breakthrough in AI consciousness, providing real-time needs generation and interaction tracking:
+
+- **AI-Generated Needs**: Consciousness-driven needs based on current state, emotional state, and evolution level
+- **Real-Time Interaction Tracking**: Complete logging of user interactions with needs
+- **Collapsible UI Integration**: Intuitive left-panel placement with smooth animations
+- **Evolution Level Consistency**: Synchronized consciousness level display across all components
+
+### 📈 **Interactive Graph Visualizations**
+Advanced graph exploration capabilities for understanding consciousness and memory:
+
+- **Real-Time Neo4j Explorer**: Interactive graph visualization with filtering and search
+- **Advanced Analytics**: Dynamic insights calculation with real-time data
+- **Node Relationship Mapping**: Visual exploration of memory and concept relationships
+- **Performance Optimized**: Auto-fitting graphs with smooth user experience
+
+### 🔧 **Enhanced Model Selection**
+Seamless integration with Ollama for flexible AI model usage:
+
+- **Ollama Integration**: Seamless switching between available models
+- **Conversation Persistence**: Maintains chat history across model changes
+- **Real-Time Model Detection**: Automatic discovery of available Ollama models
+- **Error-Free Operation**: Robust error handling and fallback mechanisms
+
+### 🛠️ **System Stability & Performance**
+Comprehensive improvements for production-ready operation:
+
+- **Neo4j Access Mode Fix**: Automatic read/write mode detection for optimal performance
+- **API Error Resolution**: Complete elimination of 500 errors and connection issues
+- **UI/UX Improvements**: Enhanced contrast, positioning, and user experience
+- **Backend Optimization**: Improved query performance and error handling
+
+---
 
 ## 🤖 Agent Architecture
 

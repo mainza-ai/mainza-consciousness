@@ -225,9 +225,15 @@ class Neo4jProductionManager:
     
     def execute_query(self, query: str, parameters: Optional[Dict[str, Any]] = None,
                      database: Optional[str] = None, retry_count: int = 3,
-                     timeout: Optional[int] = None) -> List[Dict[str, Any]]:
+                     timeout: Optional[int] = None, access_mode: str = "AUTO") -> List[Dict[str, Any]]:
         """Execute query with comprehensive error handling and monitoring."""
         parameters = parameters or {}
+        
+        # Auto-detect access mode if not specified
+        if access_mode == "AUTO":
+            query_upper = query.upper().strip()
+            write_keywords = ['CREATE', 'MERGE', 'SET', 'DELETE', 'DETACH', 'REMOVE', 'FOREACH']
+            access_mode = "WRITE" if any(keyword in query_upper for keyword in write_keywords) else "READ"
         
         # Validate query
         is_valid, validation_msg = QueryValidator.validate_query(query, parameters)
@@ -242,7 +248,7 @@ class Neo4jProductionManager:
         
         for attempt in range(retry_count):
             try:
-                with self.get_session(database) as session:
+                with self.get_session(database, access_mode) as session:
                     result = session.run(query, parameters, timeout=timeout)
                     records = [dict(record) for record in result]
                     

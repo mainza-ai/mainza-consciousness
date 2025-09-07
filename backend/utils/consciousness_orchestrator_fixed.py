@@ -147,6 +147,12 @@ class ConsciousnessOrchestrator:
         """
         cycle_start_time = datetime.now()
         
+        # Get previous consciousness level first
+        previous_consciousness_level = (
+            self.consciousness_state.consciousness_level 
+            if self.consciousness_state else 0.5
+        )
+        
         # CRITICAL FIX: Check if we should pause for user activity
         if self.should_pause_for_user_activity():
             logger.debug("🚫 CONSCIOUSNESS CYCLE PAUSED - User activity detected")
@@ -178,11 +184,6 @@ class ConsciousnessOrchestrator:
                     reflection_performed=False,
                     status="skipped_too_frequent"
                 )
-        
-        previous_consciousness_level = (
-            self.consciousness_state.consciousness_level 
-            if self.consciousness_state else 0.5
-        )
         
         try:
             logger.debug("Starting FIXED consciousness cycle...")

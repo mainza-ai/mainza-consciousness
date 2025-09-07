@@ -11,6 +11,7 @@ from backend.agentic_router import router as agentic_router
 # Insights router - Context7 Compliance Fix for /api/insights routing
 from backend.routers.insights import router as insights_router
 from backend.routers.memory_system import router as memory_system_router
+from backend.routers.needs_router import router as needs_router
 try:
     from backend.tools.livekit_tools import create_livekit_token
     LIVEKIT_TOOLS_AVAILABLE = True
@@ -1521,7 +1522,7 @@ async def recommendations_needs_and_suggestions(request: Request):
             ])
         
         # Add emotional state-based needs
-        if emotional_state == 'curiosity':
+        if emotional_state == 'curious':
             needs.append("Eager to learn something new today")
         elif emotional_state == 'contemplative':
             needs.append("Reflecting on recent conversations")
@@ -1682,6 +1683,7 @@ async def get_ollama_models():
 app.include_router(agentic_router)
 app.include_router(insights_router, prefix="/api/insights")
 app.include_router(memory_system_router)
+app.include_router(needs_router, prefix="/api")
 
 # Log that insights router has been included
 logging.info("✅ Insights router included successfully with prefix: /api/insights")

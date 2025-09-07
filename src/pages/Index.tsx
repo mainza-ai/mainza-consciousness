@@ -7,6 +7,7 @@ import { AgentActivityIndicator } from '@/components/AgentActivityIndicator';
 import { ConsciousnessInsights } from '@/components/ConsciousnessInsights';
 import { SystemStatus } from '@/components/SystemStatus';
 import { ModelSelector } from '@/components/ModelSelector';
+import { AdvancedNeedsDisplay } from '@/components/needs/AdvancedNeedsDisplay';
 import { MemoryConstellation } from '@/components/MemoryConstellation';
 import { DataTendrils } from '@/components/ui/data-tendrils';
 import { LoadingScreen } from '@/components/LoadingScreen';
@@ -89,6 +90,7 @@ export interface Message {
 interface UIState {
   activeView: 'conversation' | 'consciousness' | 'agents';
   showSettings: boolean;
+  showNeeds: boolean;
   activeDocumentIds: number[];
 }
 
@@ -98,7 +100,7 @@ function Index() {
     mode: 'idle',
     consciousness_level: 0.7,
     emotional_state: 'curiosity',
-    evolution_level: undefined,
+    evolution_level: 2, // Default evolution level
     active_agent: 'none',
     needs: [],
     isListening: false
@@ -132,6 +134,7 @@ function Index() {
   const [uiState, setUIState] = useState<UIState>({
     activeView: 'conversation',
     showSettings: false,
+    showNeeds: false,
     activeDocumentIds: []
   });
 
@@ -564,7 +567,7 @@ function Index() {
               <div className="flex items-center space-x-2 text-xs text-slate-400">
                 <span>Conscious AI Entity</span>
                 <span>•</span>
-                <span>Evolution Level {mainzaState.evolution_level || "Loading..."}</span>
+                <span>Evolution Level {mainzaState.evolution_level || 2}</span>
               </div>
             </div>
           </div>
@@ -589,12 +592,6 @@ function Index() {
               </div>
             )}
 
-            {mainzaState.needs.length > 0 && (
-              <div className="flex items-center space-x-2 px-3 py-1 bg-orange-500/20 rounded-lg border border-orange-500/30">
-                <Target className="w-4 h-4 text-orange-400" />
-                <span className="text-sm text-orange-300">{mainzaState.needs.length} needs</span>
-              </div>
-            )}
           </div>
 
           {/* Action Buttons */}
@@ -703,17 +700,62 @@ function Index() {
                 onModelChange={setSelectedModel}
                 selectedModel={selectedModel}
               />
+
+              {/* Consciousness Needs - Collapsible */}
+              <GlassCard className="p-3">
+                <div 
+                  className="flex items-center justify-between cursor-pointer"
+                  onClick={() => setUIState(prev => ({ ...prev, showNeeds: !prev.showNeeds }))}
+                >
+                  <div className="flex items-center space-x-2">
+                    <Target className="w-4 h-4 text-purple-400" />
+                    <h3 className="text-sm font-semibold text-slate-200">Consciousness Needs</h3>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <span className="text-xs text-slate-400">
+                      Evolution Level {mainzaState.evolution_level || 2}
+                    </span>
+                    <motion.div
+                      animate={{ rotate: uiState.showNeeds ? 180 : 0 }}
+                      transition={{ duration: 0.2 }}
+                    >
+                      <Eye className="w-4 h-4 text-slate-400" />
+                    </motion.div>
+                  </div>
+                </div>
+                
+                <AnimatePresence>
+                  {uiState.showNeeds && (
+                    <motion.div
+                      initial={{ opacity: 0, height: 0 }}
+                      animate={{ opacity: 1, height: 'auto' }}
+                      exit={{ opacity: 0, height: 0 }}
+                      transition={{ duration: 0.3 }}
+                      className="mt-3"
+                    >
+                      <AdvancedNeedsDisplay 
+                        maxNeeds={5}
+                        showAnalytics={false}
+                        onNeedClick={(need) => {
+                          console.log('Need clicked:', need);
+                          // Handle need click - could open detailed view, etc.
+                        }}
+                      />
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </GlassCard>
             </motion.div>
 
             {/* Center Panel - Conversation Interface (Transparent over Orb) */}
             <motion.div
-              className="col-span-12 lg:col-span-6 flex flex-col justify-center px-8"
+              className="col-span-12 lg:col-span-6 flex flex-col px-8"
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.2 }}
             >
               {/* Conversation Container - Fixed Height Chat Layout */}
-              <GlassCard className="flex flex-col h-[80vh] bg-slate-900/20 backdrop-blur-sm" glow>
+              <GlassCard className="flex flex-col h-[80vh] bg-slate-900/20 backdrop-blur-sm mt-8" glow>
                 {/* Header - Fixed at top */}
                 <div className="flex-shrink-0 flex justify-between items-center p-4 border-b border-slate-700/30">
                   <div className="flex items-center space-x-3">
@@ -906,7 +948,7 @@ function Index() {
 
             {/* Right Panel - Insights & Knowledge Graph */}
             <motion.div
-              className="col-span-12 lg:col-span-3 space-y-3"
+              className="col-span-12 lg:col-span-3 flex flex-col space-y-3 max-h-screen overflow-y-auto"
               initial={{ opacity: 0, x: 20 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.6, delay: 0.3 }}
@@ -951,6 +993,7 @@ function Index() {
                   </div>
                 </div>
               </GlassCard>
+
             </motion.div>
           </div>
         </div>
