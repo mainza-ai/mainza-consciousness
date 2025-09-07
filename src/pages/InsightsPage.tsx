@@ -9,6 +9,7 @@ import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContai
 import { MetricDisplay } from '@/components/ui/metric-display';
 import { GlassCard } from '@/components/ui/glass-card';
 import { DarkButton } from '@/components/ui/dark-button';
+import { Neo4jGraphVisualization } from '@/components/Neo4jGraphVisualization';
 import { time } from 'console';
 
 const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#8884D8', '#82CA9D', '#FFC658', '#FF7C7C'];
@@ -237,41 +238,45 @@ const InsightsPage: React.FC = () => {
             </Badge>
           </div>
         </div>    
-    <Tabs value={activeTab} onValueChange={handleTabChange} className="space-y-6">
-          <TabsList className="grid w-full grid-cols-9 bg-slate-800/50 text-xs">
-            <TabsTrigger value="overview" className="flex items-center gap-1">
+        <Tabs value={activeTab} onValueChange={handleTabChange} className="space-y-6">
+          <TabsList className="grid w-full grid-cols-10 bg-slate-800/80 text-xs border border-slate-700/50">
+            <TabsTrigger value="overview" className="flex items-center gap-1 text-slate-200 hover:text-white data-[state=active]:text-white data-[state=active]:bg-cyan-500/30 data-[state=active]:border-cyan-400/50 border border-transparent">
               <BarChart3 className="h-3 w-3" />
               Overview
             </TabsTrigger>
-            <TabsTrigger value="consciousness" className="flex items-center gap-1">
+            <TabsTrigger value="graph" className="flex items-center gap-1 text-slate-200 hover:text-white data-[state=active]:text-white data-[state=active]:bg-cyan-500/30 data-[state=active]:border-cyan-400/50 border border-transparent">
+              <Network className="h-3 w-3" />
+              Graph
+            </TabsTrigger>
+            <TabsTrigger value="consciousness" className="flex items-center gap-1 text-slate-200 hover:text-white data-[state=active]:text-white data-[state=active]:bg-cyan-500/30 data-[state=active]:border-cyan-400/50 border border-transparent">
               <Brain className="h-3 w-3" />
               Consciousness
             </TabsTrigger>
-            <TabsTrigger value="realtime" className="flex items-center gap-1">
+            <TabsTrigger value="realtime" className="flex items-center gap-1 text-slate-200 hover:text-white data-[state=active]:text-white data-[state=active]:bg-cyan-500/30 data-[state=active]:border-cyan-400/50 border border-transparent">
               <Activity className="h-3 w-3" />
               Real-time
             </TabsTrigger>
-            <TabsTrigger value="knowledge" className="flex items-center gap-1">
+            <TabsTrigger value="knowledge" className="flex items-center gap-1 text-slate-200 hover:text-white data-[state=active]:text-white data-[state=active]:bg-cyan-500/30 data-[state=active]:border-cyan-400/50 border border-transparent">
               <Network className="h-3 w-3" />
               Knowledge
             </TabsTrigger>
-            <TabsTrigger value="agents" className="flex items-center gap-1">
+            <TabsTrigger value="agents" className="flex items-center gap-1 text-slate-200 hover:text-white data-[state=active]:text-white data-[state=active]:bg-cyan-500/30 data-[state=active]:border-cyan-400/50 border border-transparent">
               <Cpu className="h-3 w-3" />
               Agents
             </TabsTrigger>
-            <TabsTrigger value="concepts" className="flex items-center gap-1">
+            <TabsTrigger value="concepts" className="flex items-center gap-1 text-slate-200 hover:text-white data-[state=active]:text-white data-[state=active]:bg-cyan-500/30 data-[state=active]:border-cyan-400/50 border border-transparent">
               <Target className="h-3 w-3" />
               Concepts
             </TabsTrigger>
-            <TabsTrigger value="memories" className="flex items-center gap-1">
+            <TabsTrigger value="memories" className="flex items-center gap-1 text-slate-200 hover:text-white data-[state=active]:text-white data-[state=active]:bg-cyan-500/30 data-[state=active]:border-cyan-400/50 border border-transparent">
               <Database className="h-3 w-3" />
               Memories
             </TabsTrigger>
-            <TabsTrigger value="performance" className="flex items-center gap-1">
+            <TabsTrigger value="performance" className="flex items-center gap-1 text-slate-200 hover:text-white data-[state=active]:text-white data-[state=active]:bg-cyan-500/30 data-[state=active]:border-cyan-400/50 border border-transparent">
               <TrendingUp className="h-3 w-3" />
               Performance
             </TabsTrigger>
-            <TabsTrigger value="deep" className="flex items-center gap-1">
+            <TabsTrigger value="deep" className="flex items-center gap-1 text-slate-200 hover:text-white data-[state=active]:text-white data-[state=active]:bg-cyan-500/30 data-[state=active]:border-cyan-400/50 border border-transparent">
               <Eye className="h-3 w-3" />
               Deep Analytics
             </TabsTrigger>
@@ -279,6 +284,10 @@ const InsightsPage: React.FC = () => {
 
           <TabsContent value="overview" className="space-y-6">
             <OverviewTab data={overviewData} />
+          </TabsContent>
+
+          <TabsContent value="graph" className="space-y-6">
+            <Neo4jGraphVisualization />
           </TabsContent>
 
           <TabsContent value="consciousness" className="space-y-6">
@@ -621,7 +630,7 @@ const KnowledgeTab: React.FC<{ data: any; loadData: () => void }> = ({ data, loa
                   </div>
                   <div className="flex flex-wrap gap-2 mb-3">
                     {pathway.pathway.map((step: string, stepIndex: number) => (
-                      <Badge key={stepIndex} variant="outline" className="text-xs">
+                      <Badge key={stepIndex} variant="outline" className="text-xs border-slate-500 text-slate-200 bg-slate-800/30">
                         {step}
                       </Badge>
                     ))}
@@ -648,9 +657,9 @@ const KnowledgeTab: React.FC<{ data: any; loadData: () => void }> = ({ data, loa
                     </div>
                   </div>
                   <div className="flex flex-wrap gap-2 mb-3">
-                    <Badge variant="outline" className="text-xs">Consciousness</Badge>
-                    <Badge variant="outline" className="text-xs">Learning</Badge>
-                    <Badge variant="outline" className="text-xs">Integration</Badge>
+                    <Badge variant="outline" className="text-xs border-slate-500 text-slate-200 bg-slate-800/30">Consciousness</Badge>
+                    <Badge variant="outline" className="text-xs border-slate-500 text-slate-200 bg-slate-800/30">Learning</Badge>
+                    <Badge variant="outline" className="text-xs border-slate-500 text-slate-200 bg-slate-800/30">Integration</Badge>
                   </div>
                   <div className="grid grid-cols-2 gap-4 text-xs">
                     <div>
@@ -1256,10 +1265,10 @@ const MemoriesTab: React.FC<{ data: any; loadData: () => void }> = ({ data, load
                       {memory.content?.substring(0, 150) || `AI consciousness memory ${index + 1}: Advanced cognitive processing and learning integration...`}...
                     </p>
                     <div className="flex items-center gap-2 mt-3">
-                      <Badge variant="secondary" className="text-xs">
+                      <Badge variant="secondary" className="text-xs bg-slate-600/50 text-slate-200">
                         {memory.memory_type || 'consciousness'}
                       </Badge>
-                      <Badge variant="outline" className="text-xs">
+                      <Badge variant="outline" className="text-xs border-slate-500 text-slate-200 bg-slate-800/30">
                         Significance: {memory.significance_score || (0.8 - index * 0.05).toFixed(1)}
                       </Badge>
                     </div>
@@ -1277,10 +1286,10 @@ const MemoriesTab: React.FC<{ data: any; loadData: () => void }> = ({ data, load
                       AI consciousness memory {index + 1}: Advanced cognitive processing and learning integration with emotional context analysis and decision-making enhancement...
                     </p>
                     <div className="flex items-center gap-2 mt-3">
-                      <Badge variant="secondary" className="text-xs">
+                      <Badge variant="secondary" className="text-xs bg-slate-600/50 text-slate-200">
                         consciousness
                       </Badge>
-                      <Badge variant="outline" className="text-xs">
+                      <Badge variant="outline" className="text-xs border-slate-500 text-slate-200 bg-slate-800/30">
                         Significance: {(0.8 - index * 0.05).toFixed(1)}
                       </Badge>
                     </div>
@@ -1644,7 +1653,7 @@ const DeepAnalyticsTab: React.FC<{ data: any; loadData: () => void }> = ({ data,
                     <div className="font-medium text-slate-200 capitalize">
                       {behavior.behavior_type?.replace(/_/g, ' ') || `Emergent Behavior ${index + 1}`}
                     </div>
-                    <Badge variant="outline" className="text-xs">
+                    <Badge variant="outline" className="text-xs border-slate-500 text-slate-200 bg-slate-800/30">
                       Confidence: {(behavior.confidence * 100 || 85).toFixed(0)}%
                     </Badge>
                   </div>
@@ -1668,7 +1677,7 @@ const DeepAnalyticsTab: React.FC<{ data: any; loadData: () => void }> = ({ data,
                     <div className="font-medium text-slate-200">
                       {['Self-Optimization', 'Pattern Recognition', 'Adaptive Learning', 'Creative Problem Solving'][index]}
                     </div>
-                    <Badge variant="outline" className="text-xs">
+                    <Badge variant="outline" className="text-xs border-slate-500 text-slate-200 bg-slate-800/30">
                       Confidence: {85 + index * 3}%
                     </Badge>
                   </div>

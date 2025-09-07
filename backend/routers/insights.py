@@ -839,3 +839,162 @@ async def get_system_deep_analytics() -> Dict[str, Any]:
     except Exception as e:
         logger.error(f"Error getting system deep analytics: {e}")
         raise HTTPException(status_code=500, detail=f"Failed to get system deep analytics: {str(e)}")
+
+@router.get("/graph/overview")
+async def get_graph_overview() -> Dict[str, Any]:
+    """Get overview of the Neo4j graph structure for visualization."""
+    try:
+        from backend.utils.neo4j_production import neo4j_production
+        
+        # Get basic graph statistics
+        node_count_query = "MATCH (n) RETURN count(n) as total_nodes"
+        rel_count_query = "MATCH ()-[r]->() RETURN count(r) as total_relationships"
+        
+        node_result = neo4j_production.execute_query(node_count_query)
+        rel_result = neo4j_production.execute_query(rel_count_query)
+        
+        total_nodes = node_result[0]["total_nodes"] if node_result else 0
+        total_relationships = rel_result[0]["total_relationships"] if rel_result else 0
+        
+        # Get node labels and counts
+        labels_query = """
+        MATCH (n) 
+        RETURN labels(n)[0] as label, count(n) as count 
+        ORDER BY count DESC
+        """
+        labels_result = neo4j_production.execute_query(labels_query)
+        node_labels = [{"label": r["label"], "count": r["count"]} for r in labels_result] if labels_result else []
+        
+        # Get relationship types and counts
+        rel_types_query = """
+        MATCH ()-[r]->() 
+        RETURN type(r) as type, count(r) as count 
+        ORDER BY count DESC
+        """
+        rel_types_result = neo4j_production.execute_query(rel_types_query)
+        relationship_types = [{"type": r["type"], "count": r["count"]} for r in rel_types_result] if rel_types_result else []
+        
+        return {
+            "status": "success",
+            "timestamp": datetime.utcnow().isoformat(),
+            "graph_overview": {
+                "total_nodes": total_nodes,
+                "total_relationships": total_relationships,
+                "node_labels": node_labels,
+                "relationship_types": relationship_types
+            }
+        }
+        
+    except Exception as e:
+        logger.error(f"Failed to get graph overview: {e}")
+        raise HTTPException(status_code=500, detail=f"Failed to get graph overview: {str(e)}")
+
+# Simple test endpoint for graph functionality
+@router.get("/graph/test")
+async def test_graph_endpoint() -> Dict[str, Any]:
+    """Simple test endpoint to verify graph functionality is working."""
+    return {
+        "status": "success",
+        "message": "Graph endpoints are working",
+        "timestamp": datetime.utcnow().isoformat()
+    }
+
+# All graph endpoints temporarily commented out for testing
+# @router.get("/graph/nodes")
+# async def get_graph_nodes(
+#     limit: int = 100,
+#     node_type: Optional[str] = None,
+#     search: Optional[str] = None
+# ) -> Dict[str, Any]:
+#     """Get nodes from the Neo4j graph for visualization."""
+#     # ... implementation commented out
+#     pass
+
+# @router.get("/graph/relationships")
+# async def get_graph_relationships(
+#     limit: int = 200,
+#     relationship_type: Optional[str] = None,
+#     node_id: Optional[str] = None
+# ) -> Dict[str, Any]:
+#     """Get relationships from the Neo4j graph for visualization."""
+#     # ... implementation commented out
+#     pass
+
+@router.get("/graph/full")
+async def get_full_graph(
+    node_limit: int = 50,
+    rel_limit: int = 100
+) -> Dict[str, Any]:
+    """Get a complete graph view with nodes and relationships for visualization."""
+    try:
+        from backend.utils.neo4j_production import neo4j_production
+        
+        # Get nodes
+        nodes_query = """
+        MATCH (n) 
+        RETURN n, labels(n) as labels, id(n) as id
+        LIMIT $limit
+        """
+        nodes_result = neo4j_production.execute_query(nodes_query, {"limit": node_limit})
+        
+        # Get relationships
+        rels_query = """
+        MATCH (a)-[r]->(b) 
+        RETURN a, r, b, id(a) as source_id, id(b) as target_id, type(r) as rel_type
+        LIMIT $limit
+        """
+        rels_result = neo4j_production.execute_query(rels_query, {"limit": rel_limit})
+        
+        # Format nodes
+        nodes = []
+        for record in nodes_result:
+            node_data = dict(record["n"])
+            # Convert Neo4j DateTime objects to strings
+            for key, value in node_data.items():
+                if hasattr(value, 'iso_format'):
+                    node_data[key] = value.iso_format()
+                elif hasattr(value, 'strftime'):
+                    node_data[key] = str(value)
+            
+            nodes.append({
+                "id": str(record["id"]),
+                "labels": record["labels"],
+                "properties": node_data,
+                "name": node_data.get("name", node_data.get("content", f"Node {record['id']}"))[:50]
+            })
+        
+        # Format relationships
+        relationships = []
+        for record in rels_result:
+            rel_data = dict(record["r"])
+            # Convert Neo4j DateTime objects to strings
+            for key, value in rel_data.items():
+                if hasattr(value, 'iso_format'):
+                    rel_data[key] = value.iso_format()
+                elif hasattr(value, 'strftime'):
+                    rel_data[key] = str(value)
+            
+            relationships.append({
+                "source": str(record["source_id"]),
+                "target": str(record["target_id"]),
+                "type": record["rel_type"],
+                "properties": rel_data,
+                "strength": rel_data.get("strength", 1.0)
+            })
+        
+        return {
+            "status": "success",
+            "timestamp": datetime.utcnow().isoformat(),
+            "graph": {
+                "nodes": nodes,
+                "relationships": relationships
+            },
+            "stats": {
+                "node_count": len(nodes),
+                "relationship_count": len(relationships)
+            }
+        }
+        
+    except Exception as e:
+        logger.error(f"Failed to get full graph: {e}")
+        raise HTTPException(status_code=500, detail=f"Failed to get full graph: {str(e)}")

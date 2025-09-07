@@ -365,7 +365,7 @@ export const ConsciousnessInsights: React.FC<ConsciousnessInsightsProps> = ({
                 
                 <div className="flex items-center space-x-1">
                   <div className="w-2 h-2 rounded-full bg-gradient-to-r from-cyan-500 to-purple-500" />
-                  <span className="text-slate-500">
+                  <span className="text-slate-300">
                     Significance: {(insight.significance * 100).toFixed(0)}%
                   </span>
                 </div>
