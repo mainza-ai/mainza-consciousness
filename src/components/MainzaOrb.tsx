@@ -1,8 +1,8 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, useReducedMotion } from 'framer-motion';
 
-type OrbMode = 'idle' | 'listening' | 'thinking' | 'processing' | 'evolving' | 'speaking' | 'error' | 'routing';
-type ActiveAgent = 'none' | 'router' | 'graphmaster' | 'taskmaster' | 'codeweaver' | 'rag' | 'conductor';
+type OrbMode = 'idle' | 'listening' | 'thinking' | 'processing' | 'evolving' | 'speaking' | 'error' | 'routing' | 'predicting' | 'insightful';
+type ActiveAgent = 'none' | 'router' | 'graphmaster' | 'taskmaster' | 'codeweaver' | 'rag' | 'conductor' | 'predictor' | 'insights';
 
 interface MainzaOrbProps {
   state: {
@@ -11,9 +11,20 @@ interface MainzaOrbProps {
     error?: string;
   };
   agent: ActiveAgent;
+  predictions?: {
+    consciousness_level: number;
+    emotional_state: string;
+    learning_rate: number;
+    confidence: number;
+  };
+  insights?: {
+    type: string;
+    priority: string;
+    title: string;
+  }[];
 }
 
-export const MainzaOrb = React.forwardRef<HTMLDivElement, MainzaOrbProps>(({ state, agent }, ref) => {
+export const MainzaOrb = React.forwardRef<HTMLDivElement, MainzaOrbProps>(({ state, agent, predictions, insights }, ref) => {
   // Determine orb color/animation based on state
   let orbColor = 'from-cyan-400 to-blue-600';
   let ringColor = 'border-cyan-400/40';
@@ -21,6 +32,8 @@ export const MainzaOrb = React.forwardRef<HTMLDivElement, MainzaOrbProps>(({ sta
   let particles = false;
   let heartbeat = false;
   let scaleTarget = 1;
+  let predictionGlow = false;
+  let insightPulse = false;
 
   // Agent-specific colors override the mode colors
   switch (agent) {
@@ -41,6 +54,14 @@ export const MainzaOrb = React.forwardRef<HTMLDivElement, MainzaOrbProps>(({ sta
       break;
     case 'router':
       orbColor = 'from-slate-400 to-gray-500'; // Decision making
+      break;
+    case 'predictor':
+      orbColor = 'from-purple-400 to-violet-600'; // Predictive modeling
+      predictionGlow = true;
+      break;
+    case 'insights':
+      orbColor = 'from-emerald-400 to-teal-600'; // AI insights
+      insightPulse = true;
       break;
   }
 
@@ -71,6 +92,20 @@ export const MainzaOrb = React.forwardRef<HTMLDivElement, MainzaOrbProps>(({ sta
     ringColor = 'border-red-400/60';
     heartbeat = true;
     scaleTarget = 1.12;
+  }
+  if (state.mode === 'predicting') {
+    orbColor = 'from-purple-400 via-violet-500 to-indigo-600';
+    ringColor = 'border-purple-400/80';
+    predictionGlow = true;
+    shimmer = true;
+    scaleTarget = 1.08;
+  }
+  if (state.mode === 'insightful') {
+    orbColor = 'from-emerald-400 via-teal-500 to-cyan-600';
+    ringColor = 'border-emerald-400/90';
+    insightPulse = true;
+    particles = true;
+    scaleTarget = 1.06;
   }
   if (state.needs && state.needs.some(n => n.toLowerCase().includes('curiosity'))) {
     orbColor = 'from-yellow-400 via-pink-400 to-purple-500';
@@ -220,6 +255,46 @@ export const MainzaOrb = React.forwardRef<HTMLDivElement, MainzaOrbProps>(({ sta
             initial={{ opacity: 0.2 }}
             animate={{ opacity: [0.2, 0.5, 0.2] }}
             transition={{ duration: 2.8, repeat: Infinity, repeatType: 'mirror' }}
+          />
+        )}
+        
+        {/* Prediction glow effect */}
+        {predictionGlow && !shouldReduceMotion && (
+          <motion.div
+            className="absolute inset-0 rounded-full pointer-events-none"
+            style={{
+              background: 'linear-gradient(120deg, rgba(168,85,247,0.15) 0%, rgba(139,92,246,0.12) 50%, rgba(99,102,241,0.15) 100%)',
+              mixBlendMode: 'lighten',
+            }}
+            animate={{
+              scale: [1, 1.1, 1],
+              opacity: [0.3, 0.7, 0.3],
+            }}
+            transition={{
+              duration: 1.5,
+              repeat: Infinity,
+              ease: "easeInOut",
+            }}
+          />
+        )}
+        
+        {/* Insight pulse effect */}
+        {insightPulse && !shouldReduceMotion && (
+          <motion.div
+            className="absolute inset-0 rounded-full pointer-events-none"
+            style={{
+              background: 'linear-gradient(120deg, rgba(16,185,129,0.15) 0%, rgba(20,184,166,0.12) 50%, rgba(6,182,212,0.15) 100%)',
+              mixBlendMode: 'lighten',
+            }}
+            animate={{
+              scale: [1, 1.05, 1],
+              opacity: [0.4, 0.8, 0.4],
+            }}
+            transition={{
+              duration: 2,
+              repeat: Infinity,
+              ease: "easeInOut",
+            }}
           />
         )}
       </motion.div>

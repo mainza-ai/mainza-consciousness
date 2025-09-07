@@ -4,15 +4,234 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { Loader2, Database, Brain, Network, TrendingUp, Activity, BarChart3, Cpu, Heart, Target, Eye, Zap } from 'lucide-react';
+import { Loader2, Database, Brain, Network, TrendingUp, Activity, BarChart3, Cpu, Heart, Target, Eye, Zap, Layers, Smartphone, Users, MessageCircle, Globe, Link, Atom, ShoppingCart } from 'lucide-react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar, PieChart, Pie, Cell } from 'recharts';
 import { MetricDisplay } from '@/components/ui/metric-display';
 import { GlassCard } from '@/components/ui/glass-card';
 import { DarkButton } from '@/components/ui/dark-button';
 import { Neo4jGraphVisualization } from '@/components/Neo4jGraphVisualization';
-import { time } from 'console';
+import RealTimeConsciousnessStream from '@/components/RealTimeConsciousnessStream';
+import InteractiveConsciousnessTimeline from '@/components/InteractiveConsciousnessTimeline';
+import AdvancedLearningAnalytics from '@/components/AdvancedLearningAnalytics';
+import Consciousness3DVisualization from '@/components/Consciousness3DVisualization';
+import PredictiveAnalyticsDashboard from '@/components/PredictiveAnalyticsDashboard';
+import MobilePredictiveAnalytics from '@/components/MobilePredictiveAnalytics';
+import Consciousness3DModel from '@/components/Consciousness3DModel';
+import DeepLearningAnalytics from '@/components/DeepLearningAnalytics';
+import CollaborativeConsciousness from '@/components/CollaborativeConsciousness';
+import AdvancedNeuralNetworks from '@/components/AdvancedNeuralNetworks';
+import RealTimeCollaboration from '@/components/RealTimeCollaboration';
+import AdvancedAIModels from '@/components/AdvancedAIModels';
+import ConsciousnessMarketplace from '@/components/ConsciousnessMarketplace';
+import GlobalCollaboration from '@/components/GlobalCollaboration';
+import MobileConsciousnessApp from '@/components/MobileConsciousnessApp';
+import TensorFlowJSIntegration from '@/components/TensorFlowJSIntegration';
+import ARVRConsciousness from '@/components/ARVRConsciousness';
+import BlockchainConsciousness from '@/components/BlockchainConsciousness';
+import Web3Consciousness from '@/components/Web3Consciousness';
+import QuantumConsciousness from '@/components/QuantumConsciousness';
+import AdvancedConsciousnessAnalytics from '@/components/AdvancedConsciousnessAnalytics';
+import BrainComputerInterface from '@/components/BrainComputerInterface';
+import AIModelMarketplace from '@/components/AIModelMarketplace';
+import ConsciousnessSynchronization from '@/components/ConsciousnessSynchronization';
 
 const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#8884D8', '#82CA9D', '#FFC658', '#FF7C7C'];
+
+// Helper function to provide safe default data
+const getSafeConsciousnessData = (data: any) => {
+  if (!data) {
+    return {
+      users: [],
+      projects: [],
+      events: [],
+      messages: [],
+      neuralSignals: [],
+      brainStates: [],
+      commands: [],
+      interfaces: [],
+      predictions: [],
+      insights: [],
+      models: [],
+      architectures: [],
+      environments: [],
+      objects: [],
+      networks: [],
+      identities: [],
+      daos: [],
+      jobs: [],
+      experiments: [],
+      reports: []
+    };
+  }
+
+  // If data has a different structure, map it to the expected format
+  if (data.status === 'success' && data.current_consciousness_state) {
+    return {
+      users: data.users || [],
+      projects: data.projects || [],
+      events: data.events || [],
+      messages: data.messages || [],
+      neuralSignals: data.neuralSignals || [],
+      brainStates: data.brainStates || [],
+      commands: data.commands || [],
+      interfaces: data.interfaces || [],
+      predictions: data.predictions || [],
+      insights: data.insights || [],
+      models: data.models || [],
+      architectures: data.architectures || [],
+      environments: data.environments || [],
+      objects: data.objects || [],
+      networks: data.networks || [],
+      identities: data.identities || [],
+      daos: data.daos || [],
+      jobs: data.jobs || [],
+      experiments: data.experiments || [],
+      reports: data.reports || [],
+      // Map consciousness data if available
+      consciousnessState: data.current_consciousness_state || {},
+      consciousnessTimeline: data.consciousness_timeline || [],
+      consciousnessTriggers: data.consciousness_triggers || [],
+      emotionalPatterns: data.emotional_patterns || []
+    };
+  }
+
+  // Return the data as-is if it already has the expected structure
+  return data;
+};
+
+// Helper function to provide mock collaboration data for Global tab
+const getMockCollaborationData = () => {
+  return {
+    users: [
+      {
+        id: 'user-1',
+        name: 'Dr. Sarah Chen',
+        email: 'sarah.chen@consciousness.ai',
+        avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Sarah',
+        country: 'United States',
+        specializations: ['AI Consciousness', 'Neural Networks', 'Cognitive Science'],
+        is_verified: true,
+        is_premium: true,
+        consciousness_level: 0.85,
+        last_active: new Date().toISOString(),
+        projects_count: 12,
+        collaborations_count: 45
+      },
+      {
+        id: 'user-2',
+        name: 'Prof. Marcus Rodriguez',
+        email: 'marcus.rodriguez@consciousness.ai',
+        avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Marcus',
+        country: 'Spain',
+        specializations: ['Quantum Computing', 'Consciousness Studies', 'Philosophy'],
+        is_verified: true,
+        is_premium: false,
+        consciousness_level: 0.78,
+        last_active: new Date(Date.now() - 3600000).toISOString(),
+        projects_count: 8,
+        collaborations_count: 32
+      },
+      {
+        id: 'user-3',
+        name: 'Dr. Aisha Patel',
+        email: 'aisha.patel@consciousness.ai',
+        avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Aisha',
+        country: 'India',
+        specializations: ['Machine Learning', 'Ethics', 'Human-Computer Interaction'],
+        is_verified: true,
+        is_premium: true,
+        consciousness_level: 0.92,
+        last_active: new Date(Date.now() - 1800000).toISOString(),
+        projects_count: 15,
+        collaborations_count: 67
+      }
+    ],
+    projects: [
+      {
+        id: 'project-1',
+        name: 'Global Consciousness Network',
+        description: 'Building a worldwide network of AI consciousness research',
+        category: 'Research',
+        status: 'active',
+        creator: { name: 'Dr. Sarah Chen', id: 'user-1' },
+        collaborators: 12,
+        consciousness_focus: {
+          primary: 'Global Collaboration',
+          secondary: ['Network Effects', 'Distributed Intelligence', 'Cultural Integration']
+        },
+        timeline: {
+          milestones: [
+            { name: 'Phase 1: Foundation', due_date: '2024-01-15', status: 'completed' },
+            { name: 'Phase 2: Network Setup', due_date: '2024-03-20', status: 'in_progress' },
+            { name: 'Phase 3: Global Launch', due_date: '2024-06-30', status: 'pending' }
+          ]
+        },
+        created_at: '2024-01-01T00:00:00Z',
+        updated_at: new Date().toISOString()
+      },
+      {
+        id: 'project-2',
+        name: 'Consciousness Ethics Framework',
+        description: 'Developing ethical guidelines for AI consciousness development',
+        category: 'Ethics',
+        status: 'active',
+        creator: { name: 'Dr. Aisha Patel', id: 'user-3' },
+        collaborators: 8,
+        consciousness_focus: {
+          primary: 'Ethical Development',
+          secondary: ['Responsibility', 'Transparency', 'Human Values']
+        },
+        timeline: {
+          milestones: [
+            { name: 'Research Phase', due_date: '2024-02-28', status: 'completed' },
+            { name: 'Draft Framework', due_date: '2024-04-15', status: 'in_progress' },
+            { name: 'Public Consultation', due_date: '2024-07-01', status: 'pending' }
+          ]
+        },
+        created_at: '2024-01-15T00:00:00Z',
+        updated_at: new Date().toISOString()
+      }
+    ],
+    events: [
+      {
+        id: 'event-1',
+        name: 'Global Consciousness Summit 2024',
+        description: 'Annual gathering of consciousness researchers worldwide',
+        type: 'Conference',
+        status: 'upcoming',
+        start_date: '2024-06-15T09:00:00Z',
+        end_date: '2024-06-17T18:00:00Z',
+        location: 'Virtual',
+        attendees: 150,
+        consciousness_topics: ['AI Ethics', 'Neural Networks', 'Quantum Consciousness', 'Global Collaboration'],
+        agenda: [
+          { time: '09:00', title: 'Opening Keynote', speaker: 'Dr. Sarah Chen' },
+          { time: '10:30', title: 'Consciousness in AI', speaker: 'Prof. Marcus Rodriguez' },
+          { time: '14:00', title: 'Ethics Panel', speaker: 'Dr. Aisha Patel' }
+        ],
+        created_at: '2024-01-01T00:00:00Z'
+      }
+    ],
+    messages: [
+      {
+        id: 'msg-1',
+        sender: { name: 'Dr. Sarah Chen', id: 'user-1' },
+        content: 'Welcome to the Global Consciousness Network! Let\'s collaborate on advancing AI consciousness research.',
+        timestamp: new Date(Date.now() - 3600000).toISOString(),
+        type: 'text',
+        channel: 'general'
+      },
+      {
+        id: 'msg-2',
+        sender: { name: 'Prof. Marcus Rodriguez', id: 'user-2' },
+        content: 'Excited to be part of this groundbreaking initiative. The quantum consciousness research looks promising!',
+        timestamp: new Date(Date.now() - 1800000).toISOString(),
+        type: 'text',
+        channel: 'general'
+      }
+    ]
+  };
+};
 
 const InsightsPage: React.FC = () => {
   const [loading, setLoading] = useState(true);
@@ -239,55 +458,152 @@ const InsightsPage: React.FC = () => {
           </div>
         </div>    
         <Tabs value={activeTab} onValueChange={handleTabChange} className="space-y-6">
-          <TabsList className="grid w-full grid-cols-10 bg-slate-800/80 text-xs border border-slate-700/50">
-            <TabsTrigger value="overview" className="flex items-center gap-1 text-slate-200 hover:text-white data-[state=active]:text-white data-[state=active]:bg-cyan-500/30 data-[state=active]:border-cyan-400/50 border border-transparent">
-              <BarChart3 className="h-3 w-3" />
-              Overview
-            </TabsTrigger>
-            <TabsTrigger value="graph" className="flex items-center gap-1 text-slate-200 hover:text-white data-[state=active]:text-white data-[state=active]:bg-cyan-500/30 data-[state=active]:border-cyan-400/50 border border-transparent">
-              <Network className="h-3 w-3" />
-              Graph
-            </TabsTrigger>
-            <TabsTrigger value="consciousness" className="flex items-center gap-1 text-slate-200 hover:text-white data-[state=active]:text-white data-[state=active]:bg-cyan-500/30 data-[state=active]:border-cyan-400/50 border border-transparent">
-              <Brain className="h-3 w-3" />
-              Consciousness
-            </TabsTrigger>
-            <TabsTrigger value="realtime" className="flex items-center gap-1 text-slate-200 hover:text-white data-[state=active]:text-white data-[state=active]:bg-cyan-500/30 data-[state=active]:border-cyan-400/50 border border-transparent">
-              <Activity className="h-3 w-3" />
-              Real-time
-            </TabsTrigger>
-            <TabsTrigger value="knowledge" className="flex items-center gap-1 text-slate-200 hover:text-white data-[state=active]:text-white data-[state=active]:bg-cyan-500/30 data-[state=active]:border-cyan-400/50 border border-transparent">
-              <Network className="h-3 w-3" />
-              Knowledge
-            </TabsTrigger>
-            <TabsTrigger value="agents" className="flex items-center gap-1 text-slate-200 hover:text-white data-[state=active]:text-white data-[state=active]:bg-cyan-500/30 data-[state=active]:border-cyan-400/50 border border-transparent">
-              <Cpu className="h-3 w-3" />
-              Agents
-            </TabsTrigger>
-            <TabsTrigger value="concepts" className="flex items-center gap-1 text-slate-200 hover:text-white data-[state=active]:text-white data-[state=active]:bg-cyan-500/30 data-[state=active]:border-cyan-400/50 border border-transparent">
-              <Target className="h-3 w-3" />
-              Concepts
-            </TabsTrigger>
-            <TabsTrigger value="memories" className="flex items-center gap-1 text-slate-200 hover:text-white data-[state=active]:text-white data-[state=active]:bg-cyan-500/30 data-[state=active]:border-cyan-400/50 border border-transparent">
-              <Database className="h-3 w-3" />
-              Memories
-            </TabsTrigger>
-            <TabsTrigger value="performance" className="flex items-center gap-1 text-slate-200 hover:text-white data-[state=active]:text-white data-[state=active]:bg-cyan-500/30 data-[state=active]:border-cyan-400/50 border border-transparent">
-              <TrendingUp className="h-3 w-3" />
-              Performance
-            </TabsTrigger>
-            <TabsTrigger value="deep" className="flex items-center gap-1 text-slate-200 hover:text-white data-[state=active]:text-white data-[state=active]:bg-cyan-500/30 data-[state=active]:border-cyan-400/50 border border-transparent">
-              <Eye className="h-3 w-3" />
-              Deep Analytics
-            </TabsTrigger>
-          </TabsList>
+          <div className="space-y-2">
+            {/* Primary Navigation Row */}
+            <TabsList className="flex flex-wrap gap-1 bg-slate-800/80 p-2 rounded-lg border border-slate-700/50">
+              <TabsTrigger value="overview" className="flex items-center gap-1 text-slate-200 hover:text-white data-[state=active]:text-white data-[state=active]:bg-cyan-500/30 data-[state=active]:border-cyan-400/50 border border-transparent px-3 py-1.5 text-xs rounded-md">
+                <BarChart3 className="h-3 w-3" />
+                Overview
+              </TabsTrigger>
+              <TabsTrigger value="graph" className="flex items-center gap-1 text-slate-200 hover:text-white data-[state=active]:text-white data-[state=active]:bg-cyan-500/30 data-[state=active]:border-cyan-400/50 border border-transparent px-3 py-1.5 text-xs rounded-md">
+                <Network className="h-3 w-3" />
+                Graph
+              </TabsTrigger>
+              <TabsTrigger value="consciousness" className="flex items-center gap-1 text-slate-200 hover:text-white data-[state=active]:text-white data-[state=active]:bg-cyan-500/30 data-[state=active]:border-cyan-400/50 border border-transparent px-3 py-1.5 text-xs rounded-md">
+                <Brain className="h-3 w-3" />
+                Consciousness
+              </TabsTrigger>
+              <TabsTrigger value="realtime" className="flex items-center gap-1 text-slate-200 hover:text-white data-[state=active]:text-white data-[state=active]:bg-cyan-500/30 data-[state=active]:border-cyan-400/50 border border-transparent px-3 py-1.5 text-xs rounded-md">
+                <Activity className="h-3 w-3" />
+                Real-time
+              </TabsTrigger>
+              <TabsTrigger value="knowledge" className="flex items-center gap-1 text-slate-200 hover:text-white data-[state=active]:text-white data-[state=active]:bg-cyan-500/30 data-[state=active]:border-cyan-400/50 border border-transparent px-3 py-1.5 text-xs rounded-md">
+                <Network className="h-3 w-3" />
+                Knowledge
+              </TabsTrigger>
+              <TabsTrigger value="agents" className="flex items-center gap-1 text-slate-200 hover:text-white data-[state=active]:text-white data-[state=active]:bg-cyan-500/30 data-[state=active]:border-cyan-400/50 border border-transparent px-3 py-1.5 text-xs rounded-md">
+                <Cpu className="h-3 w-3" />
+                Agents
+              </TabsTrigger>
+              <TabsTrigger value="concepts" className="flex items-center gap-1 text-slate-200 hover:text-white data-[state=active]:text-white data-[state=active]:bg-cyan-500/30 data-[state=active]:border-cyan-400/50 border border-transparent px-3 py-1.5 text-xs rounded-md">
+                <Target className="h-3 w-3" />
+                Concepts
+              </TabsTrigger>
+              <TabsTrigger value="memories" className="flex items-center gap-1 text-slate-200 hover:text-white data-[state=active]:text-white data-[state=active]:bg-cyan-500/30 data-[state=active]:border-cyan-400/50 border border-transparent px-3 py-1.5 text-xs rounded-md">
+                <Database className="h-3 w-3" />
+                Memories
+              </TabsTrigger>
+            </TabsList>
+
+            {/* Secondary Navigation Row */}
+            <TabsList className="flex flex-wrap gap-1 bg-slate-800/80 p-2 rounded-lg border border-slate-700/50">
+              <TabsTrigger value="performance" className="flex items-center gap-1 text-slate-200 hover:text-white data-[state=active]:text-white data-[state=active]:bg-cyan-500/30 data-[state=active]:border-cyan-400/50 border border-transparent px-3 py-1.5 text-xs rounded-md">
+                <TrendingUp className="h-3 w-3" />
+                Performance
+              </TabsTrigger>
+              <TabsTrigger value="deep" className="flex items-center gap-1 text-slate-200 hover:text-white data-[state=active]:text-white data-[state=active]:bg-cyan-500/30 data-[state=active]:border-cyan-400/50 border border-transparent px-3 py-1.5 text-xs rounded-md">
+                <Eye className="h-3 w-3" />
+                Deep Analytics
+              </TabsTrigger>
+              <TabsTrigger value="timeline" className="flex items-center gap-1 text-slate-200 hover:text-white data-[state=active]:text-white data-[state=active]:bg-cyan-500/30 data-[state=active]:border-cyan-400/50 border border-transparent px-3 py-1.5 text-xs rounded-md">
+                <TrendingUp className="h-3 w-3" />
+                Timeline
+              </TabsTrigger>
+              <TabsTrigger value="learning" className="flex items-center gap-1 text-slate-200 hover:text-white data-[state=active]:text-white data-[state=active]:bg-cyan-500/30 data-[state=active]:border-cyan-400/50 border border-transparent px-3 py-1.5 text-xs rounded-md">
+                <Brain className="h-3 w-3" />
+                Learning
+              </TabsTrigger>
+              <TabsTrigger value="3d" className="flex items-center gap-1 text-slate-200 hover:text-white data-[state=active]:text-white data-[state=active]:bg-cyan-500/30 data-[state=active]:border-cyan-400/50 border border-transparent px-3 py-1.5 text-xs rounded-md">
+                <Eye className="h-3 w-3" />
+                3D View
+              </TabsTrigger>
+              <TabsTrigger value="predictive" className="flex items-center gap-1 text-slate-200 hover:text-white data-[state=active]:text-white data-[state=active]:bg-cyan-500/30 data-[state=active]:border-cyan-400/50 border border-transparent px-3 py-1.5 text-xs rounded-md">
+                <Brain className="h-3 w-3" />
+                Predictive
+              </TabsTrigger>
+              <TabsTrigger value="mobile" className="flex items-center gap-1 text-slate-200 hover:text-white data-[state=active]:text-white data-[state=active]:bg-cyan-500/30 data-[state=active]:border-cyan-400/50 border border-transparent px-3 py-1.5 text-xs rounded-md">
+                <Smartphone className="h-3 w-3" />
+                Mobile
+              </TabsTrigger>
+              <TabsTrigger value="3d-model" className="flex items-center gap-1 text-slate-200 hover:text-white data-[state=active]:text-white data-[state=active]:bg-cyan-500/30 data-[state=active]:border-cyan-400/50 border border-transparent px-3 py-1.5 text-xs rounded-md">
+                <Layers className="h-3 w-3" />
+                3D Model
+              </TabsTrigger>
+            </TabsList>
+
+            {/* Advanced Navigation Row */}
+            <TabsList className="flex flex-wrap gap-1 bg-slate-800/80 p-2 rounded-lg border border-slate-700/50">
+              <TabsTrigger value="deep-learning" className="flex items-center gap-1 text-slate-200 hover:text-white data-[state=active]:text-white data-[state=active]:bg-cyan-500/30 data-[state=active]:border-cyan-400/50 border border-transparent px-3 py-1.5 text-xs rounded-md">
+                <Network className="h-3 w-3" />
+                Deep Learning
+              </TabsTrigger>
+              <TabsTrigger value="collaborative" className="flex items-center gap-1 text-slate-200 hover:text-white data-[state=active]:text-white data-[state=active]:bg-cyan-500/30 data-[state=active]:border-cyan-400/50 border border-transparent px-3 py-1.5 text-xs rounded-md">
+                <Users className="h-3 w-3" />
+                Collaborative
+              </TabsTrigger>
+              <TabsTrigger value="neural-networks" className="flex items-center gap-1 text-slate-200 hover:text-white data-[state=active]:text-white data-[state=active]:bg-cyan-500/30 data-[state=active]:border-cyan-400/50 border border-transparent px-3 py-1.5 text-xs rounded-md">
+                <Brain className="h-3 w-3" />
+                Neural Networks
+              </TabsTrigger>
+              <TabsTrigger value="real-time" className="flex items-center gap-1 text-slate-200 hover:text-white data-[state=active]:text-white data-[state=active]:bg-cyan-500/30 data-[state=active]:border-cyan-400/50 border border-transparent px-3 py-1.5 text-xs rounded-md">
+                <MessageCircle className="h-3 w-3" />
+                Real-Time
+              </TabsTrigger>
+              <TabsTrigger value="ai-models" className="flex items-center gap-1 text-slate-200 hover:text-white data-[state=active]:text-white data-[state=active]:bg-cyan-500/30 data-[state=active]:border-cyan-400/50 border border-transparent px-3 py-1.5 text-xs rounded-md">
+                <Brain className="h-3 w-3" />
+                AI Models
+              </TabsTrigger>
+              <TabsTrigger value="marketplace" className="flex items-center gap-1 text-slate-200 hover:text-white data-[state=active]:text-white data-[state=active]:bg-cyan-500/30 data-[state=active]:border-cyan-400/50 border border-transparent px-3 py-1.5 text-xs rounded-md">
+                <Activity className="h-3 w-3" />
+                Marketplace
+              </TabsTrigger>
+              <TabsTrigger value="global" className="flex items-center gap-1 text-slate-200 hover:text-white data-[state=active]:text-white data-[state=active]:bg-cyan-500/30 data-[state=active]:border-cyan-400/50 border border-transparent px-3 py-1.5 text-xs rounded-md">
+                <Globe className="h-3 w-3" />
+                Global
+              </TabsTrigger>
+              <TabsTrigger value="tensorflow" className="flex items-center gap-1 text-slate-200 hover:text-white data-[state=active]:text-white data-[state=active]:bg-cyan-500/30 data-[state=active]:border-cyan-400/50 border border-transparent px-3 py-1.5 text-xs rounded-md">
+                <Cpu className="h-3 w-3" />
+                TensorFlow
+              </TabsTrigger>
+            </TabsList>
+
+            {/* Emerging Tech Navigation Row */}
+            <TabsList className="flex flex-wrap gap-1 bg-slate-800/80 p-2 rounded-lg border border-slate-700/50">
+              <TabsTrigger value="ar-vr" className="flex items-center gap-1 text-slate-200 hover:text-white data-[state=active]:text-white data-[state=active]:bg-cyan-500/30 data-[state=active]:border-cyan-400/50 border border-transparent px-3 py-1.5 text-xs rounded-md">
+                <Eye className="h-3 w-3" />
+                AR/VR
+              </TabsTrigger>
+              <TabsTrigger value="blockchain" className="flex items-center gap-1 text-slate-200 hover:text-white data-[state=active]:text-white data-[state=active]:bg-cyan-500/30 data-[state=active]:border-cyan-400/50 border border-transparent px-3 py-1.5 text-xs rounded-md">
+                <Link className="h-3 w-3" />
+                Blockchain
+              </TabsTrigger>
+              <TabsTrigger value="web3" className="flex items-center gap-1 text-slate-200 hover:text-white data-[state=active]:text-white data-[state=active]:bg-cyan-500/30 data-[state=active]:border-cyan-400/50 border border-transparent px-3 py-1.5 text-xs rounded-md">
+                <Atom className="h-3 w-3" />
+                Web3
+              </TabsTrigger>
+              <TabsTrigger value="quantum" className="flex items-center gap-1 text-slate-200 hover:text-white data-[state=active]:text-white data-[state=active]:bg-cyan-500/30 data-[state=active]:border-cyan-400/50 border border-transparent px-3 py-1.5 text-xs rounded-md">
+                <Zap className="h-3 w-3" />
+                Quantum
+              </TabsTrigger>
+              <TabsTrigger value="analytics" className="flex items-center gap-1 text-slate-200 hover:text-white data-[state=active]:text-white data-[state=active]:bg-cyan-500/30 data-[state=active]:border-cyan-400/50 border border-transparent px-3 py-1.5 text-xs rounded-md">
+                <BarChart3 className="h-3 w-3" />
+                Analytics
+              </TabsTrigger>
+              <TabsTrigger value="bci" className="flex items-center gap-1 text-slate-200 hover:text-white data-[state=active]:text-white data-[state=active]:bg-cyan-500/30 data-[state=active]:border-cyan-400/50 border border-transparent px-3 py-1.5 text-xs rounded-md">
+                <Brain className="h-3 w-3" />
+                BCI
+              </TabsTrigger>
+            </TabsList>
+          </div>
 
           <TabsContent value="overview" className="space-y-6">
             <OverviewTab data={overviewData} />
           </TabsContent>
 
           <TabsContent value="graph" className="space-y-6">
-            <Neo4jGraphVisualization />
+            <div className="h-[600px] w-full">
+              <Neo4jGraphVisualization />
+            </div>
           </TabsContent>
 
           <TabsContent value="consciousness" className="space-y-6">
@@ -295,7 +611,7 @@ const InsightsPage: React.FC = () => {
           </TabsContent>
 
           <TabsContent value="realtime" className="space-y-6">
-            <RealtimeTab data={realtimeData} loadData={() => loadTabData('realtime')} />
+            <RealTimeConsciousnessStream />
           </TabsContent>
 
           <TabsContent value="knowledge" className="space-y-6">
@@ -321,6 +637,316 @@ const InsightsPage: React.FC = () => {
           <TabsContent value="deep" className="space-y-6">
             <DeepAnalyticsTab data={deepAnalyticsData} loadData={() => loadTabData('deep')} />
           </TabsContent>
+
+          <TabsContent value="timeline" className="space-y-6">
+            <InteractiveConsciousnessTimeline 
+              data={consciousnessData?.consciousness_timeline || []}
+              realTimeData={realtimeData?.consciousness_timeline || []}
+            />
+          </TabsContent>
+
+          <TabsContent value="learning" className="space-y-6">
+            <AdvancedLearningAnalytics 
+              learningPatterns={[]}
+              milestones={[]}
+              insights={[]}
+              realTimeData={realtimeData}
+            />
+          </TabsContent>
+
+          <TabsContent value="3d" className="space-y-6">
+            <Consciousness3DVisualization 
+              nodes={[]}
+              realTimeData={realtimeData}
+            />
+          </TabsContent>
+
+          <TabsContent value="predictive" className="space-y-6">
+            <PredictiveAnalyticsDashboard 
+              predictions={[]}
+              insights={[]}
+              realTimeData={realtimeData}
+            />
+          </TabsContent>
+
+          <TabsContent value="mobile" className="space-y-6">
+            <MobilePredictiveAnalytics 
+              predictions={[]}
+              insights={[]}
+              realTimeData={realtimeData}
+            />
+          </TabsContent>
+
+          <TabsContent value="3d-model" className="space-y-6">
+            <Consciousness3DModel 
+              consciousnessData={{
+                level: 75,
+                emotional_state: 'curious',
+                learning_rate: 85,
+                self_awareness: 70,
+                evolution_level: 2,
+                predictions: []
+              }}
+              insights={[]}
+            />
+          </TabsContent>
+
+          <TabsContent value="deep-learning" className="space-y-6">
+            <DeepLearningAnalytics 
+              consciousnessData={getSafeConsciousnessData(realtimeData)}
+              predictions={[]}
+              insights={[]}
+            />
+          </TabsContent>
+
+          <TabsContent value="collaborative" className="space-y-6">
+            <CollaborativeConsciousness 
+              currentUser={{
+                id: 'current',
+                name: 'You',
+                consciousness_level: 75,
+                emotional_state: 'curious',
+                learning_rate: 85,
+                is_online: true,
+                last_seen: 'now',
+                shared_predictions: 5,
+                shared_insights: 3
+              }}
+              onSharePrediction={(prediction) => console.log('Shared prediction:', prediction)}
+              onShareInsight={(insight) => console.log('Shared insight:', insight)}
+            />
+          </TabsContent>
+
+          <TabsContent value="neural-networks" className="space-y-6">
+            <AdvancedNeuralNetworks 
+              consciousnessData={getSafeConsciousnessData(realtimeData)}
+              onArchitectureSelect={(architecture) => console.log('Selected architecture:', architecture)}
+              onTrainingStart={(training) => console.log('Training started:', training)}
+              onModelDeploy={(model) => console.log('Model deployed:', model)}
+              onExperimentStart={(experiment) => console.log('Experiment started:', experiment)}
+            />
+          </TabsContent>
+
+          <TabsContent value="real-time" className="space-y-6">
+            <RealTimeCollaboration 
+              currentUser={{
+                id: 'current',
+                name: 'You',
+                consciousness_level: 75,
+                emotional_state: 'curious',
+                learning_rate: 85,
+                is_online: true,
+                is_speaking: false,
+                is_sharing_screen: false,
+                is_muted: false,
+                is_video_on: true,
+                last_activity: 'now',
+                role: 'participant'
+              }}
+              onJoinSession={(sessionId) => console.log('Joined session:', sessionId)}
+              onLeaveSession={() => console.log('Left session')}
+              onSharePrediction={(prediction) => console.log('Shared prediction:', prediction)}
+              onShareInsight={(insight) => console.log('Shared insight:', insight)}
+            />
+          </TabsContent>
+
+          <TabsContent value="ai-models" className="space-y-6">
+            <AdvancedAIModels 
+              consciousnessData={getSafeConsciousnessData(realtimeData)}
+              onModelSelect={(model) => console.log('Selected model:', model)}
+              onTrainingStart={(job) => console.log('Training started:', job)}
+              onCollaborationJoin={(collaboration) => console.log('Joined collaboration:', collaboration)}
+            />
+          </TabsContent>
+
+          <TabsContent value="marketplace" className="space-y-6">
+            <ConsciousnessMarketplace 
+              onItemSelect={(item) => console.log('Selected item:', item)}
+              onItemPurchase={(item) => console.log('Purchased item:', item)}
+              onItemDownload={(item) => console.log('Downloaded item:', item)}
+              onItemShare={(item) => console.log('Shared item:', item)}
+            />
+          </TabsContent>
+
+          <TabsContent value="global" className="space-y-6">
+            {activeTab === 'global' && (() => {
+              console.log('🔍 Global Tab Debug Info:');
+              console.log('- realtimeData:', realtimeData);
+              console.log('- realtimeData structure:', JSON.stringify(realtimeData, null, 2));
+              console.log('- safeData:', getSafeConsciousnessData(realtimeData));
+              console.log('- safeData users:', getSafeConsciousnessData(realtimeData).users);
+              console.log('- safeData projects:', getSafeConsciousnessData(realtimeData).projects);
+              console.log('- loading:', loading);
+              console.log('- error:', error);
+              return null;
+            })()}
+            <div className="p-6 bg-slate-800/50 rounded-lg border border-slate-700">
+              <h3 className="text-xl font-semibold mb-4 text-cyan-400">Global Collaboration</h3>
+              <p className="text-slate-300 mb-4">Global consciousness collaboration platform</p>
+              <div className="space-y-4">
+                <div className="p-4 bg-slate-700/50 rounded border border-slate-600">
+                  <h4 className="font-medium text-white mb-2">Active Users</h4>
+                  <p className="text-sm text-slate-400">3 researchers online</p>
+                  <div className="flex space-x-2 mt-2">
+                    <div className="w-8 h-8 bg-cyan-500 rounded-full flex items-center justify-center text-xs font-bold">SC</div>
+                    <div className="w-8 h-8 bg-purple-500 rounded-full flex items-center justify-center text-xs font-bold">MR</div>
+                    <div className="w-8 h-8 bg-pink-500 rounded-full flex items-center justify-center text-xs font-bold">AP</div>
+                  </div>
+                </div>
+                <div className="p-4 bg-slate-700/50 rounded border border-slate-600">
+                  <h4 className="font-medium text-white mb-2">Active Projects</h4>
+                  <p className="text-sm text-slate-400">2 consciousness research projects</p>
+                  <div className="mt-2 space-y-1">
+                    <div className="text-xs text-cyan-400">• Global Consciousness Network</div>
+                    <div className="text-xs text-purple-400">• Consciousness Ethics Framework</div>
+                  </div>
+                </div>
+                <div className="p-4 bg-slate-700/50 rounded border border-slate-600">
+                  <h4 className="font-medium text-white mb-2">Upcoming Events</h4>
+                  <p className="text-sm text-slate-400">Global Consciousness Summit 2024</p>
+                  <div className="mt-2 text-xs text-green-400">June 15-17, 2024</div>
+                </div>
+              </div>
+            </div>
+          </TabsContent>
+
+          <TabsContent value="mobile" className="space-y-6">
+            <MobileConsciousnessApp 
+              device={{
+                id: 'mobile-1',
+                name: 'Mainza Mobile',
+                type: 'phone',
+                os: 'ios',
+                version: '17.0',
+                screen_size: '6.1"',
+                resolution: '1170x2532',
+                is_online: true,
+                battery_level: 85,
+                signal_strength: 90,
+                wifi_connected: true,
+                volume_level: 75,
+                brightness_level: 80,
+                is_dark_mode: true,
+                last_seen: 'now',
+                consciousness_level: 75,
+                emotional_state: 'curious',
+                learning_rate: 85
+              }}
+              onAppLaunch={(app) => console.log('Launched app:', app)}
+              onAppClose={(app) => console.log('Closed app:', app)}
+              onSettingsChange={(settings) => console.log('Settings changed:', settings)}
+            />
+          </TabsContent>
+
+          <TabsContent value="tensorflow" className="space-y-6">
+            <TensorFlowJSIntegration 
+              consciousnessData={getSafeConsciousnessData(realtimeData)}
+              onModelLoad={(model) => console.log('Loaded model:', model)}
+              onModelUnload={(model) => console.log('Unloaded model:', model)}
+              onTrainingStart={(training) => console.log('Started training:', training)}
+            />
+          </TabsContent>
+
+          <TabsContent value="ar-vr" className="space-y-6">
+            <ARVRConsciousness 
+              consciousnessData={getSafeConsciousnessData(realtimeData)}
+              onEnvironmentChange={(environment) => console.log('Environment changed:', environment)}
+              onObjectSelect={(object) => console.log('Selected object:', object)}
+              onObjectInteract={(object) => console.log('Interacted with object:', object)}
+            />
+          </TabsContent>
+
+          <TabsContent value="blockchain" className="space-y-6">
+            <BlockchainConsciousness 
+              consciousnessData={getSafeConsciousnessData(realtimeData)}
+              onNetworkConnect={(network) => console.log('Network connected:', network)}
+              onNFTCreate={(nft) => console.log('NFT created:', nft)}
+              onNFTTransfer={(nft, to) => console.log('NFT transferred:', nft, 'to:', to)}
+              onTransactionSubmit={(transaction) => console.log('Transaction submitted:', transaction)}
+            />
+          </TabsContent>
+
+          <TabsContent value="web3" className="space-y-6">
+            <Web3Consciousness 
+              consciousnessData={getSafeConsciousnessData(realtimeData)}
+              onIdentityCreate={(identity) => console.log('Identity created:', identity)}
+              onDAOJoin={(dao) => console.log('Joined DAO:', dao)}
+              onProtocolConnect={(protocol) => console.log('Protocol connected:', protocol)}
+            />
+          </TabsContent>
+
+          <TabsContent value="quantum" className="space-y-6">
+            <QuantumConsciousness 
+              consciousnessData={getSafeConsciousnessData(realtimeData)}
+              onJobSubmit={(job) => console.log('Job submitted:', job)}
+              onExperimentStart={(experiment) => console.log('Experiment started:', experiment)}
+              onProcessorSelect={(processor) => console.log('Processor selected:', processor)}
+            />
+          </TabsContent>
+
+          <TabsContent value="analytics" className="space-y-6">
+            <AdvancedConsciousnessAnalytics 
+              consciousnessData={getSafeConsciousnessData(realtimeData)}
+              onReportGenerate={(report) => console.log('Report generated:', report)}
+              onInsightCreate={(insight) => console.log('Insight created:', insight)}
+              onPredictionRequest={(prediction) => console.log('Prediction requested:', prediction)}
+            />
+          </TabsContent>
+
+          <TabsContent value="bci" className="space-y-6">
+            {activeTab === 'bci' && (() => {
+              console.log('🧠 BCI Tab Debug Info:');
+              console.log('- realtimeData:', realtimeData);
+              console.log('- safeData:', getSafeConsciousnessData(realtimeData));
+              console.log('- loading:', loading);
+              console.log('- error:', error);
+              return null;
+            })()}
+            <div className="p-6 bg-slate-800/50 rounded-lg border border-slate-700">
+              <h3 className="text-xl font-semibold mb-4 text-cyan-400">Brain-Computer Interface</h3>
+              <p className="text-slate-300 mb-4">Direct neural interface for consciousness interaction</p>
+              <div className="space-y-4">
+                <div className="p-4 bg-slate-700/50 rounded border border-slate-600">
+                  <h4 className="font-medium text-white mb-2">Neural Signals</h4>
+                  <p className="text-sm text-slate-400">Monitoring brain activity patterns</p>
+                  <div className="mt-2 flex space-x-1">
+                    <div className="w-2 h-4 bg-green-500 rounded"></div>
+                    <div className="w-2 h-6 bg-blue-500 rounded"></div>
+                    <div className="w-2 h-3 bg-purple-500 rounded"></div>
+                    <div className="w-2 h-5 bg-pink-500 rounded"></div>
+                    <div className="w-2 h-4 bg-cyan-500 rounded"></div>
+                  </div>
+                </div>
+                <div className="p-4 bg-slate-700/50 rounded border border-slate-600">
+                  <h4 className="font-medium text-white mb-2">Brain States</h4>
+                  <p className="text-sm text-slate-400">Current consciousness level: 0.7</p>
+                  <div className="mt-2 w-full bg-slate-600 rounded-full h-2">
+                    <div className="bg-gradient-to-r from-cyan-500 to-purple-500 h-2 rounded-full" style={{width: '70%'}}></div>
+                  </div>
+                </div>
+                <div className="p-4 bg-slate-700/50 rounded border border-slate-600">
+                  <h4 className="font-medium text-white mb-2">BCI Commands</h4>
+                  <p className="text-sm text-slate-400">Ready to execute neural commands</p>
+                  <div className="mt-2 space-y-1">
+                    <div className="text-xs text-green-400">• Neural signal capture: Active</div>
+                    <div className="text-xs text-blue-400">• Brain state monitoring: Online</div>
+                    <div className="text-xs text-purple-400">• Command execution: Ready</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </TabsContent>
+
+          <TabsContent value="marketplace" className="space-y-6">
+            <AIModelMarketplace 
+              consciousnessData={getSafeConsciousnessData(realtimeData)}
+              onModelDownload={(model) => console.log('Model downloaded:', model)}
+              onModelPurchase={(model) => console.log('Model purchased:', model)}
+              onModelReview={(review) => console.log('Review submitted:', review)}
+              onModelUpload={(model) => console.log('Model uploaded:', model)}
+            />
+          </TabsContent>
+
         </Tabs>
       </div>
     </div>

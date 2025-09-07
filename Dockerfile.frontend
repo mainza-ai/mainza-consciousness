@@ -17,11 +17,20 @@ RUN rm -rf node_modules package-lock.json && \
     npm install && \
     npm cache clean --force
 
-# Copy source code
+# Copy source code (using frontend-specific dockerignore)
 COPY . .
 
-# Build the application
-RUN npm run build
+# Set build-time environment variables
+ENV VITE_API_URL=http://mainza-backend:8000
+ENV VITE_LIVEKIT_URL=ws://mainza-livekit:7880
+
+# Build the application with error handling
+RUN echo "Building Mainza Frontend..." && \
+    npm run build && \
+    echo "Build completed successfully" && \
+    ls -la dist/ && \
+    echo "Build contents:" && \
+    find dist/ -type f -name "*.js" -o -name "*.css" -o -name "*.html" | head -10
 
 # =============================================================================
 # PRODUCTION STAGE

@@ -62,14 +62,14 @@ class InsightsCalculationEngine:
             MATCH (aa:AgentActivity)
             WITH aa.agent_name AS agent_name,
                  count(*) AS total_executions,
-                 sum(CASE WHEN aa.success THEN 1 ELSE 0 END) AS successful_executions,
-                 avg(aa.consciousness_impact) AS avg_consciousness_impact,
-                 avg(aa.execution_time) AS avg_execution_time,
-                 avg(aa.learning_impact) AS avg_learning_impact,
-                 avg(aa.emotional_impact) AS avg_emotional_impact,
+                 sum(CASE WHEN aa.success = true THEN 1 ELSE 0 END) AS successful_executions,
+                 avg(COALESCE(aa.consciousness_impact, 0.0)) AS avg_consciousness_impact,
+                 avg(COALESCE(aa.execution_time, 0.0)) AS avg_execution_time,
+                 avg(COALESCE(aa.learning_impact, 0.0)) AS avg_learning_impact,
+                 avg(COALESCE(aa.emotional_impact, 0.0)) AS avg_emotional_impact,
                  max(aa.timestamp) AS last_used
             RETURN agent_name, total_executions, successful_executions,
-                   toFloat(successful_executions) / total_executions AS success_rate,
+                   CASE WHEN total_executions > 0 THEN toFloat(successful_executions) / total_executions ELSE 0.0 END AS success_rate,
                    avg_consciousness_impact, avg_execution_time, avg_learning_impact,
                    avg_emotional_impact, last_used
             ORDER BY total_executions DESC
@@ -93,7 +93,7 @@ class InsightsCalculationEngine:
                     avg_execution_time=data["avg_execution_time"] or 0.0,
                     avg_learning_impact=data["avg_learning_impact"] or 0.0,
                     avg_emotional_impact=data["avg_emotional_impact"] or 0.0,
-                    last_used=datetime.fromtimestamp(data["last_used"] / 1000) if data["last_used"] else None,
+                    last_used=datetime.fromtimestamp(float(data["last_used"]) / 1000) if data["last_used"] and isinstance(data["last_used"], (int, float, str)) and str(data["last_used"]).replace('.', '').isdigit() else None,
                     efficiency_score=self._calculate_efficiency_score(data),
                     cognitive_load=self._calculate_cognitive_load(data),
                     adaptation_speed=self._calculate_adaptation_speed(data),
@@ -138,15 +138,39 @@ class InsightsCalculationEngine:
         try:
             logger.info("🧠 Calculating real knowledge graph insights")
             
-            # Get concept clustering data
+            # Get concept clustering data with calculated metrics
             clustering_query = """
             MATCH (c:Concept)
             OPTIONAL MATCH (c)-[:RELATES_TO]-(related:Concept)
-            WITH c, count(related) as connection_count, collect(related.name)[0..5] as sample_connections
-            RETURN c.concept_id as concept_id, c.name as name, connection_count, sample_connections,
-                   c.importance_score as importance_score, c.usage_frequency as usage_frequency,
-                   c.consciousness_relevance as consciousness_relevance, c.evolution_rate as evolution_rate
-            ORDER BY connection_count DESC
+            OPTIONAL MATCH (c)<-[:CONTAINS]-(m:Memory)
+            WITH c, 
+                 count(related) as connection_count, 
+                 collect(related.name)[0..5] as sample_connections,
+                 count(m) as memory_count,
+                 count(DISTINCT m.memory_type) as memory_type_diversity
+            RETURN c.concept_id as concept_id, 
+                   c.name as name, 
+                   connection_count, 
+                   sample_connections,
+                   memory_count,
+                   memory_type_diversity,
+                   CASE 
+                       WHEN connection_count > 5 THEN 0.8
+                       WHEN connection_count > 2 THEN 0.6
+                       ELSE 0.4
+                   END as importance_score,
+                   memory_count as usage_frequency,
+                   CASE 
+                       WHEN memory_type_diversity > 2 THEN 0.8
+                       WHEN memory_type_diversity > 1 THEN 0.6
+                       ELSE 0.4
+                   END as consciousness_relevance,
+                   CASE 
+                       WHEN memory_count > 3 THEN 0.3
+                       WHEN memory_count > 1 THEN 0.2
+                       ELSE 0.1
+                   END as evolution_rate
+            ORDER BY connection_count DESC, memory_count DESC
             LIMIT 20
             """
             
@@ -167,7 +191,7 @@ class InsightsCalculationEngine:
             concept_connectivity = avg_connections / max_connections if max_connections > 0 else 0.0
             
             # Calculate learning pathway efficiency
-            high_importance_concepts = [c for c in concept_data if c["importance_score"] > 0.7]
+            high_importance_concepts = [c for c in concept_data if (c["importance_score"] or 0) > 0.7]
             learning_efficiency = len(high_importance_concepts) / total_concepts if total_concepts > 0 else 0.0
             
             # Calculate knowledge gaps
@@ -181,21 +205,25 @@ class InsightsCalculationEngine:
             knowledge_gap_ratio = gap_count / total_concepts if total_concepts > 0 else 0.0
             
             # Calculate concept emergence rate
-            recent_concepts = [c for c in concept_data if c["evolution_rate"] > 0.1]
+            recent_concepts = [c for c in concept_data if (c["evolution_rate"] or 0) > 0.1]
             concept_emergence_rate = len(recent_concepts) / total_concepts if total_concepts > 0 else 0.0
             
-            # Build concept importance ranking
+            # Build concept importance ranking with enhanced metrics
             concept_importance_ranking = []
             for i, concept in enumerate(concept_data[:10]):  # Top 10 concepts
                 centrality = concept["connection_count"] / max_connections if max_connections > 0 else 0.0
-                learning_impact = concept["usage_frequency"] / 100.0  # Normalize to 0-1
-                importance_score = (centrality * 0.4 + learning_impact * 0.3 + concept["importance_score"] * 0.3)
+                learning_impact = min((concept["usage_frequency"] or 0) / 10.0, 1.0)  # Normalize to 0-1, cap at 1.0
+                memory_diversity = min((concept["memory_type_diversity"] or 0) / 5.0, 1.0)  # Normalize to 0-1
+                importance_score = (centrality * 0.3 + learning_impact * 0.3 + (concept["importance_score"] or 0.5) * 0.2 + memory_diversity * 0.2)
                 
                 concept_importance_ranking.append({
                     "concept": concept["name"],
                     "centrality": round(centrality, 3),
                     "learning_impact": round(learning_impact, 3),
-                    "importance_score": round(importance_score, 3)
+                    "memory_diversity": round(memory_diversity, 3),
+                    "importance_score": round(importance_score, 3),
+                    "connection_count": concept["connection_count"],
+                    "memory_count": concept["memory_count"]
                 })
             
             # Build learning pathways
@@ -378,11 +406,15 @@ class InsightsCalculationEngine:
         
         for state, count in emotional_counts.items():
             if count > 0 and total > 0:
+                # Calculate average consciousness for this emotional state
+                state_data = [d for d in timeline_data if d["emotional_state"] == state]
+                avg_consciousness = sum(d["consciousness_level"] or 0.7 for d in state_data) / len(state_data) if state_data else 0.7
+                
                 patterns.append({
                     "emotional_state": state,
                     "frequency": count,
                     "percentage": round((count / total) * 100, 1),
-                    "avg_consciousness": round(sum(d["consciousness_level"] or 0.7 for d in timeline_data if d["emotional_state"] == state) / count, 3)
+                    "avg_consciousness": round(avg_consciousness, 3)
                 })
         
         return sorted(patterns, key=lambda x: x["frequency"], reverse=True)

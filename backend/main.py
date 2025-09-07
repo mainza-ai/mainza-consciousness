@@ -10,6 +10,8 @@ from backend.agentic_router import router as agentic_router
 
 # Insights router - Context7 Compliance Fix for /api/insights routing
 from backend.routers.insights import router as insights_router
+from backend.routers.websocket_insights import router as websocket_insights_router
+from backend.routers.predictive_analytics import router as predictive_analytics_router
 from backend.routers.memory_system import router as memory_system_router
 from backend.routers.needs_router import router as needs_router
 try:
@@ -1682,6 +1684,8 @@ async def get_ollama_models():
 
 app.include_router(agentic_router)
 app.include_router(insights_router, prefix="/api/insights")
+app.include_router(websocket_insights_router, prefix="/api")
+app.include_router(predictive_analytics_router, prefix="/api")
 app.include_router(memory_system_router)
 app.include_router(needs_router, prefix="/api")
 

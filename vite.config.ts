@@ -37,6 +37,7 @@ export default defineConfig(({ mode }) => ({
   },
   define: {
     // Define environment variables for the frontend
-    'import.meta.env.VITE_LIVEKIT_URL': '"ws://localhost:7880"',
+    'import.meta.env.VITE_LIVEKIT_URL': JSON.stringify(process.env.VITE_LIVEKIT_URL || 'ws://localhost:7880'),
+    'import.meta.env.VITE_API_URL': JSON.stringify(process.env.VITE_API_URL || 'http://localhost:8000'),
   },
 }));
