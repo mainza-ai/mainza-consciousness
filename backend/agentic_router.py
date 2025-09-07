@@ -15,14 +15,16 @@ from backend.models.notification_models import NotificationInput, NotificationOu
 from backend.models.calendar_models import CalendarInput, CalendarOutput
 from backend.models.conductor_models import ConductorInput, ConductorResult, ConductorState, ConductorFailure
 from backend.models.router_models import RouterFailure, CloudLLMFailure
-from backend.agents.graphmaster import graphmaster_agent
-from backend.agents.taskmaster import taskmaster_agent
-from backend.agents.codeweaver import codeweaver_agent
-from backend.agents.rag import rag_agent
+from backend.agents.graphmaster import graphmaster_agent, EnhancedGraphMasterAgent
+from backend.agents.taskmaster import taskmaster_agent, EnhancedTaskMasterAgent
+from backend.agents.codeweaver import codeweaver_agent, EnhancedCodeWeaverAgent
+from backend.agents.rag import rag_agent, EnhancedRAGAgent
 from backend.agents.notification import notification_agent
 from backend.agents.calendar import calendar_agent
-from backend.agents.conductor import conductor_agent
-from backend.agents.router import router_agent
+from backend.agents.conductor import conductor_agent, EnhancedConductorAgent
+from backend.agents.router import router_agent, EnhancedRouterAgent
+from backend.agents.simple_chat import simple_chat_agent, EnhancedSimpleChatAgent
+from backend.agents.self_reflection import self_reflection_agent, EnhancedSelfReflectionAgent
 try:
     from backend.utils.livekit import generate_access_token
     LIVEKIT_AVAILABLE = True
