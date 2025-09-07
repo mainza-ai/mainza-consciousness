@@ -450,10 +450,10 @@ export const Neo4jGraphVisualization: React.FC<Neo4jGraphVisualizationProps> = (
               {selectedNode ? (
                 <div className="space-y-4">
                   <div>
-                    <h4 className="font-medium text-slate-200 mb-2">{selectedNode.name}</h4>
+                    <h4 className="font-medium text-slate-100 mb-2">{selectedNode.name}</h4>
                     <div className="flex flex-wrap gap-1">
                       {selectedNode.labels.map((label, index) => (
-                        <Badge key={index} variant="outline" className="text-xs">
+                        <Badge key={index} variant="outline" className="text-xs border-slate-500 text-slate-200 bg-slate-800/30">
                           {label}
                         </Badge>
                       ))}
@@ -461,12 +461,12 @@ export const Neo4jGraphVisualization: React.FC<Neo4jGraphVisualizationProps> = (
                   </div>
                   
                   <div>
-                    <h5 className="font-medium text-slate-300 mb-2">Properties</h5>
+                    <h5 className="font-medium text-slate-100 mb-2">Properties</h5>
                     <div className="space-y-1 text-sm">
                       {Object.entries(selectedNode.properties).map(([key, value]) => (
                         <div key={key} className="flex justify-between">
-                          <span className="text-slate-400">{key}:</span>
-                          <span className="text-slate-200 truncate ml-2">
+                          <span className="text-slate-300 font-medium">{key}:</span>
+                          <span className="text-slate-100 truncate ml-2">
                             {typeof value === 'string' && value.length > 30 
                               ? `${value.substring(0, 30)}...` 
                               : String(value)
