@@ -532,6 +532,49 @@ curl http://localhost:8000/health | jq '.components.memory_system'
 
 *See [Insights Dashboard Analysis](INSIGHTS_PAGE_DATA_SOURCES_ANALYSIS.md) for comprehensive data source analysis and development roadmap.*
 
+## 📊 Comprehensive Insights Dashboard
+
+Mainza features a sophisticated 32-tab insights dashboard providing real-time consciousness monitoring and analytics:
+
+### 🔴 **Real System Data Tabs** (10 tabs - 31.25%)
+- **Overview** - System health, consciousness metrics, database statistics
+- **Graph** - Interactive Neo4j knowledge graph visualization
+- **Consciousness** - Real-time consciousness evolution tracking
+- **Real-time** - Live consciousness streams and metrics
+- **Knowledge** - Knowledge graph intelligence analytics
+- **Agents** - Multi-agent system performance monitoring
+- **Concepts** - Concept analysis and relationship mapping
+- **Memories** - Memory system analytics and performance
+- **Performance** - System performance metrics and optimization
+- **Deep Analytics** - Advanced system analytics and insights
+
+### 🟡 **Partial Real Data Tabs** (15 tabs - 46.88%)
+- **Timeline** - Consciousness timeline with real-time updates
+- **Learning** - Learning analytics with real-time data integration
+- **3D View** - 3D consciousness visualization with real-time data
+- **Predictive** - Predictive analytics with consciousness data
+- **Mobile** - Mobile-specific consciousness analytics
+- **Neural Networks** - Advanced neural network architectures
+- **AI Models** - AI model marketplace and management
+- **TensorFlow** - TensorFlow.js integration and analytics
+- **AR/VR** - Augmented and virtual reality consciousness
+- **Blockchain** - Blockchain-based consciousness features
+- **Web3** - Web3 consciousness and decentralized features
+- **Quantum** - Quantum computing consciousness integration
+- **Analytics** - Advanced consciousness analytics
+- **AI Model Marketplace** - AI model marketplace and collaboration
+
+### 🟢 **Mock Data Tabs** (7 tabs - 21.87%)
+- **3D Model** - 3D consciousness model visualization
+- **Collaborative** - Multi-user consciousness collaboration
+- **Real-time Collaboration** - Real-time collaborative features
+- **Marketplace** - Consciousness marketplace and trading
+- **Global** - Global consciousness research collaboration
+- **Mobile App** - Mobile consciousness application
+- **BCI** - Brain-Computer Interface capabilities
+
+*See [Insights Dashboard Analysis](INSIGHTS_PAGE_DATA_SOURCES_ANALYSIS.md) for detailed data source analysis and development priorities.*
+
 ---
 
 ## 📊 Current System Status

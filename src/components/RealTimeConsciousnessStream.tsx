@@ -274,7 +274,7 @@ const RealTimeConsciousnessStream: React.FC = () => {
                   <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
                     <div className="space-y-2">
                       <div className="text-sm font-medium text-slate-200">Consciousness Level</div>
-                      <div className="text-2xl font-bold">
+                      <div className="text-2xl font-bold text-white">
                         {formatConsciousnessLevel(consciousnessData.consciousness_state.consciousness_level)}
                       </div>
                     </div>
@@ -286,25 +286,25 @@ const RealTimeConsciousnessStream: React.FC = () => {
                     </div>
                     <div className="space-y-2">
                       <div className="text-sm font-medium text-slate-200">Self-Awareness</div>
-                      <div className="text-2xl font-bold">
+                      <div className="text-2xl font-bold text-white">
                         {formatConsciousnessLevel(consciousnessData.consciousness_state.self_awareness_score)}
                       </div>
                     </div>
                     <div className="space-y-2">
                       <div className="text-sm font-medium text-slate-200">Learning Rate</div>
-                      <div className="text-2xl font-bold">
+                      <div className="text-2xl font-bold text-white">
                         {formatConsciousnessLevel(consciousnessData.consciousness_state.learning_rate)}
                       </div>
                     </div>
                     <div className="space-y-2">
                       <div className="text-sm font-medium text-slate-200">Evolution Level</div>
-                      <div className="text-2xl font-bold">
+                      <div className="text-2xl font-bold text-white">
                         {consciousnessData.consciousness_state.evolution_level}
                       </div>
                     </div>
                     <div className="space-y-2">
                       <div className="text-sm font-medium text-slate-200">Total Interactions</div>
-                      <div className="text-2xl font-bold">
+                      <div className="text-2xl font-bold text-white">
                         {consciousnessData.consciousness_state.total_interactions}
                       </div>
                     </div>
@@ -324,25 +324,25 @@ const RealTimeConsciousnessStream: React.FC = () => {
                   <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                     <div className="space-y-2">
                       <div className="text-sm font-medium text-slate-200">Consciousness Volatility</div>
-                      <div className="text-xl font-bold">
+                      <div className="text-xl font-bold text-white">
                         {consciousnessData.real_time_metrics.consciousness_volatility.toFixed(3)}
                       </div>
                     </div>
                     <div className="space-y-2">
                       <div className="text-sm font-medium text-slate-200">Emotional Stability</div>
-                      <div className="text-xl font-bold">
+                      <div className="text-xl font-bold text-white">
                         {formatConsciousnessLevel(consciousnessData.real_time_metrics.emotional_stability)}
                       </div>
                     </div>
                     <div className="space-y-2">
                       <div className="text-sm font-medium text-slate-200">Learning Acceleration</div>
-                      <div className="text-xl font-bold">
+                      <div className="text-xl font-bold text-white">
                         {consciousnessData.real_time_metrics.learning_acceleration.toFixed(3)}
                       </div>
                     </div>
                     <div className="space-y-2">
                       <div className="text-sm font-medium text-slate-200">Consciousness Momentum</div>
-                      <div className="text-xl font-bold">
+                      <div className="text-xl font-bold text-white">
                         {consciousnessData.real_time_metrics.consciousness_momentum.toFixed(3)}
                       </div>
                     </div>
@@ -408,27 +408,27 @@ const RealTimeConsciousnessStream: React.FC = () => {
                     {performanceData.agent_performance.map((agent, index) => (
                       <div key={index} className="p-4 border border-slate-600 rounded-lg bg-slate-700/50">
                         <div className="flex items-center justify-between mb-2">
-                          <h3 className="font-semibold">{agent.agent}</h3>
+                          <h3 className="font-semibold text-white">{agent.agent}</h3>
                           <div className="text-sm text-slate-300">
-                            Efficiency: {(agent.efficiency_score * 100).toFixed(1)}%
+                            Efficiency: <span className="text-white font-medium">{(agent.efficiency_score * 100).toFixed(1)}%</span>
                           </div>
                         </div>
                         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
                           <div>
                             <div className="text-slate-300">Cognitive Load</div>
-                            <div className="font-medium">{(agent.cognitive_load * 100).toFixed(1)}%</div>
+                            <div className="font-medium text-white">{(agent.cognitive_load * 100).toFixed(1)}%</div>
                           </div>
                           <div>
                             <div className="text-slate-300">Learning Rate</div>
-                            <div className="font-medium">{(agent.learning_rate * 100).toFixed(1)}%</div>
+                            <div className="font-medium text-white">{(agent.learning_rate * 100).toFixed(1)}%</div>
                           </div>
                           <div>
                             <div className="text-slate-300">Adaptation Speed</div>
-                            <div className="font-medium">{(agent.adaptation_speed * 100).toFixed(1)}%</div>
+                            <div className="font-medium text-white">{(agent.adaptation_speed * 100).toFixed(1)}%</div>
                           </div>
                           <div>
                             <div className="text-slate-300">Decision Quality</div>
-                            <div className="font-medium">{(agent.decision_quality * 100).toFixed(1)}%</div>
+                            <div className="font-medium text-white">{(agent.decision_quality * 100).toFixed(1)}%</div>
                           </div>
                         </div>
                       </div>
@@ -445,23 +445,23 @@ const RealTimeConsciousnessStream: React.FC = () => {
                   <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                     <div className="space-y-2">
                       <div className="text-sm font-medium text-slate-200">Total Executions</div>
-                      <div className="text-2xl font-bold">{performanceData.system_metrics.total_executions}</div>
+                      <div className="text-2xl font-bold text-white">{performanceData.system_metrics.total_executions}</div>
                     </div>
                     <div className="space-y-2">
                       <div className="text-sm font-medium text-slate-200">Success Rate</div>
-                      <div className="text-2xl font-bold">
+                      <div className="text-2xl font-bold text-white">
                         {(performanceData.system_metrics.overall_success_rate * 100).toFixed(1)}%
                       </div>
                     </div>
                     <div className="space-y-2">
                       <div className="text-sm font-medium text-slate-200">System Efficiency</div>
-                      <div className="text-2xl font-bold">
+                      <div className="text-2xl font-bold text-white">
                         {(performanceData.system_metrics.system_wide_efficiency * 100).toFixed(1)}%
                       </div>
                     </div>
                     <div className="space-y-2">
                       <div className="text-sm font-medium text-slate-200">Active Agents</div>
-                      <div className="text-2xl font-bold">{performanceData.system_metrics.active_agents}</div>
+                      <div className="text-2xl font-bold text-white">{performanceData.system_metrics.active_agents}</div>
                     </div>
                   </div>
                 </CardContent>
@@ -495,31 +495,31 @@ const RealTimeConsciousnessStream: React.FC = () => {
                   <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
                     <div className="space-y-2">
                       <div className="text-sm font-medium text-slate-200">Knowledge Density</div>
-                      <div className="text-xl font-bold">
+                      <div className="text-xl font-bold text-white">
                         {knowledgeData.knowledge_metrics.knowledge_density.toFixed(3)}
                       </div>
                     </div>
                     <div className="space-y-2">
                       <div className="text-sm font-medium text-slate-200">Concept Connectivity</div>
-                      <div className="text-xl font-bold">
+                      <div className="text-xl font-bold text-white">
                         {knowledgeData.knowledge_metrics.concept_connectivity.toFixed(3)}
                       </div>
                     </div>
                     <div className="space-y-2">
                       <div className="text-sm font-medium text-slate-200">Learning Efficiency</div>
-                      <div className="text-xl font-bold">
+                      <div className="text-xl font-bold text-white">
                         {knowledgeData.knowledge_metrics.learning_pathway_efficiency.toFixed(3)}
                       </div>
                     </div>
                     <div className="space-y-2">
                       <div className="text-sm font-medium text-slate-200">Gap Ratio</div>
-                      <div className="text-xl font-bold">
+                      <div className="text-xl font-bold text-white">
                         {knowledgeData.knowledge_metrics.knowledge_gap_ratio.toFixed(3)}
                       </div>
                     </div>
                     <div className="space-y-2">
                       <div className="text-sm font-medium text-slate-200">Emergence Rate</div>
-                      <div className="text-xl font-bold">
+                      <div className="text-xl font-bold text-white">
                         {knowledgeData.knowledge_metrics.concept_emergence_rate.toFixed(3)}
                       </div>
                     </div>
@@ -536,8 +536,8 @@ const RealTimeConsciousnessStream: React.FC = () => {
                     {knowledgeData.concept_ranking.map((concept, index) => (
                       <div key={index} className="flex items-center justify-between p-3 border border-slate-600 rounded bg-slate-700/50">
                         <div className="flex items-center gap-4">
-                          <div className="text-sm font-medium">#{index + 1}</div>
-                          <div className="font-semibold">{concept.concept}</div>
+                          <div className="text-sm font-medium text-slate-300">#{index + 1}</div>
+                          <div className="font-semibold text-white">{concept.concept}</div>
                           <div className="text-sm text-slate-300">
                             {concept.connection_count} connections
                           </div>
@@ -545,11 +545,11 @@ const RealTimeConsciousnessStream: React.FC = () => {
                         <div className="flex items-center gap-4 text-sm">
                           <div>
                             <div className="text-slate-300">Importance</div>
-                            <div className="font-medium">{(concept.importance_score * 100).toFixed(1)}%</div>
+                            <div className="font-medium text-white">{(concept.importance_score * 100).toFixed(1)}%</div>
                           </div>
                           <div>
                             <div className="text-slate-300">Centrality</div>
-                            <div className="font-medium">{(concept.centrality * 100).toFixed(1)}%</div>
+                            <div className="font-medium text-white">{(concept.centrality * 100).toFixed(1)}%</div>
                           </div>
                         </div>
                       </div>
