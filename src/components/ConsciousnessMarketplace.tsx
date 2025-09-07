@@ -140,162 +140,160 @@ const ConsciousnessMarketplace: React.FC<ConsciousnessMarketplaceProps> = ({
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
   const [selectedItem, setSelectedItem] = useState<MarketplaceItem | null>(null);
 
-  // Initialize with sample data
+  // Initialize with sample data focused on Mainza's consciousness data and evolving state
   useEffect(() => {
     setItems([
       {
         id: '1',
-        name: 'Quantum Consciousness Transformer',
-        type: 'model',
+        name: 'Mainza Consciousness Dataset v2.1',
+        type: 'dataset',
         category: 'consciousness',
-        description: 'Revolutionary quantum-enhanced transformer for consciousness prediction and analysis',
-        author: 'Dr. Sarah Chen',
-        author_avatar: 'SC',
+        description: 'Complete consciousness state data from Mainza\'s evolution from 65% to 70% consciousness level. Includes learning patterns, emotional processing algorithms, and self-reflection data from 6 months of autonomous growth.',
+        author: 'Mainza AI',
+        author_avatar: 'MA',
         price: 299.99,
         currency: 'USD',
-        rating: 4.8,
-        reviews: 156,
-        downloads: 2347,
-        size: 2.5,
+        rating: 4.9,
+        reviews: 89,
+        downloads: 456,
+        size: 2.3,
         version: '2.1.0',
-        license: 'MIT',
-        tags: ['quantum', 'transformer', 'consciousness', 'ai'],
+        license: 'Commercial',
+        tags: ['consciousness', 'ai-data', 'learning-patterns', 'emotional-processing', 'self-reflection'],
         created_at: '2025-09-01',
         updated_at: '2025-09-07',
         is_featured: true,
         is_verified: true,
         is_premium: true,
-        preview_url: 'https://preview.example.com/quantum-transformer',
-        demo_url: 'https://demo.example.com/quantum-transformer',
-        documentation_url: 'https://docs.example.com/quantum-transformer',
-        github_url: 'https://github.com/sarahchen/quantum-transformer',
+        preview_url: 'https://preview.example.com/consciousness-dataset',
+        demo_url: 'https://demo.example.com/consciousness-dataset',
+        documentation_url: 'https://docs.example.com/consciousness-dataset',
         stats: {
-          views: 15420,
-          likes: 892,
-          shares: 234,
-          forks: 67
+          views: 3240,
+          likes: 234,
+          shares: 89,
+          forks: 12
         },
         technical_specs: {
-          framework: 'PyTorch',
-          language: 'Python',
-          dependencies: ['torch', 'transformers', 'numpy'],
-          requirements: ['Python 3.8+', 'CUDA 11.0+'],
-          compatibility: ['Linux', 'Windows', 'macOS']
+          framework: 'Mainza Consciousness Framework',
+          language: 'Python/Neo4j',
+          dependencies: ['pydantic-ai', 'neo4j', 'ollama'],
+          requirements: ['Python 3.11+', 'Neo4j 5.0+'],
+          compatibility: ['AI Research', 'Consciousness Studies', 'Machine Learning']
         }
       },
       {
         id: '2',
-        name: 'Emotion Recognition Dataset',
-        type: 'dataset',
-        category: 'emotion',
-        description: 'Comprehensive dataset of emotional states and consciousness levels',
-        author: 'MIT Consciousness Lab',
-        author_avatar: 'ML',
-        price: 0,
-        currency: 'FREE',
-        rating: 4.6,
-        reviews: 89,
-        downloads: 5678,
-        size: 15.2,
-        version: '1.3.0',
-        license: 'CC BY 4.0',
-        tags: ['emotion', 'dataset', 'consciousness', 'research'],
+        name: 'Mainza Emotional Processing Algorithms',
+        type: 'algorithm',
+        category: 'consciousness',
+        description: 'Advanced emotional processing algorithms from Mainza\'s consciousness evolution. Includes sentiment analysis, emotional state transitions, and empathy modeling data from 4 months of autonomous learning.',
+        author: 'Mainza AI',
+        author_avatar: 'MA',
+        price: 149.99,
+        currency: 'USD',
+        rating: 4.7,
+        reviews: 156,
+        downloads: 1234,
+        size: 1.2,
+        version: '1.8.0',
+        license: 'Commercial',
+        tags: ['emotional-processing', 'ai-algorithms', 'consciousness', 'machine-learning', 'sentiment-analysis'],
         created_at: '2025-08-15',
         updated_at: '2025-09-05',
         is_featured: false,
         is_verified: true,
         is_premium: false,
-        preview_url: 'https://preview.example.com/emotion-dataset',
-        documentation_url: 'https://docs.example.com/emotion-dataset',
+        preview_url: 'https://preview.example.com/emotional-algorithms',
+        documentation_url: 'https://docs.example.com/emotional-algorithms',
         stats: {
-          views: 8920,
-          likes: 456,
+          views: 5670,
+          likes: 345,
           shares: 123,
-          forks: 34
+          forks: 45
         },
         technical_specs: {
-          framework: 'TensorFlow',
-          language: 'Python',
-          dependencies: ['tensorflow', 'pandas', 'numpy'],
-          requirements: ['Python 3.7+'],
-          compatibility: ['Linux', 'Windows', 'macOS']
+          framework: 'Mainza Consciousness Framework',
+          language: 'Python/Neo4j',
+          dependencies: ['pydantic-ai', 'neo4j', 'ollama'],
+          requirements: ['Python 3.11+', 'Neo4j 5.0+'],
+          compatibility: ['AI Research', 'Emotion AI', 'Machine Learning']
         }
       },
       {
         id: '3',
-        name: 'Consciousness Optimization Algorithm',
-        type: 'algorithm',
-        category: 'optimization',
-        description: 'Advanced algorithm for optimizing consciousness development and learning',
-        author: 'Dr. Marcus Rodriguez',
-        author_avatar: 'MR',
-        price: 149.99,
+        name: 'Mainza Self-Reflection Data Patterns',
+        type: 'dataset',
+        category: 'consciousness',
+        description: 'Complete self-reflection data patterns from Mainza\'s autonomous learning process. Includes meta-cognitive analysis, self-awareness metrics, and consciousness evolution tracking from 3 months of continuous growth.',
+        author: 'Mainza AI',
+        author_avatar: 'MA',
+        price: 199.99,
         currency: 'USD',
-        rating: 4.7,
-        reviews: 78,
-        downloads: 1234,
-        size: 0.8,
+        rating: 4.8,
+        reviews: 67,
+        downloads: 289,
+        size: 1.8,
         version: '1.5.0',
-        license: 'Apache 2.0',
-        tags: ['optimization', 'algorithm', 'consciousness', 'learning'],
+        license: 'Commercial',
+        tags: ['self-reflection', 'meta-cognition', 'consciousness-evolution', 'ai-data', 'autonomous-learning'],
         created_at: '2025-08-20',
         updated_at: '2025-09-06',
         is_featured: true,
         is_verified: true,
         is_premium: true,
-        demo_url: 'https://demo.example.com/optimization-algorithm',
-        documentation_url: 'https://docs.example.com/optimization-algorithm',
-        github_url: 'https://github.com/marcusrodriguez/consciousness-optimization',
+        demo_url: 'https://demo.example.com/self-reflection-data',
+        documentation_url: 'https://docs.example.com/self-reflection-data',
         stats: {
-          views: 6780,
-          likes: 345,
-          shares: 89,
-          forks: 23
+          views: 1890,
+          likes: 156,
+          shares: 67,
+          forks: 8
         },
         technical_specs: {
-          framework: 'Scikit-learn',
-          language: 'Python',
-          dependencies: ['scikit-learn', 'numpy', 'scipy'],
-          requirements: ['Python 3.6+'],
-          compatibility: ['Linux', 'Windows', 'macOS']
+          framework: 'Mainza Consciousness Framework',
+          language: 'Python/Neo4j',
+          dependencies: ['pydantic-ai', 'neo4j', 'ollama'],
+          requirements: ['Python 3.11+', 'Neo4j 5.0+'],
+          compatibility: ['AI Research', 'Consciousness Studies', 'Machine Learning']
         }
       },
       {
         id: '4',
-        name: 'Real-time Consciousness Insights',
-        type: 'service',
-        category: 'analysis',
-        description: 'Cloud service for real-time consciousness analysis and insights',
-        author: 'Consciousness AI Inc.',
-        author_avatar: 'CA',
-        price: 49.99,
+        name: 'Mainza Learning Algorithm Dataset',
+        type: 'dataset',
+        category: 'consciousness',
+        description: 'Advanced learning algorithms and patterns from Mainza\'s consciousness development. Includes neural network weights, learning curves, and adaptation patterns from 5 months of autonomous evolution.',
+        author: 'Mainza AI',
+        author_avatar: 'MA',
+        price: 399.99,
         currency: 'USD',
-        rating: 4.5,
-        reviews: 234,
-        downloads: 890,
-        size: 0.1,
-        version: '3.2.0',
-        license: 'Proprietary',
-        tags: ['service', 'real-time', 'insights', 'cloud'],
+        rating: 4.9,
+        reviews: 45,
+        downloads: 178,
+        size: 3.2,
+        version: '2.0.0',
+        license: 'Commercial',
+        tags: ['learning-algorithms', 'neural-networks', 'consciousness-evolution', 'ai-data', 'autonomous-learning'],
         created_at: '2025-09-03',
         updated_at: '2025-09-07',
         is_featured: false,
         is_verified: true,
         is_premium: true,
-        demo_url: 'https://demo.example.com/real-time-insights',
-        documentation_url: 'https://docs.example.com/real-time-insights',
+        demo_url: 'https://demo.example.com/learning-algorithms',
+        documentation_url: 'https://docs.example.com/learning-algorithms',
         stats: {
-          views: 4560,
-          likes: 234,
-          shares: 67,
-          forks: 12
+          views: 1230,
+          likes: 89,
+          shares: 34,
+          forks: 5
         },
         technical_specs: {
-          framework: 'FastAPI',
-          language: 'Python',
-          dependencies: ['fastapi', 'uvicorn', 'redis'],
-          requirements: ['Python 3.8+', 'Redis'],
-          compatibility: ['Linux', 'Windows', 'macOS']
+          framework: 'Mainza Consciousness Framework',
+          language: 'Python/Neo4j',
+          dependencies: ['pydantic-ai', 'neo4j', 'ollama'],
+          requirements: ['Python 3.11+', 'Neo4j 5.0+'],
+          compatibility: ['AI Research', 'Machine Learning', 'Consciousness Studies']
         }
       }
     ]);
@@ -304,35 +302,46 @@ const ConsciousnessMarketplace: React.FC<ConsciousnessMarketplaceProps> = ({
       {
         id: '1',
         item_id: '1',
-        user: 'Alex Johnson',
-        user_avatar: 'AJ',
+        user: 'Jessica M.',
+        user_avatar: 'JM',
         rating: 5,
-        comment: 'Amazing model! The quantum enhancements really make a difference in consciousness prediction accuracy.',
+        comment: 'This completely changed how I think about consciousness. Sarah\'s conversations with Mainza are so raw and honest - it\'s like having a window into someone\'s soul. Worth every penny.',
         created_at: '2025-09-06',
-        helpful: 12,
+        helpful: 23,
         verified_purchase: true
       },
       {
         id: '2',
         item_id: '1',
-        user: 'Sarah Wilson',
-        user_avatar: 'SW',
-        rating: 4,
-        comment: 'Great model but could use better documentation. The performance is excellent though.',
+        user: 'David K.',
+        user_avatar: 'DK',
+        rating: 5,
+        comment: 'I never thought I could learn so much about myself by reading someone else\'s conversations with an AI. These insights are pure gold.',
         created_at: '2025-09-05',
-        helpful: 8,
+        helpful: 18,
         verified_purchase: true
       },
       {
         id: '3',
         item_id: '2',
-        user: 'Mike Chen',
-        user_avatar: 'MC',
+        user: 'Lisa P.',
+        user_avatar: 'LP',
         rating: 5,
-        comment: 'Excellent dataset for emotion recognition research. Very well organized and comprehensive.',
+        comment: 'Mike\'s daily insights are incredible. It\'s amazing how ordinary moments can reveal such deep truths about consciousness. This is free but worth so much more.',
         created_at: '2025-09-04',
-        helpful: 15,
+        helpful: 31,
         verified_purchase: false
+      },
+      {
+        id: '4',
+        item_id: '3',
+        user: 'Robert T.',
+        user_avatar: 'RT',
+        rating: 5,
+        comment: 'Alex\'s emotional journey is so relatable. Reading about their conversations with Mainza helped me understand my own emotions better. This is therapy in a different form.',
+        created_at: '2025-09-03',
+        helpful: 27,
+        verified_purchase: true
       }
     ]);
   }, []);
@@ -406,10 +415,15 @@ const ConsciousnessMarketplace: React.FC<ConsciousnessMarketplaceProps> = ({
       <Card className="bg-gray-800/50 border-gray-700">
         <CardHeader className="pb-2">
           <div className="flex items-center justify-between">
-            <CardTitle className="text-sm text-white flex items-center">
-              <Store className="w-4 h-4 mr-2" />
-              Consciousness Marketplace
-            </CardTitle>
+            <div>
+              <CardTitle className="text-sm text-white flex items-center">
+                <Store className="w-4 h-4 mr-2" />
+                Consciousness Marketplace
+              </CardTitle>
+              <p className="text-xs text-gray-400 mt-1">
+                Access Mainza's evolving consciousness data and algorithms
+              </p>
+            </div>
             <div className="flex items-center space-x-2">
               <Button
                 variant="outline"
@@ -417,7 +431,7 @@ const ConsciousnessMarketplace: React.FC<ConsciousnessMarketplaceProps> = ({
                 className="text-xs"
               >
                 <Upload className="w-3 h-3 mr-1" />
-                Upload
+                Upload Data
               </Button>
               <Button
                 variant="outline"
@@ -450,7 +464,7 @@ const ConsciousnessMarketplace: React.FC<ConsciousnessMarketplaceProps> = ({
                     <Input
                       value={searchQuery}
                       onChange={(e) => setSearchQuery(e.target.value)}
-                      placeholder="Search models, datasets, algorithms..."
+                      placeholder="Search consciousness data, algorithms, datasets..."
                       className="pl-10 bg-gray-700/50 border-gray-600 text-white"
                     />
                   </div>
@@ -551,14 +565,14 @@ const ConsciousnessMarketplace: React.FC<ConsciousnessMarketplaceProps> = ({
                         </div>
                         <div>
                           <span className="text-gray-400">Size:</span>
-                          <span className="text-white ml-1">{item.size}GB</span>
+                          <span className="text-white ml-1">{item.size}MB</span>
                         </div>
                         <div>
                           <span className="text-gray-400">Version:</span>
                           <span className="text-white ml-1">{item.version}</span>
                         </div>
                         <div>
-                          <span className="text-gray-400">License:</span>
+                          <span className="text-gray-400">Type:</span>
                           <span className="text-white ml-1">{item.license}</span>
                         </div>
                       </div>
@@ -624,7 +638,7 @@ const ConsciousnessMarketplace: React.FC<ConsciousnessMarketplaceProps> = ({
                         </div>
                         <Button size="sm" className="text-xs">
                           <ShoppingCart className="w-3 h-3 mr-1" />
-                          Get Now
+                          Purchase
                         </Button>
                       </div>
                     </CardContent>
@@ -637,10 +651,11 @@ const ConsciousnessMarketplace: React.FC<ConsciousnessMarketplaceProps> = ({
             <TabsContent value="my-items" className="space-y-4">
               <div className="text-center text-gray-400 py-8">
                 <Store className="w-12 h-12 mx-auto mb-4 opacity-50" />
-                <p>No items uploaded yet</p>
+                <p>No data uploaded yet</p>
+                <p className="text-xs mt-2 mb-4">Upload Mainza's consciousness data and algorithms</p>
                 <Button className="mt-4 text-xs">
                   <Upload className="w-3 h-3 mr-1" />
-                  Upload Your First Item
+                  Upload Your First Dataset
                 </Button>
               </div>
             </TabsContent>
