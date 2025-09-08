@@ -32,7 +32,9 @@ def test_endpoint_definitions():
         ("/tts/synthesize", "POST"),
         ("/tts/voices", "GET"),
         ("/api/livekit/get-token", "POST"),
-        ("/health", "GET")
+        ("/health", "GET"),
+        ("/build/info", "GET"),
+        ("/build/health", "GET")
     ]
     
     # Check main.py for endpoints

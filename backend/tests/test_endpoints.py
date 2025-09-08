@@ -46,6 +46,22 @@ def test_conductor_query_endpoint():
     data = response.json()
     assert "final_summary" in data or "reason" in data
 
+def test_build_info_endpoint():
+    response = client.get("/build/info")
+    assert response.status_code == 200
+    data = response.json()
+    assert "build_date" in data
+    assert "git_commit" in data
+    assert "cache_bust" in data
+    assert "status" in data
+
+def test_build_health_endpoint():
+    response = client.get("/build/health")
+    assert response.status_code == 200
+    data = response.json()
+    assert data["status"] == "healthy"
+    assert "timestamp" in data
+
 def test_router_agent_routing():
     # This test assumes router agent is available and cloud LLM is enabled
     response = client.post("/agent/graphmaster/query", json={"query": "What tasks are open?"})

@@ -68,7 +68,8 @@ def test_frontend_polling_intervals():
         ("src/pages/IndexRedesigned.tsx", "120000", "2 minutes"),
         ("src/components/ConsciousnessDashboard.tsx", "300000", "5 minutes"),
         ("src/components/ConsciousnessInsights.tsx", "600000", "10 minutes"),
-        ("src/components/SystemStatus.tsx", "300000", "5 minutes")
+        ("src/components/SystemStatus.tsx", "3600000", "1 hour"),
+        ("src/components/needs/AdvancedNeedsDisplay.tsx", "3600000", "1 hour")
     ]
     
     issues_found = []
@@ -195,6 +196,17 @@ async def test_request_manager_functionality():
             print("  ✅ User activity detection works")
         else:
             print("  ❌ User activity detection failed")
+            return False
+        
+        # Test background cache TTL
+        if hasattr(llm_request_manager, 'background_cache_ttl'):
+            if llm_request_manager.background_cache_ttl == 600:  # 10 minutes
+                print("  ✅ Background cache TTL set to 10 minutes")
+            else:
+                print(f"  ❌ Background cache TTL incorrect: {llm_request_manager.background_cache_ttl}")
+                return False
+        else:
+            print("  ❌ Background cache TTL not found")
             return False
         
         return True

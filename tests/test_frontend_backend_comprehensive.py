@@ -13,6 +13,39 @@ logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(
 logger = logging.getLogger(__name__)
 
 BASE_URL = "http://localhost:8000"
+FRONTEND_URL = "http://localhost"
+
+def test_build_info_endpoints():
+    """Test the new build info endpoints"""
+    print("\n🔧 Testing Build Info Endpoints")
+    print("-" * 40)
+    
+    # Test build info endpoint
+    response = requests.get(f"{BASE_URL}/build/info")
+    if response.status_code == 200:
+        data = response.json()
+        print(f"✅ Build Info: {data.get('status', 'unknown')}")
+        
+        # Verify expected fields
+        required_fields = ['build_date', 'git_commit', 'cache_bust', 'status']
+        missing = [f for f in required_fields if f not in data]
+        if missing:
+            print(f"⚠️  Missing fields: {missing}")
+        else:
+            print(f"✅ All required build info fields present")
+            print(f"   Build Date: {data.get('build_date', 'N/A')}")
+            print(f"   Git Commit: {data.get('git_commit', 'N/A')}")
+            print(f"   Cache Bust: {data.get('cache_bust', 'N/A')}")
+    else:
+        print(f"❌ Build info failed: {response.status_code}")
+    
+    # Test build health endpoint
+    response = requests.get(f"{BASE_URL}/build/health")
+    if response.status_code == 200:
+        data = response.json()
+        print(f"✅ Build Health: {data.get('status', 'unknown')}")
+    else:
+        print(f"❌ Build health failed: {response.status_code}")
 
 def test_consciousness_flow():
     """Test the complete consciousness data flow"""
@@ -201,6 +234,7 @@ def main():
     print("✅ Backend is healthy, proceeding with tests...")
     
     # Run all test suites
+    test_build_info_endpoints()
     test_consciousness_flow()
     test_chat_flow()
     test_tts_flow()
