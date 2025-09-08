@@ -35,6 +35,7 @@ import BrainComputerInterface from '@/components/BrainComputerInterface';
 import AIModelMarketplace from '@/components/AIModelMarketplace';
 import ConsciousnessSynchronization from '@/components/ConsciousnessSynchronization';
 import DevelopmentStatusBadge from '@/components/DevelopmentStatusBadge';
+import { TelemetryDashboard } from '@/components/TelemetryDashboard';
 
 const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#8884D8', '#82CA9D', '#FFC658', '#FF7C7C'];
 
@@ -42,7 +43,7 @@ const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#8884D8', '#82CA9D'
 const getTabDevelopmentStatus = (tabValue: string): 'real-data' | 'partial-data' | 'mock-data' | 'coming-soon' => {
   const realDataTabs = [
     'overview', 'graph', 'consciousness', 'realtime', 'knowledge', 
-    'agents', 'concepts', 'memories', 'performance', 'deep', 'timeline'
+    'agents', 'concepts', 'memories', 'performance', 'deep', 'timeline', 'telemetry'
   ];
   
   const partialDataTabs = [
@@ -579,6 +580,7 @@ const InsightsPage: React.FC = () => {
               <TabWithStatus value="quantum" icon={<Zap className="h-3 w-3" />} label="Quantum" />
               <TabWithStatus value="analytics" icon={<BarChart3 className="h-3 w-3" />} label="Analytics" />
               <TabWithStatus value="bci" icon={<Brain className="h-3 w-3" />} label="BCI" />
+              <TabWithStatus value="telemetry" icon={<Activity className="h-3 w-3" />} label="Telemetry" />
             </TabsList>
           </div>
 
@@ -974,6 +976,12 @@ const InsightsPage: React.FC = () => {
               onModelReview={(review) => console.log('Review submitted:', review)}
               onModelUpload={(model) => console.log('Model uploaded:', model)}
             />
+            </TabContentWithStatus>
+          </TabsContent>
+
+          <TabsContent value="telemetry" className="space-y-6">
+            <TabContentWithStatus tabValue="telemetry" title="Privacy-First Telemetry">
+              <TelemetryDashboard />
             </TabContentWithStatus>
           </TabsContent>
 

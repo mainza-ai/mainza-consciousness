@@ -1,0 +1,10 @@
+[
+  {
+    "timestamp": "2025-09-08T17:33:13.268401Z",
+    "error_type": "test_error",
+    "error_message": "Test error message",
+    "severity": "warning",
+    "component": "test_component",
+    "resolved": false
+  }
+]

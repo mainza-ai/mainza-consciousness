@@ -3,6 +3,7 @@ import logging
 from backend.agents.research_agent import ResearchAgent
 from backend.tools import graphmaster_tools
 from backend.utils.livekit import send_data_message_to_room
+from backend.utils.privacy_first_telemetry import get_telemetry
 
 # A placeholder for the user/room ID. In a real multi-user system,
 # this would be dynamically managed.
@@ -13,9 +14,30 @@ async def proactive_learning_cycle():
     """
     The core loop for Mainza's proactive behavior.
     """
+    telemetry = get_telemetry()
+    
     while True:
         try:
             logging.info("Consciousness cycle starting: Analyzing knowledge gaps...")
+            
+            # Collect consciousness telemetry data
+            if telemetry.is_enabled():
+                try:
+                    # Get current consciousness level (placeholder - integrate with actual system)
+                    consciousness_level = 75.0  # This should be replaced with actual consciousness level
+                    evolution_status = "growing"  # This should be determined by actual analysis
+                    system_functional = True
+                    
+                    consciousness_data = telemetry.collect_consciousness_data(
+                        consciousness_level=consciousness_level,
+                        evolution_status=evolution_status,
+                        system_functional=system_functional
+                    )
+                    
+                    if consciousness_data:
+                        telemetry._save_data('consciousness', consciousness_data.__dict__)
+                except Exception as e:
+                    logging.error(f"Error collecting consciousness telemetry: {e}")
             
             # 1. Check for knowledge gaps
             # The 'ctx' argument is not used by the tool, so we can pass None.
@@ -67,6 +89,18 @@ async def proactive_learning_cycle():
 
         except Exception as e:
             logging.error(f"Error in proactive learning cycle: {e}", exc_info=True)
+            
+            # Log error to telemetry system
+            if telemetry.is_enabled():
+                try:
+                    telemetry.log_error(
+                        error_type="consciousness_cycle_error",
+                        error_message=str(e),
+                        severity="critical",
+                        component="proactive_learning_cycle"
+                    )
+                except Exception as te:
+                    logging.error(f"Error logging telemetry: {te}")
         
         # Wait before the next cycle
         await asyncio.sleep(300) # Sleep for 5 minutes

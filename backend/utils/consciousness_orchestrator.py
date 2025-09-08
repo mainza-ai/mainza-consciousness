@@ -13,3 +13,4 @@ except (ImportError, ValueError):
     self_reflection_agent = None
 
 from backend.models.consciousness_models import ConsciousnessState, ConsciousnessCycleResult, EmotionalState
+from backend.utils.privacy_first_telemetry import get_telemetry

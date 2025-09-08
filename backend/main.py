@@ -15,6 +15,8 @@ from backend.routers.predictive_analytics import router as predictive_analytics_
 from backend.routers.memory_system import router as memory_system_router
 from backend.routers.needs_router import router as needs_router
 from backend.routers.build_info import router as build_info_router
+from backend.routers.telemetry import router as telemetry_router
+from backend.utils.system_health_monitor import start_system_health_monitoring
 try:
     from backend.tools.livekit_tools import create_livekit_token
     LIVEKIT_TOOLS_AVAILABLE = True
@@ -253,6 +255,13 @@ async def startup_event():
                 
         except Exception as e:
             logging.error(f"❌ Failed to perform initial memory system health check: {e}")
+    
+    # Start system health monitoring
+    try:
+        await start_system_health_monitoring()
+        logging.info("✅ System health monitoring started")
+    except Exception as e:
+        logging.error(f"❌ Failed to start system health monitoring: {e}")
     
     logging.info("🚀 Application startup completed!")
 
@@ -1690,6 +1699,7 @@ app.include_router(predictive_analytics_router, prefix="/api")
 app.include_router(memory_system_router)
 app.include_router(needs_router, prefix="/api")
 app.include_router(build_info_router)
+app.include_router(telemetry_router)
 
 # Log that insights router has been included
 logging.info("✅ Insights router included successfully with prefix: /api/insights")
