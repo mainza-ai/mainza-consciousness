@@ -611,11 +611,11 @@ const InsightsPage: React.FC = () => {
           </TabsContent>
 
           <TabsContent value="concepts" className="space-y-6">
-            <ConceptsTab data={conceptData} loadData={() => loadTabData('concepts')} />
+            <ConceptsTab data={overviewData} loadData={() => loadTabData('concepts')} />
           </TabsContent>
 
           <TabsContent value="memories" className="space-y-6">
-            <MemoriesTab data={memoryData} loadData={() => loadTabData('memories')} />
+            <MemoriesTab data={overviewData} loadData={() => loadTabData('memories')} />
           </TabsContent>
 
           <TabsContent value="performance" className="space-y-6">
@@ -1008,14 +1008,14 @@ const OverviewTab: React.FC<{ data: any }> = ({ data }) => {
         />
         <MetricDisplay
           label="Total Nodes"
-          value={data.database_statistics?.total_nodes?.toLocaleString() || '1,096'}
+          value={data.database_statistics?.total_nodes?.toLocaleString() || '0'}
           icon={<Database className="w-5 h-5" />}
           color="green"
           trend="up"
         />
         <MetricDisplay
           label="Total Relationships"
-          value={data.database_statistics?.total_relationships?.toLocaleString() || '2,267'}
+          value={data.database_statistics?.total_relationships?.toLocaleString() || '0'}
           icon={<Network className="w-5 h-5" />}
           color="purple"
           trend="stable"
@@ -1719,7 +1719,7 @@ const ConceptsTab: React.FC<{ data: any; loadData: () => void }> = ({ data, load
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
         <MetricDisplay
           label="Total Concepts"
-          value={data.total_concepts || 18}
+          value={data.database_statistics?.node_counts?.Concept || 0}
           icon={<Brain className="w-5 h-5" />}
           color="cyan"
         />
@@ -1888,7 +1888,7 @@ const MemoriesTab: React.FC<{ data: any; loadData: () => void }> = ({ data, load
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
         <MetricDisplay
           label="Total Memories"
-          value={data.total_memories || 32}
+          value={data.database_statistics?.node_counts?.Memory || 0}
           icon={<Database className="w-5 h-5" />}
           color="cyan"
         />

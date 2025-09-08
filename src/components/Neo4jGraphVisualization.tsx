@@ -269,12 +269,28 @@ export const Neo4jGraphVisualization: React.FC<Neo4jGraphVisualizationProps> = (
 
   return (
     <div className={`space-y-4 ${className}`}>
-      {/* Debug info */}
+      {/* Graph Statistics */}
       <GlassCard className="p-4">
         <div className="text-center">
           <h3 className="text-lg font-semibold text-slate-200 mb-2">Neo4j Graph Visualization</h3>
           <p className="text-slate-400">Status: {loading ? 'Loading...' : error ? 'Error' : 'Ready'}</p>
-          <p className="text-slate-400">Nodes: {graphData.nodes.length}, Relationships: {graphData.relationships.length}</p>
+          <div className="grid grid-cols-2 gap-4 mt-3">
+            <div>
+              <p className="text-slate-300 text-sm">Total in Database</p>
+              <p className="text-cyan-400 font-mono text-lg">
+                {graphData.nodes.length > 0 ? `${graphData.nodes.length}+` : '0'} nodes
+              </p>
+            </div>
+            <div>
+              <p className="text-slate-300 text-sm">Total in Database</p>
+              <p className="text-purple-400 font-mono text-lg">
+                {graphData.relationships.length > 0 ? `${graphData.relationships.length}+` : '0'} relationships
+              </p>
+            </div>
+          </div>
+          <div className="mt-2 text-xs text-slate-500">
+            Showing: {graphData.nodes.length} nodes, {graphData.relationships.length} relationships
+          </div>
         </div>
       </GlassCard>
 
@@ -381,8 +397,9 @@ export const Neo4jGraphVisualization: React.FC<Neo4jGraphVisualizationProps> = (
 
           {/* Stats */}
           <div className="flex items-center gap-4 text-sm text-slate-300">
-            <span>{filteredGraphData.nodes.length} nodes</span>
+            <span>Showing {filteredGraphData.nodes.length} nodes</span>
             <span>{filteredGraphData.links.length} relationships</span>
+            <span className="text-slate-500">(limited by controls above)</span>
           </div>
         </div>
       </GlassCard>

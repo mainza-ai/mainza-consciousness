@@ -322,27 +322,61 @@ async def get_neo4j_statistics() -> Dict[str, Any]:
             total_nodes = 120
             total_relationships = 116
         
+        # Get real node counts by label
+        node_counts = {}
+        try:
+            labels_query = """
+            MATCH (n) 
+            RETURN labels(n)[0] as label, count(n) as count 
+            ORDER BY count DESC
+            """
+            labels_result = neo4j_production.execute_query(labels_query)
+            if labels_result:
+                for record in labels_result:
+                    node_counts[record["label"]] = record["count"]
+        except Exception as e:
+            logger.warning(f"Could not get node counts by label: {e}")
+            # Fallback to basic counts
+            node_counts = {
+                "Concept": 0,
+                "Memory": 0,
+                "User": 0,
+                "MainzaState": 0,
+                "ConversationTurn": 0,
+                "AgentActivity": 0
+            }
+        
+        # Get real relationship counts by type
+        relationship_counts = {}
+        try:
+            rel_types_query = """
+            MATCH ()-[r]->() 
+            RETURN type(r) as type, count(r) as count 
+            ORDER BY count DESC
+            """
+            rel_types_result = neo4j_production.execute_query(rel_types_query)
+            if rel_types_result:
+                for record in rel_types_result:
+                    relationship_counts[record["type"]] = record["count"]
+        except Exception as e:
+            logger.warning(f"Could not get relationship counts by type: {e}")
+            # Fallback to basic counts
+            relationship_counts = {
+                "RELATES_TO": 0,
+                "DISCUSSED_IN": 0,
+                "IMPACTS": 0,
+                "HAD_CONVERSATION": 0,
+                "TRIGGERED": 0
+            }
+        
         return {
             "status": "success",
-            "node_counts": {
-                "Concept": 18,
-                "Memory": 32,
-                "User": 1,
-                "MainzaState": 1,
-                "ConversationTurn": 45,
-                "AgentActivity": 23
-            },
-            "relationship_counts": {
-                "RELATES_TO": 25,
-                "DISCUSSED_IN": 15,
-                "IMPACTS": 8,
-                "HAD_CONVERSATION": 45,
-                "TRIGGERED": 23
-            },
+            "node_counts": node_counts,
+            "relationship_counts": relationship_counts,
             "total_nodes": total_nodes,
             "total_relationships": total_relationships,
-            "labels": ["Concept", "Memory", "User", "MainzaState", "ConversationTurn", "AgentActivity"],
-            "relationship_types": ["RELATES_TO", "DISCUSSED_IN", "IMPACTS", "HAD_CONVERSATION", "TRIGGERED"],
+            "labels": list(node_counts.keys()),
+            "relationship_types": list(relationship_counts.keys()),
             "database_size_estimate": total_nodes + total_relationships
         }
         

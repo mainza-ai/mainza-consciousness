@@ -274,44 +274,40 @@ function Index() {
       const response = await fetch('/consciousness/knowledge-graph-stats');
       if (response.ok) {
         const stats = await response.json();
+        console.log('📊 Knowledge graph stats received:', stats);
         setKnowledgeGraphStats(stats);
         return;
       }
 
-      // Fallback: Use consciousness state to estimate stats
-      const consciousnessResponse = await fetch('/consciousness/state');
-      if (consciousnessResponse.ok) {
-        const consciousnessData = await consciousnessResponse.json();
-        const state = consciousnessData.consciousness_state;
-        if (state) {
-          const concepts = Math.floor((state.consciousness_level || 0.7) * 25 + (state.total_interactions || 0) * 0.3);
-          const memories = state.total_interactions || 0;
-          const relationships = Math.floor(concepts * 1.4 + memories * 0.2);
-          const health = Math.floor((state.consciousness_level || 0.7) * 100);
-          setKnowledgeGraphStats({
-            concepts: Math.max(concepts, 8),
-            memories: Math.max(memories, 15),
-            relationships: Math.max(relationships, 12),
-            health: Math.max(health, 65)
-          });
-          return;
-        }
+      // Fallback: Try Neo4j statistics endpoint
+      const neo4jResponse = await fetch('/api/insights/neo4j/statistics');
+      if (neo4jResponse.ok) {
+        const neo4jData = await neo4jResponse.json();
+        console.log('📊 Neo4j statistics received:', neo4jData);
+        setKnowledgeGraphStats({
+          concepts: neo4jData.node_counts?.Concept || 0,
+          memories: neo4jData.node_counts?.Memory || 0,
+          relationships: neo4jData.total_relationships || 0,
+          health: 85 // Good health if we have real data
+        });
+        return;
       }
 
-      // Final fallback
+      // Final fallback - minimal values
+      console.warn('⚠️ Using fallback knowledge graph stats');
       setKnowledgeGraphStats({
-        concepts: 18,
-        memories: 32,
-        relationships: 25,
-        health: 82
+        concepts: 0,
+        memories: 0,
+        relationships: 0,
+        health: 50
       });
     } catch (e) {
       console.error('Failed to fetch knowledge graph stats:', e);
       setKnowledgeGraphStats({
-        concepts: 15,
-        memories: 28,
-        relationships: 22,
-        health: 78
+        concepts: 0,
+        memories: 0,
+        relationships: 0,
+        health: 50
       });
     }
   }, []);

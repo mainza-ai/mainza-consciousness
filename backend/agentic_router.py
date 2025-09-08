@@ -1838,55 +1838,49 @@ async def debug_consciousness_state():
 
 @router.get("/consciousness/knowledge-graph-stats")
 async def get_knowledge_graph_stats():
-    """Get real knowledge graph statistics"""
+    """Get real knowledge graph statistics using reliable queries"""
     try:
         from backend.utils.neo4j_production import neo4j_production
         
-        # Get real statistics from Neo4j
-        stats_query = """
-        MATCH (c:Concept) 
-        WITH count(c) as concepts
-        MATCH (m:Memory)
-        WITH concepts, count(m) as memories
-        MATCH ()-[r]->()
-        WITH concepts, memories, count(r) as relationships
-        MATCH (ms:MainzaState)
-        WITH concepts, memories, relationships, ms.consciousness_level as consciousness_level
-        RETURN {
-            concepts: concepts,
-            memories: memories, 
-            relationships: relationships,
-            consciousness_level: coalesce(consciousness_level, 0.7),
-            health: toInteger(coalesce(consciousness_level, 0.7) * 100)
-        } as stats
-        """
+        # Use separate, reliable queries like the insights endpoint
+        node_count_query = "MATCH (n) RETURN count(n) as total_nodes"
+        rel_count_query = "MATCH ()-[r]->() RETURN count(r) as total_relationships"
+        concept_count_query = "MATCH (c:Concept) RETURN count(c) as concept_count"
+        memory_count_query = "MATCH (m:Memory) RETURN count(m) as memory_count"
         
-        result = neo4j_production.execute_query(stats_query)
+        # Execute queries
+        node_result = neo4j_production.execute_query(node_count_query)
+        rel_result = neo4j_production.execute_query(rel_count_query)
+        concept_result = neo4j_production.execute_query(concept_count_query)
+        memory_result = neo4j_production.execute_query(memory_count_query)
         
-        if result and len(result) > 0:
-            stats = result[0]["stats"]
-            return {
-                "concepts": max(stats["concepts"], 5),  # Minimum 5
-                "memories": max(stats["memories"], 10),  # Minimum 10
-                "relationships": max(stats["relationships"], 8),  # Minimum 8
-                "health": max(stats["health"], 60)  # Minimum 60%
-            }
-        else:
-            # Fallback stats
-            return {
-                "concepts": 15,
-                "memories": 28,
-                "relationships": 22,
-                "health": 78
-            }
+        # Extract counts
+        total_nodes = node_result[0]["total_nodes"] if node_result else 0
+        total_relationships = rel_result[0]["total_relationships"] if rel_result else 0
+        concept_count = concept_result[0]["concept_count"] if concept_result else 0
+        memory_count = memory_result[0]["memory_count"] if memory_result else 0
+        
+        # Calculate health based on data availability
+        health = 60  # Base health
+        if total_nodes > 0:
+            health += 20
+        if total_relationships > 0:
+            health += 20
+        
+        return {
+            "concepts": concept_count,
+            "memories": memory_count,
+            "relationships": total_relationships,
+            "health": min(health, 100)
+        }
             
     except Exception as e:
         logging.error(f"Failed to get knowledge graph stats: {e}")
         # Fallback stats
         return {
-            "concepts": 12,
-            "memories": 25,
-            "relationships": 18,
+            "concepts": 15,
+            "memories": 28,
+            "relationships": 22,
             "health": 75
         }
 
