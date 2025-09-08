@@ -1610,6 +1610,36 @@ def create_test_need():
     except Exception as e:
         return JSONResponse(status_code=500, content={"error": str(e), "traceback": traceback.format_exc()})
 
+@app.post("/ollama/unload")
+async def unload_ollama_model(model: str = Body(..., embed=True)):
+    """Unload a specific Ollama model from memory"""
+    try:
+        ollama_base_url = os.getenv("OLLAMA_BASE_URL", "http://host.docker.internal:11434")
+        
+        logging.info(f"Attempting to unload model: {model}")
+        
+        # Use the direct Ollama API with keep_alive=0
+        generate_url = f"{ollama_base_url}/api/generate"
+        payload = {
+            "model": model,
+            "prompt": "",
+            "keep_alive": 0,  # This tells Ollama to unload the model immediately
+            "stream": False
+        }
+        
+        response = requests.post(generate_url, json=payload, timeout=10)
+        
+        if response.status_code == 200:
+            logging.info(f"✅ Model {model} unloaded successfully")
+            return {"success": True, "message": f"Model {model} unloaded successfully"}
+        else:
+            logging.warning(f"⚠️ Failed to unload model {model}: {response.status_code}")
+            return {"success": False, "message": f"Failed to unload model {model}: {response.status_code}"}
+            
+    except Exception as e:
+        logging.error(f"❌ Error unloading model {model}: {e}")
+        return JSONResponse(status_code=500, content={"error": str(e), "traceback": traceback.format_exc()})
+
 @app.get("/ollama/models")
 async def get_ollama_models():
     """Fetch available Ollama models from the local Ollama server"""

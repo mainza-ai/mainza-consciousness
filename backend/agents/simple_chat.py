@@ -157,10 +157,13 @@ class EnhancedSimpleChatAgent(ConsciousAgent):
                             dynamic_llm,
                             system_prompt=SIMPLE_CHAT_PROMPT
                         )
+                        # FIXED: Remove user_id parameter - pydantic-ai agents don't accept it
                         base_result = await dynamic_agent.run(enhanced_query)
+                        self.logger.info(f"✅ Fallback successfully used model: {model}")
                     else:
                         # Use default agent
                         base_result = await self.pydantic_agent.run(enhanced_query)
+                        self.logger.info(f"✅ Fallback used default model")
             else:
                 # Use selected model directly
                 try:
@@ -169,10 +172,13 @@ class EnhancedSimpleChatAgent(ConsciousAgent):
                         dynamic_llm,
                         system_prompt=SIMPLE_CHAT_PROMPT
                     )
+                    # FIXED: Remove user_id parameter - pydantic-ai agents don't accept it
                     base_result = await dynamic_agent.run(enhanced_query)
+                    self.logger.info(f"✅ Successfully used model: {model}")
                 except Exception as model_error:
                     self.logger.warning(f"Selected model {model} failed, using default: {model_error}")
                     base_result = await self.pydantic_agent.run(enhanced_query)
+                    self.logger.info(f"✅ Fallback to default model successful")
             
             # The memory integration is now handled in the enhanced query and context
             memory_enhanced_result = base_result

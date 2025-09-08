@@ -47,6 +47,7 @@ class ConsciousAgent(ABC):
         self, 
         query: str, 
         user_id: str = "mainza-user",
+        model: str = None,
         **kwargs
     ):
         """Execute agent with full consciousness integration, memory context, and optimization"""
@@ -95,6 +96,7 @@ class ConsciousAgent(ABC):
                 consciousness_context=consciousness_context,
                 knowledge_context=knowledge_context,
                 memory_context=memory_context,
+                model=model,
                 **kwargs
             )
             

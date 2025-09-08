@@ -156,6 +156,77 @@ function Index() {
       return 'default';
     }
   });
+  const [loadedModel, setLoadedModel] = useState<string>('default');
+  const [previousModel, setPreviousModel] = useState<string | null>(null);
+
+  // Model unloading function
+  const unloadModel = async (modelName: string): Promise<boolean> => {
+    try {
+      console.log(`🔄 Unloading previous model: ${modelName}`);
+      
+      // Use direct Ollama API with keep_alive=0
+      const response = await fetch('http://localhost:11434/api/generate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          model: modelName,
+          prompt: '',
+          keep_alive: 0,  // This tells Ollama to unload the model immediately
+          stream: false
+        })
+      });
+      
+      if (response.ok) {
+        console.log(`✅ Model ${modelName} unloaded successfully`);
+        return true;
+      } else {
+        console.warn(`⚠️ Failed to unload model ${modelName}:`, response.status);
+        return false;
+      }
+    } catch (error) {
+      console.warn(`⚠️ Error unloading model ${modelName}:`, error);
+      return false;
+    }
+  };
+
+  // Model loading function
+  const handleModelLoad = async (model: string): Promise<boolean> => {
+    try {
+      console.log(`🔄 Loading model: ${model}`);
+      
+      // Unload previous model if it exists and is different
+      if (previousModel && previousModel !== model && previousModel !== 'default') {
+        await unloadModel(previousModel);
+      }
+      
+      // Test the model by sending a simple request
+      const response = await fetch('/agent/router/chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ 
+          query: 'Test model loading', 
+          user_id: 'mainza-user', 
+          model: model 
+        })
+      });
+      
+      if (response.ok) {
+        const data = await response.json();
+        console.log(`✅ Model ${model} loaded successfully:`, data.response?.substring(0, 50));
+        
+        // Update model tracking
+        setPreviousModel(loadedModel);
+        setLoadedModel(model);
+        return true;
+      } else {
+        console.error(`❌ Failed to load model ${model}:`, response.status);
+        return false;
+      }
+    } catch (error) {
+      console.error(`❌ Error loading model ${model}:`, error);
+      return false;
+    }
+  };
 
   // Refs
   const orbRef = useRef<HTMLDivElement>(null);
@@ -329,7 +400,7 @@ function Index() {
       const chatRes = await fetch('/agent/router/chat', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ query: message, user_id: 'mainza-user', model: selectedModel })
+        body: JSON.stringify({ query: message, user_id: 'mainza-user', model: loadedModel })
       });
       const chatData = await chatRes.json();
 
@@ -553,7 +624,7 @@ function Index() {
               transition={{ type: "spring", stiffness: 400, damping: 17 }}
             >
               <img
-                src="/assets/mainza-logo.PNG"
+                src="/assets/mainza-logo-ByhDXu_C.PNG"
                 alt="Mainza Logo"
                 className="w-12 h-12 rounded-xl shadow-xl ring-2 ring-cyan-400/40 hover:ring-cyan-400/60 transition-all duration-300"
               />
@@ -699,6 +770,7 @@ function Index() {
               <ModelSelector
                 onModelChange={setSelectedModel}
                 selectedModel={selectedModel}
+                onModelLoad={handleModelLoad}
               />
 
               {/* Consciousness Needs - Collapsible */}

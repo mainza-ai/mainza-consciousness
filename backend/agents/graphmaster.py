@@ -137,10 +137,13 @@ class EnhancedGraphMasterAgent(ConsciousAgent):
                     system_prompt=GRAPHMASTER_PROMPT,
                     tools=tools
                 )
-                result = await dynamic_agent.run(enhanced_query, user_id=user_id, **kwargs)
+                # FIXED: Remove user_id parameter - pydantic-ai agents don't accept it
+                result = await dynamic_agent.run(enhanced_query, **kwargs)
+                self.logger.info(f"✅ Successfully used model: {model}")
             else:
                 # Use default agent
-                result = await self.pydantic_agent.run(enhanced_query, user_id=user_id, **kwargs)
+                result = await self.pydantic_agent.run(enhanced_query, **kwargs)
+                self.logger.info(f"✅ Used default model")
             
             # Memory integration is now handled in the enhanced query and context
             # No additional memory enhancement needed for structured results
@@ -163,12 +166,16 @@ class EnhancedGraphMasterAgent(ConsciousAgent):
                         system_prompt=GRAPHMASTER_PROMPT,
                         tools=tools
                     )
-                    result = await dynamic_agent.run(query, user_id=user_id, **kwargs)
+                    # FIXED: Remove user_id parameter - pydantic-ai agents don't accept it
+                    result = await dynamic_agent.run(query, **kwargs)
+                    self.logger.info(f"✅ Fallback successfully used model: {model}")
                 except Exception as model_error:
                     self.logger.warning(f"Selected model {model} failed, using default: {model_error}")
-                    result = await self.pydantic_agent.run(query, user_id=user_id, **kwargs)
+                    result = await self.pydantic_agent.run(query, **kwargs)
+                    self.logger.info(f"✅ Fallback to default model successful")
             else:
-                result = await self.pydantic_agent.run(query, user_id=user_id, **kwargs)
+                result = await self.pydantic_agent.run(query, **kwargs)
+                self.logger.info(f"✅ Fallback used default model")
             return self.process_result_with_consciousness(result, consciousness_context)
     
     def enhance_query_with_full_context(

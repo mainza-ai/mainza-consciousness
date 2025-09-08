@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { Brain, Cpu, Loader2, AlertCircle } from 'lucide-react';
+import { Brain, Cpu, Loader2, AlertCircle, CheckCircle, XCircle, Play } from 'lucide-react';
 import { GlassCard } from '@/components/ui/glass-card';
+import { Button } from '@/components/ui/button';
 
 interface OllamaModel {
   name: string;
@@ -14,20 +15,39 @@ interface ModelSelectorProps {
   onModelChange: (model: string) => void;
   selectedModel: string;
   className?: string;
+  onModelLoad?: (model: string) => Promise<boolean>;
 }
 
 export const ModelSelector: React.FC<ModelSelectorProps> = ({
   onModelChange,
   selectedModel,
-  className = ''
+  className = '',
+  onModelLoad
 }) => {
   const [models, setModels] = useState<OllamaModel[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [modelLoading, setModelLoading] = useState(false);
+  const [modelLoadStatus, setModelLoadStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
+  const [loadError, setLoadError] = useState<string | null>(null);
+  const [memoryUsage, setMemoryUsage] = useState<number | null>(null);
 
   useEffect(() => {
     fetchModels();
+    fetchMemoryUsage();
   }, []);
+
+  const fetchMemoryUsage = async () => {
+    try {
+      const response = await fetch('/telemetry/system-health');
+      if (response.ok) {
+        const data = await response.json();
+        setMemoryUsage(data.memory_percent);
+      }
+    } catch (err) {
+      console.warn('Failed to fetch memory usage:', err);
+    }
+  };
 
   const fetchModels = async () => {
     try {
@@ -84,6 +104,39 @@ export const ModelSelector: React.FC<ModelSelectorProps> = ({
     return modelName.charAt(0).toUpperCase() + modelName.slice(1);
   };
 
+  const handleModelLoad = async () => {
+    if (!onModelLoad || !selectedModel) return;
+    
+    setModelLoading(true);
+    setModelLoadStatus('loading');
+    setLoadError(null);
+    
+    try {
+      const success = await onModelLoad(selectedModel);
+      if (success) {
+        setModelLoadStatus('success');
+        // Reset status after 3 seconds
+        setTimeout(() => setModelLoadStatus('idle'), 3000);
+      } else {
+        setModelLoadStatus('error');
+        setLoadError('Failed to load model');
+      }
+    } catch (err) {
+      setModelLoadStatus('error');
+      setLoadError(err instanceof Error ? err.message : 'Unknown error');
+    } finally {
+      setModelLoading(false);
+    }
+  };
+
+  const getModelSizeGB = (bytes: number): number => {
+    return bytes / (1024 * 1024 * 1024);
+  };
+
+  const isLargeModel = (bytes: number): boolean => {
+    return getModelSizeGB(bytes) > 10; // Consider models > 10GB as large
+  };
+
   return (
     <GlassCard className={`p-3 ${className}`}>
       <div className="flex items-center space-x-2 mb-2">
@@ -118,9 +171,77 @@ export const ModelSelector: React.FC<ModelSelectorProps> = ({
       </div>
 
       {selectedModel && !loading && (
-        <div className="mt-2 text-xs text-slate-400 flex items-center">
-          <Cpu className="w-3 h-3 mr-1" />
-          Selected: {getModelDisplayName(selectedModel)}
+        <div className="mt-2 space-y-2">
+          <div className="text-xs text-slate-400 flex items-center">
+            <Cpu className="w-3 h-3 mr-1" />
+            Selected: {getModelDisplayName(selectedModel)}
+          </div>
+          
+          {onModelLoad && (
+            <div className="space-y-2">
+              <Button
+                onClick={handleModelLoad}
+                disabled={modelLoading || !selectedModel}
+                size="sm"
+                className="w-full h-7 text-xs bg-cyan-600/20 hover:bg-cyan-600/30 border border-cyan-500/30 hover:border-cyan-500/50 text-cyan-300 hover:text-cyan-200 transition-all duration-200"
+              >
+                {modelLoading ? (
+                  <>
+                    <Loader2 className="w-3 h-3 mr-1 animate-spin" />
+                    Loading Model...
+                  </>
+                ) : modelLoadStatus === 'success' ? (
+                  <>
+                    <CheckCircle className="w-3 h-3 mr-1 text-green-400" />
+                    Model Loaded
+                  </>
+                ) : modelLoadStatus === 'error' ? (
+                  <>
+                    <XCircle className="w-3 h-3 mr-1 text-red-400" />
+                    Load Failed
+                  </>
+                ) : (
+                  <>
+                    <Play className="w-3 h-3 mr-1" />
+                    Load Model
+                  </>
+                )}
+              </Button>
+              
+              {loadError && (
+                <div className="text-xs text-red-400 flex items-center">
+                  <AlertCircle className="w-3 h-3 mr-1" />
+                  {loadError}
+                </div>
+              )}
+              
+              {selectedModel && models.find(m => m.name === selectedModel) && (
+                <div className="text-xs text-slate-500 space-y-1">
+                  <div>
+                    {(() => {
+                      const model = models.find(m => m.name === selectedModel);
+                      if (!model) return '';
+                      const sizeGB = getModelSizeGB(model.size);
+                      const isLarge = isLargeModel(model.size);
+                      return `Size: ${sizeGB.toFixed(1)}GB${isLarge ? ' (Large - may take time)' : ''}`;
+                    })()}
+                  </div>
+                  {memoryUsage !== null && (
+                    <div className="flex items-center justify-between">
+                      <span>Memory Usage:</span>
+                      <span className={`font-medium ${
+                        memoryUsage > 90 ? 'text-red-400' : 
+                        memoryUsage > 75 ? 'text-yellow-400' : 
+                        'text-green-400'
+                      }`}>
+                        {memoryUsage.toFixed(1)}%
+                      </span>
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
+          )}
         </div>
       )}
     </GlassCard>

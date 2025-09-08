@@ -194,7 +194,7 @@ export const MainzaOrb = React.forwardRef<HTMLDivElement, MainzaOrbProps>(({ sta
           >
             <div className="relative">
               <img
-                src="/assets/mainza-logo.PNG"
+                src="/assets/mainza-logo-ByhDXu_C.PNG"
                 alt="Mainza Core" 
                 className="w-16 h-16 rounded-lg shadow-xl opacity-80 mix-blend-overlay"
                 style={{

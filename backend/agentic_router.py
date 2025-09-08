@@ -847,6 +847,33 @@ async def run_calendar(input: CalendarInput):
     except Exception as e:
         return JSONResponse(status_code=500, content={"error": str(e), "traceback": traceback.format_exc()})
 
+def validate_model(model_name: str) -> tuple[bool, str]:
+    """Validate if a model is available and accessible"""
+    if not model_name or model_name == "default":
+        return True, "default"
+    
+    try:
+        # Check if model exists in available models
+        import requests
+        import os
+        
+        ollama_base_url = os.getenv("OLLAMA_BASE_URL", "http://host.docker.internal:11434")
+        response = requests.get(f"{ollama_base_url}/api/tags", timeout=5)
+        
+        if response.status_code == 200:
+            models_data = response.json()
+            available_models = [m["name"] for m in models_data.get("models", [])]
+            
+            if model_name in available_models:
+                return True, model_name
+            else:
+                return False, f"Model '{model_name}' not found. Available: {available_models[:3]}..."
+        else:
+            return False, f"Could not check model availability: {response.status_code}"
+            
+    except Exception as e:
+        return False, f"Model validation error: {str(e)}"
+
 @router.post("/agent/router/chat")
 async def enhanced_router_chat(query: str = Body(..., embed=True), user_id: str = Body("mainza-user", embed=True), model: str = Body(None, embed=True)):
     # CRITICAL FIX: Notify consciousness of user activity
@@ -862,6 +889,16 @@ async def enhanced_router_chat(query: str = Body(..., embed=True), user_id: str 
     """
     try:
         logging.info(f"🧠 Enhanced router chat: {query[:100]}...")
+        
+        # Validate model if provided
+        if model:
+            is_valid, validation_result = validate_model(model)
+            if not is_valid:
+                logging.warning(f"⚠️ Invalid model '{model}': {validation_result}")
+                logging.warning(f"   Falling back to default model")
+                model = None  # Fall back to default
+            else:
+                logging.info(f"✅ Model validation successful: {model}")
         
         # Get consciousness context
         consciousness_context = await get_consciousness_context()

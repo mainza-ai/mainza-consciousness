@@ -45,7 +45,7 @@ export const LoadingScreen: React.FC<LoadingScreenProps> = ({
         >
           <div className="relative">
             <motion.img 
-              src="/assets/mainza-logo.PNG"
+              src="/assets/mainza-logo-ByhDXu_C.PNG"
               alt="Mainza Logo" 
               className="w-32 h-32 mx-auto rounded-2xl shadow-2xl ring-4 ring-cyan-400/50"
               animate={{ 
