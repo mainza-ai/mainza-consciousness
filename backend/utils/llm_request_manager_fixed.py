@@ -55,7 +55,8 @@ class LLMRequestManager:
         self.max_concurrent_requests = 5  # Increased from 3
         self.user_activity_timeout = 300  # 5 minutes
         self.background_pause_duration = 30  # REDUCED from 60 to 30 seconds
-        self.cache_ttl = 180  # 3 minutes
+        self.cache_ttl = 180  # 3 minutes for user requests
+        self.background_cache_ttl = 600  # 10 minutes for background processes
         
         # CRITICAL: User conversation protection
         self.user_conversation_protection = True
@@ -116,10 +117,10 @@ class LLMRequestManager:
             self.stats['user_conversations_processed'] += 1
         
         # Check cache first
-        if cache_key and self._get_cached_response(cache_key):
+        if cache_key and self._get_cached_response(cache_key, priority):
             self.stats['cached_responses'] += 1
             logger.debug(f"Cache hit for request: {cache_key}")
-            return self._get_cached_response(cache_key)
+            return self._get_cached_response(cache_key, priority)
         
         # Update user activity for user requests
         if user_id and priority in self.never_throttle_priorities:
@@ -330,7 +331,7 @@ class LLMRequestManager:
         
         return False
     
-    def _get_cached_response(self, cache_key: str) -> Optional[Any]:
+    def _get_cached_response(self, cache_key: str, priority: RequestPriority = None) -> Optional[Any]:
         """Get cached response if still valid"""
         if cache_key not in self.response_cache:
             return None
@@ -339,8 +340,13 @@ class LLMRequestManager:
         if not cache_time:
             return None
         
+        # Use different TTL based on request priority
+        ttl = self.cache_ttl
+        if priority and priority in [RequestPriority.BACKGROUND_PROCESSING, RequestPriority.CONSCIOUSNESS_CYCLE]:
+            ttl = self.background_cache_ttl
+        
         # Check if cache is still valid
-        if (datetime.now() - cache_time).seconds > self.cache_ttl:
+        if (datetime.now() - cache_time).seconds > ttl:
             self.response_cache.pop(cache_key, None)
             self.cache_timestamps.pop(cache_key, None)
             return None

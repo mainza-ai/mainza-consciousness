@@ -1,4 +1,6 @@
-# Mainza Consciousness System - Backend Dockerfile
+# Mainza Backend Development Dockerfile
+# Optimized for development with hot reloading and faster builds
+
 FROM python:3.11-slim
 
 # Cache busting arguments
@@ -24,23 +26,27 @@ WORKDIR /app
 # Copy requirements first for better caching
 COPY requirements-docker.txt ./
 
-# Install Python dependencies (this layer will be cached if requirements don't change)
+# Install Python dependencies
 RUN pip install --upgrade pip && \
     pip install --no-cache-dir -r requirements-docker.txt
 
-# Copy backend source code (this layer will be rebuilt when source changes)
+# Install development dependencies
+RUN pip install --no-cache-dir watchdog uvicorn[standard]
+
+# Copy backend source code
 COPY backend/ ./backend/
 
 # Add build information and environment variables
 RUN echo "Cache bust: $CACHE_BUST" && \
     echo "Build date: $BUILD_DATE" && \
     echo "Git commit: $GIT_COMMIT" && \
-    echo "Backend build completed successfully"
+    echo "Backend development build completed successfully"
 
 # Set build environment variables
 ENV BUILD_DATE=$BUILD_DATE
 ENV GIT_COMMIT=$GIT_COMMIT
 ENV CACHE_BUST=$CACHE_BUST
+ENV PYTHONPATH=/app
 
 # Create non-root user for security
 RUN useradd --create-home --shell /bin/bash mainza
@@ -49,8 +55,5 @@ USER mainza
 
 EXPOSE 8000
 
-# Health check
-HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
-    CMD curl -f http://localhost:8000/health || exit 1
-
-CMD ["uvicorn", "backend.main:app", "--host", "0.0.0.0", "--port", "8000"] 
+# Development command with hot reloading
+CMD ["uvicorn", "backend.main:app", "--host", "0.0.0.0", "--port", "8000", "--reload"]

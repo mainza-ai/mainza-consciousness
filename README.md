@@ -54,14 +54,33 @@ ollama serve
 # Pull the required model
 ollama pull llama3.2:1b
 
-# Start Mainza
-docker-compose up -d
+# Start Mainza (Development Build)
+./scripts/build-dev.sh
+
+# Or for Production Build
+./scripts/build-prod.sh
 ```
 
 ### Access
-- **Frontend**: http://localhost:3000
+- **Frontend**: http://localhost
 - **Backend API**: http://localhost:8000
 - **Neo4j Browser**: http://localhost:7474
+
+### Development Tools
+
+```bash
+# Development with hot reloading
+./scripts/build-dev-hot.sh
+
+# Verify changes are reflected
+./scripts/verify-changes.sh
+
+# Monitor build performance
+./scripts/monitor-builds.sh
+
+# Comprehensive development tools
+./scripts/dev-tools.sh help
+```
 
 ---
 
@@ -95,6 +114,8 @@ docker-compose up -d
 - **[Architecture Guide](docs/architecture/)** - System architecture overview
 - **[Insights Dashboard Analysis](docs/INSIGHTS_PAGE_DATA_SOURCES_ANALYSIS.md)** - Comprehensive data sources analysis
 - **[Memory System Guide](docs/MEMORY_SYSTEM.md)** - Integrated memory system documentation
+- **[Docker Build Process Guide](docs/DOCKER_BUILD_PROCESS_GUIDE.md)** - Complete Docker build and deployment guide
+- **[Docker Optimization Summary](docs/DOCKER_OPTIMIZATION_IMPLEMENTATION_SUMMARY.md)** - Docker optimization implementation details
 
 ---
 

@@ -350,15 +350,26 @@ jobs:
     - name: Set up Docker Buildx
       uses: docker/setup-buildx-action@v3
       
+    - name: Get build metadata
+      id: meta
+      run: |
+        echo "build-date=$(date -u +'%Y-%m-%dT%H:%M:%SZ')" >> $GITHUB_OUTPUT
+        echo "git-commit=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
+        echo "cache-bust=$(date +%s)" >> $GITHUB_OUTPUT
+      
     - name: Build backend image
       uses: docker/build-push-action@v5
       with:
-        context: ./backend
-        file: ./backend/Dockerfile
+        context: .
+        file: ./Dockerfile
         push: false
         tags: mainza/backend:test
-        cache-from: type=gha
-        cache-to: type=gha,mode=max
+        build-args: |
+          CACHE_BUST=${{ steps.meta.outputs.cache-bust }}
+          BUILD_DATE=${{ steps.meta.outputs.build-date }}
+          GIT_COMMIT=${{ steps.meta.outputs.git-commit }}
+        cache-from: type=gha,scope=backend
+        cache-to: type=gha,mode=max,scope=backend
         
     - name: Build frontend image
       uses: docker/build-push-action@v5
@@ -367,8 +378,12 @@ jobs:
         file: ./Dockerfile.frontend
         push: false
         tags: mainza/frontend:test
-        cache-from: type=gha
-        cache-to: type=gha,mode=max
+        build-args: |
+          CACHE_BUST=${{ steps.meta.outputs.cache-bust }}
+          BUILD_DATE=${{ steps.meta.outputs.build-date }}
+          GIT_COMMIT=${{ steps.meta.outputs.git-commit }}
+        cache-from: type=gha,scope=frontend
+        cache-to: type=gha,mode=max,scope=frontend
         
     - name: Test Docker Compose
       run: |
@@ -428,17 +443,28 @@ jobs:
         username: ${{ github.actor }}
         password: ${{ secrets.GITHUB_TOKEN }}
         
+    - name: Get build metadata
+      id: meta
+      run: |
+        echo "build-date=$(date -u +'%Y-%m-%dT%H:%M:%SZ')" >> $GITHUB_OUTPUT
+        echo "git-commit=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
+        echo "cache-bust=$(date +%s)" >> $GITHUB_OUTPUT
+        
     - name: Build and push backend image
       uses: docker/build-push-action@v5
       with:
-        context: ./backend
-        file: ./backend/Dockerfile
+        context: .
+        file: ./Dockerfile
         push: true
         tags: |
           ghcr.io/${{ github.repository }}/backend:latest
           ghcr.io/${{ github.repository }}/backend:${{ github.event.release.tag_name }}
-        cache-from: type=gha
-        cache-to: type=gha,mode=max
+        build-args: |
+          CACHE_BUST=${{ steps.meta.outputs.cache-bust }}
+          BUILD_DATE=${{ steps.meta.outputs.build-date }}
+          GIT_COMMIT=${{ steps.meta.outputs.git-commit }}
+        cache-from: type=gha,scope=backend
+        cache-to: type=gha,mode=max,scope=backend
         
     - name: Build and push frontend image
       uses: docker/build-push-action@v5
@@ -449,8 +475,12 @@ jobs:
         tags: |
           ghcr.io/${{ github.repository }}/frontend:latest
           ghcr.io/${{ github.repository }}/frontend:${{ github.event.release.tag_name }}
-        cache-from: type=gha
-        cache-to: type=gha,mode=max
+        build-args: |
+          CACHE_BUST=${{ steps.meta.outputs.cache-bust }}
+          BUILD_DATE=${{ steps.meta.outputs.build-date }}
+          GIT_COMMIT=${{ steps.meta.outputs.git-commit }}
+        cache-from: type=gha,scope=frontend
+        cache-to: type=gha,mode=max,scope=frontend
         
     - name: Deploy to production
       run: |

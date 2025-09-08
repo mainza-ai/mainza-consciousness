@@ -129,8 +129,8 @@ export const SystemStatus: React.FC<SystemStatusProps> = ({
   useEffect(() => {
     fetchSystemHealth();
     
-    // Auto-refresh every 30 seconds
-    const interval = setInterval(fetchSystemHealth, 300000); // Reduced to 5 minutes
+    // Auto-refresh every 1 hour
+    const interval = setInterval(fetchSystemHealth, 3600000); // 1 hour = 3600000ms
     return () => clearInterval(interval);
   }, []);
 

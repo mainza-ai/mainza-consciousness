@@ -14,6 +14,7 @@ from backend.routers.websocket_insights import router as websocket_insights_rout
 from backend.routers.predictive_analytics import router as predictive_analytics_router
 from backend.routers.memory_system import router as memory_system_router
 from backend.routers.needs_router import router as needs_router
+from backend.routers.build_info import router as build_info_router
 try:
     from backend.tools.livekit_tools import create_livekit_token
     LIVEKIT_TOOLS_AVAILABLE = True
@@ -1688,6 +1689,7 @@ app.include_router(websocket_insights_router, prefix="/api")
 app.include_router(predictive_analytics_router, prefix="/api")
 app.include_router(memory_system_router)
 app.include_router(needs_router, prefix="/api")
+app.include_router(build_info_router)
 
 # Log that insights router has been included
 logging.info("✅ Insights router included successfully with prefix: /api/insights")

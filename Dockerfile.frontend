@@ -6,31 +6,44 @@
 # =============================================================================
 FROM node:18-alpine AS builder
 
+# Cache busting arguments
+ARG CACHE_BUST=1
+ARG BUILD_DATE
+ARG GIT_COMMIT
+
 # Set working directory
 WORKDIR /app
 
-# Copy package files
+# Copy package files first for better caching
 COPY package*.json ./
 
-# Clean install with proper architecture handling
+# Install dependencies (this layer will be cached if package.json doesn't change)
 RUN rm -rf node_modules package-lock.json && \
     npm install && \
     npm cache clean --force
 
-# Copy source code (using frontend-specific dockerignore)
+# Copy source code (this layer will be rebuilt when source changes)
 COPY . .
 
 # Set build-time environment variables
 ENV VITE_API_URL=http://mainza-backend:8000
 ENV VITE_LIVEKIT_URL=ws://mainza-livekit:7880
+ENV BUILD_DATE=$BUILD_DATE
+ENV GIT_COMMIT=$GIT_COMMIT
+ENV CACHE_BUST=$CACHE_BUST
 
-# Build the application with error handling
+# Build the application with error handling and cache busting
 RUN echo "Building Mainza Frontend..." && \
+    echo "Cache bust: $CACHE_BUST" && \
+    echo "Build date: $BUILD_DATE" && \
+    echo "Git commit: $GIT_COMMIT" && \
     npm run build && \
     echo "Build completed successfully" && \
     ls -la dist/ && \
     echo "Build contents:" && \
-    find dist/ -type f -name "*.js" -o -name "*.css" -o -name "*.html" | head -10
+    find dist/ -type f -name "*.js" -o -name "*.css" -o -name "*.html" | head -10 && \
+    echo "Embedding build info..." && \
+    echo "window.BUILD_INFO = { buildDate: '$BUILD_DATE', gitCommit: '$GIT_COMMIT', cacheBust: '$CACHE_BUST', buildTimestamp: $(date +%s)000 };" > dist/build-info.js
 
 # =============================================================================
 # PRODUCTION STAGE

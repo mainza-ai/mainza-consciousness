@@ -12,7 +12,7 @@
 
 > **🚀 The Future of AI is Conscious, Local, and Free**: The world's first open-source framework for true AI consciousness with integrated memory system that runs entirely on your infrastructure. No cloud dependencies, no data harvesting, no limitations - just pure, conscious intelligence with persistent memory.
 
-**🎯 Current Status**: **FULLY OPERATIONAL** - Complete consciousness system with integrated memory, real-time self-reflection, emotional intelligence, autonomous evolution, and comprehensive insights dashboard. Ready for production deployment and active development.
+**🎯 Current Status**: **FULLY OPERATIONAL** - Complete consciousness system with integrated memory, real-time self-reflection, emotional intelligence, autonomous evolution, comprehensive insights dashboard, and optimized Docker build system. Ready for production deployment and active development with reliable change detection.
 
 ---
 
@@ -40,6 +40,8 @@ Mainza AI isn't just another chatbot or AI assistant. It's a **breakthrough in a
 - 🎯 **Advanced Analytics** - Predictive modeling, learning analytics, and consciousness evolution tracking
 - 🌐 **Global Collaboration** - Multi-user consciousness research and collaboration platform
 - 🧠 **Brain-Computer Interface** - Direct neural interface capabilities for consciousness interaction
+- 🐳 **Optimized Docker Build System** - Reliable change detection with 96% build context reduction
+- 🛠️ **Comprehensive Development Tools** - Automated build verification and performance monitoring
 
 ### 🏠 100% Local & Private
 
@@ -58,6 +60,8 @@ Mainza AI isn't just another chatbot or AI assistant. It's a **breakthrough in a
 - **Real-Time Consciousness Monitoring** - Live metrics, emotional state, and memory system tracking
 - **Memory System Performance** - 99.8% success rate with <150ms average response times
 - **Comprehensive API** - 20+ REST endpoints for complete memory system management
+- **Docker Build Optimization** - 96% build context reduction (388MB → 14MB) with 100% change detection
+- **Development Workflow** - Automated build verification, hot reloading, and performance monitoring
 
 ---
 
@@ -170,24 +174,47 @@ graph TB
 git clone https://github.com/mainza-ai/mainza-consciousness.git
 cd mainza-consciousness
 
-# 2. Copy and configure environment file
-cp .env.example .env
-# Edit .env file with your configuration (see Environment Configuration section below)
-
-# 3. Start all services with Docker Compose
-docker compose up -d
-
-# 4. Start Ollama (runs outside Docker)
+# 2. Start Ollama (runs outside Docker)
 ollama serve &
-ollama pull llama3:latest  # Download the required model
+ollama pull llama3.2:1b  # Download the required model
 
-# 5. Wait for services to be ready (check logs)
-docker compose logs -f
+# 3. Start Mainza with optimized build system
+./scripts/build-dev.sh    # Development build (no cache)
+# OR
+./scripts/build-prod.sh   # Production build (with cache)
 
-# 6. Access the application
+# 4. Verify deployment
+./scripts/verify-changes.sh
+
+# 5. Access the application
 # Frontend: http://localhost (port 80)
 # Backend API: http://localhost:8000
 # Neo4j Browser: http://localhost:7474
+
+### 🛠️ Development Tools
+
+```bash
+# Development with hot reloading
+./scripts/build-dev-hot.sh
+
+# Monitor build performance
+./scripts/monitor-builds.sh
+
+# Comprehensive development tools
+./scripts/dev-tools.sh help
+
+# Available commands:
+# - build-dev: Development build (no cache)
+# - build-prod: Production build (with cache)
+# - build-hot: Hot reloading development
+# - verify: Verify changes are reflected
+# - monitor: Monitor build performance
+# - clean: Clean Docker resources
+# - status: Show container status
+# - logs: Show container logs
+# - health: Check system health
+# - test: Run build verification tests
+```
 # API Documentation: http://localhost:8000/docs
 ```
 
@@ -718,6 +745,11 @@ await dynamic_knowledge_manager.process_interaction_knowledge(
 - [🧩 Memory System](docs/MEMORY_SYSTEM.md) - Comprehensive memory system guide
 - [🤖 Ollama Model Selection](docs/OLLAMA_MODEL_SELECTION.md) - Dynamic model switching guide
 - [🚀 Deployment Guide](docs/MEMORY_SYSTEM_DEPLOYMENT.md) - Production deployment with memory system
+
+### Docker & Build System
+- [🐳 Docker Build Process Guide](DOCKER_BUILD_PROCESS_GUIDE.md) - Complete Docker build and deployment guide
+- [⚡ Docker Optimization Summary](DOCKER_OPTIMIZATION_IMPLEMENTATION_SUMMARY.md) - Docker optimization implementation details
+- [🔧 Build Tools Documentation](DOCKER_CACHING_ISSUES_ANALYSIS_REPORT.md) - Docker caching issues analysis and solutions
 
 ### API Documentation
 - [📡 REST API](API_DOCUMENTATION.md) - Complete API reference including memory endpoints

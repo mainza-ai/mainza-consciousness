@@ -145,9 +145,9 @@ export const AdvancedNeedsDisplay: React.FC<AdvancedNeedsDisplayProps> = ({
     fetchAdvancedNeeds();
   }, [fetchAdvancedNeeds]);
 
-  // Auto-refresh every 30 seconds
+  // Auto-refresh every 1 hour
   useEffect(() => {
-    const interval = setInterval(fetchAdvancedNeeds, 30000);
+    const interval = setInterval(fetchAdvancedNeeds, 3600000); // 1 hour = 3600000ms
     return () => clearInterval(interval);
   }, [fetchAdvancedNeeds]);
 
