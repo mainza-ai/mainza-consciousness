@@ -485,7 +485,7 @@ export const TelemetryDashboard: React.FC = () => {
             <div className="flex gap-3">
               <Button
                 variant="outline"
-                className="border-slate-500 hover:border-cyan-400 text-white hover:text-cyan-200"
+                className="border-slate-500 hover:border-cyan-400 text-black hover:text-cyan-200"
                 onClick={() => fetchTelemetrySummary()}
               >
                 <Eye className="h-4 w-4 mr-2" />
@@ -541,7 +541,7 @@ export const TelemetryDashboard: React.FC = () => {
                 </div>
                 <Button
                   variant="outline"
-                  className="border-slate-500 hover:border-cyan-400 text-white hover:text-cyan-200"
+                  className="border-slate-500 hover:border-cyan-400 text-black hover:text-cyan-200"
                   onClick={() => exportData('system_health')}
                 >
                   <Download className="h-4 w-4 mr-2" />
@@ -644,7 +644,7 @@ export const TelemetryDashboard: React.FC = () => {
                 </div>
                 <Button
                   variant="outline"
-                  className="border-slate-500 hover:border-purple-400 text-white hover:text-purple-200"
+                  className="border-slate-500 hover:border-purple-400 text-black hover:text-purple-200"
                   onClick={() => exportData('consciousness')}
                 >
                   <Download className="h-4 w-4 mr-2" />
@@ -745,7 +745,7 @@ export const TelemetryDashboard: React.FC = () => {
                 </div>
                 <Button
                   variant="outline"
-                  className="border-slate-500 hover:border-red-400 text-white hover:text-red-200"
+                  className="border-slate-500 hover:border-red-400 text-black hover:text-red-200"
                   onClick={() => exportData('errors')}
                 >
                   <Download className="h-4 w-4 mr-2" />
