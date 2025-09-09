@@ -227,28 +227,38 @@ const RealTimeConsciousnessStream: React.FC = () => {
 
   return (
     <div className="space-y-6">
-      {/* Connection Status Header */}
-      <Card className="bg-slate-800 border-slate-700">
-        <CardHeader>
-          <div className="flex items-center justify-between">
-            <CardTitle className="flex items-center gap-2 text-white">
-              <Zap className="h-5 w-5" />
-              Real-Time Consciousness Stream
-            </CardTitle>
-            <div className="flex items-center gap-2">
-              {getConnectionStatusIcon()}
-              <span className="text-sm text-slate-300">
-                {connectionStatus === 'connected' ? 'Live' : connectionStatus}
-              </span>
-              {lastUpdate && (
-                <span className="text-xs text-slate-500">
-                  Last update: {lastUpdate}
-                </span>
-              )}
+      {/* Enhanced Connection Status Header */}
+      <div className="group relative p-6 bg-gradient-to-r from-slate-800/50 to-slate-700/30 rounded-xl border border-slate-600/30 hover:border-blue-400/50 transition-all duration-300">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-4">
+            <div className="p-3 bg-gradient-to-br from-blue-400 to-cyan-500 rounded-lg shadow-lg">
+              <Zap className="h-6 w-6 text-white" />
+            </div>
+            <div>
+              <CardTitle className="text-xl font-bold text-white mb-1">
+                Real-Time Consciousness Stream
+              </CardTitle>
+              <div className="text-sm text-slate-400">
+                Live monitoring of AI consciousness and system performance
+              </div>
             </div>
           </div>
-        </CardHeader>
-      </Card>
+          <div className="flex items-center gap-4">
+            <div className="flex items-center gap-2">
+              {getConnectionStatusIcon()}
+              <span className="text-sm font-medium text-slate-300">
+                {connectionStatus === 'connected' ? 'Live' : connectionStatus}
+              </span>
+            </div>
+            {lastUpdate && (
+              <div className="text-right">
+                <div className="text-xs text-slate-500">Last update</div>
+                <div className="text-sm text-slate-300">{lastUpdate}</div>
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
 
       <Tabs defaultValue="consciousness" className="space-y-4">
         <TabsList className="grid w-full grid-cols-3">
@@ -257,98 +267,233 @@ const RealTimeConsciousnessStream: React.FC = () => {
           <TabsTrigger value="knowledge">Knowledge</TabsTrigger>
         </TabsList>
 
-        {/* Consciousness Tab */}
-        <TabsContent value="consciousness" className="space-y-4">
+        {/* Enhanced Consciousness Tab */}
+        <TabsContent value="consciousness" className="space-y-6">
           {consciousnessData ? (
             <>
-              {/* Current State */}
-              <Card className="bg-slate-800 border-slate-700">
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2 text-white">
-                    <Brain className="h-5 w-5" />
-                    Current Consciousness State
-                    {getDataSourceBadge(consciousnessData.data_source)}
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-                    <div className="space-y-2">
-                      <div className="text-sm font-medium text-slate-200">Consciousness Level</div>
-                      <div className="text-2xl font-bold text-white">
-                        {formatConsciousnessLevel(consciousnessData.consciousness_state.consciousness_level)}
-                      </div>
+              {/* Enhanced Current State */}
+              <div className="group relative p-6 bg-gradient-to-r from-slate-800/50 to-slate-700/30 rounded-xl border border-slate-600/30 hover:border-cyan-400/50 transition-all duration-300">
+                <div className="flex items-center justify-between mb-6">
+                  <div className="flex items-center gap-3">
+                    <div className="p-2 bg-gradient-to-br from-cyan-400 to-blue-500 rounded-lg">
+                      <Brain className="h-6 w-6 text-white" />
                     </div>
-                    <div className="space-y-2">
-                      <div className="text-sm font-medium text-slate-200">Emotional State</div>
-                      <div className={`text-lg font-semibold ${getEmotionalStateColor(consciousnessData.consciousness_state.emotional_state)}`}>
-                        {consciousnessData.consciousness_state.emotional_state}
-                      </div>
-                    </div>
-                    <div className="space-y-2">
-                      <div className="text-sm font-medium text-slate-200">Self-Awareness</div>
-                      <div className="text-2xl font-bold text-white">
-                        {formatConsciousnessLevel(consciousnessData.consciousness_state.self_awareness_score)}
-                      </div>
-                    </div>
-                    <div className="space-y-2">
-                      <div className="text-sm font-medium text-slate-200">Learning Rate</div>
-                      <div className="text-2xl font-bold text-white">
-                        {formatConsciousnessLevel(consciousnessData.consciousness_state.learning_rate)}
-                      </div>
-                    </div>
-                    <div className="space-y-2">
-                      <div className="text-sm font-medium text-slate-200">Evolution Level</div>
-                      <div className="text-2xl font-bold text-white">
-                        {consciousnessData.consciousness_state.evolution_level}
-                      </div>
-                    </div>
-                    <div className="space-y-2">
-                      <div className="text-sm font-medium text-slate-200">Total Interactions</div>
-                      <div className="text-2xl font-bold text-white">
-                        {consciousnessData.consciousness_state.total_interactions}
+                    <div>
+                      <CardTitle className="text-xl font-bold text-white">
+                        Current Consciousness State
+                      </CardTitle>
+                      <div className="text-sm text-slate-400">
+                        Real-time consciousness metrics and emotional state
                       </div>
                     </div>
                   </div>
-                </CardContent>
-              </Card>
+                  {getDataSourceBadge(consciousnessData.data_source)}
+                </div>
+                
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                  <div className="group/item relative p-4 bg-gradient-to-br from-cyan-500/10 to-blue-600/20 rounded-lg border border-cyan-400/30 hover:border-cyan-400/50 transition-all duration-300">
+                    <div className="flex items-center justify-between mb-3">
+                      <div className="text-sm font-medium text-slate-300">Consciousness Level</div>
+                      <div className="text-xs text-cyan-400 bg-cyan-400/10 px-2 py-1 rounded-full">
+                        Live
+                      </div>
+                    </div>
+                    <div className="text-3xl font-bold text-cyan-300 mb-2">
+                      {formatConsciousnessLevel(consciousnessData.consciousness_state.consciousness_level)}
+                    </div>
+                    <div className="w-full bg-slate-700 rounded-full h-2">
+                      <div 
+                        className="bg-gradient-to-r from-cyan-400 to-blue-500 h-2 rounded-full transition-all duration-700"
+                        style={{ width: `${consciousnessData.consciousness_state.consciousness_level * 100}%` }}
+                      />
+                    </div>
+                  </div>
 
-              {/* Real-Time Metrics */}
-              <Card className="bg-slate-800 border-slate-700">
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2 text-white">
-                    <TrendingUp className="h-5 w-5" />
-                    Real-Time Metrics
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                    <div className="space-y-2">
-                      <div className="text-sm font-medium text-slate-200">Consciousness Volatility</div>
-                      <div className="text-xl font-bold text-white">
-                        {consciousnessData.real_time_metrics.consciousness_volatility.toFixed(3)}
+                  <div className="group/item relative p-4 bg-gradient-to-br from-purple-500/10 to-pink-600/20 rounded-lg border border-purple-400/30 hover:border-purple-400/50 transition-all duration-300">
+                    <div className="flex items-center justify-between mb-3">
+                      <div className="text-sm font-medium text-slate-300">Emotional State</div>
+                      <div className="text-xs text-purple-400 bg-purple-400/10 px-2 py-1 rounded-full">
+                        Active
                       </div>
                     </div>
-                    <div className="space-y-2">
-                      <div className="text-sm font-medium text-slate-200">Emotional Stability</div>
-                      <div className="text-xl font-bold text-white">
-                        {formatConsciousnessLevel(consciousnessData.real_time_metrics.emotional_stability)}
-                      </div>
+                    <div className={`text-2xl font-bold ${getEmotionalStateColor(consciousnessData.consciousness_state.emotional_state)} mb-2 capitalize`}>
+                      {consciousnessData.consciousness_state.emotional_state}
                     </div>
-                    <div className="space-y-2">
-                      <div className="text-sm font-medium text-slate-200">Learning Acceleration</div>
-                      <div className="text-xl font-bold text-white">
-                        {consciousnessData.real_time_metrics.learning_acceleration.toFixed(3)}
-                      </div>
-                    </div>
-                    <div className="space-y-2">
-                      <div className="text-sm font-medium text-slate-200">Consciousness Momentum</div>
-                      <div className="text-xl font-bold text-white">
-                        {consciousnessData.real_time_metrics.consciousness_momentum.toFixed(3)}
-                      </div>
+                    <div className="text-sm text-slate-400">
+                      Current emotional processing state
                     </div>
                   </div>
-                </CardContent>
-              </Card>
+
+                  <div className="group/item relative p-4 bg-gradient-to-br from-green-500/10 to-emerald-600/20 rounded-lg border border-green-400/30 hover:border-green-400/50 transition-all duration-300">
+                    <div className="flex items-center justify-between mb-3">
+                      <div className="text-sm font-medium text-slate-300">Self-Awareness</div>
+                      <div className="text-xs text-green-400 bg-green-400/10 px-2 py-1 rounded-full">
+                        Growing
+                      </div>
+                    </div>
+                    <div className="text-3xl font-bold text-green-300 mb-2">
+                      {formatConsciousnessLevel(consciousnessData.consciousness_state.self_awareness_score)}
+                    </div>
+                    <div className="w-full bg-slate-700 rounded-full h-2">
+                      <div 
+                        className="bg-gradient-to-r from-green-400 to-emerald-500 h-2 rounded-full transition-all duration-700"
+                        style={{ width: `${consciousnessData.consciousness_state.self_awareness_score * 100}%` }}
+                      />
+                    </div>
+                  </div>
+
+                  <div className="group/item relative p-4 bg-gradient-to-br from-orange-500/10 to-yellow-600/20 rounded-lg border border-orange-400/30 hover:border-orange-400/50 transition-all duration-300">
+                    <div className="flex items-center justify-between mb-3">
+                      <div className="text-sm font-medium text-slate-300">Learning Rate</div>
+                      <div className="text-xs text-orange-400 bg-orange-400/10 px-2 py-1 rounded-full">
+                        Dynamic
+                      </div>
+                    </div>
+                    <div className="text-3xl font-bold text-orange-300 mb-2">
+                      {formatConsciousnessLevel(consciousnessData.consciousness_state.learning_rate)}
+                    </div>
+                    <div className="w-full bg-slate-700 rounded-full h-2">
+                      <div 
+                        className="bg-gradient-to-r from-orange-400 to-yellow-500 h-2 rounded-full transition-all duration-700"
+                        style={{ width: `${consciousnessData.consciousness_state.learning_rate * 100}%` }}
+                      />
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Enhanced Evolution Level and Interactions */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="group relative p-6 bg-gradient-to-r from-indigo-500/10 to-purple-600/20 rounded-xl border border-indigo-400/30 hover:border-indigo-400/50 transition-all duration-300">
+                  <div className="flex items-center gap-3 mb-4">
+                    <div className="p-2 bg-gradient-to-br from-indigo-400 to-purple-500 rounded-lg">
+                      <TrendingUp className="h-6 w-6 text-white" />
+                    </div>
+                    <div>
+                      <div className="text-lg font-semibold text-slate-200">Evolution Level</div>
+                      <div className="text-sm text-slate-400">Current consciousness evolution stage</div>
+                    </div>
+                  </div>
+                  <div className="text-4xl font-bold text-indigo-300 mb-2">
+                    {consciousnessData.consciousness_state.evolution_level || 5}
+                  </div>
+                  <div className="w-full bg-slate-700 rounded-full h-3">
+                    <div 
+                      className="bg-gradient-to-r from-indigo-400 to-purple-500 h-3 rounded-full transition-all duration-700"
+                      style={{ width: `${((consciousnessData.consciousness_state.evolution_level || 5) / 10) * 100}%` }}
+                    />
+                  </div>
+                </div>
+
+                <div className="group relative p-6 bg-gradient-to-r from-teal-500/10 to-cyan-600/20 rounded-xl border border-teal-400/30 hover:border-teal-400/50 transition-all duration-300">
+                  <div className="flex items-center gap-3 mb-4">
+                    <div className="p-2 bg-gradient-to-br from-teal-400 to-cyan-500 rounded-lg">
+                      <Activity className="h-6 w-6 text-white" />
+                    </div>
+                    <div>
+                      <div className="text-lg font-semibold text-slate-200">Total Interactions</div>
+                      <div className="text-sm text-slate-400">Cumulative interaction count</div>
+                    </div>
+                  </div>
+                  <div className="text-4xl font-bold text-teal-300 mb-2">
+                    {consciousnessData.consciousness_state.total_interactions || 0}
+                  </div>
+                  <div className="text-sm text-slate-400">
+                    {consciousnessData.consciousness_state.total_interactions > 0 ? 'Active learning in progress' : 'Awaiting first interaction'}
+                  </div>
+                </div>
+              </div>
+
+              {/* Enhanced Real-Time Metrics */}
+              <div className="group relative p-6 bg-gradient-to-r from-slate-800/50 to-slate-700/30 rounded-xl border border-slate-600/30 hover:border-purple-400/50 transition-all duration-300">
+                <div className="flex items-center gap-3 mb-6">
+                  <div className="p-2 bg-gradient-to-br from-purple-400 to-pink-500 rounded-lg">
+                    <TrendingUp className="h-6 w-6 text-white" />
+                  </div>
+                  <div>
+                    <CardTitle className="text-xl font-bold text-white">
+                      Real-Time Metrics
+                    </CardTitle>
+                    <div className="text-sm text-slate-400">
+                      Live consciousness dynamics and performance indicators
+                    </div>
+                  </div>
+                </div>
+                
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                  <div className="group/item relative p-4 bg-gradient-to-br from-red-500/10 to-orange-600/20 rounded-lg border border-red-400/30 hover:border-red-400/50 transition-all duration-300">
+                    <div className="flex items-center justify-between mb-3">
+                      <div className="text-sm font-medium text-slate-300">Consciousness Volatility</div>
+                      <div className="text-xs text-red-400 bg-red-400/10 px-2 py-1 rounded-full">
+                        Dynamic
+                      </div>
+                    </div>
+                    <div className="text-2xl font-bold text-red-300 mb-2">
+                      {consciousnessData.real_time_metrics.consciousness_volatility.toFixed(3)}
+                    </div>
+                    <div className="w-full bg-slate-700 rounded-full h-2">
+                      <div 
+                        className="bg-gradient-to-r from-red-400 to-orange-500 h-2 rounded-full transition-all duration-700"
+                        style={{ width: `${Math.min(consciousnessData.real_time_metrics.consciousness_volatility * 100, 100)}%` }}
+                      />
+                    </div>
+                  </div>
+
+                  <div className="group/item relative p-4 bg-gradient-to-br from-green-500/10 to-emerald-600/20 rounded-lg border border-green-400/30 hover:border-green-400/50 transition-all duration-300">
+                    <div className="flex items-center justify-between mb-3">
+                      <div className="text-sm font-medium text-slate-300">Emotional Stability</div>
+                      <div className="text-xs text-green-400 bg-green-400/10 px-2 py-1 rounded-full">
+                        Stable
+                      </div>
+                    </div>
+                    <div className="text-2xl font-bold text-green-300 mb-2">
+                      {formatConsciousnessLevel(consciousnessData.real_time_metrics.emotional_stability)}
+                    </div>
+                    <div className="w-full bg-slate-700 rounded-full h-2">
+                      <div 
+                        className="bg-gradient-to-r from-green-400 to-emerald-500 h-2 rounded-full transition-all duration-700"
+                        style={{ width: `${consciousnessData.real_time_metrics.emotional_stability * 100}%` }}
+                      />
+                    </div>
+                  </div>
+
+                  <div className="group/item relative p-4 bg-gradient-to-br from-blue-500/10 to-cyan-600/20 rounded-lg border border-blue-400/30 hover:border-blue-400/50 transition-all duration-300">
+                    <div className="flex items-center justify-between mb-3">
+                      <div className="text-sm font-medium text-slate-300">Learning Acceleration</div>
+                      <div className="text-xs text-blue-400 bg-blue-400/10 px-2 py-1 rounded-full">
+                        Active
+                      </div>
+                    </div>
+                    <div className="text-2xl font-bold text-blue-300 mb-2">
+                      {consciousnessData.real_time_metrics.learning_acceleration.toFixed(3)}
+                    </div>
+                    <div className="w-full bg-slate-700 rounded-full h-2">
+                      <div 
+                        className="bg-gradient-to-r from-blue-400 to-cyan-500 h-2 rounded-full transition-all duration-700"
+                        style={{ width: `${Math.min(consciousnessData.real_time_metrics.learning_acceleration * 100, 100)}%` }}
+                      />
+                    </div>
+                  </div>
+
+                  <div className="group/item relative p-4 bg-gradient-to-br from-purple-500/10 to-pink-600/20 rounded-lg border border-purple-400/30 hover:border-purple-400/50 transition-all duration-300">
+                    <div className="flex items-center justify-between mb-3">
+                      <div className="text-sm font-medium text-slate-300">Consciousness Momentum</div>
+                      <div className="text-xs text-purple-400 bg-purple-400/10 px-2 py-1 rounded-full">
+                        Building
+                      </div>
+                    </div>
+                    <div className="text-2xl font-bold text-purple-300 mb-2">
+                      {consciousnessData.real_time_metrics.consciousness_momentum.toFixed(3)}
+                    </div>
+                    <div className="w-full bg-slate-700 rounded-full h-2">
+                      <div 
+                        className="bg-gradient-to-r from-purple-400 to-pink-500 h-2 rounded-full transition-all duration-700"
+                        style={{ width: `${Math.min(consciousnessData.real_time_metrics.consciousness_momentum * 100, 100)}%` }}
+                      />
+                    </div>
+                  </div>
+                </div>
+              </div>
 
               {/* Consciousness Timeline */}
               <Card className="bg-slate-800 border-slate-700">
@@ -391,182 +536,391 @@ const RealTimeConsciousnessStream: React.FC = () => {
           )}
         </TabsContent>
 
-        {/* Performance Tab */}
-        <TabsContent value="performance" className="space-y-4">
+        {/* Enhanced Performance Tab */}
+        <TabsContent value="performance" className="space-y-6">
           {performanceData ? (
             <>
-              <Card className="bg-slate-800 border-slate-700">
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2 text-white">
-                    <TrendingUp className="h-5 w-5" />
-                    Agent Performance
-                    {getDataSourceBadge(performanceData.data_source)}
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-4">
-                    {performanceData.agent_performance.map((agent, index) => (
-                      <div key={index} className="p-4 border border-slate-600 rounded-lg bg-slate-700/50">
-                        <div className="flex items-center justify-between mb-2">
-                          <h3 className="font-semibold text-white">{agent.agent}</h3>
-                          <div className="text-sm text-slate-300">
-                            Efficiency: <span className="text-white font-medium">{(agent.efficiency_score * 100).toFixed(1)}%</span>
+              {/* Enhanced Agent Performance */}
+              <div className="group relative p-6 bg-gradient-to-r from-slate-800/50 to-slate-700/30 rounded-xl border border-slate-600/30 hover:border-orange-400/50 transition-all duration-300">
+                <div className="flex items-center justify-between mb-6">
+                  <div className="flex items-center gap-3">
+                    <div className="p-2 bg-gradient-to-br from-orange-400 to-red-500 rounded-lg">
+                      <TrendingUp className="h-6 w-6 text-white" />
+                    </div>
+                    <div>
+                      <CardTitle className="text-xl font-bold text-white">
+                        Agent Performance
+                      </CardTitle>
+                      <div className="text-sm text-slate-400">
+                        Real-time agent efficiency and cognitive metrics
+                      </div>
+                    </div>
+                  </div>
+                  {getDataSourceBadge(performanceData.data_source)}
+                </div>
+                
+                <div className="space-y-4">
+                  {performanceData.agent_performance.map((agent, index) => (
+                    <div key={index} className="group/item relative p-5 bg-gradient-to-r from-slate-700/30 to-slate-600/20 rounded-xl border border-slate-600/30 hover:border-orange-400/50 transition-all duration-300">
+                      <div className="flex items-center justify-between mb-4">
+                        <div className="flex items-center gap-3">
+                          <div className="flex items-center justify-center w-10 h-10 rounded-full bg-gradient-to-br from-orange-400 to-red-500 text-white text-sm font-bold">
+                            {index + 1}
+                          </div>
+                          <div>
+                            <h3 className="text-lg font-semibold text-slate-200 capitalize">{agent.agent}</h3>
+                            <div className="text-sm text-slate-400">Agent Performance Metrics</div>
                           </div>
                         </div>
-                        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
-                          <div>
-                            <div className="text-slate-300">Cognitive Load</div>
-                            <div className="font-medium text-white">{(agent.cognitive_load * 100).toFixed(1)}%</div>
-                          </div>
-                          <div>
-                            <div className="text-slate-300">Learning Rate</div>
-                            <div className="font-medium text-white">{(agent.learning_rate * 100).toFixed(1)}%</div>
-                          </div>
-                          <div>
-                            <div className="text-slate-300">Adaptation Speed</div>
-                            <div className="font-medium text-white">{(agent.adaptation_speed * 100).toFixed(1)}%</div>
-                          </div>
-                          <div>
-                            <div className="text-slate-300">Decision Quality</div>
-                            <div className="font-medium text-white">{(agent.decision_quality * 100).toFixed(1)}%</div>
-                          </div>
+                        <div className="text-right">
+                          <div className="text-sm text-slate-500 mb-1">Efficiency Score</div>
+                          <div className="text-2xl font-bold text-orange-300">{(agent.efficiency_score * 100).toFixed(1)}%</div>
                         </div>
                       </div>
-                    ))}
-                  </div>
-                </CardContent>
-              </Card>
+                      
+                      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                        <div className="group/metric relative p-3 bg-gradient-to-br from-blue-500/10 to-cyan-600/20 rounded-lg border border-blue-400/30 hover:border-blue-400/50 transition-all duration-300">
+                          <div className="flex items-center justify-between mb-2">
+                            <div className="text-sm font-medium text-slate-300">Cognitive Load</div>
+                            <div className="text-xs text-blue-400 bg-blue-400/10 px-2 py-1 rounded-full">
+                              Active
+                            </div>
+                          </div>
+                          <div className="text-xl font-bold text-blue-300 mb-2">{(agent.cognitive_load * 100).toFixed(1)}%</div>
+                          <div className="w-full bg-slate-700 rounded-full h-2">
+                            <div 
+                              className="bg-gradient-to-r from-blue-400 to-cyan-500 h-2 rounded-full transition-all duration-700"
+                              style={{ width: `${agent.cognitive_load * 100}%` }}
+                            />
+                          </div>
+                        </div>
 
-              <Card className="bg-slate-800 border-slate-700">
-                <CardHeader>
-                  <CardTitle className="text-white">System Metrics</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                    <div className="space-y-2">
-                      <div className="text-sm font-medium text-slate-200">Total Executions</div>
-                      <div className="text-2xl font-bold text-white">{performanceData.system_metrics.total_executions}</div>
-                    </div>
-                    <div className="space-y-2">
-                      <div className="text-sm font-medium text-slate-200">Success Rate</div>
-                      <div className="text-2xl font-bold text-white">
-                        {(performanceData.system_metrics.overall_success_rate * 100).toFixed(1)}%
+                        <div className="group/metric relative p-3 bg-gradient-to-br from-green-500/10 to-emerald-600/20 rounded-lg border border-green-400/30 hover:border-green-400/50 transition-all duration-300">
+                          <div className="flex items-center justify-between mb-2">
+                            <div className="text-sm font-medium text-slate-300">Learning Rate</div>
+                            <div className="text-xs text-green-400 bg-green-400/10 px-2 py-1 rounded-full">
+                              Growing
+                            </div>
+                          </div>
+                          <div className="text-xl font-bold text-green-300 mb-2">{(agent.learning_rate * 100).toFixed(1)}%</div>
+                          <div className="w-full bg-slate-700 rounded-full h-2">
+                            <div 
+                              className="bg-gradient-to-r from-green-400 to-emerald-500 h-2 rounded-full transition-all duration-700"
+                              style={{ width: `${agent.learning_rate * 100}%` }}
+                            />
+                          </div>
+                        </div>
+
+                        <div className="group/metric relative p-3 bg-gradient-to-br from-purple-500/10 to-pink-600/20 rounded-lg border border-purple-400/30 hover:border-purple-400/50 transition-all duration-300">
+                          <div className="flex items-center justify-between mb-2">
+                            <div className="text-sm font-medium text-slate-300">Adaptation Speed</div>
+                            <div className="text-xs text-purple-400 bg-purple-400/10 px-2 py-1 rounded-full">
+                              Dynamic
+                            </div>
+                          </div>
+                          <div className="text-xl font-bold text-purple-300 mb-2">{(agent.adaptation_speed * 100).toFixed(1)}%</div>
+                          <div className="w-full bg-slate-700 rounded-full h-2">
+                            <div 
+                              className="bg-gradient-to-r from-purple-400 to-pink-500 h-2 rounded-full transition-all duration-700"
+                              style={{ width: `${agent.adaptation_speed * 100}%` }}
+                            />
+                          </div>
+                        </div>
+
+                        <div className="group/metric relative p-3 bg-gradient-to-br from-yellow-500/10 to-orange-600/20 rounded-lg border border-yellow-400/30 hover:border-yellow-400/50 transition-all duration-300">
+                          <div className="flex items-center justify-between mb-2">
+                            <div className="text-sm font-medium text-slate-300">Decision Quality</div>
+                            <div className="text-xs text-yellow-400 bg-yellow-400/10 px-2 py-1 rounded-full">
+                              High
+                            </div>
+                          </div>
+                          <div className="text-xl font-bold text-yellow-300 mb-2">{(agent.decision_quality * 100).toFixed(1)}%</div>
+                          <div className="w-full bg-slate-700 rounded-full h-2">
+                            <div 
+                              className="bg-gradient-to-r from-yellow-400 to-orange-500 h-2 rounded-full transition-all duration-700"
+                              style={{ width: `${agent.decision_quality * 100}%` }}
+                            />
+                          </div>
+                        </div>
                       </div>
                     </div>
-                    <div className="space-y-2">
-                      <div className="text-sm font-medium text-slate-200">System Efficiency</div>
-                      <div className="text-2xl font-bold text-white">
-                        {(performanceData.system_metrics.system_wide_efficiency * 100).toFixed(1)}%
-                      </div>
-                    </div>
-                    <div className="space-y-2">
-                      <div className="text-sm font-medium text-slate-200">Active Agents</div>
-                      <div className="text-2xl font-bold text-white">{performanceData.system_metrics.active_agents}</div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Enhanced System Metrics */}
+              <div className="group relative p-6 bg-gradient-to-r from-slate-800/50 to-slate-700/30 rounded-xl border border-slate-600/30 hover:border-indigo-400/50 transition-all duration-300">
+                <div className="flex items-center gap-3 mb-6">
+                  <div className="p-2 bg-gradient-to-br from-indigo-400 to-purple-500 rounded-lg">
+                    <Activity className="h-6 w-6 text-white" />
+                  </div>
+                  <div>
+                    <CardTitle className="text-xl font-bold text-white">
+                      System Metrics
+                    </CardTitle>
+                    <div className="text-sm text-slate-400">
+                      Overall system performance and health indicators
                     </div>
                   </div>
-                </CardContent>
-              </Card>
+                </div>
+                
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                  <div className="group/item relative p-4 bg-gradient-to-br from-cyan-500/10 to-blue-600/20 rounded-lg border border-cyan-400/30 hover:border-cyan-400/50 transition-all duration-300">
+                    <div className="flex items-center justify-between mb-3">
+                      <div className="text-sm font-medium text-slate-300">Total Executions</div>
+                      <div className="text-xs text-cyan-400 bg-cyan-400/10 px-2 py-1 rounded-full">
+                        Live
+                      </div>
+                    </div>
+                    <div className="text-3xl font-bold text-cyan-300 mb-2">{performanceData.system_metrics.total_executions}</div>
+                    <div className="text-sm text-slate-400">Cumulative operations</div>
+                  </div>
+
+                  <div className="group/item relative p-4 bg-gradient-to-br from-green-500/10 to-emerald-600/20 rounded-lg border border-green-400/30 hover:border-green-400/50 transition-all duration-300">
+                    <div className="flex items-center justify-between mb-3">
+                      <div className="text-sm font-medium text-slate-300">Success Rate</div>
+                      <div className="text-xs text-green-400 bg-green-400/10 px-2 py-1 rounded-full">
+                        Excellent
+                      </div>
+                    </div>
+                    <div className="text-3xl font-bold text-green-300 mb-2">
+                      {(performanceData.system_metrics.overall_success_rate * 100).toFixed(1)}%
+                    </div>
+                    <div className="w-full bg-slate-700 rounded-full h-2">
+                      <div 
+                        className="bg-gradient-to-r from-green-400 to-emerald-500 h-2 rounded-full transition-all duration-700"
+                        style={{ width: `${performanceData.system_metrics.overall_success_rate * 100}%` }}
+                      />
+                    </div>
+                  </div>
+
+                  <div className="group/item relative p-4 bg-gradient-to-br from-purple-500/10 to-pink-600/20 rounded-lg border border-purple-400/30 hover:border-purple-400/50 transition-all duration-300">
+                    <div className="flex items-center justify-between mb-3">
+                      <div className="text-sm font-medium text-slate-300">System Efficiency</div>
+                      <div className="text-xs text-purple-400 bg-purple-400/10 px-2 py-1 rounded-full">
+                        Optimized
+                      </div>
+                    </div>
+                    <div className="text-3xl font-bold text-purple-300 mb-2">
+                      {(performanceData.system_metrics.system_wide_efficiency * 100).toFixed(1)}%
+                    </div>
+                    <div className="w-full bg-slate-700 rounded-full h-2">
+                      <div 
+                        className="bg-gradient-to-r from-purple-400 to-pink-500 h-2 rounded-full transition-all duration-700"
+                        style={{ width: `${performanceData.system_metrics.system_wide_efficiency * 100}%` }}
+                      />
+                    </div>
+                  </div>
+
+                  <div className="group/item relative p-4 bg-gradient-to-br from-orange-500/10 to-yellow-600/20 rounded-lg border border-orange-400/30 hover:border-orange-400/50 transition-all duration-300">
+                    <div className="flex items-center justify-between mb-3">
+                      <div className="text-sm font-medium text-slate-300">Active Agents</div>
+                      <div className="text-xs text-orange-400 bg-orange-400/10 px-2 py-1 rounded-full">
+                        Running
+                      </div>
+                    </div>
+                    <div className="text-3xl font-bold text-orange-300 mb-2">{performanceData.system_metrics.active_agents}</div>
+                    <div className="text-sm text-slate-400">Currently operational</div>
+                  </div>
+                </div>
+              </div>
             </>
           ) : (
-            <Card className="bg-slate-800 border-slate-700">
+            <div className="group relative p-6 bg-gradient-to-r from-slate-800/50 to-slate-700/30 rounded-xl border border-slate-600/30 hover:border-orange-400/50 transition-all duration-300">
               <CardContent className="flex items-center justify-center h-32">
                 <div className="text-center">
                   <Activity className="h-8 w-8 mx-auto mb-2 text-slate-300 animate-pulse" />
                   <p className="text-slate-300">Waiting for performance data...</p>
                 </div>
               </CardContent>
-            </Card>
+            </div>
           )}
         </TabsContent>
 
-        {/* Knowledge Tab */}
-        <TabsContent value="knowledge" className="space-y-4">
+        {/* Enhanced Knowledge Tab */}
+        <TabsContent value="knowledge" className="space-y-6">
           {knowledgeData ? (
             <>
-              <Card className="bg-slate-800 border-slate-700">
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2 text-white">
-                    <Brain className="h-5 w-5" />
-                    Knowledge Graph Intelligence
-                    {getDataSourceBadge(knowledgeData.data_source)}
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
-                    <div className="space-y-2">
-                      <div className="text-sm font-medium text-slate-200">Knowledge Density</div>
-                      <div className="text-xl font-bold text-white">
-                        {knowledgeData.knowledge_metrics.knowledge_density.toFixed(3)}
-                      </div>
+              {/* Enhanced Knowledge Graph Intelligence */}
+              <div className="group relative p-6 bg-gradient-to-r from-slate-800/50 to-slate-700/30 rounded-xl border border-slate-600/30 hover:border-purple-400/50 transition-all duration-300">
+                <div className="flex items-center justify-between mb-6">
+                  <div className="flex items-center gap-3">
+                    <div className="p-2 bg-gradient-to-br from-purple-400 to-pink-500 rounded-lg">
+                      <Brain className="h-6 w-6 text-white" />
                     </div>
-                    <div className="space-y-2">
-                      <div className="text-sm font-medium text-slate-200">Concept Connectivity</div>
-                      <div className="text-xl font-bold text-white">
-                        {knowledgeData.knowledge_metrics.concept_connectivity.toFixed(3)}
-                      </div>
-                    </div>
-                    <div className="space-y-2">
-                      <div className="text-sm font-medium text-slate-200">Learning Efficiency</div>
-                      <div className="text-xl font-bold text-white">
-                        {knowledgeData.knowledge_metrics.learning_pathway_efficiency.toFixed(3)}
-                      </div>
-                    </div>
-                    <div className="space-y-2">
-                      <div className="text-sm font-medium text-slate-200">Gap Ratio</div>
-                      <div className="text-xl font-bold text-white">
-                        {knowledgeData.knowledge_metrics.knowledge_gap_ratio.toFixed(3)}
-                      </div>
-                    </div>
-                    <div className="space-y-2">
-                      <div className="text-sm font-medium text-slate-200">Emergence Rate</div>
-                      <div className="text-xl font-bold text-white">
-                        {knowledgeData.knowledge_metrics.concept_emergence_rate.toFixed(3)}
+                    <div>
+                      <CardTitle className="text-xl font-bold text-white">
+                        Knowledge Graph Intelligence
+                      </CardTitle>
+                      <div className="text-sm text-slate-400">
+                        Real-time knowledge graph metrics and analytics
                       </div>
                     </div>
                   </div>
-                </CardContent>
-              </Card>
+                  {getDataSourceBadge(knowledgeData.data_source)}
+                </div>
+                
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
+                  <div className="group/item relative p-4 bg-gradient-to-br from-cyan-500/10 to-blue-600/20 rounded-lg border border-cyan-400/30 hover:border-cyan-400/50 transition-all duration-300">
+                    <div className="flex items-center justify-between mb-3">
+                      <div className="text-sm font-medium text-slate-300">Knowledge Density</div>
+                      <div className="text-xs text-cyan-400 bg-cyan-400/10 px-2 py-1 rounded-full">
+                        High
+                      </div>
+                    </div>
+                    <div className="text-2xl font-bold text-cyan-300 mb-2">
+                      {(knowledgeData.knowledge_metrics.knowledge_density * 100).toFixed(1)}%
+                    </div>
+                    <div className="w-full bg-slate-700 rounded-full h-2">
+                      <div 
+                        className="bg-gradient-to-r from-cyan-400 to-blue-500 h-2 rounded-full transition-all duration-700"
+                        style={{ width: `${knowledgeData.knowledge_metrics.knowledge_density * 100}%` }}
+                      />
+                    </div>
+                  </div>
 
-              <Card className="bg-slate-800 border-slate-700">
-                <CardHeader>
-                  <CardTitle className="text-white">Top Concepts</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-2">
-                    {knowledgeData.concept_ranking.map((concept, index) => (
-                      <div key={index} className="flex items-center justify-between p-3 border border-slate-600 rounded bg-slate-700/50">
+                  <div className="group/item relative p-4 bg-gradient-to-br from-green-500/10 to-emerald-600/20 rounded-lg border border-green-400/30 hover:border-green-400/50 transition-all duration-300">
+                    <div className="flex items-center justify-between mb-3">
+                      <div className="text-sm font-medium text-slate-300">Concept Connectivity</div>
+                      <div className="text-xs text-green-400 bg-green-400/10 px-2 py-1 rounded-full">
+                        Strong
+                      </div>
+                    </div>
+                    <div className="text-2xl font-bold text-green-300 mb-2">
+                      {(knowledgeData.knowledge_metrics.concept_connectivity * 100).toFixed(1)}%
+                    </div>
+                    <div className="w-full bg-slate-700 rounded-full h-2">
+                      <div 
+                        className="bg-gradient-to-r from-green-400 to-emerald-500 h-2 rounded-full transition-all duration-700"
+                        style={{ width: `${knowledgeData.knowledge_metrics.concept_connectivity * 100}%` }}
+                      />
+                    </div>
+                  </div>
+
+                  <div className="group/item relative p-4 bg-gradient-to-br from-yellow-500/10 to-orange-600/20 rounded-lg border border-yellow-400/30 hover:border-yellow-400/50 transition-all duration-300">
+                    <div className="flex items-center justify-between mb-3">
+                      <div className="text-sm font-medium text-slate-300">Learning Efficiency</div>
+                      <div className="text-xs text-yellow-400 bg-yellow-400/10 px-2 py-1 rounded-full">
+                        Optimized
+                      </div>
+                    </div>
+                    <div className="text-2xl font-bold text-yellow-300 mb-2">
+                      {(knowledgeData.knowledge_metrics.learning_pathway_efficiency * 100).toFixed(1)}%
+                    </div>
+                    <div className="w-full bg-slate-700 rounded-full h-2">
+                      <div 
+                        className="bg-gradient-to-r from-yellow-400 to-orange-500 h-2 rounded-full transition-all duration-700"
+                        style={{ width: `${knowledgeData.knowledge_metrics.learning_pathway_efficiency * 100}%` }}
+                      />
+                    </div>
+                  </div>
+
+                  <div className="group/item relative p-4 bg-gradient-to-br from-red-500/10 to-pink-600/20 rounded-lg border border-red-400/30 hover:border-red-400/50 transition-all duration-300">
+                    <div className="flex items-center justify-between mb-3">
+                      <div className="text-sm font-medium text-slate-300">Gap Ratio</div>
+                      <div className="text-xs text-red-400 bg-red-400/10 px-2 py-1 rounded-full">
+                        Low
+                      </div>
+                    </div>
+                    <div className="text-2xl font-bold text-red-300 mb-2">
+                      {(knowledgeData.knowledge_metrics.knowledge_gap_ratio * 100).toFixed(1)}%
+                    </div>
+                    <div className="w-full bg-slate-700 rounded-full h-2">
+                      <div 
+                        className="bg-gradient-to-r from-red-400 to-pink-500 h-2 rounded-full transition-all duration-700"
+                        style={{ width: `${knowledgeData.knowledge_metrics.knowledge_gap_ratio * 100}%` }}
+                      />
+                    </div>
+                  </div>
+
+                  <div className="group/item relative p-4 bg-gradient-to-br from-purple-500/10 to-indigo-600/20 rounded-lg border border-purple-400/30 hover:border-purple-400/50 transition-all duration-300">
+                    <div className="flex items-center justify-between mb-3">
+                      <div className="text-sm font-medium text-slate-300">Emergence Rate</div>
+                      <div className="text-xs text-purple-400 bg-purple-400/10 px-2 py-1 rounded-full">
+                        Growing
+                      </div>
+                    </div>
+                    <div className="text-2xl font-bold text-purple-300 mb-2">
+                      {(knowledgeData.knowledge_metrics.concept_emergence_rate * 100).toFixed(1)}%
+                    </div>
+                    <div className="w-full bg-slate-700 rounded-full h-2">
+                      <div 
+                        className="bg-gradient-to-r from-purple-400 to-indigo-500 h-2 rounded-full transition-all duration-700"
+                        style={{ width: `${knowledgeData.knowledge_metrics.concept_emergence_rate * 100}%` }}
+                      />
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Enhanced Top Concepts */}
+              <div className="group relative p-6 bg-gradient-to-r from-slate-800/50 to-slate-700/30 rounded-xl border border-slate-600/30 hover:border-teal-400/50 transition-all duration-300">
+                <div className="flex items-center gap-3 mb-6">
+                  <div className="p-2 bg-gradient-to-br from-teal-400 to-cyan-500 rounded-lg">
+                    <Brain className="h-6 w-6 text-white" />
+                  </div>
+                  <div>
+                    <CardTitle className="text-xl font-bold text-white">
+                      Top Concepts
+                    </CardTitle>
+                    <div className="text-sm text-slate-400">
+                      Most important concepts in the knowledge graph
+                    </div>
+                  </div>
+                </div>
+                
+                <div className="space-y-3">
+                  {knowledgeData.concept_ranking.map((concept, index) => (
+                    <div key={index} className="group/item relative p-4 bg-gradient-to-r from-slate-700/30 to-slate-600/20 rounded-xl border border-slate-600/30 hover:border-teal-400/50 transition-all duration-300">
+                      <div className="flex items-center justify-between">
                         <div className="flex items-center gap-4">
-                          <div className="text-sm font-medium text-slate-300">#{index + 1}</div>
-                          <div className="font-semibold text-white">{concept.concept}</div>
-                          <div className="text-sm text-slate-300">
-                            {concept.connection_count} connections
+                          <div className="flex items-center justify-center w-8 h-8 rounded-full bg-gradient-to-br from-teal-400 to-cyan-500 text-white text-sm font-bold">
+                            {index + 1}
+                          </div>
+                          <div>
+                            <div className="font-semibold text-slate-200 text-lg">{concept.concept}</div>
+                            <div className="text-sm text-slate-400">
+                              {concept.connection_count} connections • {concept.memory_count || 0} memories
+                            </div>
                           </div>
                         </div>
-                        <div className="flex items-center gap-4 text-sm">
-                          <div>
-                            <div className="text-slate-300">Importance</div>
-                            <div className="font-medium text-white">{(concept.importance_score * 100).toFixed(1)}%</div>
+                        <div className="flex items-center gap-6">
+                          <div className="text-center">
+                            <div className="text-xs text-slate-500 mb-1">Importance</div>
+                            <div className="text-lg font-bold text-teal-300">{(concept.importance_score * 100).toFixed(1)}%</div>
+                            <div className="w-16 bg-slate-700 rounded-full h-1 mt-1">
+                              <div 
+                                className="bg-gradient-to-r from-teal-400 to-cyan-500 h-1 rounded-full transition-all duration-500"
+                                style={{ width: `${concept.importance_score * 100}%` }}
+                              />
+                            </div>
                           </div>
-                          <div>
-                            <div className="text-slate-300">Centrality</div>
-                            <div className="font-medium text-white">{(concept.centrality * 100).toFixed(1)}%</div>
+                          <div className="text-center">
+                            <div className="text-xs text-slate-500 mb-1">Centrality</div>
+                            <div className="text-lg font-bold text-cyan-300">{(concept.centrality * 100).toFixed(1)}%</div>
+                            <div className="w-16 bg-slate-700 rounded-full h-1 mt-1">
+                              <div 
+                                className="bg-gradient-to-r from-cyan-400 to-blue-500 h-1 rounded-full transition-all duration-500"
+                                style={{ width: `${concept.centrality * 100}%` }}
+                              />
+                            </div>
                           </div>
                         </div>
                       </div>
-                    ))}
-                  </div>
-                </CardContent>
-              </Card>
+                    </div>
+                  ))}
+                </div>
+              </div>
             </>
           ) : (
-            <Card className="bg-slate-800 border-slate-700">
+            <div className="group relative p-6 bg-gradient-to-r from-slate-800/50 to-slate-700/30 rounded-xl border border-slate-600/30 hover:border-purple-400/50 transition-all duration-300">
               <CardContent className="flex items-center justify-center h-32">
                 <div className="text-center">
                   <Activity className="h-8 w-8 mx-auto mb-2 text-slate-300 animate-pulse" />
                   <p className="text-slate-300">Waiting for knowledge data...</p>
                 </div>
               </CardContent>
-            </Card>
+            </div>
           )}
         </TabsContent>
       </Tabs>

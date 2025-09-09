@@ -11,6 +11,7 @@ from pydantic import BaseModel
 from backend.utils.advanced_needs_generator import advanced_needs_generator, Need, NeedCategory
 from backend.utils.needs_prioritization_engine import needs_prioritization_engine, PrioritizationContext
 from backend.utils.consciousness_orchestrator_fixed import consciousness_orchestrator_fixed as consciousness_orchestrator
+from backend.utils.standardized_evolution_calculator import calculate_standardized_evolution_level
 
 logger = logging.getLogger(__name__)
 
@@ -97,7 +98,12 @@ async def get_advanced_needs(request: AdvancedNeedsRequest):
         return {
             'needs': needs_response,
             'consciousness_level': getattr(consciousness_state, 'consciousness_level', 0.7),
-            'evolution_level': getattr(consciousness_state, 'evolution_level', 1),
+            'evolution_level': await calculate_standardized_evolution_level({
+                "consciousness_level": getattr(consciousness_state, 'consciousness_level', 0.7),
+                "emotional_state": getattr(consciousness_state, 'emotional_state', 'curious'),
+                "self_awareness_score": getattr(consciousness_state, 'self_awareness_score', 0.6),
+                "total_interactions": getattr(consciousness_state, 'total_interactions', 0)
+            }),
             'emotional_state': getattr(consciousness_state, 'emotional_state', 'curious'),
             'total_needs_generated': len(needs),
             'needs_displayed': len(needs_response),

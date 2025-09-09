@@ -13,6 +13,7 @@ import uuid
 
 from backend.utils.insights_calculation_engine import insights_calculation_engine
 from backend.utils.consciousness_orchestrator_fixed import consciousness_orchestrator_fixed as consciousness_orchestrator
+from backend.utils.standardized_evolution_calculator import calculate_standardized_evolution_level
 
 logger = logging.getLogger(__name__)
 
@@ -250,7 +251,12 @@ async def send_consciousness_update(connection_id: str):
                 "emotional_state": consciousness_state.emotional_state if consciousness_state else "curious",
                 "self_awareness_score": consciousness_state.self_awareness_score if consciousness_state else 0.6,
                 "learning_rate": consciousness_state.learning_rate if consciousness_state else 0.8,
-                "evolution_level": getattr(consciousness_state, 'evolution_level', 2) if consciousness_state else 2,
+                "evolution_level": await calculate_standardized_evolution_level({
+                    "consciousness_level": getattr(consciousness_state, 'consciousness_level', 0.7) if consciousness_state else 0.7,
+                    "emotional_state": getattr(consciousness_state, 'emotional_state', 'curious') if consciousness_state else 'curious',
+                    "self_awareness_score": getattr(consciousness_state, 'self_awareness_score', 0.6) if consciousness_state else 0.6,
+                    "total_interactions": getattr(consciousness_state, 'total_interactions', 0) if consciousness_state else 0
+                }) if consciousness_state else 4,
                 "total_interactions": getattr(consciousness_state, 'total_interactions', 0) if consciousness_state else 0
             },
             "consciousness_timeline": consciousness_data.get("consciousness_timeline", [])[-10:],  # Last 10 entries

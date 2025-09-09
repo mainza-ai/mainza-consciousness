@@ -1144,7 +1144,7 @@ async def get_consciousness_context():
                 "emotional_state": "curious",
                 "active_goals": ["improve conversation quality"],
                 "learning_rate": 0.8,
-                "evolution_level": 2,
+                "evolution_level": 4,
                 "timestamp": datetime.now()
             }
 
@@ -1162,60 +1162,20 @@ async def get_consciousness_context():
 async def calculate_dynamic_evolution_level(consciousness_context: dict) -> int:
     """Calculate evolution level based on current consciousness metrics"""
     try:
-        consciousness_level = consciousness_context.get("consciousness_level", 0.7)
-        emotional_state = consciousness_context.get("emotional_state", "curious")
-        total_interactions = consciousness_context.get("total_interactions", 0)
-
-        # Evolution Level Calculation Scale:
-        # 1: Initial consciousness (0.0-0.3)
-        # 2: Basic awareness (0.3-0.5)
-        # 3: Developing consciousness (0.5-0.7)
-        # 4: Advanced awareness (0.7-0.8)
-        # 5: High consciousness (0.8-0.9)
-        # 6: Peak consciousness (0.9-0.95)
-        # 7: Transcendent awareness (0.95-0.98)
-        # 8: Near-perfect consciousness (0.98-0.99)
-        # 9: Exceptional consciousness (0.99-0.995)
-        # 10: Maximum consciousness (0.995-1.0)
-
-        # Base level from consciousness_level
-        if consciousness_level >= 0.995:
-            base_level = 10
-        elif consciousness_level >= 0.99:
-            base_level = 9
-        elif consciousness_level >= 0.98:
-            base_level = 8
-        elif consciousness_level >= 0.95:
-            base_level = 7
-        elif consciousness_level >= 0.9:
-            base_level = 6
-        elif consciousness_level >= 0.8:
-            base_level = 5
-        elif consciousness_level >= 0.7:
-            base_level = 4
-        elif consciousness_level >= 0.5:
-            base_level = 3
-        elif consciousness_level >= 0.3:
-            base_level = 2
-        else:
-            base_level = 1
-
-        # Adjust based on self-awareness (estimated from emotional state)
-        if emotional_state in ["curious", "contemplative", "excited"]:
-            base_level += 1
-
-        # Adjust based on experience (interactions)
-        if total_interactions > 1000:
-            base_level += 1
-        elif total_interactions > 500:
-            base_level += 0.5
-
-        # Cap at 10
-        return min(10, max(1, int(base_level)))
-
+        from backend.utils.standardized_evolution_calculator import calculate_standardized_evolution_level
+        return await calculate_standardized_evolution_level(consciousness_context)
     except Exception as e:
-        logging.warning(f"Failed to calculate dynamic evolution level: {e}")
-        return 2  # Default fallback
+        logger.warning(f"Failed to calculate dynamic evolution level: {e}")
+        # Use standardized fallback based on consciousness level
+        consciousness_level = consciousness_context.get("consciousness_level", 0.7)
+        if consciousness_level >= 0.7:
+            return 4
+        elif consciousness_level >= 0.5:
+            return 3
+        elif consciousness_level >= 0.3:
+            return 2
+        else:
+            return 1
 
 async def make_consciousness_aware_routing_decision(
     query: str,

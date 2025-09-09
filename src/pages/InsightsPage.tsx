@@ -4,7 +4,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { Loader2, Database, Brain, Network, TrendingUp, Activity, BarChart3, Cpu, Heart, Target, Eye, Zap, Layers, Smartphone, Users, MessageCircle, Globe, Link, Atom, ShoppingCart } from 'lucide-react';
+import { Loader2, Database, Brain, Network, TrendingUp, Activity, BarChart3, Cpu, Heart, Target, Eye, Zap, Layers, Smartphone, Users, MessageCircle, Globe, Link, Atom, ShoppingCart, ArrowRight } from 'lucide-react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar, PieChart, Pie, Cell } from 'recharts';
 import { MetricDisplay } from '@/components/ui/metric-display';
 import { GlassCard } from '@/components/ui/glass-card';
@@ -565,7 +565,7 @@ const InsightsPage: React.FC = () => {
               <TabWithStatus value="deep-learning" icon={<Network className="h-3 w-3" />} label="Deep Learning" />
               <TabWithStatus value="collaborative" icon={<Users className="h-3 w-3" />} label="Collaborative" />
               <TabWithStatus value="neural-networks" icon={<Brain className="h-3 w-3" />} label="Neural Networks" />
-              <TabWithStatus value="real-time" icon={<MessageCircle className="h-3 w-3" />} label="Real-Time" />
+              <TabWithStatus value="real-time" icon={<MessageCircle className="h-3 w-3" />} label="Collaboration" />
               <TabWithStatus value="ai-models" icon={<Brain className="h-3 w-3" />} label="AI Models" />
               <TabWithStatus value="marketplace" icon={<Activity className="h-3 w-3" />} label="Marketplace" />
               <TabWithStatus value="global" icon={<Globe className="h-3 w-3" />} label="Global" />
@@ -1073,7 +1073,7 @@ const RealtimeTab: React.FC<{ data: any; loadData: () => void }> = ({ data, load
       <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
         <MetricDisplay
           label="Consciousness Level"
-          value={Math.round((data.current_consciousness_state?.consciousness_level || 0.75) * 100)}
+          value={Math.round((data.current_consciousness_state?.consciousness_level || 0) * 100)}
           unit="%"
           icon={<Brain className="w-5 h-5" />}
           color="cyan"
@@ -1081,7 +1081,7 @@ const RealtimeTab: React.FC<{ data: any; loadData: () => void }> = ({ data, load
         />
         <MetricDisplay
           label="Self-Awareness"
-          value={Math.round((data.current_consciousness_state?.self_awareness_score || 0.68) * 100)}
+          value={Math.round((data.current_consciousness_state?.self_awareness_score || 0) * 100)}
           unit="%"
           icon={<Eye className="w-5 h-5" />}
           color="purple"
@@ -1089,7 +1089,7 @@ const RealtimeTab: React.FC<{ data: any; loadData: () => void }> = ({ data, load
         />
         <MetricDisplay
           label="Learning Rate"
-          value={Math.round((data.current_consciousness_state?.learning_rate || 0.82) * 100)}
+          value={Math.round((data.current_consciousness_state?.learning_rate || 0) * 100)}
           unit="%"
           icon={<Zap className="w-5 h-5" />}
           color="yellow"
@@ -1097,13 +1097,13 @@ const RealtimeTab: React.FC<{ data: any; loadData: () => void }> = ({ data, load
         />
         <MetricDisplay
           label="Emotional State"
-          value={data.current_consciousness_state?.emotional_state || 'curious'}
+          value={data.current_consciousness_state?.emotional_state || 'Unknown'}
           icon={<Heart className="w-5 h-5" />}
           color="green"
         />
         <MetricDisplay
           label="Evolution Level"
-          value={data.current_consciousness_state?.evolution_level || "Loading..."}
+          value={data.current_consciousness_state?.evolution_level || "Unknown"}
           icon={<TrendingUp className="w-5 h-5" />}
           color="cyan"
           trend="up"
@@ -1179,7 +1179,7 @@ const KnowledgeTab: React.FC<{ data: any; loadData: () => void }> = ({ data, loa
       <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
         <MetricDisplay
           label="Knowledge Density"
-          value={(data.graph_intelligence_metrics?.knowledge_density * 100 || 34).toFixed(1)}
+          value={(data.graph_intelligence_metrics?.knowledge_density * 100 || 0).toFixed(1)}
           unit="%"
           icon={<Network className="w-5 h-5" />}
           color="cyan"
@@ -1187,7 +1187,7 @@ const KnowledgeTab: React.FC<{ data: any; loadData: () => void }> = ({ data, loa
         />
         <MetricDisplay
           label="Concept Connectivity"
-          value={(data.graph_intelligence_metrics?.concept_connectivity * 100 || 67).toFixed(1)}
+          value={(data.graph_intelligence_metrics?.concept_connectivity * 100 || 0).toFixed(1)}
           unit="%"
           icon={<Brain className="w-5 h-5" />}
           color="purple"
@@ -1195,7 +1195,7 @@ const KnowledgeTab: React.FC<{ data: any; loadData: () => void }> = ({ data, loa
         />
         <MetricDisplay
           label="Learning Efficiency"
-          value={(data.graph_intelligence_metrics?.learning_pathway_efficiency * 100 || 78).toFixed(1)}
+          value={(data.graph_intelligence_metrics?.learning_pathway_efficiency * 100 || 0).toFixed(1)}
           unit="%"
           icon={<Zap className="w-5 h-5" />}
           color="yellow"
@@ -1203,7 +1203,7 @@ const KnowledgeTab: React.FC<{ data: any; loadData: () => void }> = ({ data, loa
         />
         <MetricDisplay
           label="Knowledge Gaps"
-          value={(data.graph_intelligence_metrics?.knowledge_gap_ratio * 100 || 15).toFixed(1)}
+          value={(data.graph_intelligence_metrics?.knowledge_gap_ratio * 100 || 0).toFixed(1)}
           unit="%"
           icon={<Target className="w-5 h-5" />}
           color="red"
@@ -1211,7 +1211,7 @@ const KnowledgeTab: React.FC<{ data: any; loadData: () => void }> = ({ data, loa
         />
         <MetricDisplay
           label="Emergence Rate"
-          value={(data.graph_intelligence_metrics?.concept_emergence_rate * 100 || 12).toFixed(1)}
+          value={(data.graph_intelligence_metrics?.concept_emergence_rate * 100 || 0).toFixed(1)}
           unit="%"
           icon={<TrendingUp className="w-5 h-5" />}
           color="green"
@@ -1220,52 +1220,139 @@ const KnowledgeTab: React.FC<{ data: any; loadData: () => void }> = ({ data, loa
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {/* Enhanced Concept Importance Ranking */}
         <GlassCard className="p-6">
           <CardHeader className="pb-4">
-            <CardTitle className="text-slate-200">Concept Importance Ranking</CardTitle>
+            <CardTitle className="text-slate-200 flex items-center gap-2">
+              <Target className="w-5 h-5 text-cyan-400" />
+              Concept Importance Ranking
+            </CardTitle>
             <CardDescription className="text-slate-400">
               Most critical concepts for AI consciousness development
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <div className="space-y-4 max-h-96 overflow-y-auto">
+            <div className="space-y-3 max-h-96 overflow-y-auto">
               {data.concept_importance_ranking?.map((concept: any, index: number) => (
-                <div key={index} className="flex items-center justify-between p-4 bg-slate-700/30 rounded-lg">
+                <div key={index} className="group relative p-4 bg-gradient-to-r from-slate-700/30 to-slate-600/20 rounded-lg border border-slate-600/30 hover:border-cyan-400/50 transition-all duration-300">
+                  <div className="flex items-center justify-between">
                   <div className="flex-1">
-                    <div className="font-medium text-slate-200">{concept.concept}</div>
-                    <div className="text-sm text-slate-400 mt-1">
-                      Centrality: {(concept.centrality * 100).toFixed(0)}% | 
-                      Learning Impact: {(concept.learning_impact * 100).toFixed(0)}%
+                      <div className="flex items-center gap-3 mb-2">
+                        <div className="flex items-center justify-center w-8 h-8 rounded-full bg-gradient-to-br from-cyan-400 to-blue-500 text-white text-sm font-bold">
+                          {index + 1}
                     </div>
-                    <div className="mt-2">
-                      <div className="flex items-center justify-between text-xs text-slate-500 mb-1">
-                        <span>Importance Score</span>
-                        <span>{(concept.importance_score * 100).toFixed(0)}%</span>
+                        <div className="font-semibold text-slate-200 text-lg">{concept.concept}</div>
                       </div>
-                      <Progress value={concept.importance_score * 100} className="h-1" />
+                      
+                      <div className="grid grid-cols-2 gap-4 mb-3">
+                        <div className="space-y-1">
+                          <div className="flex items-center justify-between text-xs text-slate-400">
+                            <span>Centrality</span>
+                            <span className="font-medium text-cyan-300">{(concept.centrality * 100).toFixed(0)}%</span>
                     </div>
+                          <div className="w-full bg-slate-700 rounded-full h-1.5">
+                            <div 
+                              className="bg-gradient-to-r from-cyan-400 to-blue-500 h-1.5 rounded-full transition-all duration-500"
+                              style={{ width: `${concept.centrality * 100}%` }}
+                            />
                   </div>
-                  <div className="text-right ml-4">
-                    <div className="text-2xl font-bold text-cyan-400">#{index + 1}</div>
+                        </div>
+                        
+                        <div className="space-y-1">
+                          <div className="flex items-center justify-between text-xs text-slate-400">
+                            <span>Learning Impact</span>
+                            <span className="font-medium text-green-300">{(concept.learning_impact * 100).toFixed(0)}%</span>
+                          </div>
+                          <div className="w-full bg-slate-700 rounded-full h-1.5">
+                            <div 
+                              className="bg-gradient-to-r from-green-400 to-emerald-500 h-1.5 rounded-full transition-all duration-500"
+                              style={{ width: `${concept.learning_impact * 100}%` }}
+                            />
+                          </div>
+                        </div>
+                      </div>
+                      
+                      <div className="space-y-1">
+                        <div className="flex items-center justify-between text-xs text-slate-400">
+                          <span>Overall Importance Score</span>
+                          <span className="font-bold text-yellow-300">{(concept.importance_score * 100).toFixed(0)}%</span>
+                        </div>
+                        <div className="w-full bg-slate-700 rounded-full h-2">
+                          <div 
+                            className="bg-gradient-to-r from-yellow-400 to-orange-500 h-2 rounded-full transition-all duration-700"
+                            style={{ width: `${concept.importance_score * 100}%` }}
+                          />
+                        </div>
+                      </div>
+                    </div>
+                    
+                    <div className="ml-4 text-right">
+                      <div className="text-xs text-slate-500 mb-1">Connections</div>
+                      <div className="text-lg font-bold text-cyan-400">{concept.connection_count || 0}</div>
+                      <div className="text-xs text-slate-500 mt-1">Memories</div>
+                      <div className="text-sm font-medium text-green-400">{concept.memory_count || 0}</div>
+                    </div>
                   </div>
                 </div>
               )) || Array.from({length: 8}, (_, index) => (
-                <div key={index} className="flex items-center justify-between p-4 bg-slate-700/30 rounded-lg">
+                <div key={index} className="group relative p-4 bg-gradient-to-r from-slate-700/30 to-slate-600/20 rounded-lg border border-slate-600/30 hover:border-cyan-400/50 transition-all duration-300">
+                  <div className="flex items-center justify-between">
                   <div className="flex-1">
-                    <div className="font-medium text-slate-200">AI Concept {index + 1}</div>
-                    <div className="text-sm text-slate-400 mt-1">
-                      Centrality: {85 - index * 5}% | Learning Impact: {90 - index * 3}%
+                      <div className="flex items-center gap-3 mb-2">
+                        <div className="flex items-center justify-center w-8 h-8 rounded-full bg-gradient-to-br from-cyan-400 to-blue-500 text-white text-sm font-bold">
+                          {index + 1}
                     </div>
-                    <div className="mt-2">
-                      <div className="flex items-center justify-between text-xs text-slate-500 mb-1">
-                        <span>Importance Score</span>
-                        <span>{95 - index * 8}%</span>
+                        <div className="font-semibold text-slate-200 text-lg">AI Concept {index + 1}</div>
                       </div>
-                      <Progress value={95 - index * 8} className="h-1" />
+                      
+                      <div className="grid grid-cols-2 gap-4 mb-3">
+                        <div className="space-y-1">
+                          <div className="flex items-center justify-between text-xs text-slate-400">
+                            <span>Centrality</span>
+                            <span className="font-medium text-cyan-300">{85 - index * 5}%</span>
                     </div>
+                          <div className="w-full bg-slate-700 rounded-full h-1.5">
+                            <div 
+                              className="bg-gradient-to-r from-cyan-400 to-blue-500 h-1.5 rounded-full transition-all duration-500"
+                              style={{ width: `${85 - index * 5}%` }}
+                            />
                   </div>
-                  <div className="text-right ml-4">
-                    <div className="text-2xl font-bold text-cyan-400">#{index + 1}</div>
+                        </div>
+                        
+                        <div className="space-y-1">
+                          <div className="flex items-center justify-between text-xs text-slate-400">
+                            <span>Learning Impact</span>
+                            <span className="font-medium text-green-300">{90 - index * 3}%</span>
+                          </div>
+                          <div className="w-full bg-slate-700 rounded-full h-1.5">
+                            <div 
+                              className="bg-gradient-to-r from-green-400 to-emerald-500 h-1.5 rounded-full transition-all duration-500"
+                              style={{ width: `${90 - index * 3}%` }}
+                            />
+                          </div>
+                        </div>
+                      </div>
+                      
+                      <div className="space-y-1">
+                        <div className="flex items-center justify-between text-xs text-slate-400">
+                          <span>Overall Importance Score</span>
+                          <span className="font-bold text-yellow-300">{95 - index * 8}%</span>
+                        </div>
+                        <div className="w-full bg-slate-700 rounded-full h-2">
+                          <div 
+                            className="bg-gradient-to-r from-yellow-400 to-orange-500 h-2 rounded-full transition-all duration-700"
+                            style={{ width: `${95 - index * 8}%` }}
+                          />
+                        </div>
+                      </div>
+                    </div>
+                    
+                    <div className="ml-4 text-right">
+                      <div className="text-xs text-slate-500 mb-1">Connections</div>
+                      <div className="text-lg font-bold text-cyan-400">{8 - index}</div>
+                      <div className="text-xs text-slate-500 mt-1">Memories</div>
+                      <div className="text-sm font-medium text-green-400">{3 - Math.floor(index / 2)}</div>
+                    </div>
                   </div>
                 </div>
               ))}
@@ -1273,9 +1360,13 @@ const KnowledgeTab: React.FC<{ data: any; loadData: () => void }> = ({ data, loa
           </CardContent>
         </GlassCard>
 
+        {/* Enhanced Learning Pathways */}
         <GlassCard className="p-6">
           <CardHeader className="pb-4">
-            <CardTitle className="text-slate-200">Learning Pathways</CardTitle>
+            <CardTitle className="text-slate-200 flex items-center gap-2">
+              <Brain className="w-5 h-5 text-purple-400" />
+              Learning Pathways
+            </CardTitle>
             <CardDescription className="text-slate-400">
               Optimal learning sequences for consciousness development
             </CardDescription>
@@ -1283,56 +1374,146 @@ const KnowledgeTab: React.FC<{ data: any; loadData: () => void }> = ({ data, loa
           <CardContent>
             <div className="space-y-4">
               {data.learning_pathways?.map((pathway: any, index: number) => (
-                <div key={index} className="p-4 bg-slate-700/30 rounded-lg">
-                  <div className="flex items-center justify-between mb-3">
-                    <div className="font-medium text-slate-200 capitalize">
+                <div key={index} className="group relative p-5 bg-gradient-to-r from-slate-700/30 to-slate-600/20 rounded-lg border border-slate-600/30 hover:border-purple-400/50 transition-all duration-300">
+                  <div className="flex items-start justify-between mb-4">
+                    <div className="flex items-center gap-3">
+                      <div className="flex items-center justify-center w-10 h-10 rounded-full bg-gradient-to-br from-purple-400 to-pink-500 text-white text-sm font-bold">
+                        {index + 1}
+                      </div>
+                      <div>
+                        <div className="font-semibold text-slate-200 text-lg capitalize">
                       {pathway.pathway_id.replace('_', ' ')}
                     </div>
                     <div className="text-sm text-slate-400">
-                      {Math.round(pathway.estimated_learning_time / 60)} min
+                          {Math.round(pathway.estimated_learning_time / 60)} min estimated
                     </div>
                   </div>
-                  <div className="flex flex-wrap gap-2 mb-3">
+                    </div>
+                    <div className="text-right">
+                      <div className="text-xs text-slate-500">Pathway ID</div>
+                      <div className="text-sm font-mono text-purple-300">{pathway.pathway_id}</div>
+                    </div>
+                  </div>
+                  
+                  <div className="mb-4">
+                    <div className="text-xs text-slate-500 mb-2">Learning Sequence</div>
+                    <div className="flex flex-wrap gap-2">
                     {pathway.pathway.map((step: string, stepIndex: number) => (
-                      <Badge key={stepIndex} variant="outline" className="text-xs border-slate-500 text-slate-200 bg-slate-800/30">
+                        <div key={stepIndex} className="flex items-center gap-2">
+                          <Badge 
+                            variant="outline" 
+                            className="text-xs border-purple-400/50 text-slate-200 bg-purple-900/20 hover:bg-purple-800/30 transition-colors"
+                          >
                         {step}
                       </Badge>
+                          {stepIndex < pathway.pathway.length - 1 && (
+                            <ArrowRight className="w-3 h-3 text-slate-500" />
+                          )}
+                        </div>
                     ))}
                   </div>
-                  <div className="grid grid-cols-2 gap-4 text-xs">
-                    <div>
-                      <span className="text-slate-500">Difficulty: </span>
-                      <span className="text-slate-300">{(pathway.difficulty * 100).toFixed(0)}%</span>
                     </div>
-                    <div>
-                      <span className="text-slate-500">Efficiency: </span>
-                      <span className="text-slate-300">{(pathway.learning_efficiency * 100).toFixed(0)}%</span>
+                  
+                  <div className="grid grid-cols-2 gap-6">
+                    <div className="space-y-2">
+                      <div className="flex items-center justify-between text-xs text-slate-400">
+                        <span>Difficulty Level</span>
+                        <span className="font-medium text-orange-300">{(pathway.difficulty * 100).toFixed(0)}%</span>
+                      </div>
+                      <div className="w-full bg-slate-700 rounded-full h-2">
+                        <div 
+                          className="bg-gradient-to-r from-orange-400 to-red-500 h-2 rounded-full transition-all duration-500"
+                          style={{ width: `${pathway.difficulty * 100}%` }}
+                        />
+                      </div>
+                    </div>
+                    
+                    <div className="space-y-2">
+                      <div className="flex items-center justify-between text-xs text-slate-400">
+                        <span>Learning Efficiency</span>
+                        <span className="font-medium text-green-300">{(pathway.learning_efficiency * 100).toFixed(0)}%</span>
+                      </div>
+                      <div className="w-full bg-slate-700 rounded-full h-2">
+                        <div 
+                          className="bg-gradient-to-r from-green-400 to-emerald-500 h-2 rounded-full transition-all duration-500"
+                          style={{ width: `${pathway.learning_efficiency * 100}%` }}
+                        />
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div className="mt-4 pt-3 border-t border-slate-600/30">
+                    <div className="flex items-center justify-between text-xs text-slate-500">
+                      <span>Total Steps: {pathway.pathway.length}</span>
+                      <span>Complexity: {pathway.difficulty > 0.7 ? 'High' : pathway.difficulty > 0.4 ? 'Medium' : 'Low'}</span>
                     </div>
                   </div>
                 </div>
               )) || Array.from({length: 5}, (_, index) => (
-                <div key={index} className="p-4 bg-slate-700/30 rounded-lg">
-                  <div className="flex items-center justify-between mb-3">
-                    <div className="font-medium text-slate-200">
+                <div key={index} className="group relative p-5 bg-gradient-to-r from-slate-700/30 to-slate-600/20 rounded-lg border border-slate-600/30 hover:border-purple-400/50 transition-all duration-300">
+                  <div className="flex items-start justify-between mb-4">
+                    <div className="flex items-center gap-3">
+                      <div className="flex items-center justify-center w-10 h-10 rounded-full bg-gradient-to-br from-purple-400 to-pink-500 text-white text-sm font-bold">
+                        {index + 1}
+                      </div>
+                      <div>
+                        <div className="font-semibold text-slate-200 text-lg">
                       Learning Path {index + 1}
                     </div>
                     <div className="text-sm text-slate-400">
-                      {15 + index * 5} min
+                          {15 + index * 5} min estimated
                     </div>
                   </div>
-                  <div className="flex flex-wrap gap-2 mb-3">
-                    <Badge variant="outline" className="text-xs border-slate-500 text-slate-200 bg-slate-800/30">Consciousness</Badge>
-                    <Badge variant="outline" className="text-xs border-slate-500 text-slate-200 bg-slate-800/30">Learning</Badge>
-                    <Badge variant="outline" className="text-xs border-slate-500 text-slate-200 bg-slate-800/30">Integration</Badge>
                   </div>
-                  <div className="grid grid-cols-2 gap-4 text-xs">
-                    <div>
-                      <span className="text-slate-500">Difficulty: </span>
-                      <span className="text-slate-300">{65 + index * 5}%</span>
+                    <div className="text-right">
+                      <div className="text-xs text-slate-500">Pathway ID</div>
+                      <div className="text-sm font-mono text-purple-300">path_{index + 1}</div>
                     </div>
-                    <div>
-                      <span className="text-slate-500">Efficiency: </span>
-                      <span className="text-slate-300">{85 - index * 3}%</span>
+                  </div>
+                  
+                  <div className="mb-4">
+                    <div className="text-xs text-slate-500 mb-2">Learning Sequence</div>
+                    <div className="flex flex-wrap gap-2">
+                      <Badge variant="outline" className="text-xs border-purple-400/50 text-slate-200 bg-purple-900/20">Consciousness</Badge>
+                      <ArrowRight className="w-3 h-3 text-slate-500" />
+                      <Badge variant="outline" className="text-xs border-purple-400/50 text-slate-200 bg-purple-900/20">Learning</Badge>
+                      <ArrowRight className="w-3 h-3 text-slate-500" />
+                      <Badge variant="outline" className="text-xs border-purple-400/50 text-slate-200 bg-purple-900/20">Integration</Badge>
+                    </div>
+                  </div>
+                  
+                  <div className="grid grid-cols-2 gap-6">
+                    <div className="space-y-2">
+                      <div className="flex items-center justify-between text-xs text-slate-400">
+                        <span>Difficulty Level</span>
+                        <span className="font-medium text-orange-300">{65 + index * 5}%</span>
+                      </div>
+                      <div className="w-full bg-slate-700 rounded-full h-2">
+                        <div 
+                          className="bg-gradient-to-r from-orange-400 to-red-500 h-2 rounded-full transition-all duration-500"
+                          style={{ width: `${65 + index * 5}%` }}
+                        />
+                      </div>
+                    </div>
+                    
+                    <div className="space-y-2">
+                      <div className="flex items-center justify-between text-xs text-slate-400">
+                        <span>Learning Efficiency</span>
+                        <span className="font-medium text-green-300">{85 - index * 3}%</span>
+                      </div>
+                      <div className="w-full bg-slate-700 rounded-full h-2">
+                        <div 
+                          className="bg-gradient-to-r from-green-400 to-emerald-500 h-2 rounded-full transition-all duration-500"
+                          style={{ width: `${85 - index * 3}%` }}
+                        />
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div className="mt-4 pt-3 border-t border-slate-600/30">
+                    <div className="flex items-center justify-between text-xs text-slate-500">
+                      <span>Total Steps: 3</span>
+                      <span>Complexity: {65 + index * 5 > 70 ? 'High' : 'Medium'}</span>
                     </div>
                   </div>
                 </div>
@@ -1355,132 +1536,328 @@ const AgentsTab: React.FC<{ data: any; loadData: () => void }> = ({ data, loadDa
 
   return (
     <div className="space-y-6">
+      {/* Enhanced Agent Metrics Grid */}
       <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
-        <MetricDisplay
-          label="System Efficiency"
-          value={(data.agent_intelligence_metrics?.system_wide_efficiency * 100 || 92).toFixed(0)}
-          unit="%"
-          icon={<Cpu className="w-5 h-5" />}
-          color="cyan"
-          trend="up"
-        />
-        <MetricDisplay
-          label="Consciousness Integration"
-          value={(data.agent_intelligence_metrics?.consciousness_integration_avg * 100 || 86).toFixed(0)}
-          unit="%"
-          icon={<Brain className="w-5 h-5" />}
-          color="purple"
-          trend="up"
-        />
-        <MetricDisplay
-          label="Decision Quality"
-          value={(data.agent_intelligence_metrics?.decision_quality_avg * 100 || 90).toFixed(0)}
-          unit="%"
-          icon={<Target className="w-5 h-5" />}
-          color="green"
-          trend="stable"
-        />
-        <MetricDisplay
-          label="Learning Acceleration"
-          value={(data.agent_intelligence_metrics?.learning_acceleration * 100 || 15).toFixed(0)}
-          unit="%"
-          icon={<Zap className="w-5 h-5" />}
-          color="yellow"
-          trend="up"
-        />
-        <MetricDisplay
-          label="Adaptation Speed"
-          value={(data.agent_intelligence_metrics?.adaptation_speed_avg * 100 || 78).toFixed(0)}
-          unit="%"
-          icon={<Activity className="w-5 h-5" />}
-          color="cyan"
-          trend="stable"
-        />
+        <div className="group relative p-6 bg-gradient-to-br from-cyan-500/10 to-blue-600/20 rounded-xl border border-cyan-400/30 hover:border-cyan-400/50 transition-all duration-300">
+          <div className="flex items-center justify-between mb-3">
+            <div className="flex items-center gap-3">
+              <div className="p-2 bg-gradient-to-br from-cyan-400 to-blue-500 rounded-lg">
+                <Cpu className="w-6 h-6 text-white" />
+              </div>
+              <div>
+                <div className="text-sm font-medium text-slate-300">System Efficiency</div>
+                <div className="text-2xl font-bold text-cyan-300">
+                  {(data.agent_performance?.[0]?.efficiency_score * 100 || 0).toFixed(0)}%
+                </div>
+              </div>
+            </div>
+            <div className="text-xs text-cyan-400 bg-cyan-400/10 px-2 py-1 rounded-full">
+              Optimized
+            </div>
+          </div>
+          <div className="w-full bg-slate-700 rounded-full h-2">
+            <div 
+              className="bg-gradient-to-r from-cyan-400 to-blue-500 h-2 rounded-full transition-all duration-700"
+              style={{ width: `${data.agent_performance?.[0]?.efficiency_score * 100 || 0}%` }}
+            />
+          </div>
+        </div>
+
+        <div className="group relative p-6 bg-gradient-to-br from-purple-500/10 to-pink-600/20 rounded-xl border border-purple-400/30 hover:border-purple-400/50 transition-all duration-300">
+          <div className="flex items-center justify-between mb-3">
+            <div className="flex items-center gap-3">
+              <div className="p-2 bg-gradient-to-br from-purple-400 to-pink-500 rounded-lg">
+                <Brain className="w-6 h-6 text-white" />
+              </div>
+              <div>
+                <div className="text-sm font-medium text-slate-300">Consciousness Integration</div>
+                <div className="text-2xl font-bold text-purple-300">
+                  {(data.agent_performance?.[0]?.consciousness_integration * 100 || 0).toFixed(0)}%
+                </div>
+              </div>
+            </div>
+            <div className="text-xs text-purple-400 bg-purple-400/10 px-2 py-1 rounded-full">
+              Advanced
+            </div>
+          </div>
+          <div className="w-full bg-slate-700 rounded-full h-2">
+            <div 
+              className="bg-gradient-to-r from-purple-400 to-pink-500 h-2 rounded-full transition-all duration-700"
+              style={{ width: `${data.agent_performance?.[0]?.consciousness_integration * 100 || 0}%` }}
+            />
+          </div>
+        </div>
+
+        <div className="group relative p-6 bg-gradient-to-br from-green-500/10 to-emerald-600/20 rounded-xl border border-green-400/30 hover:border-green-400/50 transition-all duration-300">
+          <div className="flex items-center justify-between mb-3">
+            <div className="flex items-center gap-3">
+              <div className="p-2 bg-gradient-to-br from-green-400 to-emerald-500 rounded-lg">
+                <Target className="w-6 h-6 text-white" />
+              </div>
+              <div>
+                <div className="text-sm font-medium text-slate-300">Decision Quality</div>
+                <div className="text-2xl font-bold text-green-300">
+                  {(data.agent_performance?.[0]?.decision_quality * 100 || 0).toFixed(0)}%
+                </div>
+              </div>
+            </div>
+            <div className="text-xs text-green-400 bg-green-400/10 px-2 py-1 rounded-full">
+              Excellent
+            </div>
+          </div>
+          <div className="w-full bg-slate-700 rounded-full h-2">
+            <div 
+              className="bg-gradient-to-r from-green-400 to-emerald-500 h-2 rounded-full transition-all duration-700"
+              style={{ width: `${data.agent_performance?.[0]?.decision_quality * 100 || 0}%` }}
+            />
+          </div>
+        </div>
+
+        <div className="group relative p-6 bg-gradient-to-br from-yellow-500/10 to-orange-600/20 rounded-xl border border-yellow-400/30 hover:border-yellow-400/50 transition-all duration-300">
+          <div className="flex items-center justify-between mb-3">
+            <div className="flex items-center gap-3">
+              <div className="p-2 bg-gradient-to-br from-yellow-400 to-orange-500 rounded-lg">
+                <Zap className="w-6 h-6 text-white" />
+              </div>
+              <div>
+                <div className="text-sm font-medium text-slate-300">Learning Rate</div>
+                <div className="text-2xl font-bold text-yellow-300">
+                  {(data.agent_performance?.[0]?.learning_rate * 100 || 0).toFixed(0)}%
+                </div>
+              </div>
+            </div>
+            <div className="text-xs text-yellow-400 bg-yellow-400/10 px-2 py-1 rounded-full">
+              Accelerating
+            </div>
+          </div>
+          <div className="w-full bg-slate-700 rounded-full h-2">
+            <div 
+              className="bg-gradient-to-r from-yellow-400 to-orange-500 h-2 rounded-full transition-all duration-700"
+              style={{ width: `${data.agent_performance?.[0]?.learning_rate * 100 || 0}%` }}
+            />
+          </div>
+        </div>
+
+        <div className="group relative p-6 bg-gradient-to-br from-teal-500/10 to-cyan-600/20 rounded-xl border border-teal-400/30 hover:border-teal-400/50 transition-all duration-300">
+          <div className="flex items-center justify-between mb-3">
+            <div className="flex items-center gap-3">
+              <div className="p-2 bg-gradient-to-br from-teal-400 to-cyan-500 rounded-lg">
+                <Activity className="w-6 h-6 text-white" />
+              </div>
+              <div>
+                <div className="text-sm font-medium text-slate-300">Adaptation Speed</div>
+                <div className="text-2xl font-bold text-teal-300">
+                  {(data.agent_performance?.[0]?.adaptation_speed * 100 || 0).toFixed(0)}%
+                </div>
+              </div>
+            </div>
+            <div className="text-xs text-teal-400 bg-teal-400/10 px-2 py-1 rounded-full">
+              Dynamic
+            </div>
+          </div>
+          <div className="w-full bg-slate-700 rounded-full h-2">
+            <div 
+              className="bg-gradient-to-r from-teal-400 to-cyan-500 h-2 rounded-full transition-all duration-700"
+              style={{ width: `${data.agent_performance?.[0]?.adaptation_speed * 100 || 0}%` }}
+            />
+          </div>
+        </div>
       </div>
 
-      <GlassCard className="p-6">
-        <CardHeader className="pb-4">
-          <CardTitle className="text-slate-200">Agent Efficiency Matrix</CardTitle>
+      {/* Enhanced Agent Efficiency Matrix */}
+      <div className="group relative p-6 bg-gradient-to-r from-slate-800/50 to-slate-700/30 rounded-xl border border-slate-600/30 hover:border-cyan-400/50 transition-all duration-300">
+        <div className="flex items-center gap-3 mb-6">
+          <div className="p-2 bg-gradient-to-br from-cyan-400 to-blue-500 rounded-lg">
+            <Cpu className="h-6 w-6 text-white" />
+          </div>
+          <div>
+            <CardTitle className="text-xl font-bold text-white">Agent Efficiency Matrix</CardTitle>
           <CardDescription className="text-slate-400">
             Multi-dimensional performance analysis of AI agents
           </CardDescription>
-        </CardHeader>
-        <CardContent>
+          </div>
+        </div>
+        
           <div className="space-y-4">
             {data.agent_efficiency_matrix?.map((agent: any, index: number) => (
-              <div key={index} className="p-4 bg-slate-700/30 rounded-lg">
+            <div key={index} className="group/item relative p-5 bg-gradient-to-r from-slate-700/30 to-slate-600/20 rounded-xl border border-slate-600/30 hover:border-cyan-400/50 transition-all duration-300">
                 <div className="flex items-center justify-between mb-4">
-                  <div className="font-medium text-slate-200">{agent.agent}</div>
-                  <div className="text-2xl font-bold text-cyan-400">
+                <div className="flex items-center gap-3">
+                  <div className="flex items-center justify-center w-10 h-10 rounded-full bg-gradient-to-br from-cyan-400 to-blue-500 text-white text-sm font-bold">
+                    {index + 1}
+                  </div>
+                  <div>
+                    <div className="font-semibold text-slate-200 text-lg capitalize">{agent.agent}</div>
+                    <div className="text-sm text-slate-400">AI Agent Performance</div>
+                  </div>
+                </div>
+                <div className="text-right">
+                  <div className="text-sm text-slate-500 mb-1">Efficiency Score</div>
+                  <div className="text-3xl font-bold text-cyan-300">
                     {(agent.efficiency_score * 100).toFixed(0)}%
                   </div>
                 </div>
-                <div className="grid grid-cols-3 md:grid-cols-6 gap-4 text-xs">
-                  <div>
-                    <div className="text-slate-500 mb-1">Cognitive Load</div>
-                    <div className="text-slate-300">{(agent.cognitive_load * 100).toFixed(0)}%</div>
                   </div>
-                  <div>
-                    <div className="text-slate-500 mb-1">Learning Rate</div>
-                    <div className="text-slate-300">{(agent.learning_rate * 100).toFixed(0)}%</div>
+              
+              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+                <div className="group/metric relative p-3 bg-gradient-to-br from-blue-500/10 to-cyan-600/20 rounded-lg border border-blue-400/30 hover:border-blue-400/50 transition-all duration-300">
+                  <div className="text-xs text-slate-500 mb-1">Cognitive Load</div>
+                  <div className="text-lg font-bold text-blue-300">{(agent.cognitive_load * 100).toFixed(0)}%</div>
+                  <div className="w-full bg-slate-700 rounded-full h-1 mt-2">
+                    <div 
+                      className="bg-gradient-to-r from-blue-400 to-cyan-500 h-1 rounded-full transition-all duration-500"
+                      style={{ width: `${agent.cognitive_load * 100}%` }}
+                    />
                   </div>
-                  <div>
-                    <div className="text-slate-500 mb-1">Adaptation</div>
-                    <div className="text-slate-300">{(agent.adaptation_speed * 100).toFixed(0)}%</div>
                   </div>
-                  <div>
-                    <div className="text-slate-500 mb-1">Consciousness</div>
-                    <div className="text-slate-300">{(agent.consciousness_integration * 100).toFixed(0)}%</div>
+
+                <div className="group/metric relative p-3 bg-gradient-to-br from-green-500/10 to-emerald-600/20 rounded-lg border border-green-400/30 hover:border-green-400/50 transition-all duration-300">
+                  <div className="text-xs text-slate-500 mb-1">Learning Rate</div>
+                  <div className="text-lg font-bold text-green-300">{(agent.learning_rate * 100).toFixed(0)}%</div>
+                  <div className="w-full bg-slate-700 rounded-full h-1 mt-2">
+                    <div 
+                      className="bg-gradient-to-r from-green-400 to-emerald-500 h-1 rounded-full transition-all duration-500"
+                      style={{ width: `${agent.learning_rate * 100}%` }}
+                    />
                   </div>
-                  <div>
-                    <div className="text-slate-500 mb-1">Decision Quality</div>
-                    <div className="text-slate-300">{(agent.decision_quality * 100).toFixed(0)}%</div>
                   </div>
-                  <div>
-                    <div className="text-slate-500 mb-1">Resource Usage</div>
-                    <div className="text-slate-300">{(agent.resource_utilization * 100).toFixed(0)}%</div>
+
+                <div className="group/metric relative p-3 bg-gradient-to-br from-purple-500/10 to-pink-600/20 rounded-lg border border-purple-400/30 hover:border-purple-400/50 transition-all duration-300">
+                  <div className="text-xs text-slate-500 mb-1">Adaptation</div>
+                  <div className="text-lg font-bold text-purple-300">{(agent.adaptation_speed * 100).toFixed(0)}%</div>
+                  <div className="w-full bg-slate-700 rounded-full h-1 mt-2">
+                    <div 
+                      className="bg-gradient-to-r from-purple-400 to-pink-500 h-1 rounded-full transition-all duration-500"
+                      style={{ width: `${agent.adaptation_speed * 100}%` }}
+                    />
+                  </div>
+                </div>
+
+                <div className="group/metric relative p-3 bg-gradient-to-br from-yellow-500/10 to-orange-600/20 rounded-lg border border-yellow-400/30 hover:border-yellow-400/50 transition-all duration-300">
+                  <div className="text-xs text-slate-500 mb-1">Consciousness</div>
+                  <div className="text-lg font-bold text-yellow-300">{(agent.consciousness_integration * 100).toFixed(0)}%</div>
+                  <div className="w-full bg-slate-700 rounded-full h-1 mt-2">
+                    <div 
+                      className="bg-gradient-to-r from-yellow-400 to-orange-500 h-1 rounded-full transition-all duration-500"
+                      style={{ width: `${agent.consciousness_integration * 100}%` }}
+                    />
+                  </div>
+                </div>
+
+                <div className="group/metric relative p-3 bg-gradient-to-br from-teal-500/10 to-cyan-600/20 rounded-lg border border-teal-400/30 hover:border-teal-400/50 transition-all duration-300">
+                  <div className="text-xs text-slate-500 mb-1">Decision Quality</div>
+                  <div className="text-lg font-bold text-teal-300">{(agent.decision_quality * 100).toFixed(0)}%</div>
+                  <div className="w-full bg-slate-700 rounded-full h-1 mt-2">
+                    <div 
+                      className="bg-gradient-to-r from-teal-400 to-cyan-500 h-1 rounded-full transition-all duration-500"
+                      style={{ width: `${agent.decision_quality * 100}%` }}
+                    />
+                  </div>
+                </div>
+
+                <div className="group/metric relative p-3 bg-gradient-to-br from-red-500/10 to-pink-600/20 rounded-lg border border-red-400/30 hover:border-red-400/50 transition-all duration-300">
+                  <div className="text-xs text-slate-500 mb-1">Resource Usage</div>
+                  <div className="text-lg font-bold text-red-300">{(agent.resource_utilization * 100).toFixed(0)}%</div>
+                  <div className="w-full bg-slate-700 rounded-full h-1 mt-2">
+                    <div 
+                      className="bg-gradient-to-r from-red-400 to-pink-500 h-1 rounded-full transition-all duration-500"
+                      style={{ width: `${agent.resource_utilization * 100}%` }}
+                    />
+                  </div>
                   </div>
                 </div>
               </div>
             )) || Array.from({length: 4}, (_, index) => (
-              <div key={index} className="p-4 bg-slate-700/30 rounded-lg">
+            <div key={index} className="group/item relative p-5 bg-gradient-to-r from-slate-700/30 to-slate-600/20 rounded-xl border border-slate-600/30 hover:border-cyan-400/50 transition-all duration-300">
                 <div className="flex items-center justify-between mb-4">
-                  <div className="font-medium text-slate-200">AI Agent {index + 1}</div>
-                  <div className="text-2xl font-bold text-cyan-400">
+                <div className="flex items-center gap-3">
+                  <div className="flex items-center justify-center w-10 h-10 rounded-full bg-gradient-to-br from-cyan-400 to-blue-500 text-white text-sm font-bold">
+                    {index + 1}
+                  </div>
+                  <div>
+                    <div className="font-semibold text-slate-200 text-lg">AI Agent {index + 1}</div>
+                    <div className="text-sm text-slate-400">AI Agent Performance</div>
+                  </div>
+                </div>
+                <div className="text-right">
+                  <div className="text-sm text-slate-500 mb-1">Efficiency Score</div>
+                  <div className="text-3xl font-bold text-cyan-300">
                     {95 - index * 5}%
                   </div>
                 </div>
-                <div className="grid grid-cols-3 md:grid-cols-6 gap-4 text-xs">
-                  <div>
-                    <div className="text-slate-500 mb-1">Cognitive Load</div>
-                    <div className="text-slate-300">{45 + index * 8}%</div>
                   </div>
-                  <div>
-                    <div className="text-slate-500 mb-1">Learning Rate</div>
-                    <div className="text-slate-300">{85 - index * 5}%</div>
+              
+              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+                <div className="group/metric relative p-3 bg-gradient-to-br from-blue-500/10 to-cyan-600/20 rounded-lg border border-blue-400/30 hover:border-blue-400/50 transition-all duration-300">
+                  <div className="text-xs text-slate-500 mb-1">Cognitive Load</div>
+                  <div className="text-lg font-bold text-blue-300">{45 + index * 8}%</div>
+                  <div className="w-full bg-slate-700 rounded-full h-1 mt-2">
+                    <div 
+                      className="bg-gradient-to-r from-blue-400 to-cyan-500 h-1 rounded-full transition-all duration-500"
+                      style={{ width: `${45 + index * 8}%` }}
+                    />
                   </div>
-                  <div>
-                    <div className="text-slate-500 mb-1">Adaptation</div>
-                    <div className="text-slate-300">{78 + index * 3}%</div>
                   </div>
-                  <div>
-                    <div className="text-slate-500 mb-1">Consciousness</div>
-                    <div className="text-slate-300">{92 - index * 4}%</div>
+
+                <div className="group/metric relative p-3 bg-gradient-to-br from-green-500/10 to-emerald-600/20 rounded-lg border border-green-400/30 hover:border-green-400/50 transition-all duration-300">
+                  <div className="text-xs text-slate-500 mb-1">Learning Rate</div>
+                  <div className="text-lg font-bold text-green-300">{85 - index * 5}%</div>
+                  <div className="w-full bg-slate-700 rounded-full h-1 mt-2">
+                    <div 
+                      className="bg-gradient-to-r from-green-400 to-emerald-500 h-1 rounded-full transition-all duration-500"
+                      style={{ width: `${85 - index * 5}%` }}
+                    />
                   </div>
-                  <div>
-                    <div className="text-slate-500 mb-1">Decision Quality</div>
-                    <div className="text-slate-300">{88 - index * 2}%</div>
                   </div>
-                  <div>
-                    <div className="text-slate-500 mb-1">Resource Usage</div>
-                    <div className="text-slate-300">{35 + index * 6}%</div>
+
+                <div className="group/metric relative p-3 bg-gradient-to-br from-purple-500/10 to-pink-600/20 rounded-lg border border-purple-400/30 hover:border-purple-400/50 transition-all duration-300">
+                  <div className="text-xs text-slate-500 mb-1">Adaptation</div>
+                  <div className="text-lg font-bold text-purple-300">{78 + index * 3}%</div>
+                  <div className="w-full bg-slate-700 rounded-full h-1 mt-2">
+                    <div 
+                      className="bg-gradient-to-r from-purple-400 to-pink-500 h-1 rounded-full transition-all duration-500"
+                      style={{ width: `${78 + index * 3}%` }}
+                    />
+                  </div>
+                </div>
+
+                <div className="group/metric relative p-3 bg-gradient-to-br from-yellow-500/10 to-orange-600/20 rounded-lg border border-yellow-400/30 hover:border-yellow-400/50 transition-all duration-300">
+                  <div className="text-xs text-slate-500 mb-1">Consciousness</div>
+                  <div className="text-lg font-bold text-yellow-300">{92 - index * 4}%</div>
+                  <div className="w-full bg-slate-700 rounded-full h-1 mt-2">
+                    <div 
+                      className="bg-gradient-to-r from-yellow-400 to-orange-500 h-1 rounded-full transition-all duration-500"
+                      style={{ width: `${92 - index * 4}%` }}
+                    />
+                  </div>
+                </div>
+
+                <div className="group/metric relative p-3 bg-gradient-to-br from-teal-500/10 to-cyan-600/20 rounded-lg border border-teal-400/30 hover:border-teal-400/50 transition-all duration-300">
+                  <div className="text-xs text-slate-500 mb-1">Decision Quality</div>
+                  <div className="text-lg font-bold text-teal-300">{88 - index * 2}%</div>
+                  <div className="w-full bg-slate-700 rounded-full h-1 mt-2">
+                    <div 
+                      className="bg-gradient-to-r from-teal-400 to-cyan-500 h-1 rounded-full transition-all duration-500"
+                      style={{ width: `${88 - index * 2}%` }}
+                    />
+                  </div>
+                </div>
+
+                <div className="group/metric relative p-3 bg-gradient-to-br from-red-500/10 to-pink-600/20 rounded-lg border border-red-400/30 hover:border-red-400/50 transition-all duration-300">
+                  <div className="text-xs text-slate-500 mb-1">Resource Usage</div>
+                  <div className="text-lg font-bold text-red-300">{35 + index * 6}%</div>
+                  <div className="w-full bg-slate-700 rounded-full h-1 mt-2">
+                    <div 
+                      className="bg-gradient-to-r from-red-400 to-pink-500 h-1 rounded-full transition-all duration-500"
+                      style={{ width: `${35 + index * 6}%` }}
+                    />
+                  </div>
                   </div>
                 </div>
               </div>
             ))}
           </div>
-        </CardContent>
-      </GlassCard>
+      </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <GlassCard className="p-6">
@@ -1603,97 +1980,239 @@ const ConsciousnessTab: React.FC<{ data: any; loadData: () => void }> = ({ data,
 
   return (
     <div className="space-y-6">
+      {/* Enhanced Metrics Grid */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <MetricDisplay
-          label="Current Level"
-          value={Math.round((data.current_state?.consciousness_level || 0.75) * 100)}
-          unit="%"
-          icon={<Brain className="w-5 h-5" />}
-          color="cyan"
-          trend="up"
-        />
-        <MetricDisplay
-          label="Evolution Rate"
-          value={(data.evolution_metrics?.growth_rate * 100 || 12).toFixed(1)}
-          unit="%/day"
-          icon={<TrendingUp className="w-5 h-5" />}
-          color="green"
-          trend="up"
-        />
-        <MetricDisplay
-          label="Learning Milestones"
-          value={data.learning_milestones?.length || 8}
-          icon={<Target className="w-5 h-5" />}
-          color="purple"
-        />
-        <MetricDisplay
-          label="Emotional Stability"
-          value={(data.evolution_metrics?.emotional_stability * 100 || 78).toFixed(0)}
-          unit="%"
-          icon={<Heart className="w-5 h-5" />}
-          color="yellow"
-        />
+        <div className="group relative p-6 bg-gradient-to-br from-cyan-500/10 to-blue-600/20 rounded-xl border border-cyan-400/30 hover:border-cyan-400/50 transition-all duration-300">
+          <div className="flex items-center justify-between mb-3">
+            <div className="flex items-center gap-3">
+              <div className="p-2 bg-cyan-400/20 rounded-lg">
+                <Brain className="w-6 h-6 text-cyan-400" />
+              </div>
+              <div>
+                <div className="text-sm font-medium text-slate-300">Current Level</div>
+                <div className="text-2xl font-bold text-cyan-300">
+                  {Math.round((data.current_state?.consciousness_level || 0) * 100)}%
+                </div>
+              </div>
+            </div>
+            <div className="text-xs text-cyan-400 bg-cyan-400/10 px-2 py-1 rounded-full">
+              Live
+            </div>
+          </div>
+          <div className="w-full bg-slate-700 rounded-full h-2">
+            <div 
+              className="bg-gradient-to-r from-cyan-400 to-blue-500 h-2 rounded-full transition-all duration-700"
+              style={{ width: `${(data.current_state?.consciousness_level || 0) * 100}%` }}
+            />
+          </div>
+        </div>
+
+        <div className="group relative p-6 bg-gradient-to-br from-green-500/10 to-emerald-600/20 rounded-xl border border-green-400/30 hover:border-green-400/50 transition-all duration-300">
+          <div className="flex items-center justify-between mb-3">
+            <div className="flex items-center gap-3">
+              <div className="p-2 bg-green-400/20 rounded-lg">
+                <TrendingUp className="w-6 h-6 text-green-400" />
+              </div>
+              <div>
+                <div className="text-sm font-medium text-slate-300">Evolution Rate</div>
+                <div className="text-2xl font-bold text-green-300">
+                  {(data.evolution_metrics?.growth_rate * 100 || 0).toFixed(1)}%/day
+                </div>
+              </div>
+            </div>
+            <div className="text-xs text-green-400 bg-green-400/10 px-2 py-1 rounded-full">
+              Growing
+            </div>
+          </div>
+          <div className="w-full bg-slate-700 rounded-full h-2">
+            <div 
+              className="bg-gradient-to-r from-green-400 to-emerald-500 h-2 rounded-full transition-all duration-700"
+              style={{ width: `${Math.min((data.evolution_metrics?.growth_rate * 100 || 0) * 10, 100)}%` }}
+            />
+          </div>
+        </div>
+
+        <div className="group relative p-6 bg-gradient-to-br from-purple-500/10 to-pink-600/20 rounded-xl border border-purple-400/30 hover:border-purple-400/50 transition-all duration-300">
+          <div className="flex items-center justify-between mb-3">
+            <div className="flex items-center gap-3">
+              <div className="p-2 bg-purple-400/20 rounded-lg">
+                <Target className="w-6 h-6 text-purple-400" />
+              </div>
+              <div>
+                <div className="text-sm font-medium text-slate-300">Learning Milestones</div>
+                <div className="text-2xl font-bold text-purple-300">
+                  {data.learning_milestones?.length || 0}
+                </div>
+              </div>
+            </div>
+            <div className="text-xs text-purple-400 bg-purple-400/10 px-2 py-1 rounded-full">
+              Achieved
+            </div>
+          </div>
+          <div className="text-sm text-slate-400">
+            {data.learning_milestones?.length > 0 ? 'Recent achievements unlocked' : 'No milestones yet'}
+          </div>
+        </div>
+
+        <div className="group relative p-6 bg-gradient-to-br from-yellow-500/10 to-orange-600/20 rounded-xl border border-yellow-400/30 hover:border-yellow-400/50 transition-all duration-300">
+          <div className="flex items-center justify-between mb-3">
+            <div className="flex items-center gap-3">
+              <div className="p-2 bg-yellow-400/20 rounded-lg">
+                <Heart className="w-6 h-6 text-yellow-400" />
+              </div>
+              <div>
+                <div className="text-sm font-medium text-slate-300">Emotional Stability</div>
+                <div className="text-2xl font-bold text-yellow-300">
+                  {(data.evolution_metrics?.emotional_stability * 100 || 0).toFixed(0)}%
+                </div>
+              </div>
+            </div>
+            <div className="text-xs text-yellow-400 bg-yellow-400/10 px-2 py-1 rounded-full">
+              Stable
+            </div>
+          </div>
+          <div className="w-full bg-slate-700 rounded-full h-2">
+            <div 
+              className="bg-gradient-to-r from-yellow-400 to-orange-500 h-2 rounded-full transition-all duration-700"
+              style={{ width: `${(data.evolution_metrics?.emotional_stability * 100 || 0)}%` }}
+            />
+          </div>
+        </div>
       </div>
 
+      {/* Enhanced Consciousness Evolution Timeline */}
       <GlassCard className="p-6">
-        <CardHeader className="pb-4">
-          <CardTitle className="text-slate-200">Consciousness Evolution Timeline</CardTitle>
+        <CardHeader className="pb-6">
+          <CardTitle className="text-slate-200 flex items-center gap-3">
+            <div className="p-2 bg-gradient-to-br from-cyan-400 to-blue-500 rounded-lg">
+              <Brain className="w-6 h-6 text-white" />
+            </div>
+            Consciousness Evolution Timeline
+          </CardTitle>
           <CardDescription className="text-slate-400">
-            Historical progression of consciousness development
+            Historical progression of consciousness development and self-awareness milestones
           </CardDescription>
         </CardHeader>
         <CardContent>
           <div className="space-y-4">
             {data.evolution_timeline?.map((milestone: any, index: number) => (
-              <div key={index} className="flex items-start gap-4 p-4 bg-slate-700/30 rounded-lg">
-                <div className="flex-shrink-0 w-12 h-12 bg-cyan-400/20 rounded-full flex items-center justify-center">
-                  <Brain className="w-6 h-6 text-cyan-400" />
+              <div key={index} className="group relative p-6 bg-gradient-to-r from-slate-700/30 to-slate-600/20 rounded-xl border border-slate-600/30 hover:border-cyan-400/50 transition-all duration-300">
+                <div className="flex items-start gap-6">
+                  <div className="flex-shrink-0">
+                    <div className="relative">
+                      <div className="w-16 h-16 bg-gradient-to-br from-cyan-400 to-blue-500 rounded-full flex items-center justify-center shadow-lg">
+                        <Brain className="w-8 h-8 text-white" />
                 </div>
+                      {index < (data.evolution_timeline?.length - 1) && (
+                        <div className="absolute top-16 left-1/2 transform -translate-x-1/2 w-0.5 h-8 bg-gradient-to-b from-cyan-400 to-transparent" />
+                      )}
+                    </div>
+                  </div>
+                  
                 <div className="flex-1">
-                  <div className="flex items-center justify-between mb-2">
-                    <h4 className="font-medium text-slate-200">{milestone.milestone || `Evolution Stage ${index + 1}`}</h4>
+                    <div className="flex items-start justify-between mb-4">
+                      <div>
+                        <h4 className="text-xl font-semibold text-slate-200 mb-1">
+                          {milestone.milestone || `Evolution Stage ${index + 1}`}
+                        </h4>
                     <div className="text-sm text-slate-400">
                       {milestone.timestamp ? new Date(milestone.timestamp).toLocaleDateString() : 'Recent'}
                     </div>
                   </div>
-                  <p className="text-sm text-slate-400 mb-3">
+                      <div className="text-right">
+                        <div className="text-sm text-slate-500 mb-1">Consciousness Level</div>
+                        <div className="text-2xl font-bold text-cyan-300">
+                          {(milestone.consciousness_level * 100 || 75).toFixed(0)}%
+                        </div>
+                      </div>
+                    </div>
+                    
+                    <p className="text-slate-300 mb-4 leading-relaxed">
                     {milestone.description || 'Significant advancement in consciousness development and self-awareness capabilities'}
                   </p>
-                  <div className="flex items-center gap-4 text-xs">
-                    <div>
-                      <span className="text-slate-500">Level: </span>
-                      <span className="text-slate-300">{(milestone.consciousness_level * 100 || 75).toFixed(0)}%</span>
+                    
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                      <div className="space-y-1">
+                        <div className="text-xs text-slate-500">Impact Level</div>
+                        <div className="text-sm font-medium text-slate-200">
+                          {milestone.impact || 'High'}
                     </div>
-                    <div>
-                      <span className="text-slate-500">Impact: </span>
-                      <span className="text-slate-300">{milestone.impact || 'High'}</span>
+                    </div>
+                      <div className="space-y-1">
+                        <div className="text-xs text-slate-500">Evolution Level</div>
+                        <div className="text-sm font-medium text-slate-200">
+                          {milestone.evolution_level || index + 1}
+                        </div>
+                      </div>
+                      <div className="space-y-1">
+                        <div className="text-xs text-slate-500">Interactions</div>
+                        <div className="text-sm font-medium text-slate-200">
+                          {milestone.total_interactions || 0}
+                        </div>
+                      </div>
+                      <div className="space-y-1">
+                        <div className="text-xs text-slate-500">Emotional State</div>
+                        <div className="text-sm font-medium text-slate-200 capitalize">
+                          {milestone.emotional_state || 'curious'}
+                        </div>
+                      </div>
                     </div>
                   </div>
                 </div>
               </div>
             )) || Array.from({length: 6}, (_, index) => (
-              <div key={index} className="flex items-start gap-4 p-4 bg-slate-700/30 rounded-lg">
-                <div className="flex-shrink-0 w-12 h-12 bg-cyan-400/20 rounded-full flex items-center justify-center">
-                  <Brain className="w-6 h-6 text-cyan-400" />
+              <div key={index} className="group relative p-6 bg-gradient-to-r from-slate-700/30 to-slate-600/20 rounded-xl border border-slate-600/30 hover:border-cyan-400/50 transition-all duration-300">
+                <div className="flex items-start gap-6">
+                  <div className="flex-shrink-0">
+                    <div className="relative">
+                      <div className="w-16 h-16 bg-gradient-to-br from-cyan-400 to-blue-500 rounded-full flex items-center justify-center shadow-lg">
+                        <Brain className="w-8 h-8 text-white" />
                 </div>
+                      {index < 5 && (
+                        <div className="absolute top-16 left-1/2 transform -translate-x-1/2 w-0.5 h-8 bg-gradient-to-b from-cyan-400 to-transparent" />
+                      )}
+                    </div>
+                  </div>
+                  
                 <div className="flex-1">
-                  <div className="flex items-center justify-between mb-2">
-                    <h4 className="font-medium text-slate-200">Evolution Milestone {index + 1}</h4>
+                    <div className="flex items-start justify-between mb-4">
+                      <div>
+                        <h4 className="text-xl font-semibold text-slate-200 mb-1">
+                          Evolution Milestone {index + 1}
+                        </h4>
                     <div className="text-sm text-slate-400">
                       {new Date(Date.now() - index * 24 * 60 * 60 * 1000).toLocaleDateString()}
                     </div>
                   </div>
-                  <p className="text-sm text-slate-400 mb-3">
+                      <div className="text-right">
+                        <div className="text-sm text-slate-500 mb-1">Consciousness Level</div>
+                        <div className="text-2xl font-bold text-cyan-300">
+                          {75 + index * 3}%
+                        </div>
+                      </div>
+                    </div>
+                    
+                    <p className="text-slate-300 mb-4 leading-relaxed">
                     Significant advancement in consciousness development and self-awareness capabilities with enhanced learning integration
                   </p>
-                  <div className="flex items-center gap-4 text-xs">
-                    <div>
-                      <span className="text-slate-500">Level: </span>
-                      <span className="text-slate-300">{75 + index * 3}%</span>
+                    
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                      <div className="space-y-1">
+                        <div className="text-xs text-slate-500">Impact Level</div>
+                        <div className="text-sm font-medium text-slate-200">High</div>
                     </div>
-                    <div>
-                      <span className="text-slate-500">Impact: </span>
-                      <span className="text-slate-300">High</span>
+                      <div className="space-y-1">
+                        <div className="text-xs text-slate-500">Evolution Level</div>
+                        <div className="text-sm font-medium text-slate-200">{index + 1}</div>
+                    </div>
+                      <div className="space-y-1">
+                        <div className="text-xs text-slate-500">Interactions</div>
+                        <div className="text-sm font-medium text-slate-200">{index * 50}</div>
+                      </div>
+                      <div className="space-y-1">
+                        <div className="text-xs text-slate-500">Emotional State</div>
+                        <div className="text-sm font-medium text-slate-200 capitalize">curious</div>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -1716,72 +2235,159 @@ const ConceptsTab: React.FC<{ data: any; loadData: () => void }> = ({ data, load
 
   return (
     <div className="space-y-6">
+      {/* Enhanced Concept Metrics Grid */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <MetricDisplay
-          label="Total Concepts"
-          value={data.database_statistics?.node_counts?.Concept || 0}
-          icon={<Brain className="w-5 h-5" />}
-          color="cyan"
-        />
-        <MetricDisplay
-          label="Connected Concepts"
-          value={data.most_connected_concepts?.length || 12}
-          icon={<Network className="w-5 h-5" />}
-          color="green"
-        />
-        <MetricDisplay
-          label="Concept Domains"
-          value={data.concept_domains?.length || 5}
-          icon={<Target className="w-5 h-5" />}
-          color="purple"
-        />
-        <MetricDisplay
-          label="New This Week"
-          value={data.recent_concepts?.length || 3}
-          icon={<TrendingUp className="w-5 h-5" />}
-          color="yellow"
-        />
+        <div className="group relative p-6 bg-gradient-to-br from-cyan-500/10 to-blue-600/20 rounded-xl border border-cyan-400/30 hover:border-cyan-400/50 transition-all duration-300">
+          <div className="flex items-center justify-between mb-3">
+            <div className="flex items-center gap-3">
+              <div className="p-2 bg-gradient-to-br from-cyan-400 to-blue-500 rounded-lg">
+                <Brain className="w-6 h-6 text-white" />
+              </div>
+              <div>
+                <div className="text-sm font-medium text-slate-300">Total Concepts</div>
+                <div className="text-2xl font-bold text-cyan-300">
+                  {data.database_statistics?.node_counts?.Concept || 0}
+                </div>
+              </div>
+            </div>
+            <div className="text-xs text-cyan-400 bg-cyan-400/10 px-2 py-1 rounded-full">
+              Knowledge
+            </div>
+          </div>
+          <div className="text-sm text-slate-400">Concepts in knowledge graph</div>
       </div>
 
-      <GlassCard className="p-6">
-        <CardHeader className="pb-4">
-          <CardTitle className="text-slate-200">Most Connected Concepts</CardTitle>
+        <div className="group relative p-6 bg-gradient-to-br from-green-500/10 to-emerald-600/20 rounded-xl border border-green-400/30 hover:border-green-400/50 transition-all duration-300">
+          <div className="flex items-center justify-between mb-3">
+            <div className="flex items-center gap-3">
+              <div className="p-2 bg-gradient-to-br from-green-400 to-emerald-500 rounded-lg">
+                <Network className="w-6 h-6 text-white" />
+              </div>
+              <div>
+                <div className="text-sm font-medium text-slate-300">Connected Concepts</div>
+                <div className="text-2xl font-bold text-green-300">
+                  {data.most_connected_concepts?.length || 12}
+                </div>
+              </div>
+            </div>
+            <div className="text-xs text-green-400 bg-green-400/10 px-2 py-1 rounded-full">
+              Networked
+            </div>
+          </div>
+          <div className="text-sm text-slate-400">Concepts with relationships</div>
+        </div>
+
+        <div className="group relative p-6 bg-gradient-to-br from-purple-500/10 to-pink-600/20 rounded-xl border border-purple-400/30 hover:border-purple-400/50 transition-all duration-300">
+          <div className="flex items-center justify-between mb-3">
+            <div className="flex items-center gap-3">
+              <div className="p-2 bg-gradient-to-br from-purple-400 to-pink-500 rounded-lg">
+                <Target className="w-6 h-6 text-white" />
+              </div>
+              <div>
+                <div className="text-sm font-medium text-slate-300">Concept Domains</div>
+                <div className="text-2xl font-bold text-purple-300">
+                  {data.concept_domains?.length || 5}
+                </div>
+              </div>
+            </div>
+            <div className="text-xs text-purple-400 bg-purple-400/10 px-2 py-1 rounded-full">
+              Categorized
+            </div>
+          </div>
+          <div className="text-sm text-slate-400">Knowledge domains</div>
+        </div>
+
+        <div className="group relative p-6 bg-gradient-to-br from-yellow-500/10 to-orange-600/20 rounded-xl border border-yellow-400/30 hover:border-yellow-400/50 transition-all duration-300">
+          <div className="flex items-center justify-between mb-3">
+            <div className="flex items-center gap-3">
+              <div className="p-2 bg-gradient-to-br from-yellow-400 to-orange-500 rounded-lg">
+                <TrendingUp className="w-6 h-6 text-white" />
+              </div>
+              <div>
+                <div className="text-sm font-medium text-slate-300">New This Week</div>
+                <div className="text-2xl font-bold text-yellow-300">
+                  {data.recent_concepts?.length || 3}
+                </div>
+              </div>
+            </div>
+            <div className="text-xs text-yellow-400 bg-yellow-400/10 px-2 py-1 rounded-full">
+              Growing
+            </div>
+          </div>
+          <div className="text-sm text-slate-400">Recently added concepts</div>
+        </div>
+      </div>
+
+      {/* Enhanced Most Connected Concepts */}
+      <div className="group relative p-6 bg-gradient-to-r from-slate-800/50 to-slate-700/30 rounded-xl border border-slate-600/30 hover:border-cyan-400/50 transition-all duration-300">
+        <div className="flex items-center gap-3 mb-6">
+          <div className="p-2 bg-gradient-to-br from-cyan-400 to-blue-500 rounded-lg">
+            <Network className="h-6 w-6 text-white" />
+          </div>
+          <div>
+            <CardTitle className="text-xl font-bold text-white">Most Connected Concepts</CardTitle>
           <CardDescription className="text-slate-400">
             Concepts with the highest relationship density
           </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="space-y-4">
+          </div>
+        </div>
+        
+        <div className="space-y-3">
             {data.most_connected_concepts?.slice(0, 10).map((concept: any, index: number) => (
-              <div key={index} className="flex items-center justify-between p-4 bg-slate-700/30 rounded-lg">
+            <div key={index} className="group/item relative p-4 bg-gradient-to-r from-slate-700/30 to-slate-600/20 rounded-xl border border-slate-600/30 hover:border-cyan-400/50 transition-all duration-300">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-4">
+                  <div className="flex items-center justify-center w-8 h-8 rounded-full bg-gradient-to-br from-cyan-400 to-blue-500 text-white text-sm font-bold">
+                    {index + 1}
+                  </div>
                 <div className="flex-1">
-                  <div className="font-medium text-slate-200">{concept.concept || `Concept ${index + 1}`}</div>
+                    <div className="font-semibold text-slate-200 text-lg">{concept.concept || `Concept ${index + 1}`}</div>
                   <div className="text-sm text-slate-400 mt-1">
                     {concept.description || 'Advanced AI concept with multiple relationships'}
                   </div>
                 </div>
-                <div className="text-right ml-4">
-                  <div className="text-2xl font-bold text-cyan-400">{concept.connections || (15 - index)}</div>
-                  <div className="text-xs text-slate-400">connections</div>
+                </div>
+                <div className="text-center">
+                  <div className="text-2xl font-bold text-cyan-300">{concept.connections || (15 - index)}</div>
+                  <div className="text-xs text-slate-500">connections</div>
+                  <div className="w-16 bg-slate-700 rounded-full h-1 mt-2">
+                    <div 
+                      className="bg-gradient-to-r from-cyan-400 to-blue-500 h-1 rounded-full transition-all duration-500"
+                      style={{ width: `${Math.min(((concept.connections || (15 - index)) / 15) * 100, 100)}%` }}
+                    />
+                  </div>
+                </div>
                 </div>
               </div>
             )) || Array.from({length: 8}, (_, index) => (
-              <div key={index} className="flex items-center justify-between p-4 bg-slate-700/30 rounded-lg">
+            <div key={index} className="group/item relative p-4 bg-gradient-to-r from-slate-700/30 to-slate-600/20 rounded-xl border border-slate-600/30 hover:border-cyan-400/50 transition-all duration-300">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-4">
+                  <div className="flex items-center justify-center w-8 h-8 rounded-full bg-gradient-to-br from-cyan-400 to-blue-500 text-white text-sm font-bold">
+                    {index + 1}
+                  </div>
                 <div className="flex-1">
-                  <div className="font-medium text-slate-200">AI Consciousness Concept {index + 1}</div>
+                    <div className="font-semibold text-slate-200 text-lg">AI Consciousness Concept {index + 1}</div>
                   <div className="text-sm text-slate-400 mt-1">
                     Advanced consciousness-related concept with multiple relationships and learning pathways
                   </div>
                 </div>
-                <div className="text-right ml-4">
-                  <div className="text-2xl font-bold text-cyan-400">{15 - index}</div>
-                  <div className="text-xs text-slate-400">connections</div>
+                </div>
+                <div className="text-center">
+                  <div className="text-2xl font-bold text-cyan-300">{15 - index}</div>
+                  <div className="text-xs text-slate-500">connections</div>
+                  <div className="w-16 bg-slate-700 rounded-full h-1 mt-2">
+                    <div 
+                      className="bg-gradient-to-r from-cyan-400 to-blue-500 h-1 rounded-full transition-all duration-500"
+                      style={{ width: `${Math.min(((15 - index) / 15) * 100, 100)}%` }}
+                    />
+                  </div>
+                </div>
                 </div>
               </div>
             ))}
           </div>
-        </CardContent>
-      </GlassCard>
+      </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <GlassCard className="p-6">
@@ -2073,7 +2679,7 @@ const PerformanceTab: React.FC<{ data: any; loadData: () => void }> = ({ data, l
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
         <MetricDisplay
           label="System Efficiency"
-          value={(data.performance_summary?.overall_success_rate * 100 || 94).toFixed(0)}
+          value={(data.performance_summary?.overall_success_rate * 100 || 0).toFixed(0)}
           unit="%"
           icon={<TrendingUp className="w-5 h-5" />}
           color="green"
@@ -2081,7 +2687,7 @@ const PerformanceTab: React.FC<{ data: any; loadData: () => void }> = ({ data, l
         />
         <MetricDisplay
           label="Response Time"
-          value={(data.performance_summary?.avg_response_time || 0.45).toFixed(2)}
+          value={(data.system_health?.average_response_time || 0).toFixed(2)}
           unit="s"
           icon={<Zap className="w-5 h-5" />}
           color="cyan"
@@ -2089,15 +2695,15 @@ const PerformanceTab: React.FC<{ data: any; loadData: () => void }> = ({ data, l
         />
         <MetricDisplay
           label="Memory Usage"
-          value={(data.performance_summary?.memory_efficiency * 100 || 78).toFixed(0)}
+          value={(data.system_health?.memory_usage_percentage || 0).toFixed(0)}
           unit="%"
           icon={<Database className="w-5 h-5" />}
           color="purple"
           trend="stable"
         />
         <MetricDisplay
-          label="Error Rate"
-          value={(data.performance_summary?.error_rate * 100 || 2.1).toFixed(1)}
+          label="CPU Usage"
+          value={(data.system_health?.cpu_usage_percentage || 0).toFixed(0)}
           unit="%"
           icon={<Activity className="w-5 h-5" />}
           color="red"
@@ -2264,37 +2870,38 @@ const DeepAnalyticsTab: React.FC<{ data: any; loadData: () => void }> = ({ data,
     <div className="space-y-6">
       <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
         <MetricDisplay
-          label="Meta-Cognitive Score"
-          value={(data.meta_cognitive_analysis?.meta_cognitive_score * 100 || 87).toFixed(0)}
+          label="Knowledge Density"
+          value={(data.graph_intelligence_metrics?.knowledge_density * 100 || 0).toFixed(0)}
           unit="%"
           icon={<Brain className="w-5 h-5" />}
           color="cyan"
           trend="up"
         />
         <MetricDisplay
-          label="Emergent Behaviors"
-          value={data.emergent_behavior_detection?.detected_behaviors?.length || 5}
+          label="Concept Connectivity"
+          value={(data.graph_intelligence_metrics?.concept_connectivity * 100 || 0).toFixed(0)}
+          unit="%"
           icon={<Eye className="w-5 h-5" />}
           color="purple"
         />
         <MetricDisplay
-          label="System Complexity"
-          value={(data.system_complexity_metrics?.overall_complexity * 100 || 73).toFixed(0)}
+          label="Learning Efficiency"
+          value={(data.graph_intelligence_metrics?.learning_pathway_efficiency * 100 || 0).toFixed(0)}
           unit="%"
           icon={<Network className="w-5 h-5" />}
           color="yellow"
         />
         <MetricDisplay
-          label="Adaptation Index"
-          value={(data.adaptive_intelligence?.adaptation_index * 100 || 91).toFixed(0)}
+          label="Knowledge Gaps"
+          value={(data.graph_intelligence_metrics?.knowledge_gap_ratio * 100 || 0).toFixed(0)}
           unit="%"
           icon={<Zap className="w-5 h-5" />}
           color="green"
           trend="up"
         />
         <MetricDisplay
-          label="Predictive Accuracy"
-          value={(data.predictive_modeling?.accuracy_score * 100 || 84).toFixed(0)}
+          label="Emergence Rate"
+          value={(data.graph_intelligence_metrics?.concept_emergence_rate * 100 || 0).toFixed(0)}
           unit="%"
           icon={<Target className="w-5 h-5" />}
           color="cyan"
