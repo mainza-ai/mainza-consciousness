@@ -485,7 +485,7 @@ export const TelemetryDashboard: React.FC = () => {
             <div className="flex gap-3">
               <Button
                 variant="outline"
-                className="border-slate-500 hover:border-cyan-400"
+                className="border-slate-500 hover:border-cyan-400 text-slate-200 hover:text-cyan-300"
                 onClick={() => fetchTelemetrySummary()}
               >
                 <Eye className="h-4 w-4 mr-2" />
@@ -493,7 +493,7 @@ export const TelemetryDashboard: React.FC = () => {
               </Button>
               <Button
                 variant="destructive"
-                className="bg-red-600 hover:bg-red-700"
+                className="bg-red-600 hover:bg-red-700 text-white"
                 onClick={deleteAllData}
               >
                 <Trash2 className="h-4 w-4 mr-2" />
@@ -541,7 +541,7 @@ export const TelemetryDashboard: React.FC = () => {
                 </div>
                 <Button
                   variant="outline"
-                  className="border-slate-500 hover:border-cyan-400"
+                  className="border-slate-500 hover:border-cyan-400 text-slate-200 hover:text-cyan-300"
                   onClick={() => exportData('system_health')}
                 >
                   <Download className="h-4 w-4 mr-2" />
@@ -644,7 +644,7 @@ export const TelemetryDashboard: React.FC = () => {
                 </div>
                 <Button
                   variant="outline"
-                  className="border-slate-500 hover:border-purple-400"
+                  className="border-slate-500 hover:border-purple-400 text-slate-200 hover:text-purple-300"
                   onClick={() => exportData('consciousness')}
                 >
                   <Download className="h-4 w-4 mr-2" />
@@ -745,7 +745,7 @@ export const TelemetryDashboard: React.FC = () => {
                 </div>
                 <Button
                   variant="outline"
-                  className="border-slate-500 hover:border-red-400"
+                  className="border-slate-500 hover:border-red-400 text-slate-200 hover:text-red-300"
                   onClick={() => exportData('errors')}
                 >
                   <Download className="h-4 w-4 mr-2" />
