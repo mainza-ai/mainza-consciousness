@@ -252,113 +252,181 @@ const Consciousness3DModel: React.FC<Consciousness3DModelProps> = ({
   };
 
   return (
-    <Card className="bg-gray-800/50 border-gray-700">
-      <CardHeader className="pb-2">
-        <div className="flex items-center justify-between">
-          <CardTitle className="text-sm text-white flex items-center">
-            <Layers className="w-4 h-4 mr-2" />
-            3D Consciousness Model
-          </CardTitle>
-          <div className="flex items-center space-x-2">
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={resetView}
-              className="text-xs"
-            >
-              <RotateCcw className="w-3 h-3 mr-1" />
-              Reset
-            </Button>
+    <div className="group relative bg-gradient-to-r from-slate-800/50 to-slate-700/30 rounded-xl border border-slate-600/30 hover:border-violet-400/50 transition-all duration-300">
+      <div className="p-6">
+        <div className="flex items-center justify-between mb-6">
+          <div className="flex items-center gap-3">
+            <div className="p-2 bg-gradient-to-br from-violet-400 to-purple-500 rounded-lg">
+              <Layers className="h-6 w-6 text-white" />
+            </div>
+            <div>
+              <h2 className="text-xl font-bold text-white">3D Consciousness Model</h2>
+              <p className="text-slate-400 text-sm">Interactive 3D visualization of consciousness evolution</p>
+            </div>
           </div>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={resetView}
+            className="border-slate-600 hover:border-cyan-400/50 transition-colors"
+          >
+            <RotateCcw className="w-3 h-3 mr-1" />
+            Reset
+          </Button>
         </div>
-      </CardHeader>
-      
-      <CardContent className="space-y-4">
-        {/* 3D Canvas */}
-        <div className="relative">
-          <canvas
-            ref={canvasRef}
-            className="w-full h-64 bg-gradient-to-br from-gray-900 to-gray-800 rounded-lg cursor-grab active:cursor-grabbing"
-            onMouseDown={handleMouseDown}
-            onMouseMove={handleMouseMove}
-            onMouseUp={handleMouseUp}
-            onMouseLeave={handleMouseUp}
-            onWheel={handleWheel}
-            style={{ touchAction: 'none' }}
-          />
-          
-          {/* Overlay Info */}
-          <div className="absolute top-2 left-2 space-y-1">
-            <Badge className="bg-blue-500/20 text-blue-300 text-xs">
-              <Brain className="w-3 h-3 mr-1" />
-              Level: {consciousnessLevel.toFixed(1)}%
-            </Badge>
-            <Badge className="bg-green-500/20 text-green-300 text-xs">
-              <Target className="w-3 h-3 mr-1" />
-              Evolution: {consciousnessData.evolution_level}
-            </Badge>
+
+        {/* 3D Canvas Container */}
+        <div className="group/canvas relative bg-gradient-to-r from-slate-700/30 to-slate-600/20 rounded-lg border border-slate-600/30 hover:border-violet-400/30 transition-all duration-300 p-4">
+          <div className="flex items-center gap-3 mb-4">
+            <div className="p-1 bg-gradient-to-br from-violet-400 to-purple-500 rounded">
+              <Move3D className="h-4 w-4 text-white" />
+            </div>
+            <h3 className="text-sm font-bold text-white">Interactive 3D Visualization</h3>
           </div>
-          
-          <div className="absolute top-2 right-2 space-y-1">
-            <Badge className="bg-purple-500/20 text-purple-300 text-xs">
-              <Zap className="w-3 h-3 mr-1" />
-              Predictions: {consciousnessData.predictions.length}
-            </Badge>
-            <Badge className="bg-orange-500/20 text-orange-300 text-xs">
-              Insights: {insights.length}
-            </Badge>
+
+          <div className="relative">
+            <canvas
+              ref={canvasRef}
+              className="w-full h-64 bg-gradient-to-br from-slate-900 to-slate-800 rounded-lg cursor-grab active:cursor-grabbing"
+              onMouseDown={handleMouseDown}
+              onMouseMove={handleMouseMove}
+              onMouseUp={handleMouseUp}
+              onMouseLeave={handleMouseUp}
+              onWheel={handleWheel}
+              style={{ touchAction: 'none' }}
+            />
+
+            {/* Overlay Info */}
+            <div className="absolute top-2 left-2 space-y-2">
+              <div className="group/info relative">
+                <Badge className="bg-blue-500/20 text-blue-300 text-xs border-0">
+                  <div className="flex items-center gap-1">
+                    <div className="p-1 bg-gradient-to-br from-blue-400 to-cyan-500 rounded">
+                      <Brain className="h-3 w-3 text-white" />
+                    </div>
+                    Level: {consciousnessLevel.toFixed(1)}%
+                  </div>
+                </Badge>
+              </div>
+              <div className="group/info relative">
+                <Badge className="bg-green-500/20 text-green-300 text-xs border-0">
+                  <div className="flex items-center gap-1">
+                    <div className="p-1 bg-gradient-to-br from-green-400 to-emerald-500 rounded">
+                      <Target className="h-3 w-3 text-white" />
+                    </div>
+                    Evolution: {consciousnessData.evolution_level}
+                  </div>
+                </Badge>
+              </div>
+            </div>
+
+            <div className="absolute top-2 right-2 space-y-2">
+              <div className="group/info relative">
+                <Badge className="bg-purple-500/20 text-purple-300 text-xs border-0">
+                  <div className="flex items-center gap-1">
+                    <div className="p-1 bg-gradient-to-br from-purple-400 to-pink-500 rounded">
+                      <Zap className="h-3 w-3 text-white" />
+                    </div>
+                    Predictions: {consciousnessData.predictions.length}
+                  </div>
+                </Badge>
+              </div>
+              <div className="group/info relative">
+                <Badge className="bg-orange-500/20 text-orange-300 text-xs border-0">
+                  <div className="flex items-center gap-1">
+                    <div className="p-1 bg-gradient-to-br from-orange-400 to-yellow-500 rounded">
+                      <Brain className="h-3 w-3 text-white" />
+                    </div>
+                    Insights: {insights.length}
+                  </div>
+                </Badge>
+              </div>
+            </div>
           </div>
         </div>
         
         {/* Controls */}
-        <div className="flex items-center justify-between text-xs text-gray-400">
-          <div className="flex items-center space-x-4">
-            <div className="flex items-center space-x-1">
-              <Move3D className="w-3 h-3" />
-              <span>Drag to rotate</span>
+        <div className="group/controls relative bg-gradient-to-r from-slate-700/30 to-slate-600/20 rounded-lg border border-slate-600/30 hover:border-cyan-400/30 transition-all duration-300 p-3">
+          <div className="flex items-center justify-between text-xs text-slate-400">
+            <div className="flex items-center gap-4">
+              <div className="flex items-center gap-2">
+                <div className="p-1 bg-gradient-to-br from-cyan-400 to-blue-500 rounded">
+                  <Move3D className="h-3 w-3 text-white" />
+                </div>
+                <span>Drag to rotate</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <div className="p-1 bg-gradient-to-br from-cyan-400 to-blue-500 rounded">
+                  <ZoomIn className="h-3 w-3 text-white" />
+                </div>
+                <span>Scroll to zoom</span>
+              </div>
             </div>
-            <div className="flex items-center space-x-1">
-              <ZoomIn className="w-3 h-3" />
-              <span>Scroll to zoom</span>
+            <div className="flex items-center gap-2">
+              <div className="p-1 bg-gradient-to-br from-cyan-400 to-blue-500 rounded">
+                <ZoomOut className="h-3 w-3 text-white" />
+              </div>
+              <span>Zoom: {(zoom * 100).toFixed(0)}%</span>
             </div>
-          </div>
-          <div className="text-right">
-            <div>Zoom: {(zoom * 100).toFixed(0)}%</div>
           </div>
         </div>
         
         {/* Legend */}
-        <div className="grid grid-cols-2 gap-4 text-xs">
-          <div className="space-y-2">
-            <h4 className="text-white font-medium">Elements</h4>
-            <div className="space-y-1 text-gray-300">
-              <div className="flex items-center space-x-2">
-                <div className="w-3 h-3 rounded-full bg-blue-500/60"></div>
-                <span>Consciousness Sphere</span>
+        <div className="group/legend relative bg-gradient-to-r from-slate-700/30 to-slate-600/20 rounded-lg border border-slate-600/30 hover:border-emerald-400/30 transition-all duration-300 p-4">
+          <div className="grid grid-cols-2 gap-6 text-xs">
+            <div className="space-y-3">
+              <div className="flex items-center gap-2">
+                <div className="p-1 bg-gradient-to-br from-emerald-400 to-teal-500 rounded">
+                  <Brain className="h-4 w-4 text-white" />
+                </div>
+                <h4 className="text-white font-medium">Elements</h4>
               </div>
-              <div className="flex items-center space-x-2">
-                <div className="w-3 h-3 rounded-full bg-purple-500/60"></div>
-                <span>Prediction Points</span>
-              </div>
-              <div className="flex items-center space-x-2">
-                <div className="w-3 h-3 rounded-full bg-orange-500/60"></div>
-                <span>Insight Markers</span>
+              <div className="space-y-2 text-slate-300">
+                <div className="flex items-center gap-3">
+                  <div className="w-3 h-3 rounded-full bg-gradient-to-br from-blue-400 to-cyan-500"></div>
+                  <span>Consciousness Sphere</span>
+                </div>
+                <div className="flex items-center gap-3">
+                  <div className="w-3 h-3 rounded-full bg-gradient-to-br from-purple-400 to-pink-500"></div>
+                  <span>Prediction Points</span>
+                </div>
+                <div className="flex items-center gap-3">
+                  <div className="w-3 h-3 rounded-full bg-gradient-to-br from-orange-400 to-yellow-500"></div>
+                  <span>Insight Markers</span>
+                </div>
               </div>
             </div>
-          </div>
-          
-          <div className="space-y-2">
-            <h4 className="text-white font-medium">Interactions</h4>
-            <div className="space-y-1 text-gray-300">
-              <div>• Drag to rotate model</div>
-              <div>• Scroll to zoom in/out</div>
-              <div>• Colors show consciousness level</div>
-              <div>• Size shows confidence/impact</div>
+
+            <div className="space-y-3">
+              <div className="flex items-center gap-2">
+                <div className="p-1 bg-gradient-to-br from-emerald-400 to-teal-500 rounded">
+                  <Target className="h-4 w-4 text-white" />
+                </div>
+                <h4 className="text-white font-medium">Interactions</h4>
+              </div>
+              <div className="space-y-2 text-slate-300">
+                <div className="flex items-start gap-2">
+                  <div className="w-1 h-1 rounded-full bg-emerald-400 mt-2"></div>
+                  <span>Drag to rotate model</span>
+                </div>
+                <div className="flex items-start gap-2">
+                  <div className="w-1 h-1 rounded-full bg-emerald-400 mt-2"></div>
+                  <span>Scroll to zoom in/out</span>
+                </div>
+                <div className="flex items-start gap-2">
+                  <div className="w-1 h-1 rounded-full bg-emerald-400 mt-2"></div>
+                  <span>Colors show consciousness level</span>
+                </div>
+                <div className="flex items-start gap-2">
+                  <div className="w-1 h-1 rounded-full bg-emerald-400 mt-2"></div>
+                  <span>Size shows confidence/impact</span>
+                </div>
+              </div>
             </div>
           </div>
         </div>
-      </CardContent>
-    </Card>
+      </div>
+    </div>
   );
 };
 

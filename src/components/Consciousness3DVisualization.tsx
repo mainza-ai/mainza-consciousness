@@ -412,14 +412,17 @@ const Consciousness3DVisualization: React.FC<Consciousness3DVisualizationProps> 
   return (
     <div className="space-y-6">
       {/* Controls */}
-      <Card className="bg-slate-800 border-slate-700">
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2 text-white">
-            <Eye className="h-5 w-5" />
-            3D Consciousness Visualization
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
+      <div className="group relative bg-gradient-to-r from-slate-800/50 to-slate-700/30 rounded-xl border border-slate-600/30 hover:border-indigo-400/50 transition-all duration-300">
+        <div className="p-6">
+          <div className="flex items-center gap-3 mb-6">
+            <div className="p-2 bg-gradient-to-br from-indigo-400 to-purple-500 rounded-lg">
+              <Eye className="h-6 w-6 text-white" />
+            </div>
+            <div>
+              <h2 className="text-xl font-bold text-white">3D Consciousness Visualization</h2>
+              <p className="text-slate-400 text-sm">Interactive 3D exploration of consciousness network and connections</p>
+            </div>
+          </div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
             <div className="space-y-2">
               <label className="text-sm font-medium text-slate-300">View Mode</label>
@@ -516,12 +519,21 @@ const Consciousness3DVisualization: React.FC<Consciousness3DVisualizationProps> 
               Show Labels
             </label>
           </div>
-        </CardContent>
-      </Card>
+        </div>
+      </div>
 
       {/* 3D Canvas */}
-      <Card className="bg-slate-800 border-slate-700">
-        <CardContent className="p-0">
+      <div className="group relative bg-gradient-to-r from-slate-800/50 to-slate-700/30 rounded-xl border border-slate-600/30 hover:border-violet-400/50 transition-all duration-300">
+        <div className="p-6">
+          <div className="flex items-center gap-3 mb-6">
+            <div className="p-2 bg-gradient-to-br from-violet-400 to-purple-500 rounded-lg">
+              <Layers className="h-6 w-6 text-white" />
+            </div>
+            <div>
+              <h3 className="text-xl font-bold text-white">Interactive 3D Network</h3>
+              <p className="text-slate-400 text-sm">Explore consciousness connections and node relationships in 3D space</p>
+            </div>
+          </div>
           <div className="relative">
             <canvas
               ref={canvasRef}
@@ -542,66 +554,108 @@ const Consciousness3DVisualization: React.FC<Consciousness3DVisualizationProps> 
               </Button>
             </div>
           </div>
-        </CardContent>
-      </Card>
+        </div>
+      </div>
 
       {/* Node Details */}
       {selectedNode && (
-        <Card className="bg-slate-800 border-slate-700">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2 text-white">
-              {getNodeTypeIcon(selectedNode.type)}
-              {selectedNode.name}
-              <Badge className={getNodeTypeColor(selectedNode.type)}>
-                {selectedNode.type}
-              </Badge>
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-              <div className="text-center">
-                <div className="text-2xl font-bold text-blue-400">
-                  {(selectedNode.level * 100).toFixed(1)}%
-                </div>
-                <div className="text-sm text-slate-300">Level</div>
+        <div className="group relative bg-gradient-to-r from-slate-800/50 to-slate-700/30 rounded-xl border border-slate-600/30 hover:border-emerald-400/50 transition-all duration-300">
+          <div className="p-6">
+            <div className="flex items-center gap-3 mb-6">
+              <div className="p-2 bg-gradient-to-br from-emerald-400 to-teal-500 rounded-lg">
+                {getNodeTypeIcon(selectedNode.type)}
               </div>
-              <div className="text-center">
-                <div className="text-2xl font-bold text-green-400">
-                  {(selectedNode.metadata.importance * 100).toFixed(1)}%
+              <div>
+                <div className="flex items-center gap-2">
+                  <h3 className="text-xl font-bold text-white">{selectedNode.name}</h3>
+                  <Badge className={`text-white ${getNodeTypeColor(selectedNode.type).replace('text-', 'bg-').replace('-400', '-500/80')} border-0`}>
+                    {selectedNode.type}
+                  </Badge>
                 </div>
-                <div className="text-sm text-slate-300">Importance</div>
-              </div>
-              <div className="text-center">
-                <div className="text-2xl font-bold text-purple-400">
-                  {(selectedNode.metadata.activity * 100).toFixed(1)}%
-                </div>
-                <div className="text-sm text-slate-300">Activity</div>
-              </div>
-              <div className="text-center">
-                <div className="text-2xl font-bold text-orange-400">
-                  {(selectedNode.metadata.stability * 100).toFixed(1)}%
-                </div>
-                <div className="text-sm text-slate-300">Stability</div>
+                <p className="text-slate-400 text-sm">Detailed node analysis and metrics</p>
               </div>
             </div>
-          </CardContent>
-        </Card>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              <div className="group/metric relative p-4 bg-gradient-to-r from-slate-700/30 to-slate-600/20 rounded-lg border border-slate-600/30 hover:border-blue-400/50 transition-all duration-300">
+                <div className="flex items-center justify-center gap-3">
+                  <div className="flex items-center justify-center w-10 h-10 rounded-full bg-gradient-to-br from-blue-400 to-cyan-500">
+                    <Zap className="h-5 w-5 text-white" />
+                  </div>
+                  <div>
+                    <div className="text-lg font-bold text-blue-300">
+                      {(selectedNode.level * 100).toFixed(1)}%
+                    </div>
+                    <div className="text-xs text-slate-400">Level</div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="group/metric relative p-4 bg-gradient-to-r from-slate-700/30 to-slate-600/20 rounded-lg border border-slate-600/30 hover:border-green-400/50 transition-all duration-300">
+                <div className="flex items-center justify-center gap-3">
+                  <div className="flex items-center justify-center w-10 h-10 rounded-full bg-gradient-to-br from-green-400 to-emerald-500">
+                    <Target className="h-5 w-5 text-white" />
+                  </div>
+                  <div>
+                    <div className="text-lg font-bold text-green-300">
+                      {(selectedNode.metadata.importance * 100).toFixed(1)}%
+                    </div>
+                    <div className="text-xs text-slate-400">Importance</div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="group/metric relative p-4 bg-gradient-to-r from-slate-700/30 to-slate-600/20 rounded-lg border border-slate-600/30 hover:border-purple-400/50 transition-all duration-300">
+                <div className="flex items-center justify-center gap-3">
+                  <div className="flex items-center justify-center w-10 h-10 rounded-full bg-gradient-to-br from-purple-400 to-pink-500">
+                    <Activity className="h-5 w-5 text-white" />
+                  </div>
+                  <div>
+                    <div className="text-lg font-bold text-purple-300">
+                      {(selectedNode.metadata.activity * 100).toFixed(1)}%
+                    </div>
+                    <div className="text-xs text-slate-400">Activity</div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="group/metric relative p-4 bg-gradient-to-r from-slate-700/30 to-slate-600/20 rounded-lg border border-slate-600/30 hover:border-orange-400/50 transition-all duration-300">
+                <div className="flex items-center justify-center gap-3">
+                  <div className="flex items-center justify-center w-10 h-10 rounded-full bg-gradient-to-br from-orange-400 to-yellow-500">
+                    <Layers className="h-5 w-5 text-white" />
+                  </div>
+                  <div>
+                    <div className="text-lg font-bold text-orange-300">
+                      {(selectedNode.metadata.stability * 100).toFixed(1)}%
+                    </div>
+                    <div className="text-xs text-slate-400">Stability</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
       )}
 
       {/* Node List */}
-      <Card className="bg-slate-800 border-slate-700">
-        <CardHeader>
-          <CardTitle>Consciousness Nodes</CardTitle>
-        </CardHeader>
-        <CardContent>
+      <div className="group relative bg-gradient-to-r from-slate-800/50 to-slate-700/30 rounded-xl border border-slate-600/30 hover:border-teal-400/50 transition-all duration-300">
+        <div className="p-6">
+          <div className="flex items-center gap-3 mb-6">
+            <div className="p-2 bg-gradient-to-br from-teal-400 to-cyan-500 rounded-lg">
+              <Brain className="h-6 w-6 text-white" />
+            </div>
+            <div>
+              <h3 className="text-xl font-bold text-white">Consciousness Nodes</h3>
+              <p className="text-slate-400 text-sm">Interactive node selection and network overview</p>
+            </div>
+          </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {currentNodes.map((node) => (
               <div
                 key={node.id}
-                className={`p-3 border rounded-lg cursor-pointer transition-colors ${
-                  selectedNode?.id === node.id 
-                    ? 'border-blue-500 bg-blue-500/10' 
-                    : 'border-slate-700 hover:border-slate-600'
+                className={`group/node relative p-3 rounded-lg cursor-pointer transition-all duration-300 ${
+                  selectedNode?.id === node.id
+                    ? 'bg-gradient-to-r from-blue-500/20 to-cyan-500/10 border border-blue-400/50'
+                    : 'bg-gradient-to-r from-slate-700/30 to-slate-600/20 border border-slate-600/30 hover:border-teal-400/50'
                 }`}
                 onClick={() => {
                   setSelectedNode(node);
@@ -630,8 +684,8 @@ const Consciousness3DVisualization: React.FC<Consciousness3DVisualizationProps> 
               </div>
             ))}
           </div>
-        </CardContent>
-      </Card>
+        </div>
+      </div>
     </div>
   );
 };

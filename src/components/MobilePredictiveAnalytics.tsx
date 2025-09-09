@@ -95,34 +95,41 @@ const MobilePredictiveAnalytics: React.FC<MobilePredictiveAnalyticsProps> = ({
   return (
     <div className="w-full max-w-md mx-auto p-4 space-y-4">
       {/* Mobile Header */}
-      <div className="flex items-center justify-between mb-4">
-        <div className="flex items-center space-x-2">
-          <Smartphone className="w-5 h-5 text-blue-500" />
-          <h2 className="text-lg font-semibold text-white">Predictive Analytics</h2>
+      <div className="group relative bg-gradient-to-r from-slate-800/50 to-slate-700/30 rounded-xl border border-slate-600/30 hover:border-teal-400/50 transition-all duration-300 p-4">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <div className="p-2 bg-gradient-to-br from-teal-400 to-cyan-500 rounded-lg">
+              <Smartphone className="h-5 w-5 text-white" />
+            </div>
+            <div>
+              <h2 className="text-lg font-semibold text-white">Predictive Analytics</h2>
+              <p className="text-xs text-slate-400">Mobile consciousness insights</p>
+            </div>
+          </div>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={handleRefresh}
+            disabled={isRefreshing}
+            className="text-xs border-slate-600 hover:border-cyan-400/50 transition-colors"
+          >
+            {isRefreshing ? 'Refreshing...' : 'Refresh'}
+          </Button>
         </div>
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={handleRefresh}
-          disabled={isRefreshing}
-          className="text-xs"
-        >
-          {isRefreshing ? 'Refreshing...' : 'Refresh'}
-        </Button>
       </div>
 
       {/* Mobile Tabs */}
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-        <TabsList className="grid w-full grid-cols-3 bg-gray-800/50">
-          <TabsTrigger value="overview" className="text-xs">
+        <TabsList className="grid w-full grid-cols-3 bg-slate-800/50 border border-slate-600/30">
+          <TabsTrigger value="overview" className="text-xs hover:bg-teal-500/20 data-[state=active]:bg-teal-500/30">
             <Hand className="w-3 h-3 mr-1" />
             Overview
           </TabsTrigger>
-          <TabsTrigger value="predictions" className="text-xs">
+          <TabsTrigger value="predictions" className="text-xs hover:bg-cyan-500/20 data-[state=active]:bg-cyan-500/30">
             <Brain className="w-3 h-3 mr-1" />
             Predict
           </TabsTrigger>
-          <TabsTrigger value="insights" className="text-xs">
+          <TabsTrigger value="insights" className="text-xs hover:bg-blue-500/20 data-[state=active]:bg-blue-500/30">
             <Zap className="w-3 h-3 mr-1" />
             Insights
           </TabsTrigger>
@@ -132,116 +139,123 @@ const MobilePredictiveAnalytics: React.FC<MobilePredictiveAnalyticsProps> = ({
         <TabsContent value="overview" className="space-y-3">
           {/* Quick Stats */}
           <div className="grid grid-cols-2 gap-3">
-            <Card className="bg-gradient-to-br from-blue-500/20 to-purple-600/20 border-blue-500/30">
-              <CardContent className="p-3">
-                <div className="flex items-center space-x-2">
-                  <Brain className="w-4 h-4 text-blue-400" />
-                  <div>
-                    <p className="text-xs text-gray-300">Consciousness</p>
-                    <p className="text-lg font-bold text-white">
-                      {predictions[0]?.consciousness_level?.toFixed(1) || '0.0'}%
-                    </p>
-                  </div>
+            <div className="group/stat relative bg-gradient-to-r from-slate-700/30 to-slate-600/20 rounded-lg border border-slate-600/30 hover:border-blue-400/50 transition-all duration-300 p-3">
+              <div className="flex items-center gap-3">
+                <div className="flex items-center justify-center w-8 h-8 rounded-full bg-gradient-to-br from-blue-400 to-cyan-500">
+                  <Brain className="h-4 w-4 text-white" />
                 </div>
-              </CardContent>
-            </Card>
+                <div>
+                  <p className="text-xs text-slate-300">Consciousness</p>
+                  <p className="text-lg font-bold text-blue-300">
+                    {predictions[0]?.consciousness_level?.toFixed(1) || '0.0'}%
+                  </p>
+                </div>
+              </div>
+            </div>
 
-            <Card className="bg-gradient-to-br from-green-500/20 to-teal-600/20 border-green-500/30">
-              <CardContent className="p-3">
-                <div className="flex items-center space-x-2">
-                  <TrendingUp className="w-4 h-4 text-green-400" />
-                  <div>
-                    <p className="text-xs text-gray-300">Learning Rate</p>
-                    <p className="text-lg font-bold text-white">
-                      {predictions[0]?.learning_rate?.toFixed(1) || '0.0'}%
-                    </p>
-                  </div>
+            <div className="group/stat relative bg-gradient-to-r from-slate-700/30 to-slate-600/20 rounded-lg border border-slate-600/30 hover:border-green-400/50 transition-all duration-300 p-3">
+              <div className="flex items-center gap-3">
+                <div className="flex items-center justify-center w-8 h-8 rounded-full bg-gradient-to-br from-green-400 to-emerald-500">
+                  <TrendingUp className="h-4 w-4 text-white" />
                 </div>
-              </CardContent>
-            </Card>
+                <div>
+                  <p className="text-xs text-slate-300">Learning Rate</p>
+                  <p className="text-lg font-bold text-green-300">
+                    {predictions[0]?.learning_rate?.toFixed(1) || '0.0'}%
+                  </p>
+                </div>
+              </div>
+            </div>
 
-            <Card className="bg-gradient-to-br from-purple-500/20 to-pink-600/20 border-purple-500/30">
-              <CardContent className="p-3">
-                <div className="flex items-center space-x-2">
-                  <Activity className="w-4 h-4 text-purple-400" />
-                  <div>
-                    <p className="text-xs text-gray-300">Emotion</p>
-                    <p className="text-sm font-semibold text-white capitalize">
-                      {predictions[0]?.emotional_state || 'Unknown'}
-                    </p>
-                  </div>
+            <div className="group/stat relative bg-gradient-to-r from-slate-700/30 to-slate-600/20 rounded-lg border border-slate-600/30 hover:border-purple-400/50 transition-all duration-300 p-3">
+              <div className="flex items-center gap-3">
+                <div className="flex items-center justify-center w-8 h-8 rounded-full bg-gradient-to-br from-purple-400 to-pink-500">
+                  <Activity className="h-4 w-4 text-white" />
                 </div>
-              </CardContent>
-            </Card>
+                <div>
+                  <p className="text-xs text-slate-300">Emotion</p>
+                  <p className="text-sm font-semibold text-purple-300 capitalize">
+                    {predictions[0]?.emotional_state || 'Unknown'}
+                  </p>
+                </div>
+              </div>
+            </div>
 
-            <Card className="bg-gradient-to-br from-orange-500/20 to-red-600/20 border-orange-500/30">
-              <CardContent className="p-3">
-                <div className="flex items-center space-x-2">
-                  <Target className="w-4 h-4 text-orange-400" />
-                  <div>
-                    <p className="text-xs text-gray-300">Confidence</p>
-                    <p className="text-lg font-bold text-white">
-                      {predictions[0]?.confidence?.toFixed(1) || '0.0'}%
-                    </p>
-                  </div>
+            <div className="group/stat relative bg-gradient-to-r from-slate-700/30 to-slate-600/20 rounded-lg border border-slate-600/30 hover:border-orange-400/50 transition-all duration-300 p-3">
+              <div className="flex items-center gap-3">
+                <div className="flex items-center justify-center w-8 h-8 rounded-full bg-gradient-to-br from-orange-400 to-yellow-500">
+                  <Target className="h-4 w-4 text-white" />
                 </div>
-              </CardContent>
-            </Card>
+                <div>
+                  <p className="text-xs text-slate-300">Confidence</p>
+                  <p className="text-lg font-bold text-orange-300">
+                    {predictions[0]?.confidence?.toFixed(1) || '0.0'}%
+                  </p>
+                </div>
+              </div>
+            </div>
           </div>
 
           {/* Recent Insights */}
-          <Card className="bg-gray-800/50 border-gray-700">
-            <CardHeader className="pb-2">
-              <CardTitle className="text-sm text-white flex items-center">
-                <Zap className="w-4 h-4 mr-2" />
-                Recent Insights
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-2">
+          <div className="group relative bg-gradient-to-r from-slate-800/50 to-slate-700/30 rounded-xl border border-slate-600/30 hover:border-emerald-400/50 transition-all duration-300">
+            <div className="p-4">
+              <div className="flex items-center gap-3 mb-4">
+                <div className="p-1 bg-gradient-to-br from-emerald-400 to-teal-500 rounded-lg">
+                  <Zap className="h-4 w-4 text-white" />
+                </div>
+                <h3 className="text-sm font-bold text-white">Recent Insights</h3>
+              </div>
+              <div className="space-y-3">
               {insights.slice(0, 3).map((insight) => (
-                <div key={insight.id} className="flex items-start space-x-2">
-                  <div className="flex-shrink-0 mt-1">
-                    {getInsightIcon(insight.type)}
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center space-x-2 mb-1">
-                      <Badge 
-                        className={`text-xs ${getPriorityColor(insight.priority)}`}
-                      >
-                        {insight.priority}
-                      </Badge>
-                      <span className="text-xs text-gray-400">{insight.type}</span>
+                <div key={insight.id} className="group/insight relative bg-gradient-to-r from-slate-700/30 to-slate-600/20 rounded-lg border border-slate-600/30 hover:border-emerald-400/30 transition-all duration-300 p-3">
+                  <div className="flex items-start gap-3">
+                    <div className="flex-shrink-0">
+                      <div className="p-1 bg-gradient-to-br from-emerald-400 to-teal-500 rounded">
+                        {getInsightIcon(insight.type)}
+                      </div>
                     </div>
-                    <p className="text-sm text-white font-medium truncate">
-                      {insight.title}
-                    </p>
-                    <p className="text-xs text-gray-400 line-clamp-2">
-                      {insight.description}
-                    </p>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-2 mb-2">
+                        <Badge
+                          className={`text-xs text-white ${getPriorityColor(insight.priority).replace('bg-', 'bg-')} border-0`}
+                        >
+                          {insight.priority}
+                        </Badge>
+                        <span className="text-xs text-slate-400">{insight.type}</span>
+                      </div>
+                      <p className="text-sm text-white font-medium truncate">
+                        {insight.title}
+                      </p>
+                      <p className="text-xs text-slate-400 line-clamp-2">
+                        {insight.description}
+                      </p>
+                    </div>
                   </div>
                 </div>
               ))}
-            </CardContent>
-          </Card>
+              </div>
+            </div>
+          </div>
         </TabsContent>
 
         {/* Predictions Tab */}
         <TabsContent value="predictions" className="space-y-3">
-          <Card className="bg-gray-800/50 border-gray-700">
-            <CardHeader className="pb-2">
-              <CardTitle className="text-sm text-white flex items-center">
-                <Brain className="w-4 h-4 mr-2" />
-                Consciousness Predictions
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-3">
+          <div className="group relative bg-gradient-to-r from-slate-800/50 to-slate-700/30 rounded-xl border border-slate-600/30 hover:border-cyan-400/50 transition-all duration-300">
+            <div className="p-4">
+              <div className="flex items-center gap-3 mb-4">
+                <div className="p-1 bg-gradient-to-br from-cyan-400 to-blue-500 rounded-lg">
+                  <Brain className="h-4 w-4 text-white" />
+                </div>
+                <h3 className="text-sm font-bold text-white">Consciousness Predictions</h3>
+              </div>
+              <div className="space-y-3">
               {predictions.slice(0, 5).map((prediction, index) => (
-                <div key={index} className="space-y-2">
-                  <div className="flex justify-between items-center">
-                    <span className="text-xs text-gray-400">
+                <div key={index} className="group/prediction relative bg-gradient-to-r from-slate-700/30 to-slate-600/20 rounded-lg border border-slate-600/30 hover:border-cyan-400/30 transition-all duration-300 p-3 space-y-2">
+                  <div className="flex justify-between items-center mb-3">
+                    <span className="text-xs text-slate-400">
                       {new Date(prediction.timestamp).toLocaleTimeString()}
                     </span>
-                    <Badge className="bg-blue-500/20 text-blue-300 text-xs">
+                    <Badge className="bg-blue-500/20 text-blue-300 text-xs border-0">
                       {prediction.confidence.toFixed(0)}% confidence
                     </Badge>
                   </div>
@@ -277,30 +291,34 @@ const MobilePredictiveAnalytics: React.FC<MobilePredictiveAnalyticsProps> = ({
                   </div>
                 </div>
               ))}
-            </CardContent>
-          </Card>
+              </div>
+            </div>
+          </div>
         </TabsContent>
 
         {/* Insights Tab */}
         <TabsContent value="insights" className="space-y-3">
-          <Card className="bg-gray-800/50 border-gray-700">
-            <CardHeader className="pb-2">
-              <CardTitle className="text-sm text-white flex items-center">
-                <Zap className="w-4 h-4 mr-2" />
-                AI Insights
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-3">
+          <div className="group relative bg-gradient-to-r from-slate-800/50 to-slate-700/30 rounded-xl border border-slate-600/30 hover:border-blue-400/50 transition-all duration-300">
+            <div className="p-4">
+              <div className="flex items-center gap-3 mb-4">
+                <div className="p-1 bg-gradient-to-br from-blue-400 to-indigo-500 rounded-lg">
+                  <Zap className="h-4 w-4 text-white" />
+                </div>
+                <h3 className="text-sm font-bold text-white">AI Insights</h3>
+              </div>
+              <div className="space-y-3">
               {insights.map((insight) => (
-                <div key={insight.id} className="border border-gray-700 rounded-lg p-3">
+                <div key={insight.id} className="group/insight relative bg-gradient-to-r from-slate-700/30 to-slate-600/20 rounded-lg border border-slate-600/30 hover:border-blue-400/30 transition-all duration-300 p-3">
                   <div className="flex items-start justify-between mb-2">
-                    <div className="flex items-center space-x-2">
-                      {getInsightIcon(insight.type)}
+                    <div className="flex items-center gap-3">
+                      <div className="p-1 bg-gradient-to-br from-blue-400 to-indigo-500 rounded">
+                        {getInsightIcon(insight.type)}
+                      </div>
                       <span className="text-sm font-medium text-white">
                         {insight.title}
                       </span>
                     </div>
-                    <Badge className={`text-xs ${getPriorityColor(insight.priority)}`}>
+                    <Badge className={`text-xs text-white ${getPriorityColor(insight.priority).replace('bg-', 'bg-')} border-0`}>
                       {insight.priority}
                     </Badge>
                   </div>
@@ -335,16 +353,21 @@ const MobilePredictiveAnalytics: React.FC<MobilePredictiveAnalyticsProps> = ({
                   )}
                 </div>
               ))}
-            </CardContent>
-          </Card>
+              </div>
+            </div>
+          </div>
         </TabsContent>
       </Tabs>
 
       {/* Mobile Footer */}
-      <div className="text-center text-xs text-gray-500 mt-4">
-        <div className="flex items-center justify-center space-x-2">
-          <Move className="w-3 h-3" />
-          <span>Swipe between tabs for more details</span>
+      <div className="group relative bg-gradient-to-r from-slate-800/50 to-slate-700/30 rounded-xl border border-slate-600/30 hover:border-teal-400/50 transition-all duration-300 p-3 mt-4">
+        <div className="text-center text-xs text-slate-400">
+          <div className="flex items-center justify-center gap-2">
+            <div className="p-1 bg-gradient-to-br from-teal-400 to-cyan-500 rounded">
+              <Move className="w-3 h-3 text-white" />
+            </div>
+            <span>Swipe between tabs for more details</span>
+          </div>
         </div>
       </div>
     </div>

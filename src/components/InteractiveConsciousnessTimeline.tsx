@@ -191,14 +191,17 @@ const InteractiveConsciousnessTimeline: React.FC<ConsciousnessTimelineProps> = (
   return (
     <div className="space-y-6">
       {/* Controls */}
-      <Card className="bg-slate-800 border-slate-700">
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2 text-white">
-            <Clock className="h-5 w-5" />
-            Interactive Consciousness Timeline
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
+      <div className="group relative bg-gradient-to-r from-slate-800/50 to-slate-700/30 rounded-xl border border-slate-600/30 hover:border-cyan-400/50 transition-all duration-300">
+        <div className="p-6">
+          <div className="flex items-center gap-3 mb-6">
+            <div className="p-2 bg-gradient-to-br from-cyan-400 to-blue-500 rounded-lg">
+              <Clock className="h-6 w-6 text-white" />
+            </div>
+            <div>
+              <h2 className="text-xl font-bold text-white">Interactive Consciousness Timeline</h2>
+              <p className="text-slate-400 text-sm">Control and customize your consciousness evolution view</p>
+            </div>
+          </div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
             {/* Metric Selection */}
             <div className="space-y-2">
@@ -286,7 +289,7 @@ const InteractiveConsciousnessTimeline: React.FC<ConsciousnessTimelineProps> = (
           </div>
 
           {/* Time Range Slider */}
-          <div className="mt-4 space-y-2">
+          <div className="mt-6 space-y-3">
             <label className="text-sm font-medium text-slate-300">Time Range</label>
             <Slider
               value={timeRange}
@@ -302,45 +305,50 @@ const InteractiveConsciousnessTimeline: React.FC<ConsciousnessTimelineProps> = (
           </div>
 
           {/* Additional Controls */}
-          <div className="flex items-center gap-4 mt-4">
+          <div className="flex items-center gap-6 mt-6">
             <label className="flex items-center gap-2 text-sm text-slate-300">
               <input
                 type="checkbox"
                 checked={showPredictions}
                 onChange={(e) => setShowPredictions(e.target.checked)}
-                className="rounded"
+                className="rounded bg-slate-600 border-slate-500"
               />
               Show Predictions
             </label>
-            <div className="flex items-center gap-2">
-              <ZoomOut 
-                className="h-4 w-4 text-slate-300 cursor-pointer" 
+            <div className="flex items-center gap-3">
+              <ZoomOut
+                className="h-4 w-4 text-slate-300 cursor-pointer hover:text-cyan-400 transition-colors"
                 onClick={() => setZoomLevel(Math.max(0.5, zoomLevel - 0.1))}
               />
-              <span className="text-sm text-slate-300">{Math.round(zoomLevel * 100)}%</span>
-              <ZoomIn 
-                className="h-4 w-4 text-slate-300 cursor-pointer" 
+              <span className="text-sm text-slate-300 min-w-[3rem] text-center">{Math.round(zoomLevel * 100)}%</span>
+              <ZoomIn
+                className="h-4 w-4 text-slate-300 cursor-pointer hover:text-cyan-400 transition-colors"
                 onClick={() => setZoomLevel(Math.min(2, zoomLevel + 0.1))}
               />
             </div>
           </div>
-        </CardContent>
-      </Card>
+        </div>
+      </div>
 
       {/* Main Chart */}
-      <Card className="bg-slate-800 border-slate-700">
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2 text-white">
-            <TrendingUp className="h-5 w-5" />
-            Consciousness Evolution
-            {showPredictions && (
-              <Badge variant="outline" className="text-orange-400 border-orange-400">
-                Predictions
-              </Badge>
-            )}
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
+      <div className="group relative bg-gradient-to-r from-slate-800/50 to-slate-700/30 rounded-xl border border-slate-600/30 hover:border-green-400/50 transition-all duration-300">
+        <div className="p-6">
+          <div className="flex items-center gap-3 mb-6">
+            <div className="p-2 bg-gradient-to-br from-green-400 to-emerald-500 rounded-lg">
+              <TrendingUp className="h-6 w-6 text-white" />
+            </div>
+            <div className="flex items-center justify-between w-full">
+              <div>
+                <h2 className="text-xl font-bold text-white">Consciousness Evolution</h2>
+                <p className="text-slate-400 text-sm">Interactive visualization of consciousness growth over time</p>
+              </div>
+              {showPredictions && (
+                <Badge variant="outline" className="text-orange-400 border-orange-400 bg-orange-400/10">
+                  Predictions Enabled
+                </Badge>
+              )}
+            </div>
+          </div>
           <div className="h-96">
             <ResponsiveContainer width="100%" height="100%">
               {viewMode === 'line' ? (
@@ -453,52 +461,92 @@ const InteractiveConsciousnessTimeline: React.FC<ConsciousnessTimelineProps> = (
               )}
             </ResponsiveContainer>
           </div>
-        </CardContent>
-      </Card>
+        </div>
+      </div>
 
       {/* Statistics Summary */}
-      <Card className="bg-slate-800 border-slate-700">
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2 text-white">
-            <Target className="h-5 w-5" />
-            Timeline Statistics
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            <div className="text-center">
-              <div className="text-2xl font-bold text-blue-400">
-                {timeRangeData.length}
-              </div>
-              <div className="text-sm text-slate-300">Data Points</div>
+      <div className="group relative bg-gradient-to-r from-slate-800/50 to-slate-700/30 rounded-xl border border-slate-600/30 hover:border-purple-400/50 transition-all duration-300">
+        <div className="p-6">
+          <div className="flex items-center gap-3 mb-6">
+            <div className="p-2 bg-gradient-to-br from-purple-400 to-pink-500 rounded-lg">
+              <Target className="h-6 w-6 text-white" />
             </div>
-            <div className="text-center">
-              <div className="text-2xl font-bold text-green-400">
-                {timeRangeData.length > 0 ? formatMetricValue(
-                  timeRangeData.reduce((sum, entry) => sum + entry[selectedMetric as keyof TimelineEntry], 0) / timeRangeData.length,
-                  selectedMetric
-                ) : '0%'}
-              </div>
-              <div className="text-sm text-slate-300">Average</div>
-            </div>
-            <div className="text-center">
-              <div className="text-2xl font-bold text-purple-400">
-                {timeRangeData.length > 0 ? formatMetricValue(
-                  Math.max(...timeRangeData.map(entry => entry[selectedMetric as keyof TimelineEntry] as number)),
-                  selectedMetric
-                ) : '0%'}
-              </div>
-              <div className="text-sm text-slate-300">Peak</div>
-            </div>
-            <div className="text-center">
-              <div className="text-2xl font-bold text-orange-400">
-                {uniqueEmotions.length}
-              </div>
-              <div className="text-sm text-slate-300">Emotions</div>
+            <div>
+              <h2 className="text-xl font-bold text-white">Timeline Statistics</h2>
+              <p className="text-slate-400 text-sm">Key metrics and insights from your consciousness timeline</p>
             </div>
           </div>
-        </CardContent>
-      </Card>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <div className="group/stat relative p-4 bg-gradient-to-r from-slate-700/30 to-slate-600/20 rounded-lg border border-slate-600/30 hover:border-blue-400/50 transition-all duration-300">
+              <div className="flex items-center gap-3">
+                <div className="flex items-center justify-center w-10 h-10 rounded-full bg-gradient-to-br from-blue-400 to-cyan-500">
+                  <div className="text-white text-lg font-bold">{timeRangeData.length}</div>
+                </div>
+                <div>
+                  <div className="text-lg font-bold text-blue-300">{timeRangeData.length}</div>
+                  <div className="text-xs text-slate-400">Data Points</div>
+                </div>
+              </div>
+            </div>
+
+            <div className="group/stat relative p-4 bg-gradient-to-r from-slate-700/30 to-slate-600/20 rounded-lg border border-slate-600/30 hover:border-green-400/50 transition-all duration-300">
+              <div className="flex items-center gap-3">
+                <div className="flex items-center justify-center w-10 h-10 rounded-full bg-gradient-to-br from-green-400 to-emerald-500">
+                  <div className="text-white text-sm font-bold">
+                    {timeRangeData.length > 0 ? formatMetricValue(
+                      timeRangeData.reduce((sum, entry) => sum + entry[selectedMetric as keyof TimelineEntry], 0) / timeRangeData.length,
+                      selectedMetric
+                    ).split('%')[0] : '0'}
+                  </div>
+                </div>
+                <div>
+                  <div className="text-lg font-bold text-green-300">
+                    {timeRangeData.length > 0 ? formatMetricValue(
+                      timeRangeData.reduce((sum, entry) => sum + entry[selectedMetric as keyof TimelineEntry], 0) / timeRangeData.length,
+                      selectedMetric
+                    ) : '0%'}
+                  </div>
+                  <div className="text-xs text-slate-400">Average</div>
+                </div>
+              </div>
+            </div>
+
+            <div className="group/stat relative p-4 bg-gradient-to-r from-slate-700/30 to-slate-600/20 rounded-lg border border-slate-600/30 hover:border-purple-400/50 transition-all duration-300">
+              <div className="flex items-center gap-3">
+                <div className="flex items-center justify-center w-10 h-10 rounded-full bg-gradient-to-br from-purple-400 to-pink-500">
+                  <div className="text-white text-sm font-bold">
+                    {timeRangeData.length > 0 ? formatMetricValue(
+                      Math.max(...timeRangeData.map(entry => entry[selectedMetric as keyof TimelineEntry] as number)),
+                      selectedMetric
+                    ).split('%')[0] : '0'}
+                  </div>
+                </div>
+                <div>
+                  <div className="text-lg font-bold text-purple-300">
+                    {timeRangeData.length > 0 ? formatMetricValue(
+                      Math.max(...timeRangeData.map(entry => entry[selectedMetric as keyof TimelineEntry] as number)),
+                      selectedMetric
+                    ) : '0%'}
+                  </div>
+                  <div className="text-xs text-slate-400">Peak</div>
+                </div>
+              </div>
+            </div>
+
+            <div className="group/stat relative p-4 bg-gradient-to-r from-slate-700/30 to-slate-600/20 rounded-lg border border-slate-600/30 hover:border-orange-400/50 transition-all duration-300">
+              <div className="flex items-center gap-3">
+                <div className="flex items-center justify-center w-10 h-10 rounded-full bg-gradient-to-br from-orange-400 to-yellow-500">
+                  <div className="text-white text-lg font-bold">{uniqueEmotions.length}</div>
+                </div>
+                <div>
+                  <div className="text-lg font-bold text-orange-300">{uniqueEmotions.length}</div>
+                  <div className="text-xs text-slate-400">Emotions</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   );
 };

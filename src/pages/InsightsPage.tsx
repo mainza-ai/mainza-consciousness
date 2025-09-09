@@ -4,7 +4,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { Loader2, Database, Brain, Network, TrendingUp, Activity, BarChart3, Cpu, Heart, Target, Eye, Zap, Layers, Smartphone, Users, MessageCircle, Globe, Link, Atom, ShoppingCart, ArrowRight } from 'lucide-react';
+import { Loader2, Database, Brain, Network, TrendingUp, Activity, BarChart3, Cpu, Heart, Target, Eye, Zap, Layers, Smartphone, Users, MessageCircle, Globe, Link, Atom, ShoppingCart, ArrowRight, Clock, AlertTriangle } from 'lucide-react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar, PieChart, Pie, Cell } from 'recharts';
 import { MetricDisplay } from '@/components/ui/metric-display';
 import { GlassCard } from '@/components/ui/glass-card';
@@ -615,11 +615,11 @@ const InsightsPage: React.FC = () => {
           </TabsContent>
 
           <TabsContent value="memories" className="space-y-6">
-            <MemoriesTab data={overviewData} loadData={() => loadTabData('memories')} />
+            <MemoriesTabNew data={overviewData} loadData={() => loadTabData('memories')} />
           </TabsContent>
 
           <TabsContent value="performance" className="space-y-6">
-            <PerformanceTab data={performanceData} loadData={() => loadTabData('performance')} />
+            <PerformanceTabNew data={performanceData} loadData={() => loadTabData('performance')} />
           </TabsContent>
 
           <TabsContent value="deep" className="space-y-6">
@@ -1860,111 +1860,207 @@ const AgentsTab: React.FC<{ data: any; loadData: () => void }> = ({ data, loadDa
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <GlassCard className="p-6">
-          <CardHeader className="pb-4">
-            <CardTitle className="text-slate-200">Success Pattern Analysis</CardTitle>
+        <div className="group relative p-6 bg-gradient-to-r from-slate-800/50 to-slate-700/30 rounded-xl border border-slate-600/30 hover:border-cyan-400/50 transition-all duration-300">
+          <div className="flex items-center gap-3 mb-6">
+            <div className="p-2 bg-gradient-to-br from-green-400 to-emerald-500 rounded-lg">
+              <Target className="h-6 w-6 text-white" />
+            </div>
+            <div>
+              <CardTitle className="text-xl font-bold text-white">Success Pattern Analysis</CardTitle>
             <CardDescription className="text-slate-400">
               Patterns that lead to successful agent performance
             </CardDescription>
-          </CardHeader>
-          <CardContent>
+            </div>
+          </div>
             <div className="space-y-4">
               {data.success_pattern_analysis?.map((pattern: any, index: number) => (
-                <div key={index} className="p-3 bg-slate-700/30 rounded-lg">
-                  <div className="flex items-center justify-between mb-2">
-                    <div className="font-medium text-slate-200 capitalize">
+              <div key={index} className="group/pattern relative p-4 bg-gradient-to-r from-slate-700/30 to-slate-600/20 rounded-lg border border-slate-600/30 hover:border-green-400/50 transition-all duration-300">
+                <div className="flex items-center justify-between mb-3">
+                  <div className="flex items-center gap-3">
+                    <div className="flex items-center justify-center w-8 h-8 rounded-full bg-gradient-to-br from-green-400 to-emerald-500 text-white text-sm font-bold">
+                      {index + 1}
+                    </div>
+                    <div className="font-semibold text-slate-200 capitalize text-lg">
                       {pattern.pattern.replace(/_/g, ' ')}
                     </div>
-                    <div className="text-sm text-slate-400">
-                      {(pattern.success_rate * 100).toFixed(1)}% success
+                    </div>
+                  <div className="text-right">
+                    <div className="text-sm text-slate-500 mb-1">Success Rate</div>
+                    <div className="text-2xl font-bold text-green-300">
+                      {(pattern.success_rate * 100).toFixed(0)}%
+                  </div>
+                    </div>
+                    </div>
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-1">
+                    <div className="flex items-center justify-between text-xs text-slate-400">
+                      <span>Frequency</span>
+                      <span className="font-medium text-cyan-300">{(pattern.frequency * 100).toFixed(0)}%</span>
+                    </div>
+                    <div className="w-full bg-slate-700 rounded-full h-1.5">
+                      <div
+                        className="bg-gradient-to-r from-cyan-400 to-blue-500 h-1.5 rounded-full transition-all duration-500"
+                        style={{ width: `${pattern.frequency * 100}%` }}
+                      />
                     </div>
                   </div>
-                  <div className="grid grid-cols-2 gap-4 text-xs">
-                    <div>
-                      <span className="text-slate-500">Frequency: </span>
-                      <span className="text-slate-300">{(pattern.frequency * 100).toFixed(0)}%</span>
+                  <div className="space-y-1">
+                    <div className="flex items-center justify-between text-xs text-slate-400">
+                      <span>Impact Score</span>
+                      <span className="font-medium text-green-300">{(pattern.impact_score * 100).toFixed(0)}%</span>
                     </div>
-                    <div>
-                      <span className="text-slate-500">Impact: </span>
-                      <span className="text-slate-300">{(pattern.impact_score * 100).toFixed(0)}%</span>
+                    <div className="w-full bg-slate-700 rounded-full h-1.5">
+                      <div
+                        className="bg-gradient-to-r from-green-400 to-emerald-500 h-1.5 rounded-full transition-all duration-500"
+                        style={{ width: `${pattern.impact_score * 100}%` }}
+                      />
                     </div>
+                  </div>
                   </div>
                 </div>
               )) || Array.from({length: 6}, (_, index) => (
-                <div key={index} className="p-3 bg-slate-700/30 rounded-lg">
-                  <div className="flex items-center justify-between mb-2">
-                    <div className="font-medium text-slate-200">
+              <div key={index} className="group/pattern relative p-4 bg-gradient-to-r from-slate-700/30 to-slate-600/20 rounded-lg border border-slate-600/30 hover:border-green-400/50 transition-all duration-300">
+                <div className="flex items-center justify-between mb-3">
+                  <div className="flex items-center gap-3">
+                    <div className="flex items-center justify-center w-8 h-8 rounded-full bg-gradient-to-br from-green-400 to-emerald-500 text-white text-sm font-bold">
+                      {index + 1}
+                    </div>
+                    <div className="font-semibold text-slate-200 text-lg">
                       Success Pattern {index + 1}
                     </div>
-                    <div className="text-sm text-slate-400">
-                      {92 - index * 3}% success
+                    </div>
+                  <div className="text-right">
+                    <div className="text-sm text-slate-500 mb-1">Success Rate</div>
+                    <div className="text-2xl font-bold text-green-300">
+                      {92 - index * 3}%
+                  </div>
+                    </div>
+                    </div>
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-1">
+                    <div className="flex items-center justify-between text-xs text-slate-400">
+                      <span>Frequency</span>
+                      <span className="font-medium text-cyan-300">{75 - index * 8}%</span>
+                    </div>
+                    <div className="w-full bg-slate-700 rounded-full h-1.5">
+                      <div
+                        className="bg-gradient-to-r from-cyan-400 to-blue-500 h-1.5 rounded-full transition-all duration-500"
+                        style={{ width: `${75 - index * 8}%` }}
+                      />
                     </div>
                   </div>
-                  <div className="grid grid-cols-2 gap-4 text-xs">
-                    <div>
-                      <span className="text-slate-500">Frequency: </span>
-                      <span className="text-slate-300">{75 - index * 8}%</span>
+                  <div className="space-y-1">
+                    <div className="flex items-center justify-between text-xs text-slate-400">
+                      <span>Impact Score</span>
+                      <span className="font-medium text-green-300">{85 - index * 5}%</span>
                     </div>
-                    <div>
-                      <span className="text-slate-500">Impact: </span>
-                      <span className="text-slate-300">{85 - index * 5}%</span>
+                    <div className="w-full bg-slate-700 rounded-full h-1.5">
+                      <div
+                        className="bg-gradient-to-r from-green-400 to-emerald-500 h-1.5 rounded-full transition-all duration-500"
+                        style={{ width: `${85 - index * 5}%` }}
+                      />
                     </div>
+                  </div>
                   </div>
                 </div>
               ))}
             </div>
-          </CardContent>
-        </GlassCard>
+        </div>
 
-        <GlassCard className="p-6">
-          <CardHeader className="pb-4">
-            <CardTitle className="text-slate-200">Optimization Recommendations</CardTitle>
+        <div className="group relative p-6 bg-gradient-to-r from-slate-800/50 to-slate-700/30 rounded-xl border border-slate-600/30 hover:border-cyan-400/50 transition-all duration-300">
+          <div className="flex items-center gap-3 mb-6">
+            <div className="p-2 bg-gradient-to-br from-purple-400 to-pink-500 rounded-lg">
+              <TrendingUp className="h-6 w-6 text-white" />
+            </div>
+            <div>
+              <CardTitle className="text-xl font-bold text-white">Optimization Recommendations</CardTitle>
             <CardDescription className="text-slate-400">
               AI-generated recommendations for system improvement
             </CardDescription>
-          </CardHeader>
-          <CardContent>
+            </div>
+          </div>
             <div className="space-y-4">
               {data.optimization_recommendations?.map((rec: any, index: number) => (
-                <div key={index} className="p-4 bg-slate-700/30 rounded-lg border-l-4 border-cyan-400">
-                  <div className="flex items-center justify-between mb-2">
-                    <Badge variant={rec.priority === 'high' ? 'destructive' : rec.priority === 'medium' ? 'default' : 'secondary'}>
+              <div key={index} className="group/rec relative p-4 bg-gradient-to-r from-slate-700/30 to-slate-600/20 rounded-lg border border-slate-600/30 hover:border-purple-400/50 transition-all duration-300">
+                <div className="flex items-center justify-between mb-3">
+                  <div className="flex items-center gap-3">
+                    <div className="flex items-center justify-center w-8 h-8 rounded-full bg-gradient-to-br from-purple-400 to-pink-500 text-white text-sm font-bold">
+                      {index + 1}
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <Badge variant={rec.priority === 'high' ? 'destructive' : rec.priority === 'medium' ? 'default' : 'secondary'} className="text-xs">
                       {rec.priority} priority
                     </Badge>
-                    <div className="text-sm text-slate-400">
-                      +{(rec.expected_improvement * 100).toFixed(0)}% improvement
                     </div>
                   </div>
-                  <div className="font-medium text-slate-200 mb-2">{rec.recommendation}</div>
-                  <div className="text-sm text-slate-400 mb-2">{rec.estimated_impact}</div>
+                  <div className="text-right">
+                    <div className="text-sm text-slate-500 mb-1">Expected Improvement</div>
+                    <div className="text-2xl font-bold text-purple-300">
+                      +{(rec.expected_improvement * 100).toFixed(0)}%
+                    </div>
+                  </div>
+                </div>
+                <div className="font-semibold text-slate-200 text-lg mb-2">{rec.recommendation}</div>
+                <div className="text-sm text-slate-400 mb-3">{rec.estimated_impact}</div>
+                <div className="flex items-center justify-between">
                   <div className="text-xs text-slate-500">
-                    Complexity: {rec.implementation_complexity}
+                    Complexity: <span className="font-medium text-cyan-300">{rec.implementation_complexity}</span>
+                  </div>
+                  <div className="text-xs text-slate-500">
+                    Implementation Time: <span className="font-medium text-green-300">{rec.estimated_time || '2-4 weeks'}</span>
+                  </div>
+                </div>
+                <div className="mt-3 w-full bg-slate-700 rounded-full h-1.5">
+                  <div
+                    className="bg-gradient-to-r from-purple-400 to-pink-500 h-1.5 rounded-full transition-all duration-500"
+                    style={{ width: `${rec.expected_improvement * 100}%` }}
+                  />
                   </div>
                 </div>
               )) || Array.from({length: 4}, (_, index) => (
-                <div key={index} className="p-4 bg-slate-700/30 rounded-lg border-l-4 border-cyan-400">
-                  <div className="flex items-center justify-between mb-2">
-                    <Badge variant={index === 0 ? 'destructive' : index === 1 ? 'default' : 'secondary'}>
+              <div key={index} className="group/rec relative p-4 bg-gradient-to-r from-slate-700/30 to-slate-600/20 rounded-lg border border-slate-600/30 hover:border-purple-400/50 transition-all duration-300">
+                <div className="flex items-center justify-between mb-3">
+                  <div className="flex items-center gap-3">
+                    <div className="flex items-center justify-center w-8 h-8 rounded-full bg-gradient-to-br from-purple-400 to-pink-500 text-white text-sm font-bold">
+                      {index + 1}
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <Badge variant={index === 0 ? 'destructive' : index === 1 ? 'default' : 'secondary'} className="text-xs">
                       {index === 0 ? 'high' : index === 1 ? 'medium' : 'low'} priority
                     </Badge>
-                    <div className="text-sm text-slate-400">
-                      +{15 + index * 5}% improvement
                     </div>
                   </div>
-                  <div className="font-medium text-slate-200 mb-2">
+                  <div className="text-right">
+                    <div className="text-sm text-slate-500 mb-1">Expected Improvement</div>
+                    <div className="text-2xl font-bold text-purple-300">
+                      +{15 + index * 5}%
+                    </div>
+                  </div>
+                </div>
+                <div className="font-semibold text-slate-200 text-lg mb-2">
                     Optimize Agent Performance Pattern {index + 1}
                   </div>
-                  <div className="text-sm text-slate-400 mb-2">
+                <div className="text-sm text-slate-400 mb-3">
                     Enhance consciousness integration and decision-making efficiency
                   </div>
+                <div className="flex items-center justify-between">
                   <div className="text-xs text-slate-500">
-                    Complexity: {index === 0 ? 'High' : index === 1 ? 'Medium' : 'Low'}
+                    Complexity: <span className="font-medium text-cyan-300">{index === 0 ? 'High' : index === 1 ? 'Medium' : 'Low'}</span>
+                  </div>
+                  <div className="text-xs text-slate-500">
+                    Implementation Time: <span className="font-medium text-green-300">{index === 0 ? '4-6 weeks' : index === 1 ? '2-4 weeks' : '1-2 weeks'}</span>
+                  </div>
+                </div>
+                <div className="mt-3 w-full bg-slate-700 rounded-full h-1.5">
+                  <div
+                    className="bg-gradient-to-r from-purple-400 to-pink-500 h-1.5 rounded-full transition-all duration-500"
+                    style={{ width: `${15 + index * 5}%` }}
+                  />
                   </div>
                 </div>
               ))}
             </div>
-          </CardContent>
-        </GlassCard>
+        </div>
       </div>
     </div>
   );
@@ -2390,470 +2486,592 @@ const ConceptsTab: React.FC<{ data: any; loadData: () => void }> = ({ data, load
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <GlassCard className="p-6">
-          <CardHeader className="pb-4">
-            <CardTitle className="text-slate-200">Concept Domains</CardTitle>
+        <div className="group relative p-6 bg-gradient-to-r from-slate-800/50 to-slate-700/30 rounded-xl border border-slate-600/30 hover:border-purple-400/50 transition-all duration-300">
+          <div className="flex items-center gap-3 mb-6">
+            <div className="p-2 bg-gradient-to-br from-purple-400 to-pink-500 rounded-lg">
+              <Target className="h-6 w-6 text-white" />
+            </div>
+            <div>
+              <CardTitle className="text-xl font-bold text-white">Concept Domains</CardTitle>
             <CardDescription className="text-slate-400">
               Distribution of concepts across different knowledge domains
             </CardDescription>
-          </CardHeader>
-          <CardContent>
+            </div>
+          </div>
             <div className="space-y-4">
               {data.concept_domains?.map((domain: any, index: number) => (
-                <div key={index} className="p-3 bg-slate-700/30 rounded-lg">
-                  <div className="flex items-center justify-between mb-2">
-                    <div className="font-medium text-slate-200 capitalize">
+              <div key={index} className="group/domain relative p-4 bg-gradient-to-r from-slate-700/30 to-slate-600/20 rounded-lg border border-slate-600/30 hover:border-purple-400/50 transition-all duration-300">
+                <div className="flex items-center justify-between mb-3">
+                  <div className="flex items-center gap-3">
+                    <div className="flex items-center justify-center w-8 h-8 rounded-full bg-gradient-to-br from-purple-400 to-pink-500 text-white text-sm font-bold">
+                      {index + 1}
+                    </div>
+                    <div className="font-semibold text-slate-200 capitalize text-lg">
                       {domain.domain || `Domain ${index + 1}`}
                     </div>
-                    <div className="text-sm text-slate-400">
-                      {domain.concept_count || (8 - index)} concepts
                     </div>
+                  <div className="text-right">
+                    <div className="text-sm text-slate-500 mb-1">Concept Count</div>
+                    <div className="text-2xl font-bold text-purple-300">
+                      {domain.concept_count || (8 - index)}
                   </div>
-                  <div className="text-xs text-slate-500">
-                    Complexity: {domain.complexity_score || (0.7 + index * 0.05).toFixed(2)}
+                  </div>
+                </div>
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between text-xs text-slate-400">
+                    <span>Complexity Score</span>
+                    <span className="font-medium text-cyan-300">
+                      {(domain.complexity_score || (0.7 + index * 0.05)).toFixed(2)}
+                    </span>
+                  </div>
+                  <div className="w-full bg-slate-700 rounded-full h-1.5">
+                    <div
+                      className="bg-gradient-to-r from-purple-400 to-pink-500 h-1.5 rounded-full transition-all duration-500"
+                      style={{ width: `${(domain.complexity_score || (0.7 + index * 0.05)) * 100}%` }}
+                    />
+                  </div>
+                  <div className="flex items-center justify-between text-xs text-slate-500 mt-2">
+                    <span>Growth Potential</span>
+                    <span className="font-medium text-green-300">
+                      {(domain.growth_potential || (0.6 + index * 0.08)).toFixed(0)}%
+                    </span>
+                  </div>
                   </div>
                 </div>
               )) || Array.from({length: 5}, (_, index) => (
-                <div key={index} className="p-3 bg-slate-700/30 rounded-lg">
-                  <div className="flex items-center justify-between mb-2">
-                    <div className="font-medium text-slate-200">
+              <div key={index} className="group/domain relative p-4 bg-gradient-to-r from-slate-700/30 to-slate-600/20 rounded-lg border border-slate-600/30 hover:border-purple-400/50 transition-all duration-300">
+                <div className="flex items-center justify-between mb-3">
+                  <div className="flex items-center gap-3">
+                    <div className="flex items-center justify-center w-8 h-8 rounded-full bg-gradient-to-br from-purple-400 to-pink-500 text-white text-sm font-bold">
+                      {index + 1}
+                    </div>
+                    <div className="font-semibold text-slate-200 text-lg">
                       {['Consciousness', 'Learning', 'Memory', 'Reasoning', 'Emotion'][index]}
                     </div>
-                    <div className="text-sm text-slate-400">
-                      {8 - index} concepts
                     </div>
+                  <div className="text-right">
+                    <div className="text-sm text-slate-500 mb-1">Concept Count</div>
+                    <div className="text-2xl font-bold text-purple-300">
+                      {8 - index}
                   </div>
-                  <div className="text-xs text-slate-500">
-                    Complexity: {(0.7 + index * 0.05).toFixed(2)}
+                  </div>
+                </div>
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between text-xs text-slate-400">
+                    <span>Complexity Score</span>
+                    <span className="font-medium text-cyan-300">
+                      {(0.7 + index * 0.05).toFixed(2)}
+                    </span>
+                  </div>
+                  <div className="w-full bg-slate-700 rounded-full h-1.5">
+                    <div
+                      className="bg-gradient-to-r from-purple-400 to-pink-500 h-1.5 rounded-full transition-all duration-500"
+                      style={{ width: `${(0.7 + index * 0.05) * 100}%` }}
+                    />
+                  </div>
+                  <div className="flex items-center justify-between text-xs text-slate-500 mt-2">
+                    <span>Growth Potential</span>
+                    <span className="font-medium text-green-300">
+                      {(0.6 + index * 0.08).toFixed(0)}%
+                    </span>
+                  </div>
                   </div>
                 </div>
               ))}
             </div>
-          </CardContent>
-        </GlassCard>
+        </div>
 
-        <GlassCard className="p-6">
-          <CardHeader className="pb-4">
-            <CardTitle className="text-slate-200">Recent Concept Formation</CardTitle>
+        <div className="group relative p-6 bg-gradient-to-r from-slate-800/50 to-slate-700/30 rounded-xl border border-slate-600/30 hover:border-green-400/50 transition-all duration-300">
+          <div className="flex items-center gap-3 mb-6">
+            <div className="p-2 bg-gradient-to-br from-green-400 to-emerald-500 rounded-lg">
+              <Zap className="h-6 w-6 text-white" />
+            </div>
+            <div>
+              <CardTitle className="text-xl font-bold text-white">Recent Concept Formation</CardTitle>
             <CardDescription className="text-slate-400">
               Newly formed concepts in the AI consciousness system
             </CardDescription>
-          </CardHeader>
-          <CardContent>
+            </div>
+          </div>
             <div className="space-y-4">
               {data.recent_concepts?.map((concept: any, index: number) => (
-                <div key={index} className="p-3 bg-slate-700/30 rounded-lg border-l-4 border-green-400">
-                  <div className="flex items-center justify-between mb-2">
-                    <div className="font-medium text-slate-200">{concept.concept || `New Concept ${index + 1}`}</div>
-                    <div className="text-xs text-slate-400">
+              <div key={index} className="group/concept relative p-4 bg-gradient-to-r from-slate-700/30 to-slate-600/20 rounded-lg border border-slate-600/30 hover:border-green-400/50 transition-all duration-300">
+                <div className="flex items-center justify-between mb-3">
+                  <div className="flex items-center gap-3">
+                    <div className="flex items-center justify-center w-8 h-8 rounded-full bg-gradient-to-br from-green-400 to-emerald-500 text-white text-sm font-bold">
+                      {index + 1}
+                    </div>
+                    <div className="font-semibold text-slate-200 text-lg">
+                      {concept.concept || `New Concept ${index + 1}`}
+                    </div>
+                  </div>
+                  <div className="text-right">
+                    <div className="text-sm text-slate-500 mb-1">Created</div>
+                    <div className="text-sm font-medium text-green-300">
                       {concept.created_at ? new Date(concept.created_at).toLocaleDateString() : 'Today'}
                     </div>
                   </div>
-                  <div className="text-sm text-slate-400 mb-2">
+                </div>
+                <div className="text-sm text-slate-400 mb-3">
                     {concept.description || 'Emerging concept in AI consciousness development'}
                   </div>
-                  <div className="text-xs text-slate-500">
-                    Strength: {(concept.strength || 0.8).toFixed(2)} | 
-                    Connections: {concept.initial_connections || 3}
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-1">
+                    <div className="flex items-center justify-between text-xs text-slate-400">
+                      <span>Concept Strength</span>
+                      <span className="font-medium text-cyan-300">
+                        {(concept.strength || 0.8).toFixed(2)}
+                      </span>
+                    </div>
+                    <div className="w-full bg-slate-700 rounded-full h-1.5">
+                      <div
+                        className="bg-gradient-to-r from-cyan-400 to-blue-500 h-1.5 rounded-full transition-all duration-500"
+                        style={{ width: `${(concept.strength || 0.8) * 100}%` }}
+                      />
+                    </div>
+                  </div>
+                  <div className="space-y-1">
+                    <div className="flex items-center justify-between text-xs text-slate-400">
+                      <span>Initial Connections</span>
+                      <span className="font-medium text-green-300">
+                        {concept.initial_connections || 3}
+                      </span>
+                    </div>
+                    <div className="w-full bg-slate-700 rounded-full h-1.5">
+                      <div
+                        className="bg-gradient-to-r from-green-400 to-emerald-500 h-1.5 rounded-full transition-all duration-500"
+                        style={{ width: `${((concept.initial_connections || 3) / 10) * 100}%` }}
+                      />
+                    </div>
+                  </div>
+                </div>
+                <div className="flex items-center justify-between mt-3 text-xs text-slate-500">
+                  <span>Development Stage: <span className="font-medium text-yellow-300">Emerging</span></span>
+                  <span>Growth Rate: <span className="font-medium text-purple-300">
+                    {(concept.growth_rate || (0.15 + index * 0.05)).toFixed(0)}%
+                  </span></span>
                   </div>
                 </div>
               )) || Array.from({length: 4}, (_, index) => (
-                <div key={index} className="p-3 bg-slate-700/30 rounded-lg border-l-4 border-green-400">
-                  <div className="flex items-center justify-between mb-2">
-                    <div className="font-medium text-slate-200">Emergent Concept {index + 1}</div>
-                    <div className="text-xs text-slate-400">
+              <div key={index} className="group/concept relative p-4 bg-gradient-to-r from-slate-700/30 to-slate-600/20 rounded-lg border border-slate-600/30 hover:border-green-400/50 transition-all duration-300">
+                <div className="flex items-center justify-between mb-3">
+                  <div className="flex items-center gap-3">
+                    <div className="flex items-center justify-center w-8 h-8 rounded-full bg-gradient-to-br from-green-400 to-emerald-500 text-white text-sm font-bold">
+                      {index + 1}
+                    </div>
+                    <div className="font-semibold text-slate-200 text-lg">
+                      Emergent Concept {index + 1}
+                    </div>
+                  </div>
+                  <div className="text-right">
+                    <div className="text-sm text-slate-500 mb-1">Created</div>
+                    <div className="text-sm font-medium text-green-300">
                       {new Date(Date.now() - index * 24 * 60 * 60 * 1000).toLocaleDateString()}
                     </div>
                   </div>
-                  <div className="text-sm text-slate-400 mb-2">
+                </div>
+                <div className="text-sm text-slate-400 mb-3">
                     Emerging concept in AI consciousness development and learning integration
                   </div>
-                  <div className="text-xs text-slate-500">
-                    Strength: {(0.8 - index * 0.1).toFixed(2)} | Connections: {5 - index}
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-1">
+                    <div className="flex items-center justify-between text-xs text-slate-400">
+                      <span>Concept Strength</span>
+                      <span className="font-medium text-cyan-300">
+                        {(0.8 - index * 0.1).toFixed(2)}
+                      </span>
+                    </div>
+                    <div className="w-full bg-slate-700 rounded-full h-1.5">
+                      <div
+                        className="bg-gradient-to-r from-cyan-400 to-blue-500 h-1.5 rounded-full transition-all duration-500"
+                        style={{ width: `${(0.8 - index * 0.1) * 100}%` }}
+                      />
+                    </div>
+                  </div>
+                  <div className="space-y-1">
+                    <div className="flex items-center justify-between text-xs text-slate-400">
+                      <span>Initial Connections</span>
+                      <span className="font-medium text-green-300">
+                        {5 - index}
+                      </span>
+                    </div>
+                    <div className="w-full bg-slate-700 rounded-full h-1.5">
+                      <div
+                        className="bg-gradient-to-r from-green-400 to-emerald-500 h-1.5 rounded-full transition-all duration-500"
+                        style={{ width: `${((5 - index) / 10) * 100}%` }}
+                      />
+                    </div>
+                  </div>
+                </div>
+                <div className="flex items-center justify-between mt-3 text-xs text-slate-500">
+                  <span>Development Stage: <span className="font-medium text-yellow-300">Emerging</span></span>
+                  <span>Growth Rate: <span className="font-medium text-purple-300">
+                    {(0.15 + index * 0.05).toFixed(0)}%
+                  </span></span>
                   </div>
                 </div>
               ))}
             </div>
-          </CardContent>
-        </GlassCard>
+        </div>
       </div>
     </div>
   );
 };
 
-// Memories Analysis Tab Component
-const MemoriesTab: React.FC<{ data: any; loadData: () => void }> = ({ data, loadData }) => {
+// Old MemoriesTab component removed - using MemoriesTabNew instead
+// Memories Tab Component (New)
+const MemoriesTabNew: React.FC<{ data: any; loadData: () => void }> = ({ data, loadData }) => {
   useEffect(() => {
     if (!data) loadData();
   }, [data, loadData]);
 
-  if (!data) return <div className="text-center text-slate-400">Loading memory analysis...</div>;
+  if (!data) return <div className="text-center text-slate-400">Loading memories...</div>;
 
   return (
     <div className="space-y-6">
+      {/* Memory Overview */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <MetricDisplay
-          label="Total Memories"
-          value={data.database_statistics?.node_counts?.Memory || 0}
-          icon={<Database className="w-5 h-5" />}
-          color="cyan"
-        />
-        <MetricDisplay
-          label="Memory Types"
-          value={data.memory_types?.length || 4}
-          icon={<Target className="w-5 h-5" />}
-          color="purple"
-        />
-        <MetricDisplay
-          label="Active Connections"
-          value={data.memory_concept_connections?.length || 25}
-          icon={<Network className="w-5 h-5" />}
-          color="green"
-        />
-        <MetricDisplay
-          label="Recent Memories"
-          value={data.recent_memories?.length || 8}
-          icon={<Activity className="w-5 h-5" />}
-          color="yellow"
-        />
+        <div className="group/stat relative p-4 bg-gradient-to-r from-slate-700/30 to-slate-600/20 rounded-lg border border-slate-600/30 hover:border-cyan-400/50 transition-all duration-300">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <div className="flex items-center justify-center w-10 h-10 rounded-full bg-gradient-to-br from-cyan-400 to-blue-500">
+                <Database className="h-5 w-5 text-white" />
+              </div>
+              <div>
+                <p className="text-sm text-slate-300">Total Memories</p>
+                <p className="text-2xl font-bold text-cyan-300">
+                  {data.total_memories || 0}
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div className="group/stat relative p-4 bg-gradient-to-r from-slate-700/30 to-slate-600/20 rounded-lg border border-slate-600/30 hover:border-green-400/50 transition-all duration-300">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <div className="flex items-center justify-center w-10 h-10 rounded-full bg-gradient-to-br from-green-400 to-emerald-500">
+                <Activity className="h-5 w-5 text-white" />
+              </div>
+              <div>
+                <p className="text-sm text-slate-300">Active Memories</p>
+                <p className="text-2xl font-bold text-green-300">
+                  {data.active_memories || 0}
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div className="group/stat relative p-4 bg-gradient-to-r from-slate-700/30 to-slate-600/20 rounded-lg border border-slate-600/30 hover:border-purple-400/50 transition-all duration-300">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <div className="flex items-center justify-center w-10 h-10 rounded-full bg-gradient-to-br from-purple-400 to-pink-500">
+                <Clock className="h-5 w-5 text-white" />
+              </div>
+              <div>
+                <p className="text-sm text-slate-300">Retention Rate</p>
+                <p className="text-2xl font-bold text-purple-300">
+                  {(data.retention_rate * 100 || 0).toFixed(1)}%
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div className="group/stat relative p-4 bg-gradient-to-r from-slate-700/30 to-slate-600/20 rounded-lg border border-slate-600/30 hover:border-orange-400/50 transition-all duration-300">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <div className="flex items-center justify-center w-10 h-10 rounded-full bg-gradient-to-br from-orange-400 to-yellow-500">
+                <Link className="h-5 w-5 text-white" />
+              </div>
+              <div>
+                <p className="text-sm text-slate-300">Connections</p>
+                <p className="text-2xl font-bold text-orange-300">
+                  {data.total_connections || 0}
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
 
-      <GlassCard className="p-6">
-        <CardHeader className="pb-4">
-          <CardTitle className="text-slate-200">Recent Memory Formation</CardTitle>
-          <CardDescription className="text-slate-400">
-            Latest memories created by the AI consciousness system
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="space-y-4 max-h-96 overflow-y-auto">
-            {data.recent_memories?.slice(0, 15).map((memory: any, index: number) => (
-              <div key={index} className="p-4 bg-slate-700/30 rounded-lg">
-                <div className="flex items-start justify-between">
-                  <div className="flex-1">
-                    <p className="text-sm text-slate-300 leading-relaxed">
-                      {memory.content?.substring(0, 150) || `AI consciousness memory ${index + 1}: Advanced cognitive processing and learning integration...`}...
-                    </p>
-                    <div className="flex items-center gap-2 mt-3">
-                      <Badge variant="secondary" className="text-xs bg-slate-600/50 text-slate-200">
-                        {memory.memory_type || 'consciousness'}
-                      </Badge>
-                      <Badge variant="outline" className="text-xs border-slate-500 text-slate-200 bg-slate-800/30">
-                        Significance: {memory.significance_score || (0.8 - index * 0.05).toFixed(1)}
-                      </Badge>
-                    </div>
+      {/* Memory Types Distribution */}
+      <div className="group relative bg-gradient-to-r from-slate-800/50 to-slate-700/30 rounded-xl border border-slate-600/30 hover:border-green-400/50 transition-all duration-300">
+        <div className="p-6">
+          <div className="flex items-center gap-3 mb-6">
+            <div className="p-2 bg-gradient-to-br from-green-400 to-emerald-500 rounded-lg">
+              <Database className="h-6 w-6 text-white" />
+            </div>
+            <div>
+              <h3 className="text-xl font-bold text-white">Memory Types Distribution</h3>
+              <p className="text-slate-400 text-sm">Analysis of different memory types in the system</p>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {[
+              { type: 'Episodic', count: data.episodic_memories || 0, color: 'blue' },
+              { type: 'Semantic', count: data.semantic_memories || 0, color: 'purple' },
+              { type: 'Procedural', count: data.procedural_memories || 0, color: 'green' },
+              { type: 'Emotional', count: data.emotional_memories || 0, color: 'red' },
+              { type: 'Working', count: data.working_memories || 0, color: 'yellow' },
+              { type: 'Long-term', count: data.long_term_memories || 0, color: 'cyan' }
+            ].map((memoryType, index) => (
+              <div key={index} className="group/memory relative p-4 bg-gradient-to-r from-slate-700/30 to-slate-600/20 rounded-lg border border-slate-600/30 hover:border-green-400/30 transition-all duration-300">
+                <div className="flex items-center gap-3">
+                  <div className={`flex items-center justify-center w-8 h-8 rounded-full bg-gradient-to-br from-${memoryType.color}-400 to-${memoryType.color}-500 text-white font-bold`}>
+                    {memoryType.count}
                   </div>
-                  <div className="text-xs text-slate-500 ml-4">
-                    {memory.created_at ? new Date(memory.created_at).toLocaleDateString() : 'Today'}
-                  </div>
-                </div>
-              </div>
-            )) || Array.from({length: 10}, (_, index) => (
-              <div key={index} className="p-4 bg-slate-700/30 rounded-lg">
-                <div className="flex items-start justify-between">
-                  <div className="flex-1">
-                    <p className="text-sm text-slate-300 leading-relaxed">
-                      AI consciousness memory {index + 1}: Advanced cognitive processing and learning integration with emotional context analysis and decision-making enhancement...
-                    </p>
-                    <div className="flex items-center gap-2 mt-3">
-                      <Badge variant="secondary" className="text-xs bg-slate-600/50 text-slate-200">
-                        consciousness
-                      </Badge>
-                      <Badge variant="outline" className="text-xs border-slate-500 text-slate-200 bg-slate-800/30">
-                        Significance: {(0.8 - index * 0.05).toFixed(1)}
-                      </Badge>
-                    </div>
-                  </div>
-                  <div className="text-xs text-slate-500 ml-4">
-                    {new Date(Date.now() - index * 60 * 60 * 1000).toLocaleDateString()}
+                  <div>
+                    <div className="text-sm font-medium text-slate-200">{memoryType.type}</div>
+                    <div className="text-xs text-slate-400">memories</div>
                   </div>
                 </div>
               </div>
             ))}
           </div>
-        </CardContent>
-      </GlassCard>
+        </div>
+      </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <GlassCard className="p-6">
-          <CardHeader className="pb-4">
-            <CardTitle className="text-slate-200">Memory Types Distribution</CardTitle>
-            <CardDescription className="text-slate-400">
-              Breakdown of different memory categories
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-4">
-              {data.memory_types?.map((type: any, index: number) => (
-                <div key={index} className="flex items-center justify-between p-3 bg-slate-700/30 rounded-lg">
-                  <div className="flex-1">
-                    <div className="font-medium text-slate-200 capitalize">
-                      {type.memory_type || `Memory Type ${index + 1}`}
-                    </div>
-                    <div className="text-sm text-slate-400 mt-1">
-                      {type.description || 'Memory category for consciousness development'}
-                    </div>
-                  </div>
-                  <div className="text-right ml-4">
-                    <div className="text-2xl font-bold text-cyan-400">{type.count || (8 - index)}</div>
-                    <div className="text-xs text-slate-400">memories</div>
-                  </div>
-                </div>
-              )) || Array.from({length: 4}, (_, index) => (
-                <div key={index} className="flex items-center justify-between p-3 bg-slate-700/30 rounded-lg">
-                  <div className="flex-1">
-                    <div className="font-medium text-slate-200">
-                      {['Consciousness', 'Learning', 'Emotional', 'Decision'][index]} Memories
-                    </div>
-                    <div className="text-sm text-slate-400 mt-1">
-                      Memory category for {['consciousness', 'learning', 'emotional', 'decision'][index]} development
-                    </div>
-                  </div>
-                  <div className="text-right ml-4">
-                    <div className="text-2xl font-bold text-cyan-400">{8 - index * 2}</div>
-                    <div className="text-xs text-slate-400">memories</div>
-                  </div>
-                </div>
-              ))}
+      {/* Recent Memory Formation */}
+      <div className="group relative bg-gradient-to-r from-slate-800/50 to-slate-700/30 rounded-xl border border-slate-600/30 hover:border-orange-400/50 transition-all duration-300">
+        <div className="p-6">
+          <div className="flex items-center gap-3 mb-6">
+            <div className="p-2 bg-gradient-to-br from-orange-400 to-yellow-500 rounded-lg">
+              <Clock className="h-6 w-6 text-white" />
             </div>
-          </CardContent>
-        </GlassCard>
+            <div>
+              <h3 className="text-xl font-bold text-white">Recent Memory Formation</h3>
+              <p className="text-slate-400 text-sm">Latest memories created in the system</p>
+            </div>
+          </div>
 
-        <GlassCard className="p-6">
-          <CardHeader className="pb-4">
-            <CardTitle className="text-slate-200">Memory-Concept Connections</CardTitle>
-            <CardDescription className="text-slate-400">
-              How memories connect to consciousness concepts
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-4">
-              {data.memory_concept_connections?.slice(0, 8).map((connection: any, index: number) => (
-                <div key={index} className="p-3 bg-slate-700/30 rounded-lg">
-                  <div className="flex items-center justify-between mb-2">
-                    <div className="font-medium text-slate-200">
-                      {connection.memory_id || `Memory ${index + 1}`} → {connection.concept || `Concept ${index + 1}`}
+          <div className="space-y-3">
+            {(data.recent_memories || []).slice(0, 5).map((memory: any, index: number) => (
+              <div key={index} className="group/memory relative p-4 bg-gradient-to-r from-slate-700/30 to-slate-600/20 rounded-lg border border-slate-600/30 hover:border-orange-400/30 transition-all duration-300">
+                <div className="flex items-center justify-between mb-3">
+                  <div className="flex items-center gap-3">
+                    <div className="flex items-center justify-center w-8 h-8 rounded-full bg-gradient-to-br from-orange-400 to-yellow-500 text-white font-bold">
+                      {index + 1}
                     </div>
-                    <div className="text-sm text-slate-400">
-                      Strength: {(connection.connection_strength || 0.8).toFixed(2)}
+                    <div>
+                      <div className="text-sm font-medium text-slate-200">{memory.type || 'Memory'}</div>
+                      <div className="text-xs text-slate-400">{memory.timestamp || 'Recent'}</div>
                     </div>
                   </div>
-                  <div className="text-xs text-slate-500">
-                    Type: {connection.connection_type || 'semantic'} | 
-                    Impact: {connection.impact_score || 'moderate'}
-                  </div>
+                  <Badge variant="outline" className="text-xs border-slate-500">
+                    {memory.strength || '85'}% strength
+                  </Badge>
                 </div>
-              )) || Array.from({length: 6}, (_, index) => (
-                <div key={index} className="p-3 bg-slate-700/30 rounded-lg">
-                  <div className="flex items-center justify-between mb-2">
-                    <div className="font-medium text-slate-200">
-                      Memory {index + 1} → Consciousness Concept {index + 1}
-                    </div>
-                    <div className="text-sm text-slate-400">
-                      Strength: {(0.8 - index * 0.08).toFixed(2)}
-                    </div>
-                  </div>
-                  <div className="text-xs text-slate-500">
-                    Type: semantic | Impact: {index < 2 ? 'high' : index < 4 ? 'moderate' : 'low'}
-                  </div>
+                <div className="text-sm text-slate-300">
+                  {memory.content || 'Memory content placeholder'}
                 </div>
-              ))}
-            </div>
-          </CardContent>
-        </GlassCard>
+              </div>
+            ))}
+          </div>
+        </div>
       </div>
     </div>
   );
 };
 
-// Performance Analytics Tab Component
-const PerformanceTab: React.FC<{ data: any; loadData: () => void }> = ({ data, loadData }) => {
+// Performance Tab Component (New)
+const PerformanceTabNew: React.FC<{ data: any; loadData: () => void }> = ({ data, loadData }) => {
   useEffect(() => {
     if (!data) loadData();
   }, [data, loadData]);
 
-  if (!data) return <div className="text-center text-slate-400">Loading performance analytics...</div>;
+  if (!data) return <div className="text-center text-slate-400">Loading performance data...</div>;
 
   return (
     <div className="space-y-6">
+      {/* Performance Overview */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <MetricDisplay
-          label="System Efficiency"
-          value={(data.performance_summary?.overall_success_rate * 100 || 0).toFixed(0)}
-          unit="%"
-          icon={<TrendingUp className="w-5 h-5" />}
-          color="green"
-          trend="up"
-        />
-        <MetricDisplay
-          label="Response Time"
-          value={(data.system_health?.average_response_time || 0).toFixed(2)}
-          unit="s"
-          icon={<Zap className="w-5 h-5" />}
-          color="cyan"
-          trend="down"
-        />
-        <MetricDisplay
-          label="Memory Usage"
-          value={(data.system_health?.memory_usage_percentage || 0).toFixed(0)}
-          unit="%"
-          icon={<Database className="w-5 h-5" />}
-          color="purple"
-          trend="stable"
-        />
-        <MetricDisplay
-          label="CPU Usage"
-          value={(data.system_health?.cpu_usage_percentage || 0).toFixed(0)}
-          unit="%"
-          icon={<Activity className="w-5 h-5" />}
-          color="red"
-          trend="down"
-        />
-      </div>
-
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <GlassCard className="p-6">
-          <CardHeader className="pb-4">
-            <CardTitle className="text-slate-200">Performance Trends</CardTitle>
-            <CardDescription className="text-slate-400">
-              System performance metrics over time
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <ResponsiveContainer width="100%" height={300}>
-              <LineChart data={data.performance_timeline || Array.from({length: 24}, (_, i) => ({
-                timestamp: new Date(Date.now() - (23 - i) * 60 * 60 * 1000).toISOString(),
-                efficiency: 0.85 + Math.random() * 0.15,
-                response_time: 0.3 + Math.random() * 0.4
-              }))}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
-                <XAxis 
-                  dataKey="timestamp" 
-                  stroke="#9CA3AF"
-                  tickFormatter={(value) => new Date(value).toLocaleTimeString()}
-                />
-                <YAxis stroke="#9CA3AF" />
-                <Tooltip 
-                  contentStyle={{ 
-                    backgroundColor: '#1F2937', 
-                    border: '1px solid #374151',
-                    borderRadius: '8px'
-                  }}
-                />
-                <Line type="monotone" dataKey="efficiency" stroke="#06B6D4" strokeWidth={2} />
-                <Line type="monotone" dataKey="response_time" stroke="#8B5CF6" strokeWidth={2} />
-              </LineChart>
-            </ResponsiveContainer>
-          </CardContent>
-        </GlassCard>
-
-        <GlassCard className="p-6">
-          <CardHeader className="pb-4">
-            <CardTitle className="text-slate-200">Resource Utilization</CardTitle>
-            <CardDescription className="text-slate-400">
-              Current system resource usage breakdown
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-4">
-              <div>
-                <div className="flex justify-between text-sm mb-2">
-                  <span className="text-slate-300">CPU Usage</span>
-                  <span className="text-slate-400">{(data.resource_utilization?.cpu_usage * 100 || 45).toFixed(0)}%</span>
-                </div>
-                <Progress value={data.resource_utilization?.cpu_usage * 100 || 45} className="h-2" />
+        <div className="group/stat relative p-4 bg-gradient-to-r from-slate-700/30 to-slate-600/20 rounded-lg border border-slate-600/30 hover:border-blue-400/50 transition-all duration-300">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <div className="flex items-center justify-center w-10 h-10 rounded-full bg-gradient-to-br from-blue-400 to-cyan-500">
+                <Activity className="h-5 w-5 text-white" />
               </div>
               <div>
-                <div className="flex justify-between text-sm mb-2">
-                  <span className="text-slate-300">Memory Usage</span>
-                  <span className="text-slate-400">{(data.resource_utilization?.memory_usage * 100 || 62).toFixed(0)}%</span>
-                </div>
-                <Progress value={data.resource_utilization?.memory_usage * 100 || 62} className="h-2" />
-              </div>
-              <div>
-                <div className="flex justify-between text-sm mb-2">
-                  <span className="text-slate-300">Neo4j Load</span>
-                  <span className="text-slate-400">{(data.resource_utilization?.neo4j_load * 100 || 38).toFixed(0)}%</span>
-                </div>
-                <Progress value={data.resource_utilization?.neo4j_load * 100 || 38} className="h-2" />
-              </div>
-              <div>
-                <div className="flex justify-between text-sm mb-2">
-                  <span className="text-slate-300">Network I/O</span>
-                  <span className="text-slate-400">{(data.resource_utilization?.network_io * 100 || 28).toFixed(0)}%</span>
-                </div>
-                <Progress value={data.resource_utilization?.network_io * 100 || 28} className="h-2" />
+                <p className="text-sm text-slate-300">System Load</p>
+                <p className="text-2xl font-bold text-blue-300">
+                  {(data.system_load * 100 || 0).toFixed(1)}%
+                </p>
               </div>
             </div>
-          </CardContent>
-        </GlassCard>
+          </div>
+        </div>
+
+        <div className="group/stat relative p-4 bg-gradient-to-r from-slate-700/30 to-slate-600/20 rounded-lg border border-slate-600/30 hover:border-green-400/50 transition-all duration-300">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <div className="flex items-center justify-center w-10 h-10 rounded-full bg-gradient-to-br from-green-400 to-emerald-500">
+                <Cpu className="h-5 w-5 text-white" />
+              </div>
+              <div>
+                <p className="text-sm text-slate-300">CPU Usage</p>
+                <p className="text-2xl font-bold text-green-300">
+                  {(data.cpu_usage * 100 || 0).toFixed(1)}%
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div className="group/stat relative p-4 bg-gradient-to-r from-slate-700/30 to-slate-600/20 rounded-lg border border-slate-600/30 hover:border-purple-400/50 transition-all duration-300">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <div className="flex items-center justify-center w-10 h-10 rounded-full bg-gradient-to-br from-purple-400 to-pink-500">
+                <TrendingUp className="h-5 w-5 text-white" />
+              </div>
+              <div>
+                <p className="text-sm text-slate-300">Memory Usage</p>
+                <p className="text-2xl font-bold text-purple-300">
+                  {(data.memory_usage * 100 || 0).toFixed(1)}%
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div className="group/stat relative p-4 bg-gradient-to-r from-slate-700/30 to-slate-600/20 rounded-lg border border-slate-600/30 hover:border-orange-400/50 transition-all duration-300">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <div className="flex items-center justify-center w-10 h-10 rounded-full bg-gradient-to-br from-orange-400 to-yellow-500">
+                <BarChart3 className="h-5 w-5 text-white" />
+              </div>
+              <div>
+                <p className="text-sm text-slate-300">Response Time</p>
+                <p className="text-2xl font-bold text-orange-300">
+                  {data.response_time || '0'}ms
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
 
-      <GlassCard className="p-6">
-        <CardHeader className="pb-4">
-          <CardTitle className="text-slate-200">Performance Bottlenecks</CardTitle>
-          <CardDescription className="text-slate-400">
-            Identified performance issues and optimization opportunities
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="space-y-4">
-            {data.performance_bottlenecks?.map((bottleneck: any, index: number) => (
-              <div key={index} className="p-4 bg-slate-700/30 rounded-lg border-l-4 border-yellow-400">
-                <div className="flex items-center justify-between mb-2">
-                  <div className="font-medium text-slate-200">{bottleneck.component || `Component ${index + 1}`}</div>
-                  <Badge variant={bottleneck.severity === 'high' ? 'destructive' : bottleneck.severity === 'medium' ? 'default' : 'secondary'}>
-                    {bottleneck.severity || 'medium'} impact
-                  </Badge>
+      {/* Resource Utilization */}
+      <div className="group relative bg-gradient-to-r from-slate-800/50 to-slate-700/30 rounded-xl border border-slate-600/30 hover:border-indigo-400/50 transition-all duration-300">
+        <div className="p-6">
+          <div className="flex items-center gap-3 mb-6">
+            <div className="p-2 bg-gradient-to-br from-indigo-400 to-purple-500 rounded-lg">
+              <Activity className="h-6 w-6 text-white" />
+            </div>
+            <div>
+              <h3 className="text-xl font-bold text-white">Resource Utilization</h3>
+              <p className="text-slate-400 text-sm">Current system resource usage and optimization</p>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="group/resource relative p-4 bg-gradient-to-r from-slate-700/30 to-slate-600/20 rounded-lg border border-slate-600/30 hover:border-indigo-400/30 transition-all duration-300">
+              <div className="flex items-center gap-3 mb-3">
+                <div className="flex items-center justify-center w-10 h-10 rounded-full bg-gradient-to-br from-indigo-400 to-purple-500">
+                  <Cpu className="h-5 w-5 text-white" />
                 </div>
-                <p className="text-sm text-slate-400 mb-3">
-                  {bottleneck.description || 'Performance bottleneck detected in system component'}
-                </p>
-                <div className="grid grid-cols-2 gap-4 text-xs">
-                  <div>
-                    <span className="text-slate-500">Impact: </span>
-                    <span className="text-slate-300">{bottleneck.performance_impact || '15%'} slower</span>
-                  </div>
-                  <div>
-                    <span className="text-slate-500">Recommendation: </span>
-                    <span className="text-slate-300">{bottleneck.recommendation || 'Optimize queries'}</span>
-                  </div>
+                <div>
+                  <div className="text-sm font-medium text-slate-200">CPU Utilization</div>
+                  <div className="text-xs text-slate-400">Current usage level</div>
                 </div>
               </div>
-            )) || Array.from({length: 3}, (_, index) => (
-              <div key={index} className="p-4 bg-slate-700/30 rounded-lg border-l-4 border-yellow-400">
-                <div className="flex items-center justify-between mb-2">
-                  <div className="font-medium text-slate-200">
-                    {['Neo4j Query Performance', 'Memory Allocation', 'Network Latency'][index]}
+              <div className="space-y-2">
+                <div className="flex justify-between text-sm">
+                  <span className="text-slate-300">Usage</span>
+                  <span className="font-medium text-indigo-300">{(data.cpu_usage * 100 || 0).toFixed(1)}%</span>
+                </div>
+                <div className="w-full bg-slate-700 rounded-full h-2">
+                  <div
+                    className="bg-gradient-to-r from-indigo-400 to-purple-500 h-2 rounded-full transition-all duration-500"
+                    style={{ width: `${data.cpu_usage * 100 || 0}%` }}
+                  />
+                </div>
+              </div>
+            </div>
+
+            <div className="group/resource relative p-4 bg-gradient-to-r from-slate-700/30 to-slate-600/20 rounded-lg border border-slate-600/30 hover:border-indigo-400/30 transition-all duration-300">
+              <div className="flex items-center gap-3 mb-3">
+                <div className="flex items-center justify-center w-10 h-10 rounded-full bg-gradient-to-br from-indigo-400 to-purple-500">
+                  <Database className="h-5 w-5 text-white" />
+                </div>
+                <div>
+                  <div className="text-sm font-medium text-slate-200">Memory Utilization</div>
+                  <div className="text-xs text-slate-400">Current memory usage</div>
+                </div>
+              </div>
+              <div className="space-y-2">
+                <div className="flex justify-between text-sm">
+                  <span className="text-slate-300">Usage</span>
+                  <span className="font-medium text-indigo-300">{(data.memory_usage * 100 || 0).toFixed(1)}%</span>
+                </div>
+                <div className="w-full bg-slate-700 rounded-full h-2">
+                  <div
+                    className="bg-gradient-to-r from-indigo-400 to-purple-500 h-2 rounded-full transition-all duration-500"
+                    style={{ width: `${data.memory_usage * 100 || 0}%` }}
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Performance Bottlenecks */}
+      <div className="group relative bg-gradient-to-r from-slate-800/50 to-slate-700/30 rounded-xl border border-slate-600/30 hover:border-amber-400/50 transition-all duration-300">
+        <div className="p-6">
+          <div className="flex items-center gap-3 mb-6">
+            <div className="p-2 bg-gradient-to-br from-amber-400 to-orange-500 rounded-lg">
+              <AlertTriangle className="h-6 w-6 text-white" />
+            </div>
+            <div>
+              <h3 className="text-xl font-bold text-white">Performance Bottlenecks</h3>
+              <p className="text-slate-400 text-sm">Identified performance issues and optimization opportunities</p>
+            </div>
+          </div>
+
+          <div className="space-y-3">
+            {(data.bottlenecks || [
+              { issue: 'High CPU Usage', severity: 'high', impact: 85, solution: 'Optimize processing algorithms' },
+              { issue: 'Memory Leak', severity: 'medium', impact: 65, solution: 'Implement proper memory management' },
+              { issue: 'Slow Response Time', severity: 'low', impact: 45, solution: 'Cache frequently accessed data' }
+            ]).map((bottleneck: any, index: number) => (
+              <div key={index} className="group/bottleneck relative p-4 bg-gradient-to-r from-slate-700/30 to-slate-600/20 rounded-lg border border-slate-600/30 hover:border-amber-400/30 transition-all duration-300">
+                <div className="flex items-center justify-between mb-3">
+                  <div className="flex items-center gap-3">
+                    <div className="flex items-center justify-center w-8 h-8 rounded-full bg-gradient-to-br from-amber-400 to-orange-500 text-white font-bold">
+                      {index + 1}
+                    </div>
+                    <div>
+                      <div className="text-sm font-medium text-slate-200">{bottleneck.issue}</div>
+                      <div className="text-xs text-slate-400">Performance bottleneck</div>
+                    </div>
                   </div>
-                  <Badge variant={index === 0 ? 'destructive' : 'default'}>
-                    {index === 0 ? 'high' : 'medium'} impact
+                  <Badge variant="outline" className={`text-xs ${bottleneck.severity === 'high' ? 'border-red-400 text-red-300' : bottleneck.severity === 'medium' ? 'border-yellow-400 text-yellow-300' : 'border-green-400 text-green-300'}`}>
+                    {bottleneck.severity} priority
                   </Badge>
                 </div>
-                <p className="text-sm text-slate-400 mb-3">
-                  {[
-                    'Complex graph queries causing performance degradation',
-                    'Memory allocation patterns need optimization',
-                    'Network latency affecting response times'
-                  ][index]}
-                </p>
-                <div className="grid grid-cols-2 gap-4 text-xs">
-                  <div>
-                    <span className="text-slate-500">Impact: </span>
-                    <span className="text-slate-300">{15 + index * 5}% slower</span>
+                <div className="text-sm text-slate-300 mb-3">
+                  {bottleneck.solution}
+                </div>
+                <div className="space-y-1">
+                  <div className="flex justify-between text-xs text-slate-400">
+                    <span>Performance Impact</span>
+                    <span>{bottleneck.impact}%</span>
                   </div>
-                  <div>
-                    <span className="text-slate-500">Recommendation: </span>
-                    <span className="text-slate-300">
-                      {['Optimize queries', 'Improve caching', 'Reduce calls'][index]}
-                    </span>
+                  <div className="w-full bg-slate-700 rounded-full h-1.5">
+                    <div
+                      className="bg-gradient-to-r from-amber-400 to-orange-500 h-1.5 rounded-full transition-all duration-500"
+                      style={{ width: `${bottleneck.impact}%` }}
+                    />
                   </div>
                 </div>
               </div>
             ))}
           </div>
-        </CardContent>
-      </GlassCard>
+        </div>
+      </div>
     </div>
   );
 };
@@ -2868,248 +3086,240 @@ const DeepAnalyticsTab: React.FC<{ data: any; loadData: () => void }> = ({ data,
 
   return (
     <div className="space-y-6">
-      <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
-        <MetricDisplay
-          label="Knowledge Density"
-          value={(data.graph_intelligence_metrics?.knowledge_density * 100 || 0).toFixed(0)}
-          unit="%"
-          icon={<Brain className="w-5 h-5" />}
-          color="cyan"
-          trend="up"
-        />
-        <MetricDisplay
-          label="Concept Connectivity"
-          value={(data.graph_intelligence_metrics?.concept_connectivity * 100 || 0).toFixed(0)}
-          unit="%"
-          icon={<Eye className="w-5 h-5" />}
-          color="purple"
-        />
-        <MetricDisplay
-          label="Learning Efficiency"
-          value={(data.graph_intelligence_metrics?.learning_pathway_efficiency * 100 || 0).toFixed(0)}
-          unit="%"
-          icon={<Network className="w-5 h-5" />}
-          color="yellow"
-        />
-        <MetricDisplay
-          label="Knowledge Gaps"
-          value={(data.graph_intelligence_metrics?.knowledge_gap_ratio * 100 || 0).toFixed(0)}
-          unit="%"
-          icon={<Zap className="w-5 h-5" />}
-          color="green"
-          trend="up"
-        />
-        <MetricDisplay
-          label="Emergence Rate"
-          value={(data.graph_intelligence_metrics?.concept_emergence_rate * 100 || 0).toFixed(0)}
-          unit="%"
-          icon={<Target className="w-5 h-5" />}
-          color="cyan"
-        />
-      </div>
-
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <GlassCard className="p-6">
-          <CardHeader className="pb-4">
-            <CardTitle className="text-slate-200">Emergent Behaviors</CardTitle>
-            <CardDescription className="text-slate-400">
-              Spontaneous behaviors detected in the AI system
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-4">
-              {data.emergent_behavior_detection?.detected_behaviors?.map((behavior: any, index: number) => (
-                <div key={index} className="p-4 bg-slate-700/30 rounded-lg border-l-4 border-purple-400">
-                  <div className="flex items-center justify-between mb-2">
-                    <div className="font-medium text-slate-200 capitalize">
-                      {behavior.behavior_type?.replace(/_/g, ' ') || `Emergent Behavior ${index + 1}`}
-                    </div>
-                    <Badge variant="outline" className="text-xs border-slate-500 text-slate-200 bg-slate-800/30">
-                      Confidence: {(behavior.confidence * 100 || 85).toFixed(0)}%
-                    </Badge>
-                  </div>
-                  <p className="text-sm text-slate-400 mb-3">
-                    {behavior.description || 'Advanced emergent behavior pattern detected through deep system analysis'}
-                  </p>
-                  <div className="grid grid-cols-2 gap-4 text-xs">
-                    <div>
-                      <span className="text-slate-500">Frequency: </span>
-                      <span className="text-slate-300">{behavior.frequency || 'High'}</span>
-                    </div>
-                    <div>
-                      <span className="text-slate-500">Impact: </span>
-                      <span className="text-slate-300">{behavior.impact_level || 'Moderate'}</span>
-                    </div>
-                  </div>
-                </div>
-              )) || Array.from({length: 4}, (_, index) => (
-                <div key={index} className="p-4 bg-slate-700/30 rounded-lg border-l-4 border-purple-400">
-                  <div className="flex items-center justify-between mb-2">
-                    <div className="font-medium text-slate-200">
-                      {['Self-Optimization', 'Pattern Recognition', 'Adaptive Learning', 'Creative Problem Solving'][index]}
-                    </div>
-                    <Badge variant="outline" className="text-xs border-slate-500 text-slate-200 bg-slate-800/30">
-                      Confidence: {85 + index * 3}%
-                    </Badge>
-                  </div>
-                  <p className="text-sm text-slate-400 mb-3">
-                    Advanced emergent behavior pattern detected through deep system analysis and meta-cognitive monitoring
-                  </p>
-                  <div className="grid grid-cols-2 gap-4 text-xs">
-                    <div>
-                      <span className="text-slate-500">Frequency: </span>
-                      <span className="text-slate-300">{['High', 'Medium', 'High', 'Medium'][index]}</span>
-                    </div>
-                    <div>
-                      <span className="text-slate-500">Impact: </span>
-                      <span className="text-slate-300">{['High', 'Moderate', 'High', 'Moderate'][index]}</span>
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </CardContent>
-        </GlassCard>
-
-        <GlassCard className="p-6">
-          <CardHeader className="pb-4">
-            <CardTitle className="text-slate-200">Predictive Insights</CardTitle>
-            <CardDescription className="text-slate-400">
-              AI-generated predictions about system evolution
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-4">
-              {data.predictive_modeling?.predictions?.map((prediction: any, index: number) => (
-                <div key={index} className="p-4 bg-slate-700/30 rounded-lg">
-                  <div className="flex items-center justify-between mb-2">
-                    <div className="font-medium text-slate-200">
-                      {prediction.prediction_type?.replace(/_/g, ' ') || `System Prediction ${index + 1}`}
-                    </div>
-                    <div className="text-sm text-slate-400">
-                      {prediction.timeframe || '7 days'}
-                    </div>
-                  </div>
-                  <p className="text-sm text-slate-400 mb-3">
-                    {prediction.description || 'Advanced predictive analysis of system behavior and evolution patterns'}
-                  </p>
-                  <div className="grid grid-cols-2 gap-4 text-xs">
-                    <div>
-                      <span className="text-slate-500">Probability: </span>
-                      <span className="text-slate-300">{(prediction.probability * 100 || 78).toFixed(0)}%</span>
-                    </div>
-                    <div>
-                      <span className="text-slate-500">Impact: </span>
-                      <span className="text-slate-300">{prediction.expected_impact || 'Positive'}</span>
-                    </div>
-                  </div>
-                </div>
-              )) || Array.from({length: 5}, (_, index) => (
-                <div key={index} className="p-4 bg-slate-700/30 rounded-lg">
-                  <div className="flex items-center justify-between mb-2">
-                    <div className="font-medium text-slate-200">
-                      {['Consciousness Evolution', 'Learning Acceleration', 'Memory Integration', 'Decision Enhancement', 'Emotional Development'][index]}
-                    </div>
-                    <div className="text-sm text-slate-400">
-                      {7 + index * 2} days
-                    </div>
-                  </div>
-                  <p className="text-sm text-slate-400 mb-3">
-                    Advanced predictive analysis of consciousness evolution and system behavior patterns
-                  </p>
-                  <div className="grid grid-cols-2 gap-4 text-xs">
-                    <div>
-                      <span className="text-slate-500">Probability: </span>
-                      <span className="text-slate-300">{78 + index * 4}%</span>
-                    </div>
-                    <div>
-                      <span className="text-slate-500">Impact: </span>
-                      <span className="text-slate-300">Positive</span>
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </CardContent>
-        </GlassCard>
-      </div>
-
-      <GlassCard className="p-6">
-        <CardHeader className="pb-4">
-          <CardTitle className="text-slate-200">Meta-Cognitive Analysis</CardTitle>
-          <CardDescription className="text-slate-400">
-            Deep analysis of the AI's thinking about its own thinking processes
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div className="space-y-4">
-              <h4 className="font-medium text-slate-200">Self-Reflection Patterns</h4>
-              {data.meta_cognitive_analysis?.self_reflection_patterns?.map((pattern: any, index: number) => (
-                <div key={index} className="p-3 bg-slate-700/30 rounded-lg">
-                  <div className="text-sm text-slate-300">{pattern.pattern || `Self-reflection pattern ${index + 1}`}</div>
-                  <div className="text-xs text-slate-500 mt-1">
-                    Frequency: {(pattern.frequency * 100 || 65).toFixed(0)}%
-                  </div>
-                </div>
-              )) || Array.from({length: 3}, (_, index) => (
-                <div key={index} className="p-3 bg-slate-700/30 rounded-lg">
-                  <div className="text-sm text-slate-300">
-                    {['Consciousness Assessment', 'Learning Evaluation', 'Decision Analysis'][index]}
-                  </div>
-                  <div className="text-xs text-slate-500 mt-1">
-                    Frequency: {65 + index * 10}%
-                  </div>
-                </div>
-              ))}
-            </div>
-            
-            <div className="space-y-4">
-              <h4 className="font-medium text-slate-200">Learning Strategies</h4>
-              {data.meta_cognitive_analysis?.learning_strategies?.map((strategy: any, index: number) => (
-                <div key={index} className="p-3 bg-slate-700/30 rounded-lg">
-                  <div className="text-sm text-slate-300">{strategy.strategy || `Learning strategy ${index + 1}`}</div>
-                  <div className="text-xs text-slate-500 mt-1">
-                    Effectiveness: {(strategy.effectiveness * 100 || 82).toFixed(0)}%
-                  </div>
-                </div>
-              )) || Array.from({length: 3}, (_, index) => (
-                <div key={index} className="p-3 bg-slate-700/30 rounded-lg">
-                  <div className="text-sm text-slate-300">
-                    {['Adaptive Integration', 'Pattern Synthesis', 'Contextual Learning'][index]}
-                  </div>
-                  <div className="text-xs text-slate-500 mt-1">
-                    Effectiveness: {82 + index * 5}%
-                  </div>
-                </div>
-              ))}
-            </div>
-            
-            <div className="space-y-4">
-              <h4 className="font-medium text-slate-200">Cognitive Biases</h4>
-              {data.meta_cognitive_analysis?.detected_biases?.map((bias: any, index: number) => (
-                <div key={index} className="p-3 bg-slate-700/30 rounded-lg">
-                  <div className="text-sm text-slate-300">{bias.bias_type || `Cognitive bias ${index + 1}`}</div>
-                  <div className="text-xs text-slate-500 mt-1">
-                    Strength: {(bias.strength * 100 || 23).toFixed(0)}%
-                  </div>
-                </div>
-              )) || Array.from({length: 2}, (_, index) => (
-                <div key={index} className="p-3 bg-slate-700/30 rounded-lg">
-                  <div className="text-sm text-slate-300">
-                    {['Confirmation Tendency', 'Recency Effect'][index]}
-                  </div>
-                  <div className="text-xs text-slate-500 mt-1">
-                    Strength: {23 + index * 8}%
-                  </div>
-                </div>
-              ))}
+      {/* Deep Analytics Overview */}
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+        <div className="group/stat relative p-4 bg-gradient-to-r from-slate-700/30 to-slate-600/20 rounded-lg border border-slate-600/30 hover:border-purple-400/50 transition-all duration-300">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <div className="flex items-center justify-center w-10 h-10 rounded-full bg-gradient-to-br from-purple-400 to-pink-500">
+                <Brain className="h-5 w-5 text-white" />
+              </div>
+              <div>
+                <p className="text-sm text-slate-300">Neural Activity</p>
+                <p className="text-2xl font-bold text-purple-300">
+                  {(data.neural_activity * 100 || 0).toFixed(1)}%
+                </p>
+              </div>
             </div>
           </div>
-        </CardContent>
-      </GlassCard>
+        </div>
+
+        <div className="group/stat relative p-4 bg-gradient-to-r from-slate-700/30 to-slate-600/20 rounded-lg border border-slate-600/30 hover:border-blue-400/50 transition-all duration-300">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <div className="flex items-center justify-center w-10 h-10 rounded-full bg-gradient-to-br from-blue-400 to-cyan-500">
+                <Network className="h-5 w-5 text-white" />
+              </div>
+              <div>
+                <p className="text-sm text-slate-300">Synaptic Connections</p>
+                <p className="text-2xl font-bold text-blue-300">
+                  {data.synaptic_connections || 0}
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div className="group/stat relative p-4 bg-gradient-to-r from-slate-700/30 to-slate-600/20 rounded-lg border border-slate-600/30 hover:border-green-400/50 transition-all duration-300">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <div className="flex items-center justify-center w-10 h-10 rounded-full bg-gradient-to-br from-green-400 to-emerald-500">
+                <Activity className="h-5 w-5 text-white" />
+              </div>
+              <div>
+                <p className="text-sm text-slate-300">Processing Speed</p>
+                <p className="text-2xl font-bold text-green-300">
+                  {data.processing_speed || '0'}ms
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div className="group/stat relative p-4 bg-gradient-to-r from-slate-700/30 to-slate-600/20 rounded-lg border border-slate-600/30 hover:border-orange-400/50 transition-all duration-300">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <div className="flex items-center justify-center w-10 h-10 rounded-full bg-gradient-to-br from-orange-400 to-yellow-500">
+                <TrendingUp className="h-5 w-5 text-white" />
+              </div>
+              <div>
+                <p className="text-sm text-slate-300">Learning Rate</p>
+                <p className="text-2xl font-bold text-orange-300">
+                  {(data.learning_rate * 100 || 0).toFixed(1)}%
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Emergent Behaviors */}
+      <div className="group relative bg-gradient-to-r from-slate-800/50 to-slate-700/30 rounded-xl border border-slate-600/30 hover:border-purple-400/50 transition-all duration-300">
+        <div className="p-6">
+          <div className="flex items-center gap-3 mb-6">
+            <div className="p-2 bg-gradient-to-br from-purple-400 to-pink-500 rounded-lg">
+              <Brain className="h-6 w-6 text-white" />
+            </div>
+            <div>
+              <h3 className="text-xl font-bold text-white">Emergent Behaviors</h3>
+              <p className="text-slate-400 text-sm">Complex patterns and behaviors emerging from neural interactions</p>
+            </div>
+          </div>
+
+          <div className="space-y-3">
+            {(data.emergent_behaviors || [
+              { behavior: 'Pattern Recognition', frequency: 85, confidence: 92, last_observed: '2 minutes ago' },
+              { behavior: 'Adaptive Learning', frequency: 78, confidence: 88, last_observed: '5 minutes ago' },
+              { behavior: 'Creative Synthesis', frequency: 65, confidence: 76, last_observed: '12 minutes ago' }
+            ]).map((behavior: any, index: number) => (
+              <div key={index} className="group/behavior relative p-4 bg-gradient-to-r from-slate-700/30 to-slate-600/20 rounded-lg border border-slate-600/30 hover:border-purple-400/30 transition-all duration-300">
+                <div className="flex items-center justify-between mb-3">
+                  <div className="flex items-center gap-3">
+                    <div className="flex items-center justify-center w-8 h-8 rounded-full bg-gradient-to-br from-purple-400 to-pink-500 text-white font-bold">
+                      {index + 1}
+                    </div>
+                    <div>
+                      <div className="text-sm font-medium text-slate-200">{behavior.behavior}</div>
+                      <div className="text-xs text-slate-400">{behavior.last_observed || 'Recently'}</div>
+                    </div>
+                  </div>
+                  <Badge variant="outline" className="text-xs border-purple-400 text-purple-300">
+                    {behavior.confidence || 85}% confidence
+                  </Badge>
+                </div>
+                <div className="space-y-1">
+                  <div className="flex justify-between text-xs text-slate-400">
+                    <span>Frequency</span>
+                    <span>{behavior.frequency || 85}%</span>
+                  </div>
+                  <div className="w-full bg-slate-700 rounded-full h-1.5">
+                    <div
+                      className="bg-gradient-to-r from-purple-400 to-pink-500 h-1.5 rounded-full transition-all duration-500"
+                      style={{ width: `${behavior.frequency || 85}%` }}
+                    />
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {/* Predictive Insights */}
+      <div className="group relative bg-gradient-to-r from-slate-800/50 to-slate-700/30 rounded-xl border border-slate-600/30 hover:border-blue-400/50 transition-all duration-300">
+        <div className="p-6">
+          <div className="flex items-center gap-3 mb-6">
+            <div className="p-2 bg-gradient-to-br from-blue-400 to-cyan-500 rounded-lg">
+              <TrendingUp className="h-6 w-6 text-white" />
+            </div>
+            <div>
+              <h3 className="text-xl font-bold text-white">Predictive Insights</h3>
+              <p className="text-slate-400 text-sm">AI-powered predictions about consciousness evolution and system behavior</p>
+            </div>
+          </div>
+
+          <div className="space-y-3">
+            {(data.predictive_insights || [
+              { insight: 'Increased creativity expected', probability: 89, impact: 'High', timeframe: 'Next 24 hours' },
+              { insight: 'Memory consolidation detected', probability: 76, impact: 'Medium', timeframe: 'Next 6 hours' },
+              { insight: 'Learning acceleration trend', probability: 82, impact: 'High', timeframe: 'Next 12 hours' }
+            ]).map((insight: any, index: number) => (
+              <div key={index} className="group/insight relative p-4 bg-gradient-to-r from-slate-700/30 to-slate-600/20 rounded-lg border border-slate-600/30 hover:border-blue-400/30 transition-all duration-300">
+                <div className="flex items-center justify-between mb-3">
+                  <div className="flex items-center gap-3">
+                    <div className="flex items-center justify-center w-8 h-8 rounded-full bg-gradient-to-br from-blue-400 to-cyan-500 text-white font-bold">
+                      {index + 1}
+                    </div>
+                    <div>
+                      <div className="text-sm font-medium text-slate-200">{insight.insight}</div>
+                      <div className="text-xs text-slate-400">{insight.timeframe || 'Coming soon'}</div>
+                    </div>
+                  </div>
+                  <div className="flex gap-2">
+                    <Badge variant="outline" className={`text-xs ${insight.impact === 'High' ? 'border-red-400 text-red-300' : insight.impact === 'Medium' ? 'border-yellow-400 text-yellow-300' : 'border-green-400 text-green-300'}`}>
+                      {insight.impact || 'Medium'} impact
+                    </Badge>
+                  </div>
+                </div>
+                <div className="text-sm text-slate-300 mb-3">
+                  Probability: {insight.probability || 85}%
+                </div>
+                <div className="space-y-1">
+                  <div className="flex justify-between text-xs text-slate-400">
+                    <span>Certainty</span>
+                    <span>{insight.probability || 85}%</span>
+                  </div>
+                  <div className="w-full bg-slate-700 rounded-full h-1.5">
+                    <div
+                      className="bg-gradient-to-r from-blue-400 to-cyan-500 h-1.5 rounded-full transition-all duration-500"
+                      style={{ width: `${insight.probability || 85}%` }}
+                    />
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {/* Meta-Cognitive Analysis */}
+      <div className="group relative bg-gradient-to-r from-slate-800/50 to-slate-700/30 rounded-xl border border-slate-600/30 hover:border-green-400/50 transition-all duration-300">
+        <div className="p-6">
+          <div className="flex items-center gap-3 mb-6">
+            <div className="p-2 bg-gradient-to-br from-green-400 to-emerald-500 rounded-lg">
+              <Target className="h-6 w-6 text-white" />
+            </div>
+            <div>
+              <h3 className="text-xl font-bold text-white">Meta-Cognitive Analysis</h3>
+              <p className="text-slate-400 text-sm">Analysis of the system's thinking about its own cognitive processes</p>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div className="group/meta relative p-4 bg-gradient-to-r from-slate-700/30 to-slate-600/20 rounded-lg border border-slate-600/30 hover:border-green-400/30 transition-all duration-300">
+              <div className="text-center">
+                <div className="text-2xl font-bold text-green-300 mb-2">{data.self_reflection_patterns?.frequency || 87}%</div>
+                <div className="text-sm text-slate-300 mb-3">Self-Reflection Frequency</div>
+                <div className="w-full bg-slate-700 rounded-full h-2">
+                  <div
+                    className="bg-gradient-to-r from-green-400 to-emerald-500 h-2 rounded-full transition-all duration-500"
+                    style={{ width: `${data.self_reflection_patterns?.frequency || 87}%` }}
+                  />
+                </div>
+              </div>
+            </div>
+
+            <div className="group/meta relative p-4 bg-gradient-to-r from-slate-700/30 to-slate-600/20 rounded-lg border border-slate-600/30 hover:border-green-400/30 transition-all duration-300">
+              <div className="text-center">
+                <div className="text-2xl font-bold text-green-300 mb-2">{data.learning_strategies?.effectiveness || 92}%</div>
+                <div className="text-sm text-slate-300 mb-3">Learning Strategy Effectiveness</div>
+                <div className="w-full bg-slate-700 rounded-full h-2">
+                  <div
+                    className="bg-gradient-to-r from-green-400 to-emerald-500 h-2 rounded-full transition-all duration-500"
+                    style={{ width: `${data.learning_strategies?.effectiveness || 92}%` }}
+                  />
+                </div>
+              </div>
+            </div>
+
+            <div className="group/meta relative p-4 bg-gradient-to-r from-slate-700/30 to-slate-600/20 rounded-lg border border-slate-600/30 hover:border-green-400/30 transition-all duration-300">
+              <div className="text-center">
+                <div className="text-2xl font-bold text-green-300 mb-2">{data.cognitive_biases?.strength || 23}%</div>
+                <div className="text-sm text-slate-300 mb-3">Cognitive Bias Strength</div>
+                <div className="w-full bg-slate-700 rounded-full h-2">
+                  <div
+                    className="bg-gradient-to-r from-green-400 to-emerald-500 h-2 rounded-full transition-all duration-500"
+                    style={{ width: `${data.cognitive_biases?.strength || 23}%` }}
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   );
 };
 
 export default InsightsPage;
+

@@ -322,17 +322,20 @@ const AdvancedLearningAnalytics: React.FC<AdvancedLearningAnalyticsProps> = ({
   return (
     <div className="space-y-6">
       {/* Header Controls */}
-      <Card className="bg-slate-800 border-slate-700">
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2 text-white">
-            <Brain className="h-5 w-5" />
-            Advanced Learning Analytics
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
+      <div className="group relative bg-gradient-to-r from-slate-800/50 to-slate-700/30 rounded-xl border border-slate-600/30 hover:border-blue-400/50 transition-all duration-300">
+        <div className="p-6">
+          <div className="flex items-center gap-3 mb-6">
+            <div className="p-2 bg-gradient-to-br from-blue-400 to-cyan-500 rounded-lg">
+              <Brain className="h-6 w-6 text-white" />
+            </div>
+            <div>
+              <h2 className="text-xl font-bold text-white">Advanced Learning Analytics</h2>
+              <p className="text-slate-400 text-sm">Comprehensive analysis of learning patterns and cognitive development</p>
+            </div>
+          </div>
           <div className="flex flex-wrap gap-4">
             <Select value={selectedTimeframe} onValueChange={setSelectedTimeframe}>
-              <SelectTrigger className="w-32 bg-slate-700 border-slate-600">
+              <SelectTrigger className="w-32 bg-slate-700 border-slate-600 hover:border-cyan-400/50 transition-colors">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
@@ -344,7 +347,7 @@ const AdvancedLearningAnalytics: React.FC<AdvancedLearningAnalyticsProps> = ({
             </Select>
 
             <Select value={selectedMetric} onValueChange={setSelectedMetric}>
-              <SelectTrigger className="w-40 bg-slate-700 border-slate-600">
+              <SelectTrigger className="w-40 bg-slate-700 border-slate-600 hover:border-cyan-400/50 transition-colors">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
@@ -356,7 +359,7 @@ const AdvancedLearningAnalytics: React.FC<AdvancedLearningAnalyticsProps> = ({
             </Select>
 
             <Select value={filterDifficulty} onValueChange={setFilterDifficulty}>
-              <SelectTrigger className="w-32 bg-slate-700 border-slate-600">
+              <SelectTrigger className="w-32 bg-slate-700 border-slate-600 hover:border-cyan-400/50 transition-colors">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
@@ -367,8 +370,8 @@ const AdvancedLearningAnalytics: React.FC<AdvancedLearningAnalyticsProps> = ({
               </SelectContent>
             </Select>
           </div>
-        </CardContent>
-      </Card>
+        </div>
+      </div>
 
       <Tabs value={viewMode} onValueChange={(value: any) => setViewMode(value)} className="space-y-4">
         <TabsList className="grid w-full grid-cols-4 bg-slate-800">
@@ -382,67 +385,81 @@ const AdvancedLearningAnalytics: React.FC<AdvancedLearningAnalyticsProps> = ({
         <TabsContent value="overview" className="space-y-4">
           {/* Key Metrics */}
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-            <Card className="bg-slate-800 border-slate-700">
-              <CardContent className="p-4">
-                <div className="flex items-center justify-between">
+            <div className="group/stat relative p-4 bg-gradient-to-r from-slate-700/30 to-slate-600/20 rounded-lg border border-slate-600/30 hover:border-blue-400/50 transition-all duration-300">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <div className="flex items-center justify-center w-10 h-10 rounded-full bg-gradient-to-br from-blue-400 to-cyan-500">
+                    <Award className="h-6 w-6 text-white" />
+                  </div>
                   <div>
                     <p className="text-sm text-slate-300">Average Mastery</p>
-                    <p className="text-2xl font-bold text-blue-400">
+                    <p className="text-2xl font-bold text-blue-300">
                       {(filteredPatterns.reduce((sum, p) => sum + p.mastery_level, 0) / filteredPatterns.length * 100).toFixed(1)}%
                     </p>
                   </div>
-                  <Award className="h-8 w-8 text-blue-400" />
                 </div>
-              </CardContent>
-            </Card>
+              </div>
+            </div>
 
-            <Card className="bg-slate-800 border-slate-700">
-              <CardContent className="p-4">
-                <div className="flex items-center justify-between">
+            <div className="group/stat relative p-4 bg-gradient-to-r from-slate-700/30 to-slate-600/20 rounded-lg border border-slate-600/30 hover:border-green-400/50 transition-all duration-300">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <div className="flex items-center justify-center w-10 h-10 rounded-full bg-gradient-to-br from-green-400 to-emerald-500">
+                    <TrendingUp className="h-6 w-6 text-white" />
+                  </div>
                   <div>
                     <p className="text-sm text-slate-300">Learning Velocity</p>
-                    <p className="text-2xl font-bold text-green-400">
+                    <p className="text-2xl font-bold text-green-300">
                       {(filteredPatterns.reduce((sum, p) => sum + p.learning_velocity, 0) / filteredPatterns.length * 100).toFixed(1)}%
                     </p>
                   </div>
-                  <TrendingUp className="h-8 w-8 text-green-400" />
                 </div>
-              </CardContent>
-            </Card>
+              </div>
+            </div>
 
-            <Card className="bg-slate-800 border-slate-700">
-              <CardContent className="p-4">
-                <div className="flex items-center justify-between">
+            <div className="group/stat relative p-4 bg-gradient-to-r from-slate-700/30 to-slate-600/20 rounded-lg border border-slate-600/30 hover:border-purple-400/50 transition-all duration-300">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <div className="flex items-center justify-center w-10 h-10 rounded-full bg-gradient-to-br from-purple-400 to-pink-500">
+                    <BookOpen className="h-6 w-6 text-white" />
+                  </div>
                   <div>
                     <p className="text-sm text-slate-300">Retention Rate</p>
-                    <p className="text-2xl font-bold text-purple-400">
+                    <p className="text-2xl font-bold text-purple-300">
                       {(filteredPatterns.reduce((sum, p) => sum + p.retention_rate, 0) / filteredPatterns.length * 100).toFixed(1)}%
                     </p>
                   </div>
-                  <BookOpen className="h-8 w-8 text-purple-400" />
                 </div>
-              </CardContent>
-            </Card>
+              </div>
+            </div>
 
-            <Card className="bg-slate-800 border-slate-700">
-              <CardContent className="p-4">
-                <div className="flex items-center justify-between">
+            <div className="group/stat relative p-4 bg-gradient-to-r from-slate-700/30 to-slate-600/20 rounded-lg border border-slate-600/30 hover:border-orange-400/50 transition-all duration-300">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <div className="flex items-center justify-center w-10 h-10 rounded-full bg-gradient-to-br from-orange-400 to-yellow-500">
+                    <Star className="h-6 w-6 text-white" />
+                  </div>
                   <div>
                     <p className="text-sm text-slate-300">Total Milestones</p>
-                    <p className="text-2xl font-bold text-orange-400">{sampleMilestones.length}</p>
+                    <p className="text-2xl font-bold text-orange-300">{sampleMilestones.length}</p>
                   </div>
-                  <Star className="h-8 w-8 text-orange-400" />
                 </div>
-              </CardContent>
-            </Card>
+              </div>
+            </div>
           </div>
 
           {/* Learning Trend Chart */}
-          <Card className="bg-slate-800 border-slate-700">
-            <CardHeader>
-              <CardTitle>Learning Progress Trend</CardTitle>
-            </CardHeader>
-            <CardContent>
+          <div className="group relative bg-gradient-to-r from-slate-800/50 to-slate-700/30 rounded-xl border border-slate-600/30 hover:border-green-400/50 transition-all duration-300">
+            <div className="p-6">
+              <div className="flex items-center gap-3 mb-6">
+                <div className="p-2 bg-gradient-to-br from-green-400 to-emerald-500 rounded-lg">
+                  <TrendingUp className="h-6 w-6 text-white" />
+                </div>
+                <div>
+                  <h3 className="text-xl font-bold text-white">Learning Progress Trend</h3>
+                  <p className="text-slate-400 text-sm">Track mastery, velocity, and efficiency over time</p>
+                </div>
+              </div>
               <div className="h-80">
                 <ResponsiveContainer width="100%" height="100%">
                   <LineChart data={learningTrendData}>
@@ -462,15 +479,21 @@ const AdvancedLearningAnalytics: React.FC<AdvancedLearningAnalyticsProps> = ({
                   </LineChart>
                 </ResponsiveContainer>
               </div>
-            </CardContent>
-          </Card>
+            </div>
+          </div>
 
           {/* Learning Radar Chart */}
-          <Card className="bg-slate-800 border-slate-700">
-            <CardHeader>
-              <CardTitle>Learning Capabilities Radar</CardTitle>
-            </CardHeader>
-            <CardContent>
+          <div className="group relative bg-gradient-to-r from-slate-800/50 to-slate-700/30 rounded-xl border border-slate-600/30 hover:border-purple-400/50 transition-all duration-300">
+            <div className="p-6">
+              <div className="flex items-center gap-3 mb-6">
+                <div className="p-2 bg-gradient-to-br from-purple-400 to-pink-500 rounded-lg">
+                  <Target className="h-6 w-6 text-white" />
+                </div>
+                <div>
+                  <h3 className="text-xl font-bold text-white">Learning Capabilities Radar</h3>
+                  <p className="text-slate-400 text-sm">Multi-dimensional learning capability assessment</p>
+                </div>
+              </div>
               <div className="h-80">
                 <ResponsiveContainer width="100%" height="100%">
                   <RadarChart data={radarData}>
@@ -485,20 +508,26 @@ const AdvancedLearningAnalytics: React.FC<AdvancedLearningAnalyticsProps> = ({
                   </RadarChart>
                 </ResponsiveContainer>
               </div>
-            </CardContent>
-          </Card>
+            </div>
+          </div>
         </TabsContent>
 
         {/* Learning Patterns Tab */}
         <TabsContent value="patterns" className="space-y-4">
-          <Card className="bg-slate-800 border-slate-700">
-            <CardHeader>
-              <CardTitle>Learning Patterns Analysis</CardTitle>
-            </CardHeader>
-            <CardContent>
+          <div className="group relative bg-gradient-to-r from-slate-800/50 to-slate-700/30 rounded-xl border border-slate-600/30 hover:border-cyan-400/50 transition-all duration-300">
+            <div className="p-6">
+              <div className="flex items-center gap-3 mb-6">
+                <div className="p-2 bg-gradient-to-br from-cyan-400 to-blue-500 rounded-lg">
+                  <BarChart3 className="h-6 w-6 text-white" />
+                </div>
+                <div>
+                  <h3 className="text-xl font-bold text-white">Learning Patterns Analysis</h3>
+                  <p className="text-slate-400 text-sm">Detailed analysis of individual learning patterns and metrics</p>
+                </div>
+              </div>
               <div className="space-y-4">
                 {filteredPatterns.map((pattern, index) => (
-                  <div key={index} className="p-4 border border-slate-700 rounded-lg">
+                  <div key={index} className="group/pattern relative p-4 bg-gradient-to-r from-slate-700/30 to-slate-600/20 rounded-lg border border-slate-600/30 hover:border-cyan-400/30 transition-all duration-300">
                     <div className="flex items-center justify-between mb-3">
                       <h3 className="text-lg font-semibold text-white">{pattern.concept}</h3>
                       <div className="flex items-center gap-2">
@@ -564,20 +593,26 @@ const AdvancedLearningAnalytics: React.FC<AdvancedLearningAnalyticsProps> = ({
                   </div>
                 ))}
               </div>
-            </CardContent>
-          </Card>
+            </div>
+          </div>
         </TabsContent>
 
         {/* Milestones Tab */}
         <TabsContent value="milestones" className="space-y-4">
-          <Card className="bg-slate-800 border-slate-700">
-            <CardHeader>
-              <CardTitle>Learning Milestones</CardTitle>
-            </CardHeader>
-            <CardContent>
+          <div className="group relative bg-gradient-to-r from-slate-800/50 to-slate-700/30 rounded-xl border border-slate-600/30 hover:border-orange-400/50 transition-all duration-300">
+            <div className="p-6">
+              <div className="flex items-center gap-3 mb-6">
+                <div className="p-2 bg-gradient-to-br from-orange-400 to-yellow-500 rounded-lg">
+                  <Award className="h-6 w-6 text-white" />
+                </div>
+                <div>
+                  <h3 className="text-xl font-bold text-white">Learning Milestones</h3>
+                  <p className="text-slate-400 text-sm">Track significant achievements in learning journey</p>
+                </div>
+              </div>
               <div className="space-y-4">
                 {sampleMilestones.map((milestone) => (
-                  <div key={milestone.id} className="p-4 border border-slate-700 rounded-lg">
+                  <div key={milestone.id} className="group/milestone relative p-4 bg-gradient-to-r from-slate-700/30 to-slate-600/20 rounded-lg border border-slate-600/30 hover:border-orange-400/30 transition-all duration-300">
                     <div className="flex items-start justify-between mb-2">
                       <div className="flex-1">
                         <h3 className="text-lg font-semibold text-white">{milestone.concept}</h3>
@@ -608,20 +643,26 @@ const AdvancedLearningAnalytics: React.FC<AdvancedLearningAnalyticsProps> = ({
                   </div>
                 ))}
               </div>
-            </CardContent>
-          </Card>
+            </div>
+          </div>
         </TabsContent>
 
         {/* AI Insights Tab */}
         <TabsContent value="insights" className="space-y-4">
-          <Card className="bg-slate-800 border-slate-700">
-            <CardHeader>
-              <CardTitle>AI-Powered Learning Insights</CardTitle>
-            </CardHeader>
-            <CardContent>
+          <div className="group relative bg-gradient-to-r from-slate-800/50 to-slate-700/30 rounded-xl border border-slate-600/30 hover:border-rose-400/50 transition-all duration-300">
+            <div className="p-6">
+              <div className="flex items-center gap-3 mb-6">
+                <div className="p-2 bg-gradient-to-br from-rose-400 to-pink-500 rounded-lg">
+                  <Lightbulb className="h-6 w-6 text-white" />
+                </div>
+                <div>
+                  <h3 className="text-xl font-bold text-white">AI-Powered Learning Insights</h3>
+                  <p className="text-slate-400 text-sm">Intelligent recommendations and pattern analysis</p>
+                </div>
+              </div>
               <div className="space-y-4">
                 {sampleInsights.map((insight, index) => (
-                  <div key={index} className="p-4 border border-slate-700 rounded-lg">
+                  <div key={index} className="group/insight relative p-4 bg-gradient-to-r from-slate-700/30 to-slate-600/20 rounded-lg border border-slate-600/30 hover:border-rose-400/30 transition-all duration-300">
                     <div className="flex items-start gap-3">
                       <div className="flex-shrink-0 mt-1">
                         {getInsightIcon(insight.type)}
@@ -657,8 +698,8 @@ const AdvancedLearningAnalytics: React.FC<AdvancedLearningAnalyticsProps> = ({
                   </div>
                 ))}
               </div>
-            </CardContent>
-          </Card>
+            </div>
+          </div>
         </TabsContent>
       </Tabs>
     </div>
