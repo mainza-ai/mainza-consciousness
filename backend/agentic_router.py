@@ -462,6 +462,40 @@ def extract_response_from_result(result, query: str, consciousness_context: dict
                 obj_dict = result.__dict__
                 logging.debug(f"   Checking object __dict__ with keys: {list(obj_dict.keys())}")
                 
+                # Special handling for Graphmaster Pydantic models
+                if hasattr(result, '__class__') and 'GraphQueryOutput' in str(result.__class__):
+                    # Handle GraphQueryOutput - extract meaningful content from result field
+                    if 'result' in obj_dict:
+                        result_data = obj_dict['result']
+                        if isinstance(result_data, dict):
+                            # Look for meaningful content in the result dict
+                            for key in ['response', 'text', 'description', 'summary', 'content']:
+                                if key in result_data and isinstance(result_data[key], str) and result_data[key].strip():
+                                    logging.debug(f"✅ GraphQueryOutput content extracted from '{key}': {result_data[key][:100]}...")
+                                    return result_data[key].strip()
+                            # If no specific key found, try to format the result nicely
+                            if result_data:
+                                formatted_result = _format_graphmaster_result(result_data)
+                                if formatted_result:
+                                    logging.debug(f"✅ GraphQueryOutput formatted result: {formatted_result[:100]}...")
+                                    return formatted_result
+                        elif isinstance(result_data, str) and result_data.strip():
+                            logging.debug(f"✅ GraphQueryOutput string result: {result_data[:100]}...")
+                            return result_data.strip()
+                
+                elif hasattr(result, '__class__') and 'CreateMemoryOutput' in str(result.__class__):
+                    # Handle CreateMemoryOutput - extract text content
+                    if 'text' in obj_dict and isinstance(obj_dict['text'], str) and obj_dict['text'].strip():
+                        logging.debug(f"✅ CreateMemoryOutput text extracted: {obj_dict['text'][:100]}...")
+                        return obj_dict['text'].strip()
+                
+                elif hasattr(result, '__class__') and 'SummarizeRecentConversationsOutput' in str(result.__class__):
+                    # Handle SummarizeRecentConversationsOutput - extract summary
+                    if 'summary' in obj_dict and isinstance(obj_dict['summary'], str) and obj_dict['summary'].strip():
+                        logging.debug(f"✅ SummarizeRecentConversationsOutput summary extracted: {obj_dict['summary'][:100]}...")
+                        return obj_dict['summary'].strip()
+                
+                # Generic object attribute extraction
                 for key, value in obj_dict.items():
                     if isinstance(value, str) and value.strip() and not _is_raw_object_string(value.strip()):
                         logging.debug(f"✅ Object dict value extracted from '{key}': {value[:100]}...")
@@ -567,6 +601,53 @@ def _is_raw_object_string(response_str: str) -> bool:
     ]
     
     return any(raw_patterns)
+
+def _format_graphmaster_result(result_data: dict) -> str:
+    """Format Graphmaster result data into user-friendly text"""
+    try:
+        # Handle different types of Graphmaster results
+        if isinstance(result_data, dict):
+            # Look for concept information
+            if 'concept_id' in result_data and 'name' in result_data:
+                concept_name = result_data.get('name', 'Unknown Concept')
+                description = result_data.get('description', 'No description available')
+                return f"Found concept: {concept_name}\n\n{description}"
+            
+            # Look for search results
+            if 'result' in result_data and isinstance(result_data['result'], list):
+                concepts = result_data['result']
+                if concepts:
+                    formatted_concepts = []
+                    for concept in concepts[:3]:  # Limit to first 3 concepts
+                        if isinstance(concept, dict) and 'name' in concept:
+                            name = concept.get('name', 'Unknown')
+                            desc = concept.get('description', 'No description')
+                            formatted_concepts.append(f"• {name}: {desc}")
+                    if formatted_concepts:
+                        return "Found related concepts:\n\n" + "\n\n".join(formatted_concepts)
+            
+            # Look for error messages
+            if 'error' in result_data:
+                return f"I encountered an issue: {result_data['error']}"
+            
+            # Look for any text content
+            for key in ['text', 'content', 'message', 'response']:
+                if key in result_data and isinstance(result_data[key], str) and result_data[key].strip():
+                    return result_data[key].strip()
+            
+            # If it's a simple dict with string values, format it nicely
+            if all(isinstance(v, str) for v in result_data.values()):
+                formatted_items = []
+                for key, value in result_data.items():
+                    if value.strip():
+                        formatted_items.append(f"{key.replace('_', ' ').title()}: {value}")
+                if formatted_items:
+                    return "\n".join(formatted_items)
+        
+        return None
+    except Exception as e:
+        logging.debug(f"Error formatting Graphmaster result: {e}")
+        return None
 
 def extract_from_nested_dict(nested_dict: dict) -> str:
     """Extract response from nested dictionary structures"""
@@ -800,7 +881,7 @@ def generate_throttled_response(query: str, consciousness_context: dict, base_me
 @router.post("/agent/graphmaster/query", response_model=GraphQueryOutput)
 async def run_graphmaster_query(input: GraphQueryInput):
     try:
-        result = await graphmaster_agent.run(input.query, user_id=input.user_id)
+        result = await graphmaster_agent.run(input.query)
         
         # Handle different result types
         if hasattr(result, 'output'):
@@ -824,7 +905,7 @@ async def run_graphmaster_query(input: GraphQueryInput):
 @router.post("/agent/graphmaster/summarize_recent", response_model=SummarizeRecentConversationsOutput)
 async def summarize_recent_conversations_endpoint(input: SummarizeRecentConversationsInput = Body(...)):
     try:
-        result = await graphmaster_agent.run(f"Summarize recent conversations for user {input.user_id}", user_id=input.user_id, limit=input.limit)
+        result = await graphmaster_agent.run(f"Summarize recent conversations for user {input.user_id}")
         output = result.output
         if not isinstance(output, dict):
             return SummarizeRecentConversationsOutput(
