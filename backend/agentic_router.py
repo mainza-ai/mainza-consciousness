@@ -25,6 +25,7 @@ from backend.agents.conductor import conductor_agent, EnhancedConductorAgent
 from backend.agents.router import router_agent, EnhancedRouterAgent
 from backend.agents.simple_chat import simple_chat_agent, EnhancedSimpleChatAgent
 from backend.agents.self_reflection import self_reflection_agent, EnhancedSelfReflectionAgent
+from backend.utils.user_preferences_service import user_preferences_service
 try:
     from backend.utils.livekit import generate_access_token
     LIVEKIT_AVAILABLE = True
@@ -475,7 +476,10 @@ def extract_response_from_result(result, query: str, consciousness_context: dict
                                     return result_data[key].strip()
                             # If no specific key found, try to format the result nicely
                             if result_data:
-                                formatted_result = _format_graphmaster_result(result_data)
+                                # Get user preferences from service
+                                user_id = consciousness_context.get('user_id', 'default') if consciousness_context else 'default'
+                                user_preferences = user_preferences_service.get_response_preferences(user_id)
+                                formatted_result = _format_graphmaster_result(result_data, user_preferences=user_preferences)
                                 if formatted_result:
                                     logging.debug(f"✅ GraphQueryOutput formatted result: {formatted_result[:100]}...")
                                     return formatted_result
@@ -602,51 +606,171 @@ def _is_raw_object_string(response_str: str) -> bool:
     
     return any(raw_patterns)
 
-def _format_graphmaster_result(result_data: dict) -> str:
-    """Format Graphmaster result data into user-friendly text"""
+def _format_graphmaster_result(result_data: dict, max_length: int = 500, user_preferences: dict = None) -> str:
+    """Format Graphmaster result data into user-friendly text with length limits and better formatting"""
     try:
-        # Handle different types of Graphmaster results
-        if isinstance(result_data, dict):
-            # Look for concept information
-            if 'concept_id' in result_data and 'name' in result_data:
-                concept_name = result_data.get('name', 'Unknown Concept')
-                description = result_data.get('description', 'No description available')
-                return f"Found concept: {concept_name}\n\n{description}"
-            
-            # Look for search results
-            if 'result' in result_data and isinstance(result_data['result'], list):
-                concepts = result_data['result']
-                if concepts:
-                    formatted_concepts = []
-                    for concept in concepts[:3]:  # Limit to first 3 concepts
-                        if isinstance(concept, dict) and 'name' in concept:
-                            name = concept.get('name', 'Unknown')
-                            desc = concept.get('description', 'No description')
-                            formatted_concepts.append(f"• {name}: {desc}")
-                    if formatted_concepts:
-                        return "Found related concepts:\n\n" + "\n\n".join(formatted_concepts)
-            
-            # Look for error messages
-            if 'error' in result_data:
-                return f"I encountered an issue: {result_data['error']}"
-            
-            # Look for any text content
-            for key in ['text', 'content', 'message', 'response']:
-                if key in result_data and isinstance(result_data[key], str) and result_data[key].strip():
-                    return result_data[key].strip()
-            
-            # If it's a simple dict with string values, format it nicely
-            if all(isinstance(v, str) for v in result_data.values()):
-                formatted_items = []
-                for key, value in result_data.items():
-                    if value.strip():
-                        formatted_items.append(f"{key.replace('_', ' ').title()}: {value}")
-                if formatted_items:
-                    return "\n".join(formatted_items)
+        # Get user preferences or use defaults
+        if user_preferences is None:
+            user_preferences = {
+                'verbosity': 'detailed',  # concise, detailed, comprehensive
+                'max_length': max_length,
+                'show_tools_used': True,
+                'format_tables': True
+            }
+        
+        # Extract core content based on result type
+        core_content = _extract_core_content(result_data, user_preferences)
+        
+        if not core_content:
+            return None
+        
+        # Convert markdown tables to plain text if requested
+        if user_preferences.get('format_tables', True):
+            core_content = _convert_tables_to_text(core_content)
+        
+        # Apply length limits based on verbosity
+        max_len = user_preferences.get('max_length', max_length)
+        if user_preferences.get('verbosity') == 'concise':
+            max_len = min(max_len, 200)
+        elif user_preferences.get('verbosity') == 'comprehensive':
+            max_len = max_len * 2
+        
+        # Truncate if necessary
+        if len(core_content) > max_len:
+            core_content = _truncate_with_ellipsis(core_content, max_len)
+            core_content += "\n\n[Response truncated. Ask for more details if needed.]"
+        
+        # Add context indicators if requested
+        if user_preferences.get('show_tools_used', True):
+            context_info = _generate_context_info(result_data)
+            if context_info:
+                core_content = f"{context_info}\n\n{core_content}"
+        
+        return core_content
+        
+    except Exception as e:
+        logging.debug(f"Error formatting Graphmaster result: {e}")
+        return None
+
+def _extract_core_content(result_data: dict, user_preferences: dict) -> str:
+    """Extract core content from Graphmaster result data"""
+    try:
+        if not isinstance(result_data, dict):
+            return None
+        
+        # Look for concept information
+        if 'concept_id' in result_data and 'name' in result_data:
+            concept_name = result_data.get('name', 'Unknown Concept')
+            description = result_data.get('description', 'No description available')
+            return f"Found concept: {concept_name}\n\n{description}"
+        
+        # Look for search results
+        if 'result' in result_data and isinstance(result_data['result'], list):
+            concepts = result_data['result']
+            if concepts:
+                formatted_concepts = []
+                limit = 3 if user_preferences.get('verbosity') == 'concise' else 5
+                for concept in concepts[:limit]:
+                    if isinstance(concept, dict) and 'name' in concept:
+                        name = concept.get('name', 'Unknown')
+                        desc = concept.get('description', 'No description')
+                        formatted_concepts.append(f"• {name}: {desc}")
+                if formatted_concepts:
+                    return "Found related concepts:\n\n" + "\n\n".join(formatted_concepts)
+        
+        # Look for error messages
+        if 'error' in result_data:
+            return f"I encountered an issue: {result_data['error']}"
+        
+        # Look for any text content
+        for key in ['text', 'content', 'message', 'response']:
+            if key in result_data and isinstance(result_data[key], str) and result_data[key].strip():
+                return result_data[key].strip()
+        
+        # If it's a simple dict with string values, format it nicely
+        if all(isinstance(v, str) for v in result_data.values()):
+            formatted_items = []
+            for key, value in result_data.items():
+                if value.strip():
+                    formatted_items.append(f"{key.replace('_', ' ').title()}: {value}")
+            if formatted_items:
+                return "\n".join(formatted_items)
         
         return None
     except Exception as e:
-        logging.debug(f"Error formatting Graphmaster result: {e}")
+        logging.debug(f"Error extracting core content: {e}")
+        return None
+
+def _convert_tables_to_text(content: str) -> str:
+    """Convert markdown tables to plain text format"""
+    try:
+        import re
+        
+        # Pattern to match markdown tables
+        table_pattern = r'\|([^|]+)\|([^|]+)\|([^|]+)\|'
+        
+        def replace_table(match):
+            # Extract table content
+            header1 = match.group(1).strip()
+            header2 = match.group(2).strip()
+            header3 = match.group(3).strip()
+            
+            # Convert to plain text format
+            return f"{header1}: {header2} - {header3}"
+        
+        # Replace tables with plain text
+        content = re.sub(table_pattern, replace_table, content)
+        
+        # Remove remaining markdown table separators
+        content = re.sub(r'\|[-:]+\|', '', content)
+        content = re.sub(r'\|', '', content)
+        
+        return content
+    except Exception as e:
+        logging.debug(f"Error converting tables to text: {e}")
+        return content
+
+def _truncate_with_ellipsis(content: str, max_length: int) -> str:
+    """Truncate content at word boundary with ellipsis"""
+    try:
+        if len(content) <= max_length:
+            return content
+        
+        # Find the last complete word within the limit
+        truncated = content[:max_length]
+        last_space = truncated.rfind(' ')
+        
+        if last_space > max_length * 0.8:  # If we can find a good break point
+            truncated = truncated[:last_space]
+        
+        return truncated + "..."
+    except Exception as e:
+        logging.debug(f"Error truncating content: {e}")
+        return content[:max_length] + "..."
+
+def _generate_context_info(result_data: dict) -> str:
+    """Generate context information about tools used and result type"""
+    try:
+        context_parts = []
+        
+        # Check for suggestion type
+        if result_data.get('suggestion_type') == 'new_concept':
+            context_parts.append("🔍 Concept not found in knowledge graph - suggesting addition")
+        
+        # Check for search results
+        if 'result' in result_data and isinstance(result_data['result'], list):
+            context_parts.append("📚 Found related concepts in knowledge graph")
+        
+        # Check for error
+        if 'error' in result_data:
+            context_parts.append("⚠️ Encountered an issue while searching")
+        
+        if context_parts:
+            return " | ".join(context_parts)
+        
+        return None
+    except Exception as e:
+        logging.debug(f"Error generating context info: {e}")
         return None
 
 def extract_from_nested_dict(nested_dict: dict) -> str:

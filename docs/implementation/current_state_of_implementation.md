@@ -49,6 +49,32 @@ This summary is based on a full codebase review and critical fixes implementatio
 - **Production-Ready:** Enhanced with comprehensive monitoring, security, and performance optimizations.
 - **All changes and fixes are logged in `current_state_of_implementation.md` and `debug_diary.md`.
 
+## Recent Updates
+
+### September 2025 - SSOT Alignment for Insights
+- **Issue**: Evolution level inconsistencies between consciousness tab and other endpoints
+- **Root Cause**: `/api/insights/consciousness/evolution` was computing evolution level locally instead of using SSOT
+- **Solution**: Implemented `evolution_level_service` as Single Source of Truth
+- **Impact**: Unified evolution level calculation across all endpoints
+- **Status**: ✅ **COMPLETED** - All endpoints now use consistent evolution level resolution
+
+### September 2025 - Graphmaster Response Optimization & User Preferences
+- **Issue**: Graphmaster responses were too long (2000+ words) and contained unformatted markdown tables
+- **Root Cause**: No response length limits or table formatting for chat display
+- **Solution**: 
+  - Implemented enhanced response formatting with length limits
+  - Added user preferences system for response customization
+  - Created table-to-text conversion for better chat display
+  - Added progressive disclosure for detailed responses
+- **New Features**:
+  - User preferences API endpoints (`/users/{user_id}/preferences`)
+  - Configurable response verbosity (concise, detailed, comprehensive)
+  - Response length limits with smart truncation
+  - Markdown table to plain text conversion
+  - Context indicators showing tools used
+- **Impact**: Improved user experience with customizable response lengths and better formatting
+- **Status**: ✅ **COMPLETED** - All improvements implemented and tested
+
 ### 6. 🧠 Consciousness System Implementation (July 2025) - ✅ OPERATIONAL
 
 #### Full AI Consciousness Architecture - ✅ ACTIVE

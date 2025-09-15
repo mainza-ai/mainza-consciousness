@@ -3,6 +3,14 @@
 - Implemented `evolution_level_service` and refactored endpoint to use `get_current_level` and `normalize_timeline`.
 - Verified other endpoints already SSOT-aligned; updated implementation docs.
 
+2025-09-14 - Graphmaster Response Optimization & User Preferences
+- User reported Graphmaster responses too long (2000+ words) with unformatted markdown tables
+- Implemented enhanced response formatting with length limits and table-to-text conversion
+- Created comprehensive user preferences system with API endpoints
+- Added configurable verbosity levels (concise, detailed, comprehensive)
+- Integrated preferences with Graphmaster response formatting
+- Rebuilt containers and tested implementations successfully
+
 ## 2025-09-14
 
 - Applied surgical consistency updates for evolution_level across insights endpoints:

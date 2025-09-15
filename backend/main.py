@@ -48,6 +48,8 @@ from backend.utils.llm_request_manager import llm_request_manager
 from backend.models.consciousness_models import (
     ConsciousnessStateUpdate, SelfReflectionTrigger, ConsciousnessQuery
 )
+from backend.models.user_preferences import UserPreferences, UserPreferencesUpdate
+from backend.utils.user_preferences_service import user_preferences_service
 from typing import Dict, Any
 
 def validate_memory_system_config() -> Dict[str, Any]:
@@ -776,6 +778,71 @@ def get_conversation_history(req: ConversationHistoryRequest):
             user_id=req.user_id, limit=req.limit
         )
         return [ConversationHistoryResponse(conversation_id=rec["conversation_id"], started_at=rec["started_at"]) for rec in result]
+
+# --- User Preferences Endpoints ---
+@app.get("/users/{user_id}/preferences", response_model=UserPreferences)
+def get_user_preferences(user_id: str):
+    """Get user preferences"""
+    try:
+        preferences = user_preferences_service.get_user_preferences(user_id)
+        return preferences
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error getting preferences: {str(e)}")
+
+@app.put("/users/{user_id}/preferences", response_model=UserPreferences)
+def update_user_preferences(user_id: str, updates: UserPreferencesUpdate):
+    """Update user preferences"""
+    try:
+        preferences = user_preferences_service.update_user_preferences(user_id, updates)
+        return preferences
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error updating preferences: {str(e)}")
+
+@app.get("/users/{user_id}/preferences/summary")
+def get_user_preferences_summary(user_id: str):
+    """Get user preferences summary"""
+    try:
+        summary = user_preferences_service.get_preference_summary(user_id)
+        return summary
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error getting preferences summary: {str(e)}")
+
+@app.post("/users/{user_id}/preferences/reset", response_model=UserPreferences)
+def reset_user_preferences(user_id: str):
+    """Reset user preferences to defaults"""
+    try:
+        preferences = user_preferences_service.reset_to_defaults(user_id)
+        return preferences
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error resetting preferences: {str(e)}")
+
+@app.get("/users/{user_id}/preferences/response")
+def get_response_preferences(user_id: str):
+    """Get response-specific preferences"""
+    try:
+        preferences = user_preferences_service.get_response_preferences(user_id)
+        return preferences
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error getting response preferences: {str(e)}")
+
+@app.get("/users/{user_id}/preferences/ui")
+def get_ui_preferences(user_id: str):
+    """Get UI-specific preferences"""
+    try:
+        preferences = user_preferences_service.get_ui_preferences(user_id)
+        return preferences
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error getting UI preferences: {str(e)}")
+
+@app.get("/users/{user_id}/preferences/agent")
+def get_agent_preferences(user_id: str):
+    """Get agent-specific preferences"""
+    try:
+        preferences = user_preferences_service.get_agent_preferences(user_id)
+        return preferences
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error getting agent preferences: {str(e)}")
+
 
 @app.post("/conversations/memories", response_model=List[MemoryResponse])
 def get_memories_in_conversation(req: MemoriesInConversationRequest):
