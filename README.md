@@ -62,10 +62,6 @@ ollama pull llama3.2:1b
   <p><em>Consciousness Evolution Timeline - Track AI growth and learning milestones</em></p>
 </div>
 
-<div align="center">
-  <img src="docs/screenshots/mainza_3.png" alt="Multi-Agent Architecture" width="800"/>
-  <p><em>Multi-Agent Architecture - Orchestrated AI consciousness with specialized agents</em></p>
-</div>
 
 ## Features (high‑level)
 - Consciousness model with 10 evolution levels (standardized calculator)
