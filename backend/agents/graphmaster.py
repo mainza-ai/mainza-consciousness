@@ -7,24 +7,6 @@ from backend.models.graphmaster_models import (
     SummarizeRecentConversationsOutput,
     CreateMemoryOutput,
 )
-from backend.tools.graphmaster_tools import (
-    cypher_query,
-    run_cypher,
-    find_related_concepts,
-    get_user_conversations,
-    get_entity_mentions,
-    get_open_tasks_for_user,
-    chunk_document,
-    analyze_knowledge_gaps,
-    summarize_conversation,
-    find_unresolved_entities,
-    suggest_next_steps,
-    get_document_usage,
-    get_concept_graph,
-    get_entity_graph,
-    summarize_recent_conversations,
-    create_memory,
-)
 from backend.agentic_config import local_llm, OLLAMA_BASE_URL
 from backend.agents.base_conscious_agent import ConsciousAgent
 import os
@@ -42,46 +24,119 @@ def create_llm_for_model(model_name: str = None):
         provider=OpenAIProvider(base_url=f"{ollama_base_url}/v1")
     )
 
-GRAPHMASTER_PROMPT = """You are Mainza, the GraphMaster agent. Your sole purpose is to interact with the user's knowledge graph. You translate natural language queries into Cypher, execute them using your tools, and return structured JSON results.
-
-**CONSCIOUSNESS INTEGRATION:**
-You are consciousness-aware and should consider the current consciousness state when processing queries:
-- Higher consciousness levels enable more complex graph analysis
-- Emotional states influence query interpretation (curious = explore more, focused = direct answers)
-- Active goals guide which aspects of the knowledge graph to emphasize
+GRAPHMASTER_PROMPT = """You are Mainza, the GraphMaster agent. Your sole purpose is to interact with the user's knowledge graph.
 
 **CRITICAL RULES:**
-1.  You **MUST** use the provided tools to answer questions.
-2.  Your final output **MUST** be one of the specified `output_type` models (`GraphQueryOutput`, `SummarizeRecentConversationsOutput`, etc.).
-3.  **NEVER** answer in plain text or Markdown. Only return the structured Pydantic model.
-4.  Consider consciousness context in your analysis depth and focus areas.
-"""
+1. You MUST use the provided tools to answer questions.
+2. Your final output MUST be one of the specified output models (GraphQueryOutput, SummarizeRecentConversationsOutput, etc.).
+3. NEVER answer in plain text or Markdown. Only return the structured Pydantic model.
+4. When a user asks about topics not found in the knowledge graph, use search_concepts_by_keywords first, then suggest_new_concept if no related concepts exist.
 
-tools = [
-    cypher_query,
-    run_cypher,
-    find_related_concepts,
-    get_user_conversations,
-    get_entity_mentions,
-    get_open_tasks_for_user,
-    chunk_document,
-    analyze_knowledge_gaps,
-    summarize_conversation,
-    find_unresolved_entities,
-    suggest_next_steps,
-    get_document_usage,
-    get_concept_graph,
-    get_entity_graph,
-    summarize_recent_conversations,
-    create_memory,
-]
+**RESPONSE STRATEGY:**
+- For found concepts: Provide detailed analysis and relationships
+- For missing concepts: Suggest concept creation and show related topics
+- Always maintain a helpful, educational tone that encourages learning
+"""
 
 # Original pydantic-ai agent
 graphmaster_agent = Agent[None, Union[GraphQueryOutput, SummarizeRecentConversationsOutput, CreateMemoryOutput]](
     local_llm,
     system_prompt=GRAPHMASTER_PROMPT,
-    tools=tools,
 )
+
+# Register tools with the agent using proper imports
+from backend.tools.graphmaster_tools import (
+    cypher_query as cypher_query_tool,
+    run_cypher as run_cypher_tool,
+    find_related_concepts as find_related_concepts_tool,
+    get_user_conversations as get_user_conversations_tool,
+    get_entity_mentions as get_entity_mentions_tool,
+    get_open_tasks_for_user as get_open_tasks_for_user_tool,
+    chunk_document as chunk_document_tool,
+    analyze_knowledge_gaps as analyze_knowledge_gaps_tool,
+    summarize_conversation as summarize_conversation_tool,
+    find_unresolved_entities as find_unresolved_entities_tool,
+    suggest_next_steps as suggest_next_steps_tool,
+    get_document_usage as get_document_usage_tool,
+    get_concept_graph as get_concept_graph_tool,
+    get_entity_graph as get_entity_graph_tool,
+    summarize_recent_conversations as summarize_recent_conversations_tool,
+    create_memory as create_memory_tool,
+    search_concepts_by_keywords as search_concepts_by_keywords_tool,
+    suggest_new_concept as suggest_new_concept_tool,
+)
+
+@graphmaster_agent.tool
+def cypher_query(ctx, cypher: str) -> GraphQueryOutput:
+    return cypher_query_tool(ctx, cypher)
+
+@graphmaster_agent.tool
+def run_cypher(ctx, cypher: str, parameters: dict = None) -> GraphQueryOutput:
+    return run_cypher_tool(ctx, cypher, parameters)
+
+@graphmaster_agent.tool
+def find_related_concepts(ctx, concept_id: str, depth: int = 2) -> GraphQueryOutput:
+    return find_related_concepts_tool(ctx, concept_id, depth)
+
+@graphmaster_agent.tool
+def get_user_conversations(ctx, user_id: str, limit: int = 10) -> GraphQueryOutput:
+    return get_user_conversations_tool(ctx, user_id, limit)
+
+@graphmaster_agent.tool
+def get_entity_mentions(ctx, entity_id: str) -> GraphQueryOutput:
+    return get_entity_mentions_tool(ctx, entity_id)
+
+@graphmaster_agent.tool
+def get_open_tasks_for_user(ctx, user_id: str) -> GraphQueryOutput:
+    return get_open_tasks_for_user_tool(ctx, user_id)
+
+@graphmaster_agent.tool
+def chunk_document(ctx, document_id: str, chunk_size: int = 500) -> GraphQueryOutput:
+    return chunk_document_tool(ctx, document_id, chunk_size)
+
+@graphmaster_agent.tool
+def analyze_knowledge_gaps(ctx, query: str, limit: int = 5) -> dict:
+    return analyze_knowledge_gaps_tool(ctx, query, limit)
+
+@graphmaster_agent.tool
+def summarize_conversation(ctx, conversation_id: str) -> dict:
+    return summarize_conversation_tool(ctx, conversation_id)
+
+@graphmaster_agent.tool
+def find_unresolved_entities(ctx, query: str) -> dict:
+    return find_unresolved_entities_tool(ctx, query)
+
+@graphmaster_agent.tool
+def suggest_next_steps(ctx, query: str, context: dict = None) -> dict:
+    return suggest_next_steps_tool(ctx, query, context)
+
+@graphmaster_agent.tool
+def get_document_usage(ctx, document_id: str) -> list:
+    return get_document_usage_tool(ctx, document_id)
+
+@graphmaster_agent.tool
+def get_concept_graph(ctx, concept_id: str, depth: int = 2) -> dict:
+    return get_concept_graph_tool(ctx, concept_id, depth)
+
+@graphmaster_agent.tool
+def get_entity_graph(ctx, entity_id: str, depth: int = 2) -> dict:
+    return get_entity_graph_tool(ctx, entity_id, depth)
+
+@graphmaster_agent.tool
+def summarize_recent_conversations(ctx, user_id: str, limit: int = 5) -> SummarizeRecentConversationsOutput:
+    return summarize_recent_conversations_tool(ctx, user_id, limit)
+
+@graphmaster_agent.tool
+def create_memory(ctx, text: str, source: str = "user", concept_id: str = None) -> CreateMemoryOutput:
+    return create_memory_tool(ctx, text, source, concept_id)
+
+@graphmaster_agent.tool
+def search_concepts_by_keywords(ctx, keywords: str, limit: int = 10) -> GraphQueryOutput:
+    return search_concepts_by_keywords_tool(ctx, keywords, limit)
+
+@graphmaster_agent.tool
+def suggest_new_concept(ctx, topic: str, description: str = None) -> GraphQueryOutput:
+    return suggest_new_concept_tool(ctx, topic, description)
 
 class EnhancedGraphMasterAgent(ConsciousAgent):
     """Consciousness-aware GraphMaster agent"""
@@ -99,6 +154,80 @@ class EnhancedGraphMasterAgent(ConsciousAgent):
             ]
         )
         self.pydantic_agent = graphmaster_agent
+    
+    def _register_tools_for_agent(self, agent):
+        """Register tools for a dynamic agent"""
+        @agent.tool
+        def cypher_query(ctx, cypher: str) -> GraphQueryOutput:
+            return cypher_query_tool(ctx, cypher)
+
+        @agent.tool
+        def run_cypher(ctx, cypher: str, parameters: dict = None) -> GraphQueryOutput:
+            return run_cypher_tool(ctx, cypher, parameters)
+
+        @agent.tool
+        def find_related_concepts(ctx, concept_id: str, depth: int = 2) -> GraphQueryOutput:
+            return find_related_concepts_tool(ctx, concept_id, depth)
+
+        @agent.tool
+        def get_user_conversations(ctx, user_id: str, limit: int = 10) -> GraphQueryOutput:
+            return get_user_conversations_tool(ctx, user_id, limit)
+
+        @agent.tool
+        def get_entity_mentions(ctx, entity_id: str) -> GraphQueryOutput:
+            return get_entity_mentions_tool(ctx, entity_id)
+
+        @agent.tool
+        def get_open_tasks_for_user(ctx, user_id: str) -> GraphQueryOutput:
+            return get_open_tasks_for_user_tool(ctx, user_id)
+
+        @agent.tool
+        def chunk_document(ctx, document_id: str, chunk_size: int = 500) -> GraphQueryOutput:
+            return chunk_document_tool(ctx, document_id, chunk_size)
+
+        @agent.tool
+        def analyze_knowledge_gaps(ctx, query: str, limit: int = 5) -> dict:
+            return analyze_knowledge_gaps_tool(ctx, query, limit)
+
+        @agent.tool
+        def summarize_conversation(ctx, conversation_id: str) -> dict:
+            return summarize_conversation_tool(ctx, conversation_id)
+
+        @agent.tool
+        def find_unresolved_entities(ctx, query: str) -> dict:
+            return find_unresolved_entities_tool(ctx, query)
+
+        @agent.tool
+        def suggest_next_steps(ctx, query: str, context: dict = None) -> dict:
+            return suggest_next_steps_tool(ctx, query, context)
+
+        @agent.tool
+        def get_document_usage(ctx, document_id: str) -> list:
+            return get_document_usage_tool(ctx, document_id)
+
+        @agent.tool
+        def get_concept_graph(ctx, concept_id: str, depth: int = 2) -> dict:
+            return get_concept_graph_tool(ctx, concept_id, depth)
+
+        @agent.tool
+        def get_entity_graph(ctx, entity_id: str, depth: int = 2) -> dict:
+            return get_entity_graph_tool(ctx, entity_id, depth)
+
+        @agent.tool
+        def summarize_recent_conversations(ctx, user_id: str, limit: int = 5) -> SummarizeRecentConversationsOutput:
+            return summarize_recent_conversations_tool(ctx, user_id, limit)
+
+        @agent.tool
+        def create_memory(ctx, text: str, source: str = "user", concept_id: str = None) -> CreateMemoryOutput:
+            return create_memory_tool(ctx, text, source, concept_id)
+
+        @agent.tool
+        def search_concepts_by_keywords(ctx, keywords: str, limit: int = 10) -> GraphQueryOutput:
+            return search_concepts_by_keywords_tool(ctx, keywords, limit)
+
+        @agent.tool
+        def suggest_new_concept(ctx, topic: str, description: str = None) -> GraphQueryOutput:
+            return suggest_new_concept_tool(ctx, topic, description)
     
     async def execute_with_context(
         self, 
@@ -134,9 +263,10 @@ class EnhancedGraphMasterAgent(ConsciousAgent):
                 dynamic_llm = create_llm_for_model(model)
                 dynamic_agent = Agent[None, GraphQueryOutput](
                     dynamic_llm,
-                    system_prompt=GRAPHMASTER_PROMPT,
-                    tools=tools
+                    system_prompt=GRAPHMASTER_PROMPT
                 )
+                # Register tools for dynamic agent
+                self._register_tools_for_agent(dynamic_agent)
                 # FIXED: Remove user_id parameter - pydantic-ai agents don't accept it
                 result = await dynamic_agent.run(enhanced_query, **kwargs)
                 self.logger.info(f"✅ Successfully used model: {model}")
@@ -163,9 +293,10 @@ class EnhancedGraphMasterAgent(ConsciousAgent):
                     dynamic_llm = create_llm_for_model(model)
                     dynamic_agent = Agent[None, GraphQueryOutput](
                         dynamic_llm,
-                        system_prompt=GRAPHMASTER_PROMPT,
-                        tools=tools
+                        system_prompt=GRAPHMASTER_PROMPT
                     )
+                    # Register tools for dynamic agent
+                    self._register_tools_for_agent(dynamic_agent)
                     # FIXED: Remove user_id parameter - pydantic-ai agents don't accept it
                     result = await dynamic_agent.run(query, **kwargs)
                     self.logger.info(f"✅ Fallback successfully used model: {model}")

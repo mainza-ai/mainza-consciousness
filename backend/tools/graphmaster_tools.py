@@ -251,6 +251,43 @@ def get_entity_graph(ctx: RunContext, entity_id: str, depth: int = 2):
         except Exception as e:
             return {"error": str(e)}
 
+def search_concepts_by_keywords(ctx: RunContext, keywords: str, limit: int = 10) -> GraphQueryOutput:
+    """
+    Search for concepts by keywords using text matching and similarity.
+    Returns concepts that match the search terms.
+    """
+    cypher = (
+        "MATCH (c:Concept) "
+        "WHERE toLower(c.name) CONTAINS toLower($keywords) "
+        "   OR toLower(c.description) CONTAINS toLower($keywords) "
+        "RETURN c.concept_id AS concept_id, c.name AS name, c.description AS description "
+        "ORDER BY c.name "
+        "LIMIT $limit"
+    )
+    with driver.session() as session:
+        try:
+            result = session.run(cypher, {"keywords": keywords, "limit": limit})
+            records = [dict(record) for record in result]
+            return GraphQueryOutput(result=records)
+        except Exception as e:
+            return GraphQueryOutput(result={"error": str(e)})
+
+def suggest_new_concept(ctx: RunContext, topic: str, description: str = None) -> GraphQueryOutput:
+    """
+    Suggest creating a new concept for a topic not found in the knowledge graph.
+    Returns a structured suggestion for concept creation.
+    """
+    concept_id = topic.lower().replace(" ", "_").replace("-", "_")
+    suggestion = {
+        "suggestion_type": "new_concept",
+        "concept_id": concept_id,
+        "name": topic.title(),
+        "description": description or f"Knowledge about {topic}",
+        "reason": f"No existing concepts found for '{topic}' in the knowledge graph",
+        "action": "Consider adding this concept to expand the knowledge base"
+    }
+    return GraphQueryOutput(result=suggestion)
+
 def create_memory(ctx: RunContext, text: str, source: str = "user", concept_id: Optional[str] = None) -> CreateMemoryOutput:
     """
     Creates a new Memory node in the graph.
