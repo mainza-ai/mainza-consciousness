@@ -682,11 +682,10 @@ function Index() {
             </DarkButton>
 
             <DarkButton
-              disabled
-              variant="ghost"
+              onClick={() => window.location.href = '/settings'}
+              variant="outline"
               size="sm"
-              className="opacity-30 cursor-not-allowed hover:bg-transparent"
-              title="Settings functionality disabled - Model selection now in main dashboard"
+              title="User Settings & Preferences"
             >
               <Settings className="w-4 h-4" />
             </DarkButton>
