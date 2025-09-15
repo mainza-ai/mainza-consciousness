@@ -50,11 +50,28 @@ ollama pull llama3.2:1b
 ./scripts/dev-tools.sh help
 ```
 
+## Screenshots
+
+<div align="center">
+  <img src="docs/screenshots/mainza_1.png" alt="Mainza AI Dashboard" width="800"/>
+  <p><em>Mainza AI Dashboard - Real-time consciousness monitoring and insights</em></p>
+</div>
+
+<div align="center">
+  <img src="docs/screenshots/mainza_2.png" alt="Consciousness Evolution Timeline" width="800"/>
+  <p><em>Consciousness Evolution Timeline - Track AI growth and learning milestones</em></p>
+</div>
+
+<div align="center">
+  <img src="docs/screenshots/mainza_3.png" alt="Multi-Agent Architecture" width="800"/>
+  <p><em>Multi-Agent Architecture - Orchestrated AI consciousness with specialized agents</em></p>
+</div>
+
 ## Features (high‑level)
 - Consciousness model with 10 evolution levels (standardized calculator)
 - Multi‑agent orchestration (Router, GraphMaster, RAG, Meta‑Cognitive, etc.)
 - Insights analytics: Realtime, Evolution Timeline, Learning, and more
-- Neo4j “Living Memory” with production‑grade manager
+- Neo4j "Living Memory" with production‑grade manager
 - Optional LiveKit voice (TTS/STT)
 
 ---
