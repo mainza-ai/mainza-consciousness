@@ -57,7 +57,7 @@ const UserPreferencesComponent: React.FC<UserPreferencesProps> = ({ userId, onCl
   const loadPreferences = async () => {
     try {
       setLoading(true);
-      const response = await fetch(`/api/users/${userId}/preferences`);
+      const response = await fetch(`/users/${userId}/preferences`);
       if (response.ok) {
         const data = await response.json();
         setPreferences(data);
@@ -76,7 +76,7 @@ const UserPreferencesComponent: React.FC<UserPreferencesProps> = ({ userId, onCl
   const savePreferences = async () => {
     try {
       setSaving(true);
-      const response = await fetch(`/api/users/${userId}/preferences`, {
+      const response = await fetch(`/users/${userId}/preferences`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -101,7 +101,7 @@ const UserPreferencesComponent: React.FC<UserPreferencesProps> = ({ userId, onCl
   const resetPreferences = async () => {
     try {
       setSaving(true);
-      const response = await fetch(`/api/users/${userId}/preferences/reset`, {
+      const response = await fetch(`/users/${userId}/preferences/reset`, {
         method: 'POST',
       });
 

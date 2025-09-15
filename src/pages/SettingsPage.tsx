@@ -49,34 +49,34 @@ const SettingsPage: React.FC = () => {
       {/* Main Content */}
       <div className="max-w-7xl mx-auto px-6 py-8">
         <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-          <TabsList className="grid w-full grid-cols-4 bg-slate-800/50 border border-slate-600/30">
+          <TabsList className="flex flex-wrap gap-1 bg-slate-800/80 p-2 rounded-lg border border-slate-700/50">
             <TabsTrigger 
               value="preferences" 
-              className="flex items-center gap-2 data-[state=active]:bg-amber-500 data-[state=active]:text-white"
+              className="flex items-center gap-1 text-slate-200 hover:text-white data-[state=active]:text-white data-[state=active]:bg-cyan-500/30 data-[state=active]:border-cyan-400/50 border border-transparent px-3 py-1.5 text-xs rounded-md"
             >
-              <User className="w-4 h-4" />
-              Preferences
+              <User className="h-3 w-3" />
+              <span>Preferences</span>
             </TabsTrigger>
             <TabsTrigger 
               value="interface" 
-              className="flex items-center gap-2 data-[state=active]:bg-amber-500 data-[state=active]:text-white"
+              className="flex items-center gap-1 text-slate-200 hover:text-white data-[state=active]:text-white data-[state=active]:bg-cyan-500/30 data-[state=active]:border-cyan-400/50 border border-transparent px-3 py-1.5 text-xs rounded-md"
             >
-              <Palette className="w-4 h-4" />
-              Interface
+              <Palette className="h-3 w-3" />
+              <span>Interface</span>
             </TabsTrigger>
             <TabsTrigger 
               value="ai" 
-              className="flex items-center gap-2 data-[state=active]:bg-amber-500 data-[state=active]:text-white"
+              className="flex items-center gap-1 text-slate-200 hover:text-white data-[state=active]:text-white data-[state=active]:bg-cyan-500/30 data-[state=active]:border-cyan-400/50 border border-transparent px-3 py-1.5 text-xs rounded-md"
             >
-              <Brain className="w-4 h-4" />
-              AI Behavior
+              <Brain className="h-3 w-3" />
+              <span>AI Behavior</span>
             </TabsTrigger>
             <TabsTrigger 
               value="system" 
-              className="flex items-center gap-2 data-[state=active]:bg-amber-500 data-[state=active]:text-white"
+              className="flex items-center gap-1 text-slate-200 hover:text-white data-[state=active]:text-white data-[state=active]:bg-cyan-500/30 data-[state=active]:border-cyan-400/50 border border-transparent px-3 py-1.5 text-xs rounded-md"
             >
-              <Monitor className="w-4 h-4" />
-              System
+              <Monitor className="h-3 w-3" />
+              <span>System</span>
             </TabsTrigger>
           </TabsList>
 
