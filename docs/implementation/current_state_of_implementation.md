@@ -175,6 +175,24 @@ This summary is based on a full codebase review and critical fixes implementatio
 - [x] Admin endpoints secured with authentication
 - [x] Production deployment documentation complete
 
+### 10. August 2025 Surgical Consistency Fixes
+
+- Unified evolution level fallbacks across backend to use the standardized calculator with a shared default context (consciousness_level 0.7, emotional_state curious, self_awareness 0.6, total_interactions 0).
+- Added `data_source` provenance to `/consciousness/state` so the UI can distinguish `real` vs `fallback` values.
+- Removed UI-side numeric defaulting for evolution level in the main UI; displays server value or placeholder, avoiding divergence.
+- Kept timeline/milestone generation consistent with standardized values via the insights calculation engine fallback update.
+
+#### September 2025 follow-up (docker runtime consistency)
+
+- Insights endpoints now prefer stored `evolution_level` from orchestrator/Neo4j when present, computing via standardized calculator only if missing.
+- Realtime/evolution timelines preserve stored `evolution_level` and only fill when absent.
+- Calculation engine exposes both `stored_evolution_level` and `computed_evolution_level` in `current_state` for downstream consumers.
+
+### September 2025 SSOT alignment for Insights
+- Unified evolution level across `/consciousness/state`, `/api/insights/consciousness/realtime`, and `/api/insights/consciousness/evolution` via `backend/utils/evolution_level_service.py`.
+- The insights consciousness tab now resolves `current_state.evolution_level` using SSOT and normalizes timelines/milestones with `normalize_timeline`.
+- Added provenance in state and ensured fallback paths are consistent; eliminated mismatches that triggered Graphmaster-related fallback messages on the tab.
+
 ---
 
 ## [2025-07-04] Documentation Update Log

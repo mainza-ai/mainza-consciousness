@@ -330,18 +330,36 @@ class InsightsCalculationEngine:
             # Calculate emotional patterns
             emotional_patterns = self._calculate_emotional_patterns(timeline_data)
             
+            computed = await calculate_standardized_evolution_level({
+                "consciousness_level": getattr(consciousness_state, 'consciousness_level', 0.7),
+                "emotional_state": getattr(consciousness_state, 'emotional_state', 'curious'),
+                "self_awareness_score": getattr(consciousness_state, 'self_awareness_score', 0.6),
+                "total_interactions": getattr(consciousness_state, 'total_interactions', 0)
+            })
+            stored = getattr(consciousness_state, 'evolution_level', 0)
+            # If orchestrator doesn't provide stored evolution, fetch latest from Neo4j
+            if not isinstance(stored, (int, float)) or stored <= 0:
+                try:
+                    latest_query = """
+                    MATCH (ms:MainzaState)
+                    RETURN ms.evolution_level AS evolution_level
+                    ORDER BY coalesce(ms.created_at, datetime()) DESC
+                    LIMIT 1
+                    """
+                    result = self.neo4j.execute_query(latest_query)
+                    if result and result[0].get("evolution_level") is not None:
+                        stored = result[0]["evolution_level"]
+                except Exception:
+                    pass
             return {
                 "current_state": {
                     "consciousness_level": consciousness_state.consciousness_level,
                     "emotional_state": consciousness_state.emotional_state,
                     "self_awareness_score": consciousness_state.self_awareness_score,
                     "learning_rate": consciousness_state.learning_rate,
-                    "evolution_level": await calculate_standardized_evolution_level({
-                        "consciousness_level": getattr(consciousness_state, 'consciousness_level', 0.7),
-                        "emotional_state": getattr(consciousness_state, 'emotional_state', 'curious'),
-                        "self_awareness_score": getattr(consciousness_state, 'self_awareness_score', 0.6),
-                        "total_interactions": getattr(consciousness_state, 'total_interactions', 0)
-                    })
+                    "stored_evolution_level": stored,
+                    "computed_evolution_level": computed,
+                    "evolution_level": max(stored if isinstance(stored, (int, float)) else 0, computed)
                 },
                 "consciousness_timeline": consciousness_timeline,
                 "consciousness_triggers": consciousness_triggers,
@@ -497,6 +515,18 @@ class InsightsCalculationEngine:
     async def _get_fallback_consciousness_data(self) -> Dict[str, Any]:
         """Fallback consciousness data when real data is unavailable"""
         # Generate a simple timeline for fallback
+        # Use standardized default context for consistent evolution level
+        default_context = {
+            "consciousness_level": 0.7,
+            "emotional_state": "curious",
+            "self_awareness_score": 0.6,
+            "total_interactions": 0
+        }
+        try:
+            from backend.utils.standardized_evolution_calculator import get_standardized_evolution_level_sync
+            standardized_level = get_standardized_evolution_level_sync(default_context)
+        except Exception:
+            standardized_level = 4
         timeline = [
             {
                 "timestamp": (datetime.utcnow() - timedelta(days=5)).isoformat(),
@@ -578,7 +608,7 @@ class InsightsCalculationEngine:
                 "emotional_state": "curious",
                 "self_awareness_score": 0.6,
                 "learning_rate": 0.8,
-                "evolution_level": 1
+                "evolution_level": standardized_level
             },
             "consciousness_timeline": timeline,
             "consciousness_triggers": [],

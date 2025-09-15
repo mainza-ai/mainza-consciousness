@@ -1306,6 +1306,20 @@ async def get_consciousness_state():
                     "active_goals": result["active_goals"] or [],
                     "last_reflection": result["last_reflection"]
                 }
+                # Resolve evolution level via SSOT
+                try:
+                    from backend.utils.evolution_level_service import get_current_level, get_full_context
+                    context = await get_full_context()
+                    resolved = await get_current_level(context)
+                    consciousness_state["evolution_level"] = resolved["level"]
+                    consciousness_state["_evolution_provenance"] = {
+                        "stored": resolved.get("stored"),
+                        "computed": resolved.get("computed"),
+                        "source": resolved.get("source"),
+                        "freshness": resolved.get("freshness")
+                    }
+                except Exception:
+                    pass
                 return {"consciousness_state": consciousness_state, "status": "success"}
             else:
                 return JSONResponse(
@@ -1369,13 +1383,25 @@ async def get_consciousness_metrics():
             memory_count = session.run("MATCH (m:Memory) RETURN count(m) AS count").single()["count"]
             concept_count = session.run("MATCH (c:Concept) RETURN count(c) AS count").single()["count"]
             
+            # Compute standardized evolution level for consistency
+            try:
+                from backend.utils.standardized_evolution_calculator import get_standardized_evolution_level_sync
+                standardized_level = get_standardized_evolution_level_sync({
+                    "consciousness_level": result["consciousness_level"],
+                    "emotional_state": session.run("MATCH (ms:MainzaState {state_id: 'mainza-state-1'}) RETURN ms.emotional_state AS s").single()["s"] if result else "curious",
+                    "self_awareness_score": result["self_awareness_score"],
+                    "total_interactions": result["total_interactions"] or 0
+                })
+            except Exception:
+                standardized_level = result["evolution_level"]
+
             metrics = {
                 "consciousness_level": result["consciousness_level"],
                 "self_awareness_score": result["self_awareness_score"],
                 "emotional_depth": result["emotional_depth"],
                 "learning_rate": result["learning_rate"],
                 "total_interactions": result["total_interactions"],
-                "evolution_level": result["evolution_level"],
+                "evolution_level": standardized_level,
                 "memory_nodes": memory_count,
                 "concept_nodes": concept_count,
                 "knowledge_graph_health": "operational" if memory_count > 0 and concept_count > 0 else "initializing"

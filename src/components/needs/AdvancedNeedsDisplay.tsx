@@ -331,7 +331,7 @@ export const AdvancedNeedsDisplay: React.FC<AdvancedNeedsDisplayProps> = ({
           </div>
           <div className="flex items-center space-x-2">
             <span>Consciousness Level: {needs[0]?.consciousness_context?.consciousness_level ? (needs[0].consciousness_context.consciousness_level * 100).toFixed(0) : 'N/A'}%</span>
-            <span>Evolution: {needs[0]?.consciousness_context?.evolution_level || 'N/A'}</span>
+            <span>Evolution: {typeof needs[0]?.consciousness_context?.evolution_level === 'number' ? needs[0].consciousness_context.evolution_level : '—'}</span>
           </div>
         </div>
       )}

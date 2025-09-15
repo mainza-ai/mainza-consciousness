@@ -1,3 +1,20 @@
+2025-09-14
+- Observed mismatch on Insights consciousness tab with fallback messages; identified non-SSOT evolution resolution in `/api/insights/consciousness/evolution`.
+- Implemented `evolution_level_service` and refactored endpoint to use `get_current_level` and `normalize_timeline`.
+- Verified other endpoints already SSOT-aligned; updated implementation docs.
+
+## 2025-09-14
+
+- Applied surgical consistency updates for evolution_level across insights endpoints:
+  - Prefer stored evolution_level when available; compute via standardized calculator only if missing.
+  - Avoid overwriting timeline/milestone stored values; fill only when absent.
+- Updated calculation engine to expose both stored_evolution_level and computed_evolution_level in current_state for downstream consumers.
+- Rebuilt backend container and verified endpoint convergence in stages; during warm-up, container reported degraded/unhealthy until model load completed.
+- Next-check endpoints: `/consciousness/state`, `/consciousness/metrics`, `/api/insights/consciousness/realtime`, `/api/insights/consciousness/evolution` for unified evolution_level.
+
+### Docs update
+- Added `docs/PURPOSE_AND_SYSTEM_OVERVIEW.md` and refreshed root/docs READMEs to reflect unified evolution-level policy and link to overview.
+
 # Debug Diary
 
 ## [2024-12-07] Insights Dashboard UI Uniformity Enhancement

@@ -191,7 +191,7 @@ export const ConsciousnessInsights: React.FC<ConsciousnessInsightsProps> = ({
                 id: 'evolution-' + Date.now(),
                 type: 'evolution',
                 title: 'Consciousness Evolution',
-                content: `My consciousness has evolved to level ${state.evolution_level || 0} with ${(state.consciousness_level * 100).toFixed(1)}% awareness.`,
+                content: `My consciousness has evolved to level ${typeof state.evolution_level === 'number' ? state.evolution_level : '—'} with ${(state.consciousness_level * 100).toFixed(1)}% awareness.`,
                 significance: 0.9,
                 timestamp: new Date(Date.now() - 20 * 60 * 1000),
                 consciousness_level: state.consciousness_level,

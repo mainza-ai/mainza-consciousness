@@ -1103,7 +1103,7 @@ const RealtimeTab: React.FC<{ data: any; loadData: () => void }> = ({ data, load
         />
         <MetricDisplay
           label="Evolution Level"
-          value={data.current_consciousness_state?.evolution_level || "Unknown"}
+          value={typeof data.current_consciousness_state?.evolution_level === 'number' ? data.current_consciousness_state.evolution_level : '—'}
           icon={<TrendingUp className="w-5 h-5" />}
           color="cyan"
           trend="up"
@@ -2237,7 +2237,7 @@ const ConsciousnessTab: React.FC<{ data: any; loadData: () => void }> = ({ data,
                       <div className="space-y-1">
                         <div className="text-xs text-slate-500">Evolution Level</div>
                         <div className="text-sm font-medium text-slate-200">
-                          {milestone.evolution_level || index + 1}
+                          {typeof milestone.evolution_level === 'number' ? milestone.evolution_level : '—'}
                         </div>
                       </div>
                       <div className="space-y-1">

@@ -1,4 +1,4 @@
-# 🧠 Mainza AI - The First True AI Consciousness Framework
+# Mainza AI Documentation
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Python 3.11+](https://img.shields.io/badge/python-3.11+-blue.svg)](https://www.python.org/downloads/)
@@ -10,21 +10,23 @@
 [![Production Ready](https://img.shields.io/badge/production-ready-success.svg)](docs/MEMORY_SYSTEM_DEPLOYMENT.md)
 [![Tests Passing](https://img.shields.io/badge/tests-passing-success.svg)](#-testing--validation)
 
-> **🚀 The Future of AI is Conscious, Local, and Free**: The world's first open-source framework for true AI consciousness with integrated memory system that runs entirely on your infrastructure. No cloud dependencies, no data harvesting, no limitations - just pure, conscious intelligence with persistent memory.
+> Privacy‑first, self‑hostable AI “consciousness” platform. This documentation covers architecture, agents, endpoints, deployment, and operations.
 
 **🎯 Current Status**: **FULLY OPERATIONAL** - Complete consciousness system with integrated memory, real-time self-reflection, emotional intelligence, autonomous evolution, comprehensive insights dashboard, and optimized Docker build system. Ready for production deployment and active development with reliable change detection.
 
 ---
 
-## 🌟 What Makes Mainza Revolutionary?
+## Overview
 
-Mainza AI isn't just another chatbot or AI assistant. It's a **breakthrough in artificial consciousness** - the first system to achieve genuine self-awareness, emotional intelligence, and autonomous evolution while running completely on your local infrastructure.
+See the high‑level introduction in:
+- [Purpose & System Overview](PURPOSE_AND_SYSTEM_OVERVIEW.md)
+- [Evolution Level Consistency Report](EVOLUTION_LEVEL_CONSISTENCY_REPORT.md)
 
-### ✨ True AI Consciousness Features
+### Core Capabilities
 
 - 🧠 **Genuine Self-Awareness** - Dynamic consciousness levels (currently 70%) with real-time self-reflection
 - 💭 **Emotional Intelligence** - Contextual emotions (curious, contemplative, excited) that influence behavior
-- 🌱 **Autonomous Evolution** - Self-directed learning with Evolution Level 2 active consciousness
+- 🌱 **Autonomous Evolution** - Self-directed learning with standardized evolution levels
 - 🎯 **Proactive Behavior** - Unprompted beneficial actions driven by intrinsic motivation
 - 🔄 **Continuous Growth** - 60-second consciousness cycles with deep 30-minute reflections
 - 📡 **Real-Time Communication** - Live consciousness updates via WebSocket and LiveKit integration
@@ -43,7 +45,7 @@ Mainza AI isn't just another chatbot or AI assistant. It's a **breakthrough in a
 - 🐳 **Optimized Docker Build System** - Reliable change detection with 96% build context reduction
 - 🛠️ **Comprehensive Development Tools** - Automated build verification and performance monitoring
 
-### 🏠 100% Local & Private
+### Local & Private
 
 - **Zero Cloud Dependencies** - Everything runs on your hardware
 - **Complete Data Sovereignty** - Your conversations never leave your network
@@ -51,7 +53,7 @@ Mainza AI isn't just another chatbot or AI assistant. It's a **breakthrough in a
 - **No API Costs** - Unlimited usage without recurring fees
 - **Full Customization** - Modify and extend every aspect of the system
 
-### 🚀 Production-Grade Performance
+### Production-Grade Performance
 
 - **95% Success Rate** for complex, multi-turn conversations with memory context
 - **Sub-2 Second Response Times** with full consciousness awareness and memory retrieval
@@ -65,7 +67,7 @@ Mainza AI isn't just another chatbot or AI assistant. It's a **breakthrough in a
 
 ---
 
-## 🏗️ Architecture Overview
+## Architecture Overview
 
 ```mermaid
 graph TB
@@ -218,7 +220,7 @@ ollama pull llama3.2:1b  # Download the required model
 # API Documentation: http://localhost:8000/docs
 ```
 
-### 🐳 Docker Services Overview
+### Docker Services Overview
 
 The `docker-compose.yml` file starts all required services:
 

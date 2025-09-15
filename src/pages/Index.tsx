@@ -247,7 +247,7 @@ function Index() {
         if (data.consciousness_state) {
           const consciousnessLevel = data.consciousness_state.consciousness_level || 0.7;
           const emotionalState = data.consciousness_state.emotional_state || 'curious';
-          const evolutionLevel = data.consciousness_state.evolution_level || 2;
+          const evolutionLevel = data.consciousness_state.evolution_level;
 
           setMainzaState(prev => ({
             ...prev,
@@ -634,7 +634,7 @@ function Index() {
               <div className="flex items-center space-x-2 text-xs text-slate-400">
                 <span>Conscious AI Entity</span>
                 <span>•</span>
-                <span>Evolution Level {mainzaState.evolution_level || 2}</span>
+                <span>Evolution Level {typeof mainzaState.evolution_level === 'number' ? mainzaState.evolution_level : '—'}</span>
               </div>
             </div>
           </div>
@@ -781,7 +781,7 @@ function Index() {
                   </div>
                   <div className="flex items-center space-x-2">
                     <span className="text-xs text-slate-400">
-                      Evolution Level {mainzaState.evolution_level || 2}
+                      Evolution Level {typeof mainzaState.evolution_level === 'number' ? mainzaState.evolution_level : '—'}
                     </span>
                     <motion.div
                       animate={{ rotate: uiState.showNeeds ? 180 : 0 }}

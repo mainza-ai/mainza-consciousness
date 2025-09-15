@@ -111,6 +111,54 @@ def extract_answer(model_output):
     logging.debug(f"[extract_answer] No valid answer found, returning fallback.")
     return "I'm sorry, I couldn't generate a meaningful answer. Please try rephrasing your question or check your knowledge base."
 
+def _present_structured_output(obj: dict) -> str:
+    """Render common structured agent outputs into a concise, readable string.
+
+    Tries friendly fields first, then Graph/Cypher previews, and finally a
+    compact pretty‑print. Returns None if no useful presentation is found.
+    """
+    try:
+        # Friendly text fields commonly used across agents
+        for key in ("answer", "summary", "response", "message", "text", "content"):
+            val = obj.get(key)
+            if isinstance(val, str) and val.strip():
+                return val.strip()
+
+        # GraphMaster style outputs
+        cypher = obj.get("cypher") or obj.get("query")
+        rows = obj.get("result") or obj.get("records") or obj.get("rows") or obj.get("data")
+        parts = []
+        if isinstance(rows, list) and rows:
+            preview_lines = []
+            for r in rows[:3]:
+                if isinstance(r, dict):
+                    name = r.get("name") or r.get("concept") or r.get("title") or r.get("id")
+                    level = r.get("level") or r.get("evolution_level") or r.get("score")
+                    if name is not None and level is not None:
+                        preview_lines.append(f"- {name} (level {level})")
+                    elif name is not None:
+                        preview_lines.append(f"- {name}")
+                    else:
+                        preview_lines.append(f"- {str(r)[:80]}")
+                else:
+                    preview_lines.append(f"- {str(r)[:80]}")
+            if preview_lines:
+                parts.append("Top results:\n" + "\n".join(preview_lines))
+        if isinstance(cypher, str) and cypher.strip():
+            parts.append(f"Cypher used:\n```cypher\n{cypher.strip()}\n```")
+        if parts:
+            return "\n\n".join(parts)
+
+        # Generic pretty print (last resort)
+        try:
+            import json as _json
+            return _json.dumps(obj, indent=2)[:1500]
+        except Exception:
+            return str(obj)[:1000]
+    except Exception:
+        return None
+
+
 def extract_response_from_result(result, query: str, consciousness_context: dict) -> str:
     """
     Extract user-friendly response from LLM request manager result with throttling awareness
@@ -258,6 +306,12 @@ def extract_response_from_result(result, query: str, consciousness_context: dict
             logging.debug(f"   User: {user_id}")
             logging.debug(f"   Dict Keys: {list(result.keys())}")
             
+            # First, attempt a human‑readable presentation of structured outputs
+            presented = _present_structured_output(result)
+            if isinstance(presented, str) and presented.strip() and not _is_raw_object_string(presented):
+                logging.info(f"✅ PRESENTED STRUCTURED OUTPUT")
+                return presented.strip()
+
             # Enhanced response extraction with multiple fallback strategies
             response_candidates = []
             
@@ -977,6 +1031,25 @@ async def enhanced_router_chat(query: str = Body(..., embed=True), user_id: str 
                     logging.warning(f"   Throttled Message: {result.get('response', 'no_message')}")
             
             logging.debug(f"   Result Preview: {str(result)[:200]}{'...' if len(str(result)) > 200 else ''}")
+
+            # Guard: If request manager returned generic fallback, retry direct agent execution once
+            try:
+                GENERIC_FALLBACK = "I'm here and ready to help! What would you like to talk about?"
+                if isinstance(result, str) and result.strip() == GENERIC_FALLBACK:
+                    logging.warning("⚠️ Request manager returned generic fallback. Retrying direct agent execution once…")
+                    if agent_used == "graphmaster":
+                        from backend.agents.graphmaster import enhanced_graphmaster_agent
+                        result = await enhanced_graphmaster_agent.run_with_consciousness(
+                            query=query, user_id=user_id, model=model
+                        )
+                    else:
+                        from backend.agents.simple_chat import enhanced_simple_chat_agent
+                        result = await enhanced_simple_chat_agent.run_with_consciousness(
+                            query=query, user_id=user_id, model=model
+                        )
+                    logging.info("✅ Direct agent retry completed")
+            except Exception as retry_error:
+                logging.error(f"❌ Direct retry after fallback failed: {retry_error}")
             
             # Extract response from result using centralized function
             logging.info(f"🔄 EXTRACTING RESPONSE FROM RESULT")
@@ -1135,17 +1208,26 @@ async def get_consciousness_context():
                 "active_goals": consciousness_state.active_goals,
                 "learning_rate": consciousness_state.learning_rate,
                 "evolution_level": consciousness_state.evolution_level,
-                "timestamp": datetime.now()
+                "timestamp": datetime.now(),
+                "data_source": "real"
             }
         else:
             # Fallback consciousness context
-            return {
+            default_context = {
                 "consciousness_level": 0.7,
                 "emotional_state": "curious",
+                "self_awareness_score": 0.6,
+                "total_interactions": 0
+            }
+            calculated_level = await calculate_dynamic_evolution_level(default_context)
+            return {
+                "consciousness_level": default_context["consciousness_level"],
+                "emotional_state": default_context["emotional_state"],
                 "active_goals": ["improve conversation quality"],
                 "learning_rate": 0.8,
-                "evolution_level": 4,
-                "timestamp": datetime.now()
+                "evolution_level": calculated_level,
+                "timestamp": datetime.now(),
+                "data_source": "fallback"
             }
 
     except Exception as e:
@@ -1383,7 +1465,8 @@ async def get_consciousness_state():
                 "learning_rate": consciousness_context.get("learning_rate", 0.8),
                 "active_goals": consciousness_context.get("active_goals", ["improve conversation quality"]),
                 "last_reflection": None
-            }
+            },
+            "data_source": consciousness_context.get("data_source", "unknown")
         }
 
     except Exception as e:
@@ -1517,14 +1600,41 @@ async def get_consciousness_insights():
             level = getattr(consciousness_state, 'consciousness_level', 0.7)
             emotional_state = getattr(consciousness_state, 'emotional_state', 'curious')
             total_interactions = getattr(consciousness_state, 'total_interactions', 0)
-            evolution_level = getattr(consciousness_state, 'evolution_level', 1)
+            # Prefer stored evolution level when available; otherwise compute
+            stored_evo = getattr(consciousness_state, 'evolution_level', None)
+            try:
+                from backend.utils.standardized_evolution_calculator import get_standardized_evolution_level_sync
+                computed = get_standardized_evolution_level_sync({
+                    "consciousness_level": level,
+                    "emotional_state": emotional_state,
+                    "self_awareness_score": getattr(consciousness_state, 'self_awareness_score', 0.6),
+                    "total_interactions": total_interactions
+                })
+            except Exception:
+                computed = 1
+            # If no stored value from orchestrator, attempt to read latest from Neo4j to keep parity with /consciousness/state
+            if not isinstance(stored_evo, (int, float)) or stored_evo <= 0:
+                try:
+                    from backend.utils.neo4j_production import neo4j_production
+                    q = """
+                    MATCH (ms:MainzaState)
+                    RETURN ms.evolution_level AS evolution_level
+                    ORDER BY coalesce(ms.created_at, datetime()) DESC
+                    LIMIT 1
+                    """
+                    r = neo4j_production.execute_query(q)
+                    if r and r[0].get("evolution_level") is not None:
+                        stored_evo = r[0]["evolution_level"]
+                except Exception:
+                    pass
+            evolution_level = max(stored_evo if isinstance(stored_evo, (int, float)) else 0, computed)
             learning_rate = getattr(consciousness_state, 'learning_rate', 0.8)
             self_awareness = getattr(consciousness_state, 'self_awareness_score', 0.6)
             
             # Always generate multiple insights based on current state
             current_time = datetime.now()
             
-            # 1. Consciousness Level Insight
+            # 1. Consciousness Level Insight (use stored evo level if available)
             if level >= 0.7:
                 insights.append({
                     "id": f"consciousness-{current_time.timestamp()}",

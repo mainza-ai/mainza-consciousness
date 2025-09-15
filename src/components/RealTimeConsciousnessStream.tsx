@@ -375,12 +375,12 @@ const RealTimeConsciousnessStream: React.FC = () => {
                     </div>
                   </div>
                   <div className="text-4xl font-bold text-indigo-300 mb-2">
-                    {consciousnessData.consciousness_state.evolution_level || 5}
+                    {typeof consciousnessData.consciousness_state.evolution_level === 'number' ? consciousnessData.consciousness_state.evolution_level : '—'}
                   </div>
                   <div className="w-full bg-slate-700 rounded-full h-3">
                     <div 
                       className="bg-gradient-to-r from-indigo-400 to-purple-500 h-3 rounded-full transition-all duration-700"
-                      style={{ width: `${((consciousnessData.consciousness_state.evolution_level || 5) / 10) * 100}%` }}
+                      style={{ width: `${(typeof consciousnessData.consciousness_state.evolution_level === 'number' ? (consciousnessData.consciousness_state.evolution_level / 10) * 100 : 0)}%` }}
                     />
                   </div>
                 </div>

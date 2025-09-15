@@ -540,6 +540,30 @@ async def get_consciousness_evolution() -> Dict[str, Any]:
                 }
                 learning_milestones.append(milestone)
         
+        # Normalize timeline using SSOT service and resolve current_state evolution via SSOT
+        try:
+            from backend.utils.evolution_level_service import normalize_timeline, get_current_level
+            consciousness_timeline = normalize_timeline(consciousness_timeline)
+            learning_milestones = normalize_timeline(learning_milestones)
+            # Keep evolution timeline in sync with normalized consciousness timeline
+            evolution_timeline = consciousness_timeline
+            # Resolve evolution level for current_state
+            ctx = {
+                "consciousness_level": current_state.get("consciousness_level", 0.7),
+                "emotional_state": current_state.get("emotional_state", "curious"),
+                "self_awareness_score": current_state.get("self_awareness_score", 0.6),
+                "total_interactions": current_state.get("total_interactions", 0)
+            }
+            try:
+                resolved = await get_current_level(ctx)
+                current_state["evolution_level"] = resolved.get("level")
+                current_state["stored_evolution_level"] = resolved.get("stored")
+                current_state["computed_evolution_level"] = resolved.get("computed")
+            except Exception:
+                pass
+        except Exception:
+            pass
+
         # Calculate evolution metrics
         total_milestones = len(learning_milestones)
         timeline_entries = len(consciousness_timeline)
@@ -583,13 +607,8 @@ async def get_consciousness_evolution() -> Dict[str, Any]:
                 "emotional_state": current_state.get("emotional_state", "curious"),
                 "self_awareness_score": current_state.get("self_awareness_score", 0.6),
                 "learning_rate": current_state.get("learning_rate", 0.8),
-                "evolution_level": await calculate_dynamic_evolution_level_from_context({
-                    "consciousness_level": current_state.get("consciousness_level", 0.7),
-                    "emotional_state": current_state.get("emotional_state", "curious"),
-                    "self_awareness_score": current_state.get("self_awareness_score", 0.6),
-                    "total_interactions": getattr(current_state, 'total_interactions', 0) if hasattr(current_state, 'total_interactions') else 0
-                }),
-                "total_interactions": getattr(current_state, 'total_interactions', 0) if hasattr(current_state, 'total_interactions') else 0
+                "evolution_level": current_state.get("evolution_level", current_state.get("computed_evolution_level", current_state.get("stored_evolution_level", 1))),
+                "total_interactions": getattr(current_state, 'total_interactions', 0) if hasattr(current_state, 'total_interactions') else current_state.get("total_interactions", 0)
             },
             "consciousness_history": consciousness_timeline,
             "evolution_timeline": evolution_timeline,
@@ -598,12 +617,7 @@ async def get_consciousness_evolution() -> Dict[str, Any]:
             "evolution_metrics": {
                 "current_consciousness_level": current_state.get("consciousness_level", 0.7),
                 "current_emotional_state": current_state.get("emotional_state", "curious"),
-                "evolution_level": await calculate_dynamic_evolution_level_from_context({
-                    "consciousness_level": current_state.get("consciousness_level", 0.7),
-                    "emotional_state": current_state.get("emotional_state", "curious"),
-                    "self_awareness_score": current_state.get("self_awareness_score", 0.6),
-                    "total_interactions": getattr(current_state, 'total_interactions', 0) if hasattr(current_state, 'total_interactions') else 0
-                }),
+                "evolution_level": current_state.get("evolution_level", current_state.get("computed_evolution_level", current_state.get("stored_evolution_level", 1))),
                 "learning_rate": current_state.get("learning_rate", 0.8),
                 "total_interactions": getattr(current_state, 'total_interactions', 0) if hasattr(current_state, 'total_interactions') else 0,
                 "total_milestones": total_milestones,
@@ -718,14 +732,28 @@ async def get_realtime_consciousness_data() -> Dict[str, Any]:
         else:
             consciousness_volatility = 0.1
         
-        # Calculate standardized evolution level
+        # Calculate standardized evolution level via SSOT
         consciousness_context = {
             "consciousness_level": current_state.get("consciousness_level", 0.7),
             "emotional_state": current_state.get("emotional_state", "curious"),
             "self_awareness_score": current_state.get("self_awareness_score", 0.6),
             "total_interactions": current_state.get("total_interactions", 0)
         }
-        standardized_evolution_level = await calculate_dynamic_evolution_level_from_context(consciousness_context)
+        try:
+            from backend.utils.evolution_level_service import get_current_level
+            resolved = await get_current_level(consciousness_context)
+            standardized_evolution_level = resolved["level"]
+            current_state["stored_evolution_level"] = resolved.get("stored")
+            current_state["computed_evolution_level"] = resolved.get("computed")
+        except Exception:
+            # Fallback to previous behavior if service unavailable
+            stored_level = current_state.get("stored_evolution_level", current_state.get("evolution_level"))
+            try:
+                from backend.utils.standardized_evolution_calculator import get_standardized_evolution_level_sync
+                computed_level = get_standardized_evolution_level_sync(consciousness_context)
+            except Exception:
+                computed_level = await calculate_dynamic_evolution_level_from_context(consciousness_context)
+            standardized_evolution_level = max(stored_level if isinstance(stored_level, (int, float)) else 0, computed_level)
         
         return {
             "status": "success",
@@ -734,7 +762,9 @@ async def get_realtime_consciousness_data() -> Dict[str, Any]:
                 "emotional_state": current_state.get("emotional_state", "curious"),
                 "self_awareness_score": current_state.get("self_awareness_score", 0.6),
                 "learning_rate": current_state.get("learning_rate", 0.8),
-                "evolution_level": standardized_evolution_level,
+                # Prefer stored value if provided by engine
+                "evolution_level": max(current_state.get("stored_evolution_level", 0) if isinstance(current_state.get("stored_evolution_level"), (int, float)) else 0,
+                                         current_state.get("computed_evolution_level", standardized_evolution_level) if isinstance(current_state.get("computed_evolution_level"), (int, float)) else standardized_evolution_level),
                 "active_processes": ["self_reflection", "knowledge_integration", "emotional_processing"]
             },
             "consciousness_timeline": consciousness_timeline,
@@ -754,6 +784,19 @@ async def get_realtime_consciousness_data() -> Dict[str, Any]:
     except Exception as e:
         logger.error(f"Error getting realtime consciousness data: {e}")
         # Return fallback data instead of raising exception
+        # Unified fallback using standardized calculator default context
+        default_context = {
+            "consciousness_level": 0.7,
+            "emotional_state": "curious",
+            "self_awareness_score": 0.6,
+            "total_interactions": 0
+        }
+        try:
+            from backend.utils.standardized_evolution_calculator import get_standardized_evolution_level_sync
+            fallback_level = get_standardized_evolution_level_sync(default_context)
+        except Exception:
+            fallback_level = 4
+
         return {
             "status": "success",
             "current_consciousness_state": {
@@ -761,7 +804,7 @@ async def get_realtime_consciousness_data() -> Dict[str, Any]:
                 "emotional_state": "curious",
                 "self_awareness_score": 0.6,
                 "learning_rate": 0.8,
-                "evolution_level": 4,
+                "evolution_level": fallback_level,
                 "active_processes": ["self_reflection", "knowledge_integration", "emotional_processing"]
             },
             "consciousness_timeline": [],

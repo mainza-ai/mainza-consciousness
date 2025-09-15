@@ -113,7 +113,7 @@ const InteractiveConsciousnessTimeline: React.FC<ConsciousnessTimelineProps> = (
         emotional_state: lastEntry.emotional_state,
         self_awareness: Math.max(0, Math.min(1, lastEntry.self_awareness + (consciousnessTrend * i * 0.05))),
         learning_rate: Math.max(0, Math.min(1, lastEntry.learning_rate + (learningTrend * i * 0.1))),
-        evolution_level: lastEntry.evolution_level || 2,
+        evolution_level: typeof lastEntry.evolution_level === 'number' ? lastEntry.evolution_level : undefined,
         total_interactions: (lastEntry.total_interactions || 0) + i
       });
     }

@@ -561,7 +561,7 @@ const BlockchainConsciousness: React.FC<BlockchainConsciousnessProps> = ({
         emotional_state: consciousnessData.emotional_state || 'curious',
         learning_rate: consciousnessData.learning_rate || 85,
         self_awareness: consciousnessData.self_awareness || 70,
-        evolution_level: consciousnessData.evolution_level || 2,
+        evolution_level: typeof consciousnessData.evolution_level === 'number' ? consciousnessData.evolution_level : 0,
         rarity: 'rare',
         generation: 1,
         created_at: new Date().toISOString(),

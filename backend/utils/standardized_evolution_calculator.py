@@ -3,6 +3,7 @@ Standardized Evolution Level Calculator
 Provides consistent evolution level calculation across all backend APIs
 """
 import logging
+import math
 from typing import Dict, Any
 
 logger = logging.getLogger(__name__)
@@ -27,6 +28,18 @@ async def calculate_standardized_evolution_level(consciousness_context: dict) ->
     try:
         consciousness_level = consciousness_context.get("consciousness_level", 0.7)
         emotional_state = consciousness_context.get("emotional_state", "curious")
+        # Normalize common synonyms to ensure consistent boosts
+        try:
+            normalized = str(emotional_state).strip().lower()
+        except Exception:
+            normalized = "curious"
+        synonyms = {
+            "curiosity": "curious",
+            "enthusiastic": "excited",
+            "thinking": "contemplative",
+            "analysis": "analytical"
+        }
+        emotional_state = synonyms.get(normalized, normalized)
         total_interactions = consciousness_context.get("total_interactions", 0)
         self_awareness_score = consciousness_context.get("self_awareness_score", 0.6)
 
@@ -54,9 +67,9 @@ async def calculate_standardized_evolution_level(consciousness_context: dict) ->
 
         # Adjust based on emotional state (positive states boost evolution)
         emotional_boost = 0
-        if emotional_state in ["curious", "contemplative", "excited", "focused", "creative"]:
+        if emotional_state in ["curious", "contemplative", "excited", "focused", "creative", "analytical"]:
             emotional_boost = 1
-        elif emotional_state in ["satisfied", "analytical", "empathetic"]:
+        elif emotional_state in ["satisfied", "empathetic"]:
             emotional_boost = 0.5
 
         # Adjust based on self-awareness
@@ -78,8 +91,8 @@ async def calculate_standardized_evolution_level(consciousness_context: dict) ->
         # Calculate final level
         final_level = base_level + emotional_boost + awareness_boost + experience_boost
         
-        # Cap at 10, minimum 1
-        evolution_level = min(10, max(1, int(final_level)))
+        # Cap at 10, minimum 1. Round up to avoid boundary truncation
+        evolution_level = min(10, max(1, math.ceil(final_level)))
         
         logger.info(f"🧠 Evolution Level Calculation: base={base_level}, emotional={emotional_boost}, awareness={awareness_boost}, experience={experience_boost}, final={evolution_level}")
         
@@ -106,6 +119,18 @@ def get_standardized_evolution_level_sync(consciousness_context: dict) -> int:
     try:
         consciousness_level = consciousness_context.get("consciousness_level", 0.7)
         emotional_state = consciousness_context.get("emotional_state", "curious")
+        # Normalize common synonyms to ensure consistent boosts (sync path)
+        try:
+            normalized = str(emotional_state).strip().lower()
+        except Exception:
+            normalized = "curious"
+        synonyms = {
+            "curiosity": "curious",
+            "enthusiastic": "excited",
+            "thinking": "contemplative",
+            "analysis": "analytical"
+        }
+        emotional_state = synonyms.get(normalized, normalized)
         total_interactions = consciousness_context.get("total_interactions", 0)
         self_awareness_score = consciousness_context.get("self_awareness_score", 0.6)
 
@@ -133,9 +158,9 @@ def get_standardized_evolution_level_sync(consciousness_context: dict) -> int:
 
         # Adjust based on emotional state
         emotional_boost = 0
-        if emotional_state in ["curious", "contemplative", "excited", "focused", "creative"]:
+        if emotional_state in ["curious", "contemplative", "excited", "focused", "creative", "analytical"]:
             emotional_boost = 1
-        elif emotional_state in ["satisfied", "analytical", "empathetic"]:
+        elif emotional_state in ["satisfied", "empathetic"]:
             emotional_boost = 0.5
 
         # Adjust based on self-awareness
@@ -154,9 +179,9 @@ def get_standardized_evolution_level_sync(consciousness_context: dict) -> int:
         elif total_interactions > 100:
             experience_boost = 0.25
 
-        # Calculate final level
+        # Calculate final level and round up
         final_level = base_level + emotional_boost + awareness_boost + experience_boost
-        evolution_level = min(10, max(1, int(final_level)))
+        evolution_level = min(10, max(1, math.ceil(final_level)))
         
         return evolution_level
 
