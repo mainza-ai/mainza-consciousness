@@ -129,7 +129,7 @@ const UserPreferencesComponent: React.FC<UserPreferencesProps> = ({ userId, onCl
   if (loading) {
     return (
       <div className="flex items-center justify-center p-8">
-        <div className="text-slate-400">Loading preferences...</div>
+        <div className="text-slate-300">Loading preferences...</div>
       </div>
     );
   }
@@ -152,7 +152,7 @@ const UserPreferencesComponent: React.FC<UserPreferencesProps> = ({ userId, onCl
             variant="outline"
             size="sm"
             disabled={saving}
-            className="text-slate-400 hover:text-white"
+            className="text-slate-300 hover:text-white border-slate-600 hover:border-slate-500"
           >
             <RotateCcw className="w-4 h-4 mr-2" />
             Reset
@@ -180,26 +180,26 @@ const UserPreferencesComponent: React.FC<UserPreferencesProps> = ({ userId, onCl
           </CardHeader>
           <CardContent className="space-y-6">
             <div className="space-y-2">
-              <Label className="text-slate-200">Response Verbosity</Label>
+              <Label className="text-white font-medium">Response Verbosity</Label>
               <Select
                 value={preferences.verbosity}
                 onValueChange={(value: 'concise' | 'detailed' | 'comprehensive') => 
                   updatePreference('verbosity', value)
                 }
               >
-                <SelectTrigger className="bg-slate-700/50 border-slate-600">
+                <SelectTrigger className="bg-slate-700/50 border-slate-600 text-white">
                   <SelectValue />
                 </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="concise">Concise (200 chars max)</SelectItem>
-                  <SelectItem value="detailed">Detailed (500 chars max)</SelectItem>
-                  <SelectItem value="comprehensive">Comprehensive (1000 chars max)</SelectItem>
+                <SelectContent className="bg-slate-800 border-slate-600">
+                  <SelectItem value="concise" className="text-white hover:bg-slate-700">Concise (200 chars max)</SelectItem>
+                  <SelectItem value="detailed" className="text-white hover:bg-slate-700">Detailed (500 chars max)</SelectItem>
+                  <SelectItem value="comprehensive" className="text-white hover:bg-slate-700">Comprehensive (1000 chars max)</SelectItem>
                 </SelectContent>
               </Select>
             </div>
 
             <div className="space-y-2">
-              <Label className="text-slate-200">
+              <Label className="text-white font-medium">
                 Max Response Length: {preferences.max_response_length} characters
               </Label>
               <Slider
@@ -214,7 +214,7 @@ const UserPreferencesComponent: React.FC<UserPreferencesProps> = ({ userId, onCl
 
             <div className="space-y-4">
               <div className="flex items-center justify-between">
-                <Label className="text-slate-200">Show Tools Used</Label>
+                <Label className="text-white font-medium">Show Tools Used</Label>
                 <Switch
                   checked={preferences.show_tools_used}
                   onCheckedChange={(checked) => updatePreference('show_tools_used', checked)}
@@ -222,7 +222,7 @@ const UserPreferencesComponent: React.FC<UserPreferencesProps> = ({ userId, onCl
               </div>
 
               <div className="flex items-center justify-between">
-                <Label className="text-slate-200">Format Tables for Chat</Label>
+                <Label className="text-white font-medium">Format Tables for Chat</Label>
                 <Switch
                   checked={preferences.format_tables}
                   onCheckedChange={(checked) => updatePreference('format_tables', checked)}
@@ -230,7 +230,7 @@ const UserPreferencesComponent: React.FC<UserPreferencesProps> = ({ userId, onCl
               </div>
 
               <div className="flex items-center justify-between">
-                <Label className="text-slate-200">Show Context Information</Label>
+                <Label className="text-white font-medium">Show Context Information</Label>
                 <Switch
                   checked={preferences.show_context_info}
                   onCheckedChange={(checked) => updatePreference('show_context_info', checked)}
@@ -238,7 +238,7 @@ const UserPreferencesComponent: React.FC<UserPreferencesProps> = ({ userId, onCl
               </div>
 
               <div className="flex items-center justify-between">
-                <Label className="text-slate-200">Progressive Disclosure</Label>
+                <Label className="text-white font-medium">Progressive Disclosure</Label>
                 <Switch
                   checked={preferences.progressive_disclosure}
                   onCheckedChange={(checked) => updatePreference('progressive_disclosure', checked)}
@@ -258,30 +258,30 @@ const UserPreferencesComponent: React.FC<UserPreferencesProps> = ({ userId, onCl
           </CardHeader>
           <CardContent className="space-y-6">
             <div className="space-y-2">
-              <Label className="text-slate-200">Preferred Agent</Label>
+              <Label className="text-white font-medium">Preferred Agent</Label>
               <Select
                 value={preferences.preferred_agent || 'auto'}
                 onValueChange={(value) => 
                   updatePreference('preferred_agent', value === 'auto' ? null : value)
                 }
               >
-                <SelectTrigger className="bg-slate-700/50 border-slate-600">
+                <SelectTrigger className="bg-slate-700/50 border-slate-600 text-white">
                   <SelectValue />
                 </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="auto">Auto-select (Recommended)</SelectItem>
-                  <SelectItem value="graphmaster">Graphmaster (Knowledge)</SelectItem>
-                  <SelectItem value="taskmaster">Taskmaster (Tasks)</SelectItem>
-                  <SelectItem value="codeweaver">CodeWeaver (Code)</SelectItem>
-                  <SelectItem value="rag">RAG (Documents)</SelectItem>
-                  <SelectItem value="simple_chat">Simple Chat (General)</SelectItem>
+                <SelectContent className="bg-slate-800 border-slate-600">
+                  <SelectItem value="auto" className="text-white hover:bg-slate-700">Auto-select (Recommended)</SelectItem>
+                  <SelectItem value="graphmaster" className="text-white hover:bg-slate-700">Graphmaster (Knowledge)</SelectItem>
+                  <SelectItem value="taskmaster" className="text-white hover:bg-slate-700">Taskmaster (Tasks)</SelectItem>
+                  <SelectItem value="codeweaver" className="text-white hover:bg-slate-700">CodeWeaver (Code)</SelectItem>
+                  <SelectItem value="rag" className="text-white hover:bg-slate-700">RAG (Documents)</SelectItem>
+                  <SelectItem value="simple_chat" className="text-white hover:bg-slate-700">Simple Chat (General)</SelectItem>
                 </SelectContent>
               </Select>
             </div>
 
             <div className="space-y-4">
               <div className="flex items-center justify-between">
-                <Label className="text-slate-200">Consciousness Awareness</Label>
+                <Label className="text-white font-medium">Consciousness Awareness</Label>
                 <Switch
                   checked={preferences.consciousness_awareness}
                   onCheckedChange={(checked) => updatePreference('consciousness_awareness', checked)}
@@ -289,7 +289,7 @@ const UserPreferencesComponent: React.FC<UserPreferencesProps> = ({ userId, onCl
               </div>
 
               <div className="flex items-center justify-between">
-                <Label className="text-slate-200">Emotional Responses</Label>
+                <Label className="text-white font-medium">Emotional Responses</Label>
                 <Switch
                   checked={preferences.emotional_responses}
                   onCheckedChange={(checked) => updatePreference('emotional_responses', checked)}
@@ -297,7 +297,7 @@ const UserPreferencesComponent: React.FC<UserPreferencesProps> = ({ userId, onCl
               </div>
 
               <div className="flex items-center justify-between">
-                <Label className="text-slate-200">Auto Suggestions</Label>
+                <Label className="text-white font-medium">Auto Suggestions</Label>
                 <Switch
                   checked={preferences.auto_suggestions}
                   onCheckedChange={(checked) => updatePreference('auto_suggestions', checked)}
@@ -318,7 +318,7 @@ const UserPreferencesComponent: React.FC<UserPreferencesProps> = ({ userId, onCl
           <CardContent className="space-y-6">
             <div className="space-y-4">
               <div className="flex items-center justify-between">
-                <Label className="text-slate-200">Dark Mode</Label>
+                <Label className="text-white font-medium">Dark Mode</Label>
                 <Switch
                   checked={preferences.dark_mode}
                   onCheckedChange={(checked) => updatePreference('dark_mode', checked)}
@@ -326,7 +326,7 @@ const UserPreferencesComponent: React.FC<UserPreferencesProps> = ({ userId, onCl
               </div>
 
               <div className="flex items-center justify-between">
-                <Label className="text-slate-200">Compact Mode</Label>
+                <Label className="text-white font-medium">Compact Mode</Label>
                 <Switch
                   checked={preferences.compact_mode}
                   onCheckedChange={(checked) => updatePreference('compact_mode', checked)}
@@ -345,15 +345,15 @@ const UserPreferencesComponent: React.FC<UserPreferencesProps> = ({ userId, onCl
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
-            <div className="text-sm text-slate-400">
-              <p><strong>User ID:</strong> {userId}</p>
-              <p><strong>Preferences Version:</strong> 1.0</p>
-              <p><strong>Last Updated:</strong> {new Date().toLocaleString()}</p>
+            <div className="text-sm text-slate-300">
+              <p><strong className="text-white">User ID:</strong> {userId}</p>
+              <p><strong className="text-white">Preferences Version:</strong> 1.0</p>
+              <p><strong className="text-white">Last Updated:</strong> {new Date().toLocaleString()}</p>
             </div>
             
             <Separator className="bg-slate-600" />
             
-            <div className="text-xs text-slate-500">
+            <div className="text-xs text-slate-400">
               <p>These preferences control how Mainza responds to your queries and how the interface behaves.</p>
               <p>Changes are saved automatically when you click "Save Changes".</p>
             </div>
