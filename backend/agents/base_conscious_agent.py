@@ -1,6 +1,6 @@
 """
 Base Conscious Agent Framework
-Provides consciousness-aware execution for all Mainza agents with memory integration
+Provides consciousness-aware execution for all Mainza agents with memory integration and cross-agent learning
 """
 from typing import Dict, Any, Optional, List
 from datetime import datetime
@@ -32,10 +32,14 @@ class ConsciousAgent(ABC):
             from backend.utils.memory_storage_engine import memory_storage_engine
             from backend.utils.memory_retrieval_engine import MemoryRetrievalEngine
             from backend.utils.memory_context_builder import memory_context_builder
+            from backend.utils.unified_consciousness_memory import unified_consciousness_memory
+            from backend.utils.cross_agent_learning_system import cross_agent_learning_system
             
             self.memory_storage = memory_storage_engine
             self.memory_retrieval = MemoryRetrievalEngine()
             self.memory_context_builder = memory_context_builder
+            self.unified_memory = unified_consciousness_memory
+            self.cross_agent_learning = cross_agent_learning_system
             
             self.logger.debug(f"✅ Memory components initialized for {self.name}")
             
@@ -632,6 +636,212 @@ Please respond using the memory context to provide continuity and personalized r
             self.logger.error(f"❌ Failed to get memory performance metrics: {e}")
             return {"memory_enabled": False, "error": str(e)}
     
+    async def share_experience_with_other_agents(
+        self,
+        experience_type: str,
+        context: Dict[str, Any],
+        outcome: Dict[str, Any],
+        consciousness_context: Dict[str, Any],
+        user_id: str = "mainza-user"
+    ) -> str:
+        """Share experience with other agents through cross-agent learning system"""
+        
+        try:
+            if not hasattr(self, 'cross_agent_learning') or not self.cross_agent_learning:
+                self.logger.warning("Cross-agent learning system not available")
+                return None
+            
+            from backend.utils.cross_agent_learning_system import ExperienceType
+            
+            # Map experience type string to enum
+            experience_type_map = {
+                "success": ExperienceType.SUCCESS,
+                "failure": ExperienceType.FAILURE,
+                "learning": ExperienceType.LEARNING,
+                "insight": ExperienceType.INSIGHT,
+                "pattern": ExperienceType.PATTERN,
+                "solution": ExperienceType.SOLUTION,
+                "optimization": ExperienceType.OPTIMIZATION
+            }
+            
+            exp_type = experience_type_map.get(experience_type, ExperienceType.LEARNING)
+            
+            # Share experience
+            experience_id = await self.cross_agent_learning.share_agent_experience(
+                agent_name=self.name,
+                experience_type=exp_type,
+                context=context,
+                outcome=outcome,
+                consciousness_context=consciousness_context,
+                user_id=user_id
+            )
+            
+            self.logger.info(f"✅ Shared {experience_type} experience {experience_id} with other agents")
+            return experience_id
+            
+        except Exception as e:
+            self.logger.error(f"❌ Failed to share experience with other agents: {e}")
+            return None
+    
+    async def learn_from_other_agents(
+        self,
+        context: Dict[str, Any],
+        consciousness_context: Dict[str, Any],
+        limit: int = 5
+    ) -> List[Dict[str, Any]]:
+        """Learn from other agents' experiences"""
+        
+        try:
+            if not hasattr(self, 'cross_agent_learning') or not self.cross_agent_learning:
+                self.logger.warning("Cross-agent learning system not available")
+                return []
+            
+            # Get relevant experiences from other agents
+            relevant_experiences = await self.cross_agent_learning.get_relevant_experiences(
+                agent_name=self.name,
+                context=context,
+                consciousness_context=consciousness_context,
+                limit=limit
+            )
+            
+            learned_insights = []
+            
+            for experience in relevant_experiences:
+                # Update agent knowledge with cross-agent insights
+                learning_outcome = await self.cross_agent_learning.update_agent_knowledge(
+                    agent_name=self.name,
+                    experience=experience,
+                    learning_context=context
+                )
+                
+                learned_insights.append({
+                    "source_agent": experience.agent_name,
+                    "experience_type": experience.experience_type.value,
+                    "insights": experience.learning_insights,
+                    "success_score": experience.success_score,
+                    "learning_outcome": learning_outcome
+                })
+            
+            self.logger.info(f"✅ Learned from {len(learned_insights)} experiences from other agents")
+            return learned_insights
+            
+        except Exception as e:
+            self.logger.error(f"❌ Failed to learn from other agents: {e}")
+            return []
+    
+    async def store_consciousness_memory(
+        self,
+        content: str,
+        memory_type: str,
+        consciousness_context: Dict[str, Any],
+        emotional_context: Dict[str, Any],
+        user_id: str = "mainza-user"
+    ) -> str:
+        """Store memory using unified consciousness memory system"""
+        
+        try:
+            if not hasattr(self, 'unified_memory') or not self.unified_memory:
+                self.logger.warning("Unified consciousness memory system not available")
+                return None
+            
+            # Create agent context
+            agent_context = {
+                "source_agent": self.name,
+                "capabilities": self.capabilities,
+                "execution_count": self.execution_count,
+                "success_count": self.success_count
+            }
+            
+            # Store memory
+            memory_id = await self.unified_memory.store_consciousness_memory(
+                content=content,
+                memory_type=memory_type,
+                consciousness_context=consciousness_context,
+                emotional_context=emotional_context,
+                agent_context=agent_context,
+                user_id=user_id
+            )
+            
+            self.logger.info(f"✅ Stored consciousness memory {memory_id}")
+            return memory_id
+            
+        except Exception as e:
+            self.logger.error(f"❌ Failed to store consciousness memory: {e}")
+            return None
+    
+    async def retrieve_consciousness_memories(
+        self,
+        query: str,
+        consciousness_context: Dict[str, Any],
+        memory_type: Optional[str] = None,
+        limit: int = 10,
+        user_id: str = "mainza-user"
+    ) -> List[Dict[str, Any]]:
+        """Retrieve memories using unified consciousness memory system"""
+        
+        try:
+            if not hasattr(self, 'unified_memory') or not self.unified_memory:
+                self.logger.warning("Unified consciousness memory system not available")
+                return []
+            
+            # Retrieve memories
+            result = await self.unified_memory.retrieve_consciousness_memories(
+                query=query,
+                consciousness_context=consciousness_context,
+                agent_name=self.name,
+                memory_type=memory_type,
+                limit=limit,
+                user_id=user_id
+            )
+            
+            # Convert to simple format
+            memories = []
+            for memory in result.memories:
+                memories.append({
+                    "memory_id": memory.memory_id,
+                    "content": memory.content,
+                    "memory_type": memory.memory_type,
+                    "consciousness_level": memory.consciousness_level,
+                    "importance_score": memory.importance_score,
+                    "cross_agent_insights": memory.agent_context.get("cross_agent_insights", []),
+                    "created_at": memory.created_at.isoformat()
+                })
+            
+            self.logger.info(f"✅ Retrieved {len(memories)} consciousness memories")
+            return memories
+            
+        except Exception as e:
+            self.logger.error(f"❌ Failed to retrieve consciousness memories: {e}")
+            return []
+    
+    async def get_cross_agent_learning_analytics(self) -> Dict[str, Any]:
+        """Get analytics on cross-agent learning for this agent"""
+        
+        try:
+            if not hasattr(self, 'cross_agent_learning') or not self.cross_agent_learning:
+                return {"error": "Cross-agent learning system not available"}
+            
+            # Get learning patterns
+            learning_analytics = await self.cross_agent_learning.analyze_learning_patterns()
+            
+            # Filter for this agent
+            agent_analytics = {
+                "agent_name": self.name,
+                "total_experiences_shared": 0,
+                "total_experiences_learned": 0,
+                "learning_effectiveness": 0.0,
+                "cross_agent_interactions": []
+            }
+            
+            # This would need to be implemented in the cross-agent learning system
+            # to provide agent-specific analytics
+            
+            return agent_analytics
+            
+        except Exception as e:
+            self.logger.error(f"❌ Failed to get cross-agent learning analytics: {e}")
+            return {"error": str(e)}
+
     @abstractmethod
     async def execute_with_context(
         self, 
