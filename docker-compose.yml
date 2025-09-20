@@ -22,13 +22,13 @@ services:
       - dbms.memory.heap.max_size=1024m
       - dbms.memory.pagecache.size=512m
       - dbms.transaction.max_size=1024m
-      volumes:
-        - neo4j_data:/data
-        - neo4j_logs:/logs
-        - ./neo4j/optimized_schema.cypher:/var/lib/neo4j/import/optimized_schema.cypher
-        - ./neo4j/agent_experience_schema.cypher:/var/lib/neo4j/import/agent_experience_schema.cypher
-        - ./neo4j/consciousness_memory_schema.cypher:/var/lib/neo4j/import/consciousness_memory_schema.cypher
-        - ./neo4j/living_consciousness_schema.cypher:/var/lib/neo4j/import/living_consciousness_schema.cypher
+    volumes:
+      - neo4j_data:/data
+      - neo4j_logs:/logs
+      - ./neo4j/optimized_schema.cypher:/var/lib/neo4j/import/optimized_schema.cypher
+      - ./neo4j/agent_experience_schema.cypher:/var/lib/neo4j/import/agent_experience_schema.cypher
+      - ./neo4j/consciousness_memory_schema.cypher:/var/lib/neo4j/import/consciousness_memory_schema.cypher
+      - ./neo4j/living_consciousness_schema.cypher:/var/lib/neo4j/import/living_consciousness_schema.cypher
     networks:
       - mainza-network
     restart: unless-stopped

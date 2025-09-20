@@ -413,7 +413,7 @@ class UnifiedConsciousnessMemory:
         enhanced_content = f"{content} [CONSCIOUSNESS: {consciousness_context.get('consciousness_level', 0.7):.2f}]"
         
         # Generate embedding
-        embedding = await self.embedding_manager.generate_embedding(enhanced_content)
+        embedding = self.embedding_manager.get_embedding(enhanced_content)
         
         return embedding
     
