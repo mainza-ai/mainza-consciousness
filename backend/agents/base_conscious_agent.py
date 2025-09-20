@@ -306,7 +306,7 @@ class ConsciousAgent(ABC):
                 "execution_time": 0.0  # Will be calculated in actual implementation
             }
             
-            # Store in Neo4j
+            # Store in Neo4j using unified manager
             cypher = """
             MERGE (u:User {user_id: $user_id})
             CREATE (aa:AgentActivity {
@@ -336,7 +336,8 @@ class ConsciousAgent(ABC):
             RETURN aa.activity_id AS activity_id
             """
             
-            result = neo4j_production.execute_write_query(cypher, activity_data)
+            from backend.utils.neo4j_unified import neo4j_unified
+            result = neo4j_unified.execute_write_query(cypher, activity_data)
             self.logger.debug(f"✅ Stored agent activity: {result}")
             
         except Exception as e:

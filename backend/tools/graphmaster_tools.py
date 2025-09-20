@@ -1,30 +1,41 @@
-from backend.utils.neo4j import driver
+from backend.utils.neo4j_unified import neo4j_unified
 from backend.utils.embedding import get_embedding
 from backend.models.graphmaster_models import *
 from pydantic_ai import RunContext
 import logging
 import uuid
 from typing import Optional
+from datetime import datetime
+
+logger = logging.getLogger(__name__)
 
 # Place all @graphmaster_agent.tool functions here, e.g.:
 # @graphmaster_agent.tool
 def cypher_query(ctx: RunContext, cypher: str) -> GraphQueryOutput:
-    with driver.session() as session:
-        try:
-            result = session.run(cypher)
-            records = [dict(record) for record in result]
-            return GraphQueryOutput(result={"cypher": cypher, "result": records})
-        except Exception as e:
-            return GraphQueryOutput(result={"cypher": cypher, "error": str(e)})
+    """Execute Cypher query using unified Neo4j manager with caching and monitoring"""
+    start_time = datetime.now()
+    try:
+        records = neo4j_unified.execute_query(cypher, use_cache=True)
+        execution_time = (datetime.now() - start_time).total_seconds()
+        logger.debug(f"GraphMaster cypher_query executed in {execution_time:.3f}s")
+        return GraphQueryOutput(result={"cypher": cypher, "result": records, "execution_time_ms": round(execution_time * 1000, 2)})
+    except Exception as e:
+        execution_time = (datetime.now() - start_time).total_seconds()
+        logger.error(f"GraphMaster cypher_query failed after {execution_time:.3f}s: {e}")
+        return GraphQueryOutput(result={"cypher": cypher, "error": str(e), "execution_time_ms": round(execution_time * 1000, 2)})
 
 def run_cypher(ctx: RunContext, cypher: str, parameters: dict = None) -> GraphQueryOutput:
-    with driver.session() as session:
-        try:
-            result = session.run(cypher, parameters or {})
-            records = [dict(record) for record in result]
-            return GraphQueryOutput(result={"cypher": cypher, "result": records})
-        except Exception as e:
-            return GraphQueryOutput(result={"cypher": cypher, "error": str(e)})
+    """Execute parameterized Cypher query using unified Neo4j manager"""
+    start_time = datetime.now()
+    try:
+        records = neo4j_unified.execute_query(cypher, parameters or {}, use_cache=True)
+        execution_time = (datetime.now() - start_time).total_seconds()
+        logger.debug(f"GraphMaster run_cypher executed in {execution_time:.3f}s")
+        return GraphQueryOutput(result={"cypher": cypher, "result": records, "execution_time_ms": round(execution_time * 1000, 2)})
+    except Exception as e:
+        execution_time = (datetime.now() - start_time).total_seconds()
+        logger.error(f"GraphMaster run_cypher failed after {execution_time:.3f}s: {e}")
+        return GraphQueryOutput(result={"cypher": cypher, "error": str(e), "execution_time_ms": round(execution_time * 1000, 2)})
 
 def find_related_concepts(ctx: RunContext, concept_id: str, depth: int = 2) -> GraphQueryOutput:
     # Fix: Neo4j doesn't allow parameter variables in relationship patterns

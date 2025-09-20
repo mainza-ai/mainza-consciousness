@@ -25,7 +25,7 @@ services:
     volumes:
       - neo4j_data:/data
       - neo4j_logs:/logs
-      - ./neo4j_schema.cypher:/var/lib/neo4j/import/schema.cypher
+      - ./neo4j/optimized_schema.cypher:/var/lib/neo4j/import/optimized_schema.cypher
     networks:
       - mainza-network
     restart: unless-stopped

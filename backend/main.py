@@ -4,8 +4,10 @@ import os
 import asyncio
 from fastapi import FastAPI, HTTPException, Query, UploadFile, File, BackgroundTasks, Body, Request
 from neo4j import GraphDatabase, basic_auth
+from backend.utils.neo4j_unified import neo4j_unified
 from pydantic import BaseModel
 from typing import List, Optional
+from datetime import datetime
 from backend.agentic_router import router as agentic_router
 
 # Insights router - Context7 Compliance Fix for /api/insights routing
@@ -144,7 +146,7 @@ async def shutdown_event():
     
     # Close Neo4j driver
     try:
-        driver.close()
+        neo4j_unified.close()
         logging.info("✅ Neo4j driver closed")
     except Exception as e:
         logging.error(f"❌ Failed to close Neo4j driver: {e}")
@@ -276,7 +278,9 @@ NEO4J_PASSWORD = os.getenv("NEO4J_PASSWORD")
 if not NEO4J_PASSWORD:
     raise ValueError("NEO4J_PASSWORD environment variable is required. Please set it in your .env file.")
 
-driver = GraphDatabase.driver(NEO4J_URI, auth=basic_auth(NEO4J_USER, NEO4J_PASSWORD))
+# Use unified Neo4j manager instead of direct driver
+# driver = GraphDatabase.driver(NEO4J_URI, auth=basic_auth(NEO4J_USER, NEO4J_PASSWORD))
+driver = neo4j_unified.driver  # For backward compatibility
 
 LIVEKIT_API_KEY = os.getenv("LIVEKIT_API_KEY")
 LIVEKIT_API_SECRET = os.getenv("LIVEKIT_API_SECRET")
@@ -330,10 +334,11 @@ async def health():
     
     # Check Neo4j connection
     try:
-        with driver.session() as session:
-            result = session.run("RETURN 1 AS result")
-            value = result.single()["result"]
+        # Use unified Neo4j manager for health check
+        if neo4j_unified.health_check():
             health_status["components"]["neo4j"] = "ok"
+        else:
+            health_status["components"]["neo4j"] = "error"
     except Exception as e:
         health_status["components"]["neo4j"] = f"error: {str(e)}"
         health_status["status"] = "degraded"
@@ -372,6 +377,23 @@ async def health():
         health_status["status"] = "degraded"
     
     return health_status
+
+@app.get("/performance")
+async def get_performance_metrics():
+    """Get Neo4j performance metrics and recommendations"""
+    try:
+        metrics = neo4j_unified.get_performance_metrics()
+        return {
+            "status": "success",
+            "timestamp": datetime.now().isoformat(),
+            "metrics": metrics
+        }
+    except Exception as e:
+        return {
+            "status": "error",
+            "message": str(e),
+            "timestamp": datetime.now().isoformat()
+        }
 
 @app.get("/neo4j/ping")
 def neo4j_ping():

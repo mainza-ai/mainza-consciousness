@@ -10,7 +10,7 @@ from typing import Dict, Any, List, Optional, Tuple
 import json
 from dataclasses import dataclass, field, asdict
 
-from backend.utils.neo4j_enhanced import neo4j_manager
+from backend.utils.neo4j_unified import neo4j_unified
 from backend.utils.embedding_enhanced import embedding_manager
 from backend.core.enhanced_error_handling import ErrorHandler, handle_errors
 from backend.utils.memory_error_handling import (
@@ -48,7 +48,7 @@ class MemoryStorageEngine:
     """
     
     def __init__(self):
-        self.neo4j = neo4j_manager
+        self.neo4j = neo4j_unified
         self.embedding = embedding_manager
         self.max_content_length = 8000  # Maximum content length for storage
         self.default_importance_score = 0.5

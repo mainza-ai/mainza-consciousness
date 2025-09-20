@@ -11,7 +11,7 @@ import json
 import math
 from dataclasses import dataclass, field
 
-from backend.utils.neo4j_enhanced import neo4j_manager
+from backend.utils.neo4j_unified import neo4j_unified
 from backend.utils.memory_embedding_manager import memory_embedding_manager
 from backend.utils.embedding_enhanced import embedding_manager
 from backend.core.enhanced_error_handling import ErrorHandler, handle_errors
@@ -65,7 +65,7 @@ class MemoryRetrievalEngine:
     """
     
     def __init__(self):
-        self.neo4j = neo4j_manager
+        self.neo4j = neo4j_unified
         self.embedding_manager = memory_embedding_manager
         self.embedding = embedding_manager
         
@@ -1729,7 +1729,7 @@ class MemoryRetrievalEngine:
             """
             params["limit"] = limit
             
-            result = self.neo4j_manager.execute_query(query, params)
+            result = self.neo4j.execute_query(query, params)
             return result if result else []
             
         except Exception as e:
@@ -1754,7 +1754,7 @@ class MemoryRetrievalEngine:
                 LIMIT $limit
             """
             
-            result = self.neo4j_manager.execute_query(query, {
+            result = self.neo4j.execute_query(query, {
                 "conversation_id": conversation_id,
                 "limit": limit
             })
@@ -1781,7 +1781,7 @@ class MemoryRetrievalEngine:
                        collect(DISTINCT conv.conversation_id) as conversations
             """
             
-            result = self.neo4j_manager.execute_query(query, {"memory_id": memory_id})
+            result = self.neo4j.execute_query(query, {"memory_id": memory_id})
             return result[0] if result else None
             
         except Exception as e:
