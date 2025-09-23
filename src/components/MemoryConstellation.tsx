@@ -1,13 +1,37 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 interface MemoryNode {
-  id: number;
+  id: string;
   x: number;
   y: number;
   type: 'memory' | 'concept' | 'entity';
   active: boolean;
+  name?: string;
+  lastAccessed?: number;
+  importance?: number;
+}
+
+interface MemoryData {
+  memory_id: string;
+  text: string;
+  created_at?: number;
+  last_accessed?: number;
+}
+
+interface ConceptData {
+  concept_id: string;
+  name: string;
+  created_at?: number;
+  last_accessed?: number;
+}
+
+interface EntityData {
+  entity_id: string;
+  name: string;
+  created_at?: number;
+  last_accessed?: number;
 }
 
 interface MemoryConstellationProps {
@@ -16,50 +40,100 @@ interface MemoryConstellationProps {
 
 export const MemoryConstellation = React.memo(({ highlightedConcepts = [] }: MemoryConstellationProps) => {
   const [nodes, setNodes] = useState<MemoryNode[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [center, setCenter] = useState<{ x: number; y: number }>({ x: 50, y: 50 });
 
-  useEffect(() => {
-    // Generate constellation nodes
-    const generateNodes = () => {
-      // Cluster nodes in 3 groups (memory, concept, entity)
-      const groups = [
-        { type: 'memory', cx: 35, cy: 55, color: '#22d3ee' },
-        { type: 'concept', cx: 65, cy: 45, color: '#a855f7' },
-        { type: 'entity', cx: 50, cy: 70, color: '#fbbf24' },
-      ];
+  // Fetch real data from Neo4j APIs
+  const fetchMemoryData = useCallback(async () => {
+    try {
+      setLoading(true);
+      setError(null);
+
+      // Fetch real data from backend APIs
+      const [memoriesResponse, conceptsResponse, entitiesResponse] = await Promise.all([
+        fetch('/memories/').then(async r => r.ok ? r.json() : []),
+        fetch('/concepts/').then(async r => r.ok ? r.json() : []),
+        fetch('/entities/').then(async r => r.ok ? r.json() : [])
+      ]);
+
+      const memories: MemoryData[] = memoriesResponse || [];
+      const concepts: ConceptData[] = conceptsResponse || [];
+      const entities: EntityData[] = entitiesResponse || [];
+
+      // Transform real data into constellation nodes
       const newNodes: MemoryNode[] = [];
-      let id = 0;
-      groups.forEach((group, gi) => {
-        for (let i = 0; i < 7; i++) {
-          const angle = (2 * Math.PI * i) / 7 + gi;
-          const r = 12 + Math.random() * 6;
-          newNodes.push({
-            id: id++, 
-            x: group.cx + r * Math.cos(angle),
-            y: group.cy + r * Math.sin(angle),
-            type: group.type as 'memory' | 'concept' | 'entity',
-            active: Math.random() > 0.7,
-          });
-        }
+      
+      // Create memory nodes
+      memories.forEach((memory, index) => {
+        const angle = (2 * Math.PI * index) / Math.max(memories.length, 1);
+        const r = 15 + (memory.last_accessed ? Math.min(10, (Date.now() - memory.last_accessed) / (1000 * 60 * 60 * 24)) : 5);
+        newNodes.push({
+          id: memory.memory_id,
+          x: 35 + r * Math.cos(angle),
+          y: 55 + r * Math.sin(angle),
+          type: 'memory',
+          active: memory.last_accessed ? (Date.now() - memory.last_accessed) < (1000 * 60 * 60 * 24) : false,
+          name: memory.text?.substring(0, 20) + '...',
+          lastAccessed: memory.last_accessed,
+          importance: memory.text?.length || 0
+        });
       });
+
+      // Create concept nodes
+      concepts.forEach((concept, index) => {
+        const angle = (2 * Math.PI * index) / Math.max(concepts.length, 1);
+        const r = 12 + (concept.last_accessed ? Math.min(8, (Date.now() - concept.last_accessed) / (1000 * 60 * 60 * 24)) : 3);
+        newNodes.push({
+          id: concept.concept_id,
+          x: 65 + r * Math.cos(angle),
+          y: 45 + r * Math.sin(angle),
+          type: 'concept',
+          active: concept.last_accessed ? (Date.now() - concept.last_accessed) < (1000 * 60 * 60 * 24) : false,
+          name: concept.name,
+          lastAccessed: concept.last_accessed,
+          importance: concept.name?.length || 0
+        });
+      });
+
+      // Create entity nodes
+      entities.forEach((entity, index) => {
+        const angle = (2 * Math.PI * index) / Math.max(entities.length, 1);
+        const r = 10 + (entity.last_accessed ? Math.min(6, (Date.now() - entity.last_accessed) / (1000 * 60 * 60 * 24)) : 2);
+        newNodes.push({
+          id: entity.entity_id,
+          x: 50 + r * Math.cos(angle),
+          y: 70 + r * Math.sin(angle),
+          type: 'entity',
+          active: entity.last_accessed ? (Date.now() - entity.last_accessed) < (1000 * 60 * 60 * 24) : false,
+          name: entity.name,
+          lastAccessed: entity.last_accessed,
+          importance: entity.name?.length || 0
+        });
+      });
+
       setNodes(newNodes);
-    };
+    } catch (err) {
+      console.error('Failed to fetch memory data:', err);
+      setError('Failed to load memory constellation data');
+      
+      // Fallback to minimal visualization
+      setNodes([
+        { id: 'fallback-1', x: 50, y: 50, type: 'memory', active: true, name: 'Memory System' }
+      ]);
+    } finally {
+      setLoading(false);
+    }
+  }, []);
 
-    generateNodes();
+  useEffect(() => {
+    fetchMemoryData();
 
-    // Periodically activate/deactivate nodes
-    const interval = setInterval(() => {
-      setNodes(prev => prev.map(node => ({
-        ...node,
-        active: Math.random() > 0.8,
-        // Animate cluster drift
-        x: node.x + (Math.random() - 0.5) * 1.2,
-        y: node.y + (Math.random() - 0.5) * 1.2,
-      })));
-    }, 3000);
+    // Refresh data every 30 seconds
+    const interval = setInterval(fetchMemoryData, 30000);
 
     return () => clearInterval(interval);
-  }, []);
+  }, [fetchMemoryData]);
 
   const getNodeColor = (type: string, active: boolean) => {
     const baseColors = {
@@ -69,6 +143,24 @@ export const MemoryConstellation = React.memo(({ highlightedConcepts = [] }: Mem
     };
     return `${baseColors[type as keyof typeof baseColors]} ${active ? 'opacity-80' : 'opacity-20'}`;
   };
+
+  // Show loading state
+  if (loading) {
+    return (
+      <div className="absolute inset-0 overflow-hidden pointer-events-none flex items-center justify-center" aria-label="Loading memory constellation" role="img">
+        <div className="text-cyan-400 text-sm opacity-50">Loading memory constellation...</div>
+      </div>
+    );
+  }
+
+  // Show error state
+  if (error) {
+    return (
+      <div className="absolute inset-0 overflow-hidden pointer-events-none flex items-center justify-center" aria-label="Memory constellation error" role="img">
+        <div className="text-red-400 text-sm opacity-50">{error}</div>
+      </div>
+    );
+  }
 
   return (
     <div className="absolute inset-0 overflow-hidden pointer-events-none" aria-label="Memory constellation of Mainza's knowledge graph" role="img">
@@ -130,7 +222,8 @@ export const MemoryConstellation = React.memo(({ highlightedConcepts = [] }: Mem
                 scale: { duration: 1.2, repeat: Infinity, repeatType: 'mirror' },
                 boxShadow: { duration: 1.2, repeat: Infinity, repeatType: 'mirror' },
               }}
-              aria-label={isHighlighted ? `Mainza is curious about this ${node.type}` : node.type}
+              aria-label={isHighlighted ? `Mainza is curious about this ${node.type}: ${node.name}` : `${node.type}: ${node.name}`}
+              title={node.name}
               tabIndex={0}
               role="presentation"
             />

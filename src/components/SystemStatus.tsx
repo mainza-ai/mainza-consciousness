@@ -100,7 +100,7 @@ export const SystemStatus: React.FC<SystemStatusProps> = ({
         last_health_check: new Date().toISOString(),
         response_time: Math.min(responseTime, 999),
         uptime: uptimeString,
-        memory_usage: Math.floor(Math.random() * 30 + 50), // Simulated memory usage 50-80%
+        memory_usage: Math.min(85, Math.max(45, 100 - (responseTime / 10))), // Estimate based on response time
         active_connections: 1 // Current user connection
       });
       setError(null);

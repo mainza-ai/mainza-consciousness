@@ -169,205 +169,43 @@ const AdvancedAIModels: React.FC<AdvancedAIModelsProps> = ({
 
   // Initialize with sample data
   useEffect(() => {
-    setModels([
-      {
-        id: '1',
-        name: 'Consciousness Quantum Transformer',
-        type: 'quantum',
-        architecture: 'Quantum Attention Mechanism',
-        parameters: 500000000,
-        accuracy: 0.97,
-        loss: 0.08,
-        training_time: 12.5,
-        inference_time: 0.05,
-        status: 'deployed',
-        description: 'Revolutionary quantum-enhanced transformer for consciousness prediction',
-        created_at: '2025-09-01',
-        last_trained: '2025-09-07',
-        performance_metrics: {
-          precision: 0.95,
-          recall: 0.93,
-          f1_score: 0.94,
-          auc: 0.98,
-          mse: 0.12,
-          mae: 0.06,
-          bleu: 0.89,
-          rouge: 0.91,
-          perplexity: 2.3
-        },
-        deployment: {
-          environment: 'cloud',
-          instances: 5,
-          region: 'global',
-          cost_per_hour: 2.50,
-          uptime: 99.9
-        },
-        collaboration: {
-          is_public: true,
-          contributors: ['Alex Chen', 'Sarah Johnson', 'Marcus Rodriguez'],
-          forks: 23,
-          stars: 156,
-          downloads: 1247,
-          license: 'MIT'
+    const fetchModels = async () => {
+      try {
+        const res = await fetch('/ai-models');
+        if (res.ok) {
+          const data = await res.json();
+          if (Array.isArray(data?.models)) {
+            setModels(data.models);
+          }
         }
-      },
-      {
-        id: '2',
-        name: 'Federated Consciousness LSTM',
-        type: 'federated',
-        architecture: 'Federated Learning LSTM',
-        parameters: 200000000,
-        accuracy: 0.92,
-        loss: 0.15,
-        training_time: 8.2,
-        inference_time: 0.08,
-        status: 'training',
-        description: 'Federated learning LSTM for distributed consciousness analysis',
-        created_at: '2025-09-03',
-        last_trained: '2025-09-07',
-        performance_metrics: {
-          precision: 0.90,
-          recall: 0.88,
-          f1_score: 0.89,
-          auc: 0.94,
-          mse: 0.18,
-          mae: 0.09,
-          bleu: 0.85,
-          rouge: 0.87,
-          perplexity: 3.1
-        },
-        deployment: {
-          environment: 'hybrid',
-          instances: 12,
-          region: 'multi-region',
-          cost_per_hour: 1.80,
-          uptime: 99.7
-        },
-        collaboration: {
-          is_public: true,
-          contributors: ['Global Research Team'],
-          forks: 45,
-          stars: 234,
-          downloads: 2156,
-          license: 'Apache 2.0'
-        }
-      },
-      {
-        id: '3',
-        name: 'Distributed Consciousness GAN',
-        type: 'distributed',
-        architecture: 'Distributed GAN Architecture',
-        parameters: 800000000,
-        accuracy: 0.89,
-        loss: 0.22,
-        training_time: 15.8,
-        inference_time: 0.12,
-        status: 'active',
-        description: 'Distributed GAN for consciousness state generation across multiple nodes',
-        created_at: '2025-09-05',
-        last_trained: '2025-09-06',
-        performance_metrics: {
-          precision: 0.87,
-          recall: 0.85,
-          f1_score: 0.86,
-          auc: 0.91,
-          mse: 0.25,
-          mae: 0.12,
-          bleu: 0.82,
-          rouge: 0.84,
-          perplexity: 3.8
-        },
-        deployment: {
-          environment: 'edge',
-          instances: 8,
-          region: 'edge-nodes',
-          cost_per_hour: 3.20,
-          uptime: 99.5
-        },
-        collaboration: {
-          is_public: true,
-          contributors: ['Edge Computing Team'],
-          forks: 67,
-          stars: 189,
-          downloads: 987,
-          license: 'GPL-3.0'
-        }
+      } catch (e) {
+        console.error('Failed to fetch AI models', e);
       }
-    ]);
+    };
 
-    setTrainingJobs([
-      {
-        id: '1',
-        model_id: '2',
-        dataset: 'federated_consciousness_v3',
-        epochs: 200,
-        batch_size: 64,
-        learning_rate: 0.0005,
-        optimizer: 'AdamW',
-        status: 'running',
-        progress: 75,
-        current_epoch: 150,
-        start_time: '2025-09-07T08:00:00Z',
-        metrics: {
-          accuracy: Array.from({ length: 150 }, (_, i) => 0.6 + (i / 150) * 0.32),
-          loss: Array.from({ length: 150 }, (_, i) => 1.2 - (i / 150) * 1.05),
-          validation_accuracy: Array.from({ length: 150 }, (_, i) => 0.55 + (i / 150) * 0.30),
-          validation_loss: Array.from({ length: 150 }, (_, i) => 1.3 - (i / 150) * 1.0),
-          learning_rate: Array.from({ length: 150 }, (_, i) => 0.0005 * Math.exp(-i / 100))
-        },
-        resources: {
-          gpu_usage: 85,
-          memory_usage: 78,
-          cpu_usage: 45,
-          storage_usage: 62
+    const fetchTraining = async () => {
+      try {
+        const res = await fetch('/ai-models/training');
+        if (res.ok) {
+          const data = await res.json();
+          if (Array.isArray(data?.training_jobs)) {
+            setTrainingJobs(data.training_jobs);
+          }
         }
+      } catch (e) {
+        console.error('Failed to fetch AI training jobs', e);
       }
-    ]);
+    };
 
-    setGlobalCollaborations([
-      {
-        id: '1',
-        name: 'Global Consciousness Research Initiative',
-        description: 'Worldwide collaboration on consciousness AI research',
-        host: 'MIT Consciousness Lab',
-        participants: 1247,
-        models_shared: 89,
-        insights_generated: 234,
-        is_public: true,
-        region: 'global',
-        created_at: '2025-09-01',
-        last_activity: '2025-09-07T10:30:00Z',
-        tags: ['research', 'consciousness', 'ai', 'global']
-      },
-      {
-        id: '2',
-        name: 'Quantum Consciousness Collective',
-        description: 'Advanced quantum consciousness research and development',
-        host: 'Quantum AI Institute',
-        participants: 456,
-        models_shared: 34,
-        insights_generated: 89,
-        is_public: true,
-        region: 'north-america',
-        created_at: '2025-09-03',
-        last_activity: '2025-09-07T09:45:00Z',
-        tags: ['quantum', 'consciousness', 'advanced', 'research']
-      },
-      {
-        id: '3',
-        name: 'Federated Learning Alliance',
-        description: 'Distributed consciousness learning across institutions',
-        host: 'Stanford AI Lab',
-        participants: 789,
-        models_shared: 56,
-        insights_generated: 156,
-        is_public: true,
-        region: 'multi-region',
-        created_at: '2025-09-05',
-        last_activity: '2025-09-07T08:15:00Z',
-        tags: ['federated', 'learning', 'distributed', 'collaboration']
-      }
-    ]);
+    fetchModels();
+    fetchTraining();
+
+    const interval = setInterval(() => {
+      fetchModels();
+      fetchTraining();
+    }, 60000);
+
+    return () => clearInterval(interval);
   }, []);
 
   const getModelIcon = (type: string) => {
@@ -456,7 +294,7 @@ const AdvancedAIModels: React.FC<AdvancedAIModelsProps> = ({
       name: newModel.name,
       type: newModel.type,
       architecture: newModel.architecture,
-      parameters: Math.floor(Math.random() * 1000000000),
+      parameters: 0,
       accuracy: 0,
       loss: 1.0,
       training_time: 0,

@@ -112,7 +112,8 @@ import {
   Wifi,
   Bluetooth,
   Radio,
-  Signal
+  Signal,
+  BarChart3
 } from 'lucide-react';
 
 interface NeuralSignal {
@@ -424,23 +425,47 @@ const BrainComputerInterface: React.FC<BrainComputerInterfaceProps> = ({
 
   const startRecording = () => {
     setIsRecording(true);
-    // Simulate neural signal capture
-    const interval = setInterval(() => {
-      const newSignal: NeuralSignal = {
-        id: Date.now().toString(),
-        type: 'eeg',
-        frequency: Math.random() * 30 + 5,
-        amplitude: Math.random() * 50 + 20,
-        phase: Math.random() * 6.28,
-        timestamp: new Date().toISOString(),
-        channel: Math.floor(Math.random() * 8) + 1,
-        quality: Math.random() * 30 + 70,
-        consciousness_correlation: Math.random() * 0.4 + 0.6
-      };
 
-      setNeuralSignals(prev => [newSignal, ...prev.slice(0, 99)]);
-      onNeuralSignalCapture(newSignal);
-    }, 100);
+    // Poll backend BCI APIs instead of generating random signals
+    const interval = setInterval(async () => {
+      try {
+        const [signalsRes, statesRes] = await Promise.all([
+          fetch('/bci/neural-signals'),
+          fetch('/bci/brain-states')
+        ]);
+
+        if (signalsRes.ok) {
+          const data = await signalsRes.json();
+          const signals = Array.isArray(data?.signals) ? data.signals : [];
+          if (signals.length > 0) {
+            // Append newest first, keep last 100
+            setNeuralSignals(prev => [...signals.map((s: any) => ({
+              id: s.id || Date.now().toString(),
+              type: s.type || 'eeg',
+              frequency: Number(s.frequency) || 10,
+              amplitude: Number(s.amplitude) || 30,
+              phase: Number(s.phase) || 0,
+              timestamp: s.timestamp || new Date().toISOString(),
+              channel: Number(s.channel) || 1,
+              quality: Number(s.quality) || 80,
+              consciousness_correlation: Number(s.consciousness_correlation) || 0.7
+            })), ...prev].slice(0, 100));
+          }
+        }
+
+        if (statesRes.ok) {
+          const data = await statesRes.json();
+          const states = Array.isArray(data?.states) ? data.states : [];
+          if (states.length > 0) {
+            setBrainStates(prev => [...states, ...prev].slice(0, 50));
+          }
+        }
+      } catch (e) {
+        // Silent failure; keep existing data
+      }
+
+      onNeuralSignalCapture && neuralSignals[0] && onNeuralSignalCapture(neuralSignals[0]);
+    }, 500);
 
     setTimeout(() => {
       clearInterval(interval);

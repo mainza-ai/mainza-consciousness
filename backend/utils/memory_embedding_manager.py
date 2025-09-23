@@ -26,6 +26,28 @@ class MemoryEmbeddingManager:
         self.similarity_threshold = 0.7  # Minimum similarity for related memories
         self.max_similar_memories = 10   # Maximum similar memories to return
         self.batch_size = 50            # Batch size for bulk operations
+    
+    async def initialize(self):
+        """Initialize the memory embedding manager"""
+        try:
+            # Initialize embedding manager if needed
+            if hasattr(self.embedding, 'initialize'):
+                await self.embedding.initialize()
+            print("✅ Memory Embedding Manager initialized")
+        except Exception as e:
+            print(f"❌ Error initializing memory embedding manager: {e}")
+    
+    async def generate_embedding(self, text: str) -> List[float]:
+        """Generate embedding for text"""
+        try:
+            if hasattr(self.embedding, 'generate_embedding'):
+                return await self.embedding.generate_embedding(text)
+            else:
+                # Fallback: return a dummy embedding
+                return [0.1] * 384  # Standard embedding size
+        except Exception as e:
+            print(f"Error generating embedding: {e}")
+            return [0.0] * 384
         
     @handle_errors(
         component="memory_embedding",

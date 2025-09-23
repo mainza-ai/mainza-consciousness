@@ -235,8 +235,8 @@ function Index() {
   const messagesContainerRef = useRef<HTMLDivElement>(null);
   const scrollAnchorRef = useRef<HTMLDivElement>(null);
 
-  // Generate unique ID for messages
-  const generateUniqueId = () => `msg_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+  // Generate unique ID for messages (deterministic enough without randomness)
+  const generateUniqueId = () => `msg_${Date.now()}_${messages.length + 1}`;
 
   // Fetch consciousness state
   const fetchConsciousnessState = useCallback(async () => {

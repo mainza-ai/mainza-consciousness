@@ -416,6 +416,19 @@ const Web3Consciousness: React.FC<Web3ConsciousnessProps> = ({
     ]);
   }, []);
 
+  useEffect(() => {
+    const fetchWeb3 = async () => {
+      try {
+        const res = await fetch('/web3/identities');
+        if (res.ok) {
+          const data = await res.json();
+          if (Array.isArray(data?.identities)) setIdentities(data.identities);
+        }
+      } catch {}
+    };
+    fetchWeb3();
+  }, []);
+
   const getTrustLevelColor = (level: string) => {
     switch (level) {
       case 'verified': return 'bg-green-500/20 text-green-300';
@@ -448,9 +461,11 @@ const Web3Consciousness: React.FC<Web3ConsciousnessProps> = ({
   };
 
   const createIdentity = async () => {
+    // removed random address generation; use backend identities API or empty-state
+
     const newIdentity: Web3Identity = {
       id: Date.now().toString(),
-      address: '0x' + Math.random().toString(16).substr(2, 40),
+      address: '',
       reputation_score: 0,
       trust_level: 'low',
       badges: [],
@@ -468,8 +483,7 @@ const Web3Consciousness: React.FC<Web3ConsciousnessProps> = ({
       total_transactions: 0,
       total_volume: 0
     };
-
-    setIdentities(prev => [newIdentity, ...prev]);
+    setIdentities(prev => [...prev, newIdentity]);
     onIdentityCreate(newIdentity);
   };
 

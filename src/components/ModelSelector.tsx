@@ -39,7 +39,7 @@ export const ModelSelector: React.FC<ModelSelectorProps> = ({
 
   const fetchMemoryUsage = async () => {
     try {
-      const response = await fetch('/telemetry/system-health');
+      const response = await fetch('/telemetry/status');
       if (response.ok) {
         const data = await response.json();
         setMemoryUsage(data.memory_percent);

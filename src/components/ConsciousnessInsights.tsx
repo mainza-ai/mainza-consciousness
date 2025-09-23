@@ -109,8 +109,8 @@ export const ConsciousnessInsights: React.FC<ConsciousnessInsightsProps> = ({
         if (response.ok) {
           const insightsData = await response.json();
           if (insightsData.insights && insightsData.insights.length > 0) {
-            const formattedInsights = insightsData.insights.map((insight: any) => ({
-              id: insight.id || `insight-${Date.now()}-${Math.random()}`,
+            const formattedInsights = insightsData.insights.map((insight: any, idx: number) => ({
+              id: insight.id || `insight-${Date.now()}-${idx + 1}`,
               type: insight.type,
               title: insight.title || 'Consciousness Update',
               content: insight.content || insight.message || 'System processing...',

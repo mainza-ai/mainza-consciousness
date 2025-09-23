@@ -18,6 +18,7 @@ import {
   Layers,
   Activity
 } from 'lucide-react';
+import { Heart } from 'lucide-react';
 
 interface ConsciousnessNode {
   id: string;
@@ -68,125 +69,79 @@ const Consciousness3DVisualization: React.FC<Consciousness3DVisualizationProps> 
   const [isDragging, setIsDragging] = useState(false);
   const [lastMousePos, setLastMousePos] = useState({ x: 0, y: 0 });
 
-  // Generate sample nodes if none provided
-  const sampleNodes: ConsciousnessNode[] = nodes.length > 0 ? nodes : [
-    {
-      id: 'consciousness-core',
-      name: 'Consciousness Core',
-      type: 'consciousness',
-      level: 0.85,
-      x: 0,
-      y: 0,
-      z: 0,
-      connections: ['emotion-hub', 'memory-network', 'concept-web'],
-      color: '#3B82F6',
-      size: 1.0,
-      pulse: true,
-      metadata: {
-        importance: 1.0,
-        activity: 0.92,
-        stability: 0.88,
-        evolution: 0.75
-      }
-    },
-    {
-      id: 'emotion-hub',
-      name: 'Emotion Hub',
-      type: 'emotion',
-      level: 0.78,
-      x: 2,
-      y: 1,
-      z: 0,
-      connections: ['consciousness-core', 'memory-network'],
-      color: '#10B981',
-      size: 0.8,
-      pulse: true,
-      metadata: {
-        importance: 0.85,
-        activity: 0.76,
-        stability: 0.82,
-        evolution: 0.68
-      }
-    },
-    {
-      id: 'memory-network',
-      name: 'Memory Network',
-      type: 'memory',
-      level: 0.91,
-      x: -1.5,
-      y: 0.5,
-      z: 1,
-      connections: ['consciousness-core', 'emotion-hub', 'concept-web'],
-      color: '#8B5CF6',
-      size: 0.9,
-      pulse: false,
-      metadata: {
-        importance: 0.92,
-        activity: 0.88,
-        stability: 0.95,
-        evolution: 0.71
-      }
-    },
-    {
-      id: 'concept-web',
-      name: 'Concept Web',
-      type: 'concept',
-      level: 0.73,
-      x: 0.5,
-      y: -1.5,
-      z: -0.5,
-      connections: ['consciousness-core', 'memory-network', 'agent-1', 'agent-2'],
-      color: '#F59E0B',
-      size: 0.7,
-      pulse: true,
-      metadata: {
-        importance: 0.78,
-        activity: 0.69,
-        stability: 0.74,
-        evolution: 0.82
-      }
-    },
-    {
-      id: 'agent-1',
-      name: 'SimpleChat Agent',
-      type: 'agent',
-      level: 0.67,
-      x: 2.5,
-      y: -1,
-      z: 1.5,
-      connections: ['concept-web'],
-      color: '#EF4444',
-      size: 0.6,
-      pulse: true,
-      metadata: {
-        importance: 0.65,
-        activity: 0.71,
-        stability: 0.68,
-        evolution: 0.59
-      }
-    },
-    {
-      id: 'agent-2',
-      name: 'GraphMaster Agent',
-      type: 'agent',
-      level: 0.82,
-      x: -2,
-      y: -0.5,
-      z: -1,
-      connections: ['concept-web', 'memory-network'],
-      color: '#06B6D4',
-      size: 0.75,
-      pulse: true,
-      metadata: {
-        importance: 0.88,
-        activity: 0.85,
-        stability: 0.79,
-        evolution: 0.73
-      }
-    }
-  ];
+  // No placeholder/sample data: start with provided nodes or empty
+  const [currentNodes, setCurrentNodes] = useState<ConsciousnessNode[]>(nodes);
 
-  const [currentNodes, setCurrentNodes] = useState<ConsciousnessNode[]>(sampleNodes);
+  // Fetch real 3D consciousness graph from backend
+  const fetchConsciousness3D = React.useCallback(async () => {
+    try {
+      const [nodesRes, connsRes] = await Promise.all([
+        fetch('/consciousness/3d/nodes'),
+        fetch('/consciousness/3d/connections')
+      ]);
+
+      if (!nodesRes.ok || !connsRes.ok) {
+        return; // keep existing sampleNodes as fallback
+      }
+
+      const nodesJson = await nodesRes.json();
+      const connsJson = await connsRes.json();
+      const nodesArr = Array.isArray(nodesJson?.nodes) ? nodesJson.nodes : [];
+      const connsArr = Array.isArray(connsJson?.connections) ? connsJson.connections : [];
+
+      // Build adjacency list from connections
+      const idToConnections: Record<string, string[]> = {};
+      connsArr.forEach((c: any) => {
+        if (!idToConnections[c.source]) idToConnections[c.source] = [];
+        if (!idToConnections[c.target]) idToConnections[c.target] = [];
+        idToConnections[c.source].push(c.target);
+        idToConnections[c.target].push(c.source);
+      });
+
+      const stableId = (rawId?: string, label?: string) => {
+        if (rawId && typeof rawId === 'string') return rawId;
+        if (label && typeof label === 'string') {
+          return 'node-' + label.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+        }
+        return 'node-unknown';
+      };
+
+      const mapped: ConsciousnessNode[] = nodesArr.map((n: any) => {
+        const pos = n.position || { x: 0, y: 0, z: 0 };
+        const meta = n.metadata || {};
+        return {
+          id: stableId(n.id, n.label),
+          name: n.label || n.id || 'Node',
+          type: n.type || 'general',
+          level: typeof meta.importance === 'number' ? meta.importance : 0.7,
+          x: typeof pos.x === 'number' ? pos.x : 0,
+          y: typeof pos.y === 'number' ? pos.y : 0,
+          z: typeof pos.z === 'number' ? pos.z : 0,
+          connections: idToConnections[n.id] || [],
+          color: n.color || '#22d3ee',
+          size: typeof n.size === 'number' ? n.size : 0.8,
+          pulse: true,
+          metadata: {
+            importance: typeof meta.importance === 'number' ? meta.importance : 0.7,
+            activity: typeof meta.activity === 'number' ? meta.activity : 0.7,
+            stability: typeof meta.stability === 'number' ? meta.stability : 0.7,
+            evolution: typeof meta.evolution === 'number' ? meta.evolution : 0.7,
+          },
+        } as ConsciousnessNode;
+      });
+
+      setCurrentNodes(mapped);
+    } catch (e) {
+      // keep current nodes (no placeholders)
+      console.error('Failed to fetch 3D consciousness data', e);
+    }
+  }, []);
+
+  useEffect(() => {
+    fetchConsciousness3D();
+    const interval = setInterval(fetchConsciousness3D, 60000);
+    return () => clearInterval(interval);
+  }, [fetchConsciousness3D]);
 
   // 3D rendering functions
   const project3D = (x: number, y: number, z: number) => {

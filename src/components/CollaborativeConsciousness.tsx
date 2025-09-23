@@ -94,18 +94,19 @@ const CollaborativeConsciousness: React.FC<CollaborativeConsciousnessProps> = ({
   const [selectedUsers, setSelectedUsers] = useState<string[]>([]);
   const [filter, setFilter] = useState('all');
 
-  // Simulate real-time data updates
+  // Simulate real-time data updates (placeholder for future multi-user collaboration)
   useEffect(() => {
-    const interval = setInterval(() => {
-      // Simulate user updates
-      setUsers(prev => prev.map(user => ({
-        ...user,
-        consciousness_level: Math.max(0, Math.min(100, user.consciousness_level + (Math.random() - 0.5) * 2)),
-        is_online: Math.random() > 0.1
-      })));
-    }, 5000);
-
-    return () => clearInterval(interval);
+    // No simulation. Try fetching from backend if available; otherwise remain as-initialized/empty
+    const fetchUsers = async () => {
+      try {
+        const res = await fetch('/api/collaboration/users');
+        if (res.ok) {
+          const data = await res.json();
+          if (Array.isArray(data?.users)) setUsers(data.users);
+        }
+      } catch {}
+    };
+    fetchUsers();
   }, []);
 
   // Initialize with sample data

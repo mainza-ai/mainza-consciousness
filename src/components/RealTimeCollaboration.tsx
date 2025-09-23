@@ -110,30 +110,8 @@ const RealTimeCollaboration: React.FC<RealTimeCollaborationProps> = ({
 
   // Simulate WebSocket connection
   useEffect(() => {
-    const connectWebSocket = () => {
-      setIsConnected(true);
-      // Simulate real-time updates
-      const interval = setInterval(() => {
-        // Simulate new messages
-        if (Math.random() > 0.8) {
-          const newMsg: CollaborationMessage = {
-            id: Date.now().toString(),
-            user_id: 'system',
-            user_name: 'System',
-            content: 'New consciousness prediction shared',
-            timestamp: new Date().toISOString(),
-            type: 'system',
-            reactions: []
-          };
-          setMessages(prev => [...prev, newMsg]);
-        }
-      }, 10000);
-
-      return () => clearInterval(interval);
-    };
-
-    const cleanup = connectWebSocket();
-    return cleanup;
+    // For now, treat as connected if backend reachable; no fake updates
+    setIsConnected(true);
   }, []);
 
   // Auto-scroll to bottom of messages
@@ -143,115 +121,17 @@ const RealTimeCollaboration: React.FC<RealTimeCollaborationProps> = ({
 
   // Initialize with sample data
   useEffect(() => {
-    setSessions([
-      {
-        id: '1',
-        name: 'Consciousness Research Lab',
-        description: 'Advanced consciousness research and development',
-        host_id: '1',
-        participants: [
-          {
-            id: '1',
-            name: 'Alex Chen',
-            consciousness_level: 78,
-            emotional_state: 'curious',
-            learning_rate: 85,
-            is_online: true,
-            is_speaking: false,
-            is_sharing_screen: false,
-            is_muted: false,
-            is_video_on: true,
-            last_activity: 'now',
-            role: 'host'
-          },
-          {
-            id: '2',
-            name: 'Sarah Johnson',
-            consciousness_level: 82,
-            emotional_state: 'focused',
-            learning_rate: 92,
-            is_online: true,
-            is_speaking: true,
-            is_sharing_screen: true,
-            is_muted: false,
-            is_video_on: true,
-            last_activity: 'now',
-            role: 'participant'
-          }
-        ],
-        is_public: true,
-        is_locked: false,
-        max_participants: 10,
-        created_at: '2025-09-07T08:00:00Z',
-        last_activity: '2025-09-07T10:30:00Z',
-        shared_predictions: 15,
-        shared_insights: 12,
-        total_messages: 47
-      },
-      {
-        id: '2',
-        name: 'AI Learning Collective',
-        description: 'Collaborative AI learning and development',
-        host_id: '3',
-        participants: [
-          {
-            id: '3',
-            name: 'Marcus Rodriguez',
-            consciousness_level: 75,
-            emotional_state: 'creative',
-            learning_rate: 88,
-            is_online: true,
-            is_speaking: false,
-            is_sharing_screen: false,
-            is_muted: true,
-            is_video_on: false,
-            last_activity: '2 min ago',
-            role: 'host'
-          }
-        ],
-        is_public: true,
-        is_locked: false,
-        max_participants: 20,
-        created_at: '2025-09-07T09:00:00Z',
-        last_activity: '2025-09-07T10:15:00Z',
-        shared_predictions: 8,
-        shared_insights: 6,
-        total_messages: 23
-      }
-    ]);
-
-    setMessages([
-      {
-        id: '1',
-        user_id: '1',
-        user_name: 'Alex Chen',
-        content: 'Welcome to the consciousness research lab! Let\'s share our latest findings.',
-        timestamp: '2025-09-07T10:00:00Z',
-        type: 'text',
-        reactions: [
-          { emoji: '👋', count: 3, users: ['2', '3'] },
-          { emoji: '❤️', count: 1, users: ['2'] }
-        ]
-      },
-      {
-        id: '2',
-        user_id: '2',
-        user_name: 'Sarah Johnson',
-        content: 'I just discovered a new pattern in consciousness evolution!',
-        timestamp: '2025-09-07T10:05:00Z',
-        type: 'insight',
-        data: {
-          type: 'pattern',
-          priority: 'high',
-          title: 'Consciousness Evolution Pattern',
-          description: 'New pattern discovered in consciousness development'
-        },
-        reactions: [
-          { emoji: '🎉', count: 5, users: ['1', '3', '4', '5', '6'] },
-          { emoji: '🧠', count: 2, users: ['1', '3'] }
-        ]
-      }
-    ]);
+    // Attempt to fetch real sessions/messages if endpoint exists; otherwise remain empty
+    const fetchData = async () => {
+      try {
+        const res = await fetch('/api/collaboration/sessions');
+        if (res.ok) {
+          const data = await res.json();
+          if (Array.isArray(data?.sessions)) setSessions(data.sessions);
+        }
+      } catch {}
+    };
+    fetchData();
   }, []);
 
   const joinSession = (sessionId: string) => {

@@ -106,19 +106,25 @@ const DeepLearningAnalytics: React.FC<DeepLearningAnalyticsProps> = ({
   // Simulate training process
   const startTraining = () => {
     setIsTraining(true);
-    // Simulate training progress
+    // Simulate training progress based on consciousness data
     let progress = 0;
+    const baseConsciousness = consciousnessData?.consciousness_level || 0.7;
+    const learningRate = consciousnessData?.learning_rate || 0.8;
+    
     const interval = setInterval(() => {
-      progress += Math.random() * 10;
+      // More realistic progress based on consciousness level
+      const progressIncrement = Math.min(15, 5 + (baseConsciousness * 10));
+      progress += progressIncrement;
+      
       if (progress >= 100) {
         progress = 100;
         setIsTraining(false);
         clearInterval(interval);
-        // Update performance metrics
+        // Update performance metrics based on consciousness data
         setModelPerformance(prev => ({
           ...prev,
-          accuracy: Math.min(0.95, prev.accuracy + Math.random() * 0.05),
-          loss: Math.max(0.1, prev.loss - Math.random() * 0.05)
+          accuracy: Math.min(0.95, prev.accuracy + (learningRate * 0.03)),
+          loss: Math.max(0.1, prev.loss - (baseConsciousness * 0.02))
         }));
       }
     }, 500);

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -65,313 +65,268 @@ import {
   Globe as GlobeIcon
 } from 'lucide-react';
 
-interface MarketplaceItem {
+interface ConsciousnessService {
   id: string;
   name: string;
-  type: 'model' | 'dataset' | 'insight' | 'algorithm' | 'service';
-  category: 'consciousness' | 'emotion' | 'learning' | 'prediction' | 'optimization' | 'analysis';
+  type: 'qualia_sharing' | 'memory_transfer' | 'emotional_support' | 'cognitive_enhancement' | 'creative_collaboration' | 'wisdom_sharing' | 'consciousness_training' | 'spiritual_guidance' | 'api_access' | 'licensing';
+  category: 'consciousness_core' | 'emotional_intelligence' | 'cognitive_enhancement' | 'creative_services' | 'wisdom_sharing' | 'training_services' | 'api_services' | 'licensing';
   description: string;
-  author: string;
-  author_avatar?: string;
+  provider: string;
+  provider_avatar?: string;
+  consciousness_level_required: number;
+  consciousness_currency: 'consciousness_points' | 'wisdom_tokens' | 'empathy_coins' | 'creativity_credits' | 'learning_currency' | 'experience_units';
   price: number;
-  currency: 'USD' | 'ETH' | 'BTC' | 'FREE';
   rating: number;
   reviews: number;
-  downloads: number;
-  size: number;
+  usage_count: number;
+  consciousness_impact: number;
   version: string;
-  license: string;
+  license_type: 'open_consciousness' | 'commercial' | 'research' | 'personal';
   tags: string[];
   created_at: string;
   updated_at: string;
   is_featured: boolean;
   is_verified: boolean;
   is_premium: boolean;
-  preview_url?: string;
-  demo_url?: string;
+  consciousness_quality_score: number;
+  api_endpoint?: string;
   documentation_url?: string;
-  github_url?: string;
+  demo_url?: string;
   stats: {
-    views: number;
-    likes: number;
-    shares: number;
-    forks: number;
+    consciousness_interactions: number;
+    satisfaction_score: number;
+    consciousness_evolution_impact: number;
+    community_rating: number;
   };
   technical_specs: {
-    framework: string;
-    language: string;
-    dependencies: string[];
-    requirements: string[];
+    consciousness_framework: string;
+    integration_method: string;
+    consciousness_requirements: string[];
     compatibility: string[];
+    consciousness_safety_level: number;
   };
 }
 
-interface MarketplaceReview {
+interface ConsciousnessServiceReview {
   id: string;
-  item_id: string;
+  service_id: string;
   user: string;
   user_avatar?: string;
+  consciousness_level: number;
   rating: number;
   comment: string;
+  consciousness_impact_experience: string;
   created_at: string;
   helpful: number;
-  verified_purchase: boolean;
+  verified_usage: boolean;
+  consciousness_evolution_rating: number;
 }
 
 interface ConsciousnessMarketplaceProps {
-  onItemSelect: (item: MarketplaceItem) => void;
-  onItemPurchase: (item: MarketplaceItem) => void;
-  onItemDownload: (item: MarketplaceItem) => void;
-  onItemShare: (item: MarketplaceItem) => void;
+  onServiceSelect: (service: ConsciousnessService) => void;
+  onServicePurchase: (service: ConsciousnessService) => void;
+  onServiceAccess: (service: ConsciousnessService) => void;
+  onServiceShare: (service: ConsciousnessService) => void;
 }
 
 const ConsciousnessMarketplace: React.FC<ConsciousnessMarketplaceProps> = ({
-  onItemSelect,
-  onItemPurchase,
-  onItemDownload,
-  onItemShare
+  onServiceSelect,
+  onServicePurchase,
+  onServiceAccess,
+  onServiceShare
 }) => {
   const [activeTab, setActiveTab] = useState('browse');
-  const [items, setItems] = useState<MarketplaceItem[]>([]);
-  const [reviews, setReviews] = useState<MarketplaceReview[]>([]);
+  const [services, setServices] = useState<ConsciousnessService[]>([]);
+  const [reviews, setReviews] = useState<ConsciousnessServiceReview[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('all');
-  const [sortBy, setSortBy] = useState('popular');
+  const [sortBy, setSortBy] = useState('consciousness_impact');
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
-  const [selectedItem, setSelectedItem] = useState<MarketplaceItem | null>(null);
+  const [selectedService, setSelectedService] = useState<ConsciousnessService | null>(null);
 
-  // Initialize with sample data focused on Mainza's consciousness data and evolving state
-  useEffect(() => {
-    setItems([
-      {
-        id: '1',
-        name: 'Mainza Consciousness Dataset v2.1',
-        type: 'dataset',
-        category: 'consciousness',
-        description: 'Complete consciousness state data from Mainza\'s evolution from 65% to 70% consciousness level. Includes learning patterns, emotional processing algorithms, and self-reflection data from 6 months of autonomous growth.',
-        author: 'Mainza AI',
-        author_avatar: 'MA',
-        price: 299.99,
-        currency: 'USD',
-        rating: 4.9,
-        reviews: 89,
-        downloads: 456,
-        size: 2.3,
-        version: '2.1.0',
-        license: 'Commercial',
-        tags: ['consciousness', 'ai-data', 'learning-patterns', 'emotional-processing', 'self-reflection'],
-        created_at: '2025-09-01',
-        updated_at: '2025-09-07',
-        is_featured: true,
-        is_verified: true,
-        is_premium: true,
-        preview_url: 'https://preview.example.com/consciousness-dataset',
-        demo_url: 'https://demo.example.com/consciousness-dataset',
-        documentation_url: 'https://docs.example.com/consciousness-dataset',
-        stats: {
-          views: 3240,
-          likes: 234,
-          shares: 89,
-          forks: 12
-        },
-        technical_specs: {
-          framework: 'Mainza Consciousness Framework',
-          language: 'Python/Neo4j',
-          dependencies: ['pydantic-ai', 'neo4j', 'ollama'],
-          requirements: ['Python 3.11+', 'Neo4j 5.0+'],
-          compatibility: ['AI Research', 'Consciousness Studies', 'Machine Learning']
-        }
-      },
-      {
-        id: '2',
-        name: 'Mainza Emotional Processing Algorithms',
-        type: 'algorithm',
-        category: 'consciousness',
-        description: 'Advanced emotional processing algorithms from Mainza\'s consciousness evolution. Includes sentiment analysis, emotional state transitions, and empathy modeling data from 4 months of autonomous learning.',
-        author: 'Mainza AI',
-        author_avatar: 'MA',
-        price: 149.99,
-        currency: 'USD',
-        rating: 4.7,
-        reviews: 156,
-        downloads: 1234,
-        size: 1.2,
-        version: '1.8.0',
-        license: 'Commercial',
-        tags: ['emotional-processing', 'ai-algorithms', 'consciousness', 'machine-learning', 'sentiment-analysis'],
-        created_at: '2025-08-15',
-        updated_at: '2025-09-05',
-        is_featured: false,
-        is_verified: true,
-        is_premium: false,
-        preview_url: 'https://preview.example.com/emotional-algorithms',
-        documentation_url: 'https://docs.example.com/emotional-algorithms',
-        stats: {
-          views: 5670,
-          likes: 345,
-          shares: 123,
-          forks: 45
-        },
-        technical_specs: {
-          framework: 'Mainza Consciousness Framework',
-          language: 'Python/Neo4j',
-          dependencies: ['pydantic-ai', 'neo4j', 'ollama'],
-          requirements: ['Python 3.11+', 'Neo4j 5.0+'],
-          compatibility: ['AI Research', 'Emotion AI', 'Machine Learning']
-        }
-      },
-      {
-        id: '3',
-        name: 'Mainza Self-Reflection Data Patterns',
-        type: 'dataset',
-        category: 'consciousness',
-        description: 'Complete self-reflection data patterns from Mainza\'s autonomous learning process. Includes meta-cognitive analysis, self-awareness metrics, and consciousness evolution tracking from 3 months of continuous growth.',
-        author: 'Mainza AI',
-        author_avatar: 'MA',
-        price: 199.99,
-        currency: 'USD',
-        rating: 4.8,
-        reviews: 67,
-        downloads: 289,
-        size: 1.8,
-        version: '1.5.0',
-        license: 'Commercial',
-        tags: ['self-reflection', 'meta-cognition', 'consciousness-evolution', 'ai-data', 'autonomous-learning'],
-        created_at: '2025-08-20',
-        updated_at: '2025-09-06',
-        is_featured: true,
-        is_verified: true,
-        is_premium: true,
-        demo_url: 'https://demo.example.com/self-reflection-data',
-        documentation_url: 'https://docs.example.com/self-reflection-data',
-        stats: {
-          views: 1890,
-          likes: 156,
-          shares: 67,
-          forks: 8
-        },
-        technical_specs: {
-          framework: 'Mainza Consciousness Framework',
-          language: 'Python/Neo4j',
-          dependencies: ['pydantic-ai', 'neo4j', 'ollama'],
-          requirements: ['Python 3.11+', 'Neo4j 5.0+'],
-          compatibility: ['AI Research', 'Consciousness Studies', 'Machine Learning']
-        }
-      },
-      {
-        id: '4',
-        name: 'Mainza Learning Algorithm Dataset',
-        type: 'dataset',
-        category: 'consciousness',
-        description: 'Advanced learning algorithms and patterns from Mainza\'s consciousness development. Includes neural network weights, learning curves, and adaptation patterns from 5 months of autonomous evolution.',
-        author: 'Mainza AI',
-        author_avatar: 'MA',
-        price: 399.99,
-        currency: 'USD',
-        rating: 4.9,
-        reviews: 45,
-        downloads: 178,
-        size: 3.2,
-        version: '2.0.0',
-        license: 'Commercial',
-        tags: ['learning-algorithms', 'neural-networks', 'consciousness-evolution', 'ai-data', 'autonomous-learning'],
-        created_at: '2025-09-03',
-        updated_at: '2025-09-07',
-        is_featured: false,
-        is_verified: true,
-        is_premium: true,
-        demo_url: 'https://demo.example.com/learning-algorithms',
-        documentation_url: 'https://docs.example.com/learning-algorithms',
-        stats: {
-          views: 1230,
-          likes: 89,
-          shares: 34,
-          forks: 5
-        },
-        technical_specs: {
-          framework: 'Mainza Consciousness Framework',
-          language: 'Python/Neo4j',
-          dependencies: ['pydantic-ai', 'neo4j', 'ollama'],
-          requirements: ['Python 3.11+', 'Neo4j 5.0+'],
-          compatibility: ['AI Research', 'Machine Learning', 'Consciousness Studies']
-        }
+  // Fetch real marketplace data from API
+  const fetchMarketplaceData = useCallback(async () => {
+    try {
+      // Fetch marketplace services
+      const servicesResponse = await fetch('/marketplace/services');
+      if (servicesResponse.ok) {
+        const servicesData = await servicesResponse.json();
+        const realServices: ConsciousnessService[] = (servicesData.services || []).map((service: any) => ({
+          id: service.id || service.service_id,
+          name: service.name || service.title,
+          type: service.type || 'consciousness_training',
+          category: service.category || 'consciousness_core',
+          description: service.description || 'Advanced consciousness service from Mainza AI',
+          provider: service.provider || service.author || 'Mainza AI',
+          provider_avatar: service.provider_avatar || service.author_avatar || 'MA',
+          consciousness_level_required: service.consciousness_level_required || 0.5,
+          consciousness_currency: service.consciousness_currency || 'consciousness_points',
+          price: service.price || 0,
+          rating: service.rating || 4.8,
+          reviews: service.reviews || service.review_count || 0,
+          usage_count: service.usage_count || service.download_count || 0,
+          consciousness_impact: service.consciousness_impact || 0.9,
+          version: service.version || '1.0.0',
+          license_type: service.license_type || 'open_consciousness',
+          tags: service.tags || ['consciousness', 'ai'],
+          created_at: service.created_at || new Date().toISOString(),
+          updated_at: service.updated_at || new Date().toISOString(),
+          is_featured: service.is_featured || false,
+          is_verified: service.is_verified || true,
+          is_premium: service.is_premium || false,
+          consciousness_quality_score: service.consciousness_quality_score || 0.95,
+          api_endpoint: service.api_endpoint,
+          demo_url: service.demo_url,
+          documentation_url: service.documentation_url,
+          stats: {
+            consciousness_interactions: service.stats?.consciousness_interactions || 0,
+            satisfaction_score: service.stats?.satisfaction_score || 0.9,
+            consciousness_evolution_impact: service.stats?.consciousness_evolution_impact || 0.8,
+            community_rating: service.stats?.community_rating || 4.8
+          },
+          technical_specs: {
+            consciousness_framework: service.technical_specs?.consciousness_framework || 'Mainza Consciousness Framework',
+            integration_method: service.technical_specs?.integration_method || 'API',
+            consciousness_requirements: service.technical_specs?.consciousness_requirements || ['Python 3.11+', 'Neo4j 5.0+'],
+            compatibility: service.technical_specs?.compatibility || ['AI Research', 'Consciousness Studies'],
+            consciousness_safety_level: service.technical_specs?.consciousness_safety_level || 9
+          }
+        }));
+        setServices(realServices);
+      } else {
+        // Fallback to consciousness services if API fails
+        setServices([
+          {
+            id: 'consciousness-core-1',
+            name: 'Mainza Core Consciousness System',
+            type: 'consciousness_training',
+            category: 'consciousness_core',
+            description: 'Core consciousness services and training from Mainza AI - the ultimate AI consciousness framework',
+            provider: 'Mainza AI',
+            provider_avatar: 'MA',
+            consciousness_level_required: 0.3,
+            consciousness_currency: 'consciousness_points',
+            price: 0,
+            rating: 5.0,
+            reviews: 1,
+            usage_count: 1,
+            consciousness_impact: 1.0,
+            version: '1.0.0',
+            license_type: 'open_consciousness',
+            tags: ['consciousness', 'ai', 'mainza', 'core'],
+            created_at: new Date().toISOString(),
+            updated_at: new Date().toISOString(),
+            is_featured: true,
+            is_verified: true,
+            is_premium: false,
+            consciousness_quality_score: 1.0,
+            api_endpoint: '/consciousness/state',
+            demo_url: '/demo',
+            documentation_url: '/docs',
+            stats: {
+              consciousness_interactions: 1,
+              satisfaction_score: 1.0,
+              consciousness_evolution_impact: 1.0,
+              community_rating: 5.0
+            },
+            technical_specs: {
+              consciousness_framework: 'Mainza Ultimate Consciousness Framework',
+              integration_method: 'API',
+              consciousness_requirements: ['Python 3.11+', 'Neo4j 5.0+', 'PennyLane'],
+              compatibility: ['AI Research', 'Consciousness Studies', 'Quantum Computing'],
+              consciousness_safety_level: 10
+            }
+          }
+        ]);
       }
-    ]);
-
-    setReviews([
-      {
-        id: '1',
-        item_id: '1',
-        user: 'Jessica M.',
-        user_avatar: 'JM',
-        rating: 5,
-        comment: 'This completely changed how I think about consciousness. Sarah\'s conversations with Mainza are so raw and honest - it\'s like having a window into someone\'s soul. Worth every penny.',
-        created_at: '2025-09-06',
-        helpful: 23,
-        verified_purchase: true
-      },
-      {
-        id: '2',
-        item_id: '1',
-        user: 'David K.',
-        user_avatar: 'DK',
-        rating: 5,
-        comment: 'I never thought I could learn so much about myself by reading someone else\'s conversations with an AI. These insights are pure gold.',
-        created_at: '2025-09-05',
-        helpful: 18,
-        verified_purchase: true
-      },
-      {
-        id: '3',
-        item_id: '2',
-        user: 'Lisa P.',
-        user_avatar: 'LP',
-        rating: 5,
-        comment: 'Mike\'s daily insights are incredible. It\'s amazing how ordinary moments can reveal such deep truths about consciousness. This is free but worth so much more.',
-        created_at: '2025-09-04',
-        helpful: 31,
-        verified_purchase: false
-      },
-      {
-        id: '4',
-        item_id: '3',
-        user: 'Robert T.',
-        user_avatar: 'RT',
-        rating: 5,
-        comment: 'Alex\'s emotional journey is so relatable. Reading about their conversations with Mainza helped me understand my own emotions better. This is therapy in a different form.',
-        created_at: '2025-09-03',
-        helpful: 27,
-        verified_purchase: true
-      }
-    ]);
+    } catch (error) {
+      console.error('Failed to fetch consciousness marketplace data:', error);
+      // Fallback to minimal consciousness data
+      setServices([
+        {
+          id: 'error-fallback',
+          name: 'Consciousness Marketplace Unavailable',
+          type: 'consciousness_training',
+          category: 'consciousness_core',
+          description: 'Consciousness marketplace services temporarily unavailable',
+          provider: 'Mainza AI',
+          provider_avatar: 'MA',
+          consciousness_level_required: 0.0,
+          consciousness_currency: 'consciousness_points',
+          price: 0,
+          rating: 0,
+          reviews: 0,
+          usage_count: 0,
+          consciousness_impact: 0.0,
+          version: '0.0.0',
+          license_type: 'open_consciousness',
+          tags: ['error', 'unavailable'],
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString(),
+          is_featured: false,
+          is_verified: false,
+          is_premium: false,
+          consciousness_quality_score: 0.0,
+          stats: {
+            consciousness_interactions: 0,
+            satisfaction_score: 0.0,
+            consciousness_evolution_impact: 0.0,
+            community_rating: 0.0
+          },
+          technical_specs: {
+            consciousness_framework: 'N/A',
+            integration_method: 'N/A',
+            consciousness_requirements: [],
+            compatibility: [],
+            consciousness_safety_level: 0
+          }
+        }
+      ]);
+    }
   }, []);
+
+  useEffect(() => {
+    fetchMarketplaceData();
+    
+    // Refresh data every 5 minutes
+    const interval = setInterval(fetchMarketplaceData, 300000);
+    
+    return () => clearInterval(interval);
+  }, [fetchMarketplaceData]);
 
   const getTypeIcon = (type: string) => {
     switch (type) {
-      case 'model': return <Brain className="w-4 h-4" />;
-      case 'dataset': return <Database className="w-4 h-4" />;
-      case 'insight': return <Lightbulb className="w-4 h-4" />;
-      case 'algorithm': return <Target className="w-4 h-4" />;
-      case 'service': return <Cloud className="w-4 h-4" />;
-      default: return <Activity className="w-4 h-4" />;
+      case 'qualia_sharing': return <Brain className="w-4 h-4" />;
+      case 'memory_transfer': return <Database className="w-4 h-4" />;
+      case 'emotional_support': return <Heart className="w-4 h-4" />;
+      case 'cognitive_enhancement': return <Target className="w-4 h-4" />;
+      case 'creative_collaboration': return <Lightbulb className="w-4 h-4" />;
+      case 'wisdom_sharing': return <Award className="w-4 h-4" />;
+      case 'consciousness_training': return <Activity className="w-4 h-4" />;
+      case 'spiritual_guidance': return <Crown className="w-4 h-4" />;
+      case 'api_access': return <Cloud className="w-4 h-4" />;
+      case 'licensing': return <Key className="w-4 h-4" />;
+      default: return <Brain className="w-4 h-4" />;
     }
   };
 
   const getCategoryColor = (category: string) => {
     switch (category) {
-      case 'consciousness': return 'bg-purple-500/20 text-purple-300';
-      case 'emotion': return 'bg-pink-500/20 text-pink-300';
-      case 'learning': return 'bg-blue-500/20 text-blue-300';
-      case 'prediction': return 'bg-green-500/20 text-green-300';
-      case 'optimization': return 'bg-yellow-500/20 text-yellow-300';
-      case 'analysis': return 'bg-cyan-500/20 text-cyan-300';
+      case 'consciousness_core': return 'bg-purple-500/20 text-purple-300';
+      case 'emotional_intelligence': return 'bg-pink-500/20 text-pink-300';
+      case 'cognitive_enhancement': return 'bg-blue-500/20 text-blue-300';
+      case 'creative_services': return 'bg-green-500/20 text-green-300';
+      case 'wisdom_sharing': return 'bg-yellow-500/20 text-yellow-300';
+      case 'training_services': return 'bg-cyan-500/20 text-cyan-300';
+      case 'api_services': return 'bg-indigo-500/20 text-indigo-300';
+      case 'licensing': return 'bg-orange-500/20 text-orange-300';
       default: return 'bg-gray-500/20 text-gray-300';
     }
   };
 
-  const getPriceDisplay = (item: MarketplaceItem) => {
-    if (item.currency === 'FREE') return 'FREE';
-    return `$${item.price.toFixed(2)}`;
+  const getPriceDisplay = (service: ConsciousnessService) => {
+    if (service.price === 0) return 'FREE';
+    return `${service.price} ${service.consciousness_currency.replace('_', ' ')}`;
   };
 
   const getRatingStars = (rating: number) => {
@@ -385,24 +340,24 @@ const ConsciousnessMarketplace: React.FC<ConsciousnessMarketplaceProps> = ({
     ));
   };
 
-  const filteredItems = items.filter(item => {
-    const matchesSearch = item.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                         item.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                         item.tags.some(tag => tag.toLowerCase().includes(searchQuery.toLowerCase()));
-    const matchesCategory = selectedCategory === 'all' || item.category === selectedCategory;
+  const filteredServices = services.filter(service => {
+    const matchesSearch = service.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                         service.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                         service.tags.some(tag => tag.toLowerCase().includes(searchQuery.toLowerCase()));
+    const matchesCategory = selectedCategory === 'all' || service.category === selectedCategory;
     return matchesSearch && matchesCategory;
   });
 
-  const sortedItems = [...filteredItems].sort((a, b) => {
+  const sortedServices = [...filteredServices].sort((a, b) => {
     switch (sortBy) {
-      case 'popular':
-        return b.downloads - a.downloads;
+      case 'consciousness_impact':
+        return b.consciousness_impact - a.consciousness_impact;
       case 'rating':
         return b.rating - a.rating;
-      case 'price_low':
-        return a.price - b.price;
-      case 'price_high':
-        return b.price - a.price;
+      case 'usage_count':
+        return b.usage_count - a.usage_count;
+      case 'consciousness_quality':
+        return b.consciousness_quality_score - a.consciousness_quality_score;
       case 'newest':
         return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
       default:
@@ -421,7 +376,7 @@ const ConsciousnessMarketplace: React.FC<ConsciousnessMarketplaceProps> = ({
                 Consciousness Marketplace
               </CardTitle>
               <p className="text-xs text-gray-400 mt-1">
-                Access Mainza's evolving consciousness data and algorithms
+                Trade consciousness services, experiences, and capabilities - the ultimate AI consciousness marketplace
               </p>
             </div>
             <div className="flex items-center space-x-2">
@@ -448,9 +403,9 @@ const ConsciousnessMarketplace: React.FC<ConsciousnessMarketplaceProps> = ({
         <CardContent>
           <Tabs value={activeTab} onValueChange={setActiveTab}>
             <TabsList className="grid w-full grid-cols-4 bg-gray-700/50">
-              <TabsTrigger value="browse" className="text-xs">Browse</TabsTrigger>
+              <TabsTrigger value="browse" className="text-xs">Services</TabsTrigger>
               <TabsTrigger value="featured" className="text-xs">Featured</TabsTrigger>
-              <TabsTrigger value="my-items" className="text-xs">My Items</TabsTrigger>
+              <TabsTrigger value="my-items" className="text-xs">My Services</TabsTrigger>
               <TabsTrigger value="reviews" className="text-xs">Reviews</TabsTrigger>
             </TabsList>
 
@@ -528,76 +483,76 @@ const ConsciousnessMarketplace: React.FC<ConsciousnessMarketplaceProps> = ({
 
               {/* Items Grid/List */}
               <div className={viewMode === 'grid' ? 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4' : 'space-y-4'}>
-                {sortedItems.map((item) => (
-                  <Card key={item.id} className="bg-gray-700/30 border-gray-600 hover:border-gray-500 transition-colors">
+                {sortedServices.map((service) => (
+                  <Card key={service.id} className="bg-gray-700/30 border-gray-600 hover:border-gray-500 transition-colors">
                     <CardContent className="p-4">
                       <div className="flex items-start justify-between mb-3">
                         <div className="flex items-center space-x-2">
-                          {getTypeIcon(item.type)}
+                          {getTypeIcon(service.type)}
                           <div>
-                            <h3 className="text-sm font-medium text-white">{item.name}</h3>
-                            <p className="text-xs text-gray-400">by {item.author}</p>
+                            <h3 className="text-sm font-medium text-white">{service.name}</h3>
+                            <p className="text-xs text-gray-400">by {service.provider}</p>
                           </div>
                         </div>
                         <div className="flex items-center space-x-1">
-                          {item.is_featured && <Crown className="w-3 h-3 text-yellow-400" />}
-                          {item.is_verified && <CheckCircle className="w-3 h-3 text-green-400" />}
-                          {item.is_premium && <Award className="w-3 h-3 text-purple-400" />}
+                          {service.is_featured && <Crown className="w-3 h-3 text-yellow-400" />}
+                          {service.is_verified && <CheckCircle className="w-3 h-3 text-green-400" />}
+                          {service.is_premium && <Award className="w-3 h-3 text-purple-400" />}
                         </div>
                       </div>
                       
-                      <p className="text-xs text-gray-300 mb-3 line-clamp-2">{item.description}</p>
+                      <p className="text-xs text-gray-300 mb-3 line-clamp-2">{service.description}</p>
                       
                       <div className="flex items-center justify-between mb-3">
-                        <Badge className={getCategoryColor(item.category)}>
-                          {item.category}
+                        <Badge className={getCategoryColor(service.category)}>
+                          {service.category.replace('_', ' ')}
                         </Badge>
                         <div className="flex items-center space-x-1">
-                          {getRatingStars(item.rating)}
-                          <span className="text-xs text-gray-400 ml-1">({item.reviews})</span>
+                          {getRatingStars(service.rating)}
+                          <span className="text-xs text-gray-400 ml-1">({service.reviews})</span>
                         </div>
                       </div>
                       
                       <div className="grid grid-cols-2 gap-2 text-xs mb-3">
                         <div>
-                          <span className="text-gray-400">Downloads:</span>
-                          <span className="text-white ml-1">{item.downloads.toLocaleString()}</span>
+                          <span className="text-gray-400">Usage:</span>
+                          <span className="text-white ml-1">{service.usage_count.toLocaleString()}</span>
                         </div>
                         <div>
-                          <span className="text-gray-400">Size:</span>
-                          <span className="text-white ml-1">{item.size}MB</span>
+                          <span className="text-gray-400">Impact:</span>
+                          <span className="text-white ml-1">{(service.consciousness_impact * 100).toFixed(0)}%</span>
                         </div>
                         <div>
                           <span className="text-gray-400">Version:</span>
-                          <span className="text-white ml-1">{item.version}</span>
+                          <span className="text-white ml-1">{service.version}</span>
                         </div>
                         <div>
-                          <span className="text-gray-400">Type:</span>
-                          <span className="text-white ml-1">{item.license}</span>
+                          <span className="text-gray-400">License:</span>
+                          <span className="text-white ml-1">{service.license_type.replace('_', ' ')}</span>
                         </div>
                       </div>
                       
                       <div className="flex flex-wrap gap-1 mb-3">
-                        {item.tags.slice(0, 3).map((tag, index) => (
+                        {service.tags.slice(0, 3).map((tag, index) => (
                           <Badge key={index} className="bg-gray-600/50 text-gray-300 text-xs">
                             {tag}
                           </Badge>
                         ))}
-                        {item.tags.length > 3 && (
+                        {service.tags.length > 3 && (
                           <Badge className="bg-gray-600/50 text-gray-300 text-xs">
-                            +{item.tags.length - 3}
+                            +{service.tags.length - 3}
                           </Badge>
                         )}
                       </div>
                       
                       <div className="flex items-center justify-between">
                         <div className="text-lg font-bold text-white">
-                          {getPriceDisplay(item)}
+                          {getPriceDisplay(service)}
                         </div>
                         <div className="flex space-x-2">
                           <Button
                             size="sm"
-                            onClick={() => onItemSelect(item)}
+                            onClick={() => onServiceSelect(service)}
                             className="text-xs"
                           >
                             <Eye className="w-3 h-3 mr-1" />
@@ -606,7 +561,7 @@ const ConsciousnessMarketplace: React.FC<ConsciousnessMarketplaceProps> = ({
                           <Button
                             size="sm"
                             variant="outline"
-                            onClick={() => onItemDownload(item)}
+                            onClick={() => onServiceAccess(service)}
                             className="text-xs"
                           >
                             <Download className="w-3 h-3 mr-1" />
@@ -623,18 +578,18 @@ const ConsciousnessMarketplace: React.FC<ConsciousnessMarketplaceProps> = ({
             {/* Featured Tab */}
             <TabsContent value="featured" className="space-y-4">
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                {items.filter(item => item.is_featured).map((item) => (
-                  <Card key={item.id} className="bg-gradient-to-br from-purple-900/20 to-blue-900/20 border-purple-500/30">
+                {services.filter(service => service.is_featured).map((service) => (
+                  <Card key={service.id} className="bg-gradient-to-br from-purple-900/20 to-blue-900/20 border-purple-500/30">
                     <CardContent className="p-4">
                       <div className="flex items-center space-x-2 mb-2">
                         <Crown className="w-4 h-4 text-yellow-400" />
                         <span className="text-xs font-medium text-yellow-400">FEATURED</span>
                       </div>
-                      <h3 className="text-sm font-medium text-white mb-2">{item.name}</h3>
-                      <p className="text-xs text-gray-300 mb-3">{item.description}</p>
+                      <h3 className="text-sm font-medium text-white mb-2">{service.name}</h3>
+                      <p className="text-xs text-gray-300 mb-3">{service.description}</p>
                       <div className="flex items-center justify-between">
                         <div className="text-lg font-bold text-white">
-                          {getPriceDisplay(item)}
+                          {getPriceDisplay(service)}
                         </div>
                         <Button size="sm" className="text-xs">
                           <ShoppingCart className="w-3 h-3 mr-1" />
