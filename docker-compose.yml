@@ -29,6 +29,7 @@ services:
       - ./neo4j/agent_experience_schema.cypher:/var/lib/neo4j/import/agent_experience_schema.cypher
       - ./neo4j/consciousness_memory_schema.cypher:/var/lib/neo4j/import/consciousness_memory_schema.cypher
       - ./neo4j/living_consciousness_schema.cypher:/var/lib/neo4j/import/living_consciousness_schema.cypher
+      - ./neo4j/ai_consciousness_optimization_schema.cypher:/var/lib/neo4j/import/ai_consciousness_optimization_schema.cypher
     networks:
       - mainza-network
     restart: unless-stopped
