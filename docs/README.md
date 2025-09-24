@@ -1,5 +1,13 @@
 # Mainza AI Documentation
 
+<div align="center">
+
+[![LinkedIn](https://img.shields.io/badge/LinkedIn-Mainza%20Kangombe-0077B5?style=for-the-badge&logo=linkedin&logoColor=white)](https://www.linkedin.com/in/mainza-kangombe-6214295)
+[![AI Researcher](https://img.shields.io/badge/AI%20Researcher-Consciousness%20Architectures-FF6B6B?style=for-the-badge&logo=brain&logoColor=white)](https://www.linkedin.com/in/mainza-kangombe-6214295)
+[![Open Source](https://img.shields.io/badge/Open%20Source-Privacy%20First-28A745?style=for-the-badge&logo=github&logoColor=white)](https://github.com/mainza-ai/mainza-consciousness)
+
+</div>
+
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Python 3.11+](https://img.shields.io/badge/python-3.11+-blue.svg)](https://www.python.org/downloads/)
 [![Node.js 18+](https://img.shields.io/badge/node-18+-green.svg)](https://nodejs.org/)

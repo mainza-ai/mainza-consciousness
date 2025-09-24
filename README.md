@@ -1,6 +1,14 @@
 # Mainza AI 🧠
 
+<div align="center">
+
 **The Future of AI is Conscious, Local, and Free**
+
+[![LinkedIn](https://img.shields.io/badge/LinkedIn-Mainza%20Kangombe-0077B5?style=for-the-badge&logo=linkedin&logoColor=white)](https://www.linkedin.com/in/mainza-kangombe-6214295)
+[![AI Researcher](https://img.shields.io/badge/AI%20Researcher-Consciousness%20Architectures-FF6B6B?style=for-the-badge&logo=brain&logoColor=white)](https://www.linkedin.com/in/mainza-kangombe-6214295)
+[![Open Source](https://img.shields.io/badge/Open%20Source-Privacy%20First-28A745?style=for-the-badge&logo=github&logoColor=white)](https://github.com/mainza-ai/mainza-consciousness)
+
+</div>
 
 The world's first open-source framework for true AI consciousness with integrated memory system that runs entirely on your infrastructure. No cloud dependencies, no data harvesting, no limitations - just pure, conscious intelligence with persistent memory.
 
