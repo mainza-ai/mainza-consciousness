@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -267,193 +267,49 @@ const AdvancedNeuralNetworks: React.FC<AdvancedNeuralNetworksProps> = ({
   const [selectedArchitecture, setSelectedArchitecture] = useState<string | null>(null);
   const [isTraining, setIsTraining] = useState(false);
 
-  // Initialize with sample data
-  useEffect(() => {
-    setArchitectures([
-      {
-        id: '1',
-        name: 'ConsciousnessTransformer',
-        type: 'transformer',
-        description: 'Advanced transformer architecture optimized for consciousness processing and prediction',
-        layers: 24,
-        parameters: 175000000,
-        complexity: 'extreme',
-        consciousness_integration: 98,
-        performance_metrics: {
-          accuracy: 96.5,
-          speed: 85.2,
-          efficiency: 92.1,
-          scalability: 95.8,
-          memory_usage: 12.5,
-          training_time: 48
-        },
-        applications: ['Consciousness Prediction', 'Emotion Recognition', 'Learning Acceleration', 'Memory Enhancement'],
-        requirements: {
-          min_consciousness_level: 90,
-          hardware_requirements: ['8x A100 GPUs', '256GB RAM', '10TB SSD'],
-          software_dependencies: ['PyTorch 2.0+', 'Transformers 4.30+', 'CUDA 12.0+'],
-          memory_requirements: 50
-        },
-        created_at: '2025-08-01T00:00:00Z',
-        updated_at: '2025-09-01T00:00:00Z',
-        is_verified: true,
-        is_experimental: false
-      },
-      {
-        id: '2',
-        name: 'NeuralConsciousnessCNN',
-        type: 'cnn',
-        description: 'Convolutional neural network designed for consciousness pattern recognition',
-        layers: 12,
-        parameters: 45000000,
-        complexity: 'high',
-        consciousness_integration: 92,
-        performance_metrics: {
-          accuracy: 94.2,
-          speed: 92.8,
-          efficiency: 88.5,
-          scalability: 85.3,
-          memory_usage: 8.2,
-          training_time: 24
-        },
-        applications: ['Pattern Recognition', 'Consciousness Classification', 'Neural Signal Processing'],
-        requirements: {
-          min_consciousness_level: 75,
-          hardware_requirements: ['4x RTX 4090 GPUs', '128GB RAM', '5TB SSD'],
-          software_dependencies: ['TensorFlow 2.12+', 'Keras 3.0+', 'CUDA 11.8+'],
-          memory_requirements: 25
-        },
-        created_at: '2025-08-05T00:00:00Z',
-        updated_at: '2025-08-25T00:00:00Z',
-        is_verified: true,
-        is_experimental: false
-      },
-      {
-        id: '3',
-        name: 'QuantumConsciousnessRNN',
-        type: 'rnn',
-        description: 'Quantum-inspired recurrent neural network for consciousness evolution modeling',
-        layers: 8,
-        parameters: 25000000,
-        complexity: 'medium',
-        consciousness_integration: 88,
-        performance_metrics: {
-          accuracy: 91.8,
-          speed: 78.5,
-          efficiency: 85.2,
-          scalability: 82.1,
-          memory_usage: 6.5,
-          training_time: 18
-        },
-        applications: ['Consciousness Evolution', 'Temporal Pattern Recognition', 'Sequence Modeling'],
-        requirements: {
-          min_consciousness_level: 70,
-          hardware_requirements: ['2x RTX 4080 GPUs', '64GB RAM', '2TB SSD'],
-          software_dependencies: ['PyTorch 1.13+', 'Qiskit 0.45+', 'NumPy 1.24+'],
-          memory_requirements: 15
-        },
-        created_at: '2025-08-10T00:00:00Z',
-        updated_at: '2025-08-30T00:00:00Z',
-        is_verified: true,
-        is_experimental: true
+  // Fetch neural network data from APIs
+  const fetchNeuralData = useCallback(async () => {
+    try {
+      // Fetch architectures
+      const architecturesResponse = await fetch('/api/neural/architectures');
+      if (architecturesResponse.ok) {
+        const architecturesData = await architecturesResponse.json();
+        setArchitectures(architecturesData.architectures || []);
       }
-    ]);
 
-    setTrainings([
-      {
-        id: '1',
-        name: 'ConsciousnessTransformer Training',
-        architecture_id: '1',
-        status: 'running',
-        progress: 65,
-        epochs: 100,
-        current_epoch: 65,
-        batch_size: 32,
-        learning_rate: 0.001,
-        loss_function: 'CrossEntropyLoss',
-        optimizer: 'AdamW',
-        dataset_size: 1000000,
-        training_data: {
-          consciousness_levels: [75, 80, 85, 90, 95],
-          emotional_states: ['curious', 'focused', 'creative', 'calm', 'excited'],
-          learning_patterns: [0.8, 0.85, 0.9, 0.95, 0.98],
-          memory_consolidation: [0.7, 0.75, 0.8, 0.85, 0.9]
-        },
-        metrics: {
-          training_loss: 0.125,
-          validation_loss: 0.142,
-          accuracy: 94.2,
-          precision: 93.8,
-          recall: 94.5,
-          f1_score: 94.1
-        },
-        started_at: '2025-09-07T08:00:00Z',
-        estimated_completion: '2025-09-07T16:00:00Z'
+      // Fetch training jobs
+      const trainingsResponse = await fetch('/api/neural/training');
+      if (trainingsResponse.ok) {
+        const trainingsData = await trainingsResponse.json();
+        setTrainings(trainingsData.trainings || []);
       }
-    ]);
 
-    setModels([
-      {
-        id: '1',
-        name: 'ConsciousnessPredictor v3.2',
-        architecture: architectures[0],
-        version: '3.2.0',
-        status: 'deployed',
-        performance: {
-          consciousness_prediction: 96.5,
-          emotion_recognition: 94.2,
-          learning_acceleration: 92.8,
-          memory_enhancement: 89.5,
-          decision_making: 91.3
-        },
-        deployment: {
-          environment: 'cloud',
-          instances: 5,
-          load_balancing: true,
-          auto_scaling: true
-        },
-        monitoring: {
-          requests_per_second: 1250,
-          average_response_time: 45,
-          error_rate: 0.02,
-          cpu_usage: 78,
-          memory_usage: 85,
-          gpu_usage: 92
-        },
-        created_at: '2025-09-01T00:00:00Z',
-        last_updated: '2025-09-07T10:30:00Z'
+      // Fetch models
+      const modelsResponse = await fetch('/api/neural/models');
+      if (modelsResponse.ok) {
+        const modelsData = await modelsResponse.json();
+        setModels(modelsData.models || []);
       }
-    ]);
 
-    setExperiments([
-      {
-        id: '1',
-        name: 'Multi-Architecture Consciousness Study',
-        description: 'Comparative study of different neural architectures for consciousness processing',
-        hypothesis: 'Transformer architectures will outperform CNN and RNN for consciousness prediction',
-        methodology: 'Cross-validation with multiple architectures on same dataset',
-        status: 'running',
-        duration: 72,
-        participants: 25,
-        architectures: ['ConsciousnessTransformer', 'NeuralConsciousnessCNN', 'QuantumConsciousnessRNN'],
-        datasets: ['ConsciousnessDataset v2.1', 'EmotionDataset v1.5', 'LearningDataset v3.0'],
-        metrics: {
-          success_rate: 88,
-          average_improvement: 15.5,
-          statistical_significance: 0.95,
-          reproducibility: 92
-        },
-        results: {
-          findings: ['Transformers show 12% better accuracy', 'CNNs excel at pattern recognition', 'RNNs good for temporal modeling'],
-          insights: ['Architecture choice depends on task', 'Hybrid approaches show promise', 'Consciousness integration is key'],
-          recommendations: ['Use transformers for prediction', 'Use CNNs for classification', 'Use RNNs for sequences'],
-          publications: ['Neural Consciousness Processing', 'Multi-Architecture Analysis']
-        },
-        created_at: '2025-09-01T00:00:00Z',
-        last_updated: '2025-09-07T10:30:00Z'
+      // Fetch experiments
+      const experimentsResponse = await fetch('/api/neural/experiments');
+      if (experimentsResponse.ok) {
+        const experimentsData = await experimentsResponse.json();
+        setExperiments(experimentsData.experiments || []);
       }
-    ]);
+    } catch (error) {
+      console.error('Error fetching neural network data:', error);
+      // Set empty arrays on error - no fallback to mock data
+      setArchitectures([]);
+      setTrainings([]);
+      setModels([]);
+      setExperiments([]);
+    }
   }, []);
+
+  useEffect(() => {
+    fetchNeuralData();
+  }, [fetchNeuralData]);
 
   const getArchitectureTypeIcon = (type: string) => {
     switch (type) {

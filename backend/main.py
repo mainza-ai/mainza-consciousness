@@ -2335,6 +2335,43 @@ async def list_ai_training_jobs():
         logging.error(f"Error listing training jobs: {e}")
         return JSONResponse(status_code=500, content={"error": str(e), "status": "failed"})
 
+# Neural Network API Endpoints (read-only baseline)
+@app.get("/api/neural/architectures")
+async def list_neural_architectures():
+    """Get available neural network architectures"""
+    try:
+        return {"architectures": [], "status": "success"}
+    except Exception as e:
+        logging.error(f"Error listing neural architectures: {e}")
+        return JSONResponse(status_code=500, content={"error": str(e), "status": "failed"})
+
+@app.get("/api/neural/training")
+async def list_neural_training_jobs():
+    """Get neural network training jobs"""
+    try:
+        return {"trainings": [], "status": "success"}
+    except Exception as e:
+        logging.error(f"Error listing neural training jobs: {e}")
+        return JSONResponse(status_code=500, content={"error": str(e), "status": "failed"})
+
+@app.get("/api/neural/models")
+async def list_neural_models():
+    """Get deployed neural network models"""
+    try:
+        return {"models": [], "status": "success"}
+    except Exception as e:
+        logging.error(f"Error listing neural models: {e}")
+        return JSONResponse(status_code=500, content={"error": str(e), "status": "failed"})
+
+@app.get("/api/neural/experiments")
+async def list_neural_experiments():
+    """Get neural network experiments"""
+    try:
+        return {"experiments": [], "status": "success"}
+    except Exception as e:
+        logging.error(f"Error listing neural experiments: {e}")
+        return JSONResponse(status_code=500, content={"error": str(e), "status": "failed"})
+
 # BCI API Endpoints (read-only baseline)
 @app.get("/bci/neural-signals")
 async def list_neural_signals(limit: int = 100):

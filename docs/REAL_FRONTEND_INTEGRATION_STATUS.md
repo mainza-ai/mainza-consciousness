@@ -24,8 +24,8 @@
 - Web3/Marketplace: frontend calls exist; backend routes NOT found (expected: `/web3/identities`, `/web3/daos`, `/web3/protocols`, `/marketplace/services`).
 
 ### Current truth (post-fix)
-- Real/empty-state (no mocks) components: ConsciousnessDashboard, ConsciousnessInsights, AdvancedConsciousnessAnalytics, MemoryConstellation, ConsciousnessMarketplace, SystemStatus, UserPreferences, TelemetryDashboard, QuantumConsciousness, Consciousness3DVisualization, AdvancedAIModels, BrainComputerInterface, RealTimeCollaboration, CollaborativeConsciousness, Web3Consciousness, PredictiveAnalyticsDashboard.
-- Remaining to audit/refactor next: AdvancedNeuralNetworks, Neo4jGraphVisualization (ensure no sample graph), GlobalCollaboration, AIModelMarketplace, ARVRConsciousness, TensorFlowJSIntegration, MobileConsciousnessApp, ConsciousnessSynchronization, BlockchainConsciousness, InteractiveConsciousnessTimeline.
+- Real/empty-state (no mocks) components: ConsciousnessDashboard, ConsciousnessInsights, AdvancedConsciousnessAnalytics, MemoryConstellation, ConsciousnessMarketplace, SystemStatus, UserPreferences, TelemetryDashboard, QuantumConsciousness, Consciousness3DVisualization, AdvancedAIModels, BrainComputerInterface, RealTimeCollaboration, CollaborativeConsciousness, Web3Consciousness, PredictiveAnalyticsDashboard, AdvancedNeuralNetworks, Neo4jGraphVisualization, ConsciousnessSynchronization, InteractiveConsciousnessTimeline.
+- Remaining to fix (6 components with hardcoded sample data): GlobalCollaboration, AIModelMarketplace, ARVRConsciousness, TensorFlowJSIntegration, MobileConsciousnessApp, BlockchainConsciousness.
 
 ---
 
