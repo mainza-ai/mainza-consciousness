@@ -19,6 +19,9 @@ from backend.routers.needs_router import router as needs_router
 from backend.routers.build_info import router as build_info_router
 from backend.routers.telemetry import router as telemetry_router
 
+# Import optimization systems
+from backend.utils.optimized_system_integration import get_optimized_system, optimize_system_performance, get_system_health
+
 # Redis caching for performance optimization
 try:
     import redis
@@ -2819,3 +2822,45 @@ app.include_router(telemetry_router)
 
 # Log that insights router has been included
 logging.info("✅ Insights router included successfully with prefix: /api/insights")
+
+# Optimization endpoints
+@app.post("/api/optimization/run")
+async def run_system_optimization():
+    """Run comprehensive system optimization"""
+    try:
+        optimization_results = await optimize_system_performance()
+        return {
+            "status": "success",
+            "message": "System optimization completed",
+            "results": optimization_results
+        }
+    except Exception as e:
+        logger.error(f"Error running system optimization: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.get("/api/optimization/health")
+async def get_system_health_report():
+    """Get comprehensive system health report"""
+    try:
+        health_report = await get_system_health()
+        return {
+            "status": "success",
+            "health_report": health_report
+        }
+    except Exception as e:
+        logger.error(f"Error getting system health: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.get("/api/optimization/status")
+async def get_optimization_status():
+    """Get current optimization system status"""
+    try:
+        system = await get_optimized_system()
+        return {
+            "status": "success",
+            "initialized": system.initialized,
+            "optimization_stats": system.optimization_stats
+        }
+    except Exception as e:
+        logger.error(f"Error getting optimization status: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
