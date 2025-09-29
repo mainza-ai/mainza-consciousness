@@ -263,10 +263,30 @@ export const EnhancedNeo4jGraphVisualization: React.FC<EnhancedNeo4jGraphVisuali
     };
   }, [graphData, searchTerm, nodeTypeFilter, relationshipTypeFilter]);
 
-  // Get node color based on labels
+  // Get node color based on labels and importance
   const getNodeColor = useCallback((node: any) => {
     const primaryLabel = node.labels?.[0];
-    return NODE_COLORS[primaryLabel as keyof typeof NODE_COLORS] || NODE_COLORS.default;
+    const baseColor = NODE_COLORS[primaryLabel as keyof typeof NODE_COLORS] || NODE_COLORS.default;
+    
+    // Adjust brightness based on importance
+    const importance = node.importance || 1;
+    const brightness = Math.min(0.4 + (importance / 5) * 0.6, 1);
+    
+    return adjustColorBrightness(baseColor, brightness);
+  }, []);
+
+  // Adjust color brightness based on importance
+  const adjustColorBrightness = useCallback((color: string, brightness: number) => {
+    const hex = color.replace('#', '');
+    const r = parseInt(hex.substr(0, 2), 16);
+    const g = parseInt(hex.substr(2, 2), 16);
+    const b = parseInt(hex.substr(4, 2), 16);
+    
+    const newR = Math.round(r * brightness);
+    const newG = Math.round(g * brightness);
+    const newB = Math.round(b * brightness);
+    
+    return `#${newR.toString(16).padStart(2, '0')}${newG.toString(16).padStart(2, '0')}${newB.toString(16).padStart(2, '0')}`;
   }, []);
 
   // Get link color based on type
@@ -562,11 +582,15 @@ export const EnhancedNeo4jGraphVisualization: React.FC<EnhancedNeo4jGraphVisuali
                     return baseColor;
                   }}
                   nodeVal={(node: any) => {
-                    const baseSize = Math.sqrt(node.labels?.length || 1) * 3;
+                    const baseSize = 8;
+                    const importance = node.importance || 1;
+                    const connections = node.connections || 0;
+                    let size = baseSize + (importance * 2) + (connections * 0.5);
+                    
                     if (highlightedNodes.has(node.id)) {
-                      return baseSize * 1.5; // Larger for highlighted nodes
+                      size *= 1.5; // Larger for highlighted nodes
                     }
-                    return baseSize;
+                    return size;
                   }}
                   linkColor={(link: any) => {
                     const baseColor = getLinkColor(link);
@@ -579,13 +603,20 @@ export const EnhancedNeo4jGraphVisualization: React.FC<EnhancedNeo4jGraphVisuali
                     return isInPath ? '#FFD700' : baseColor;
                   }}
                   linkWidth={(link: any) => {
-                    const baseWidth = Math.sqrt(link.strength || 1) * 2;
+                    const baseWidth = 1;
+                    const strength = link.strength || 1;
+                    const typeMultiplier = link.type === 'ENABLES' ? 2 : 
+                                         link.type === 'DEPENDS_ON' ? 1.8 :
+                                         link.type === 'CONFLICTS_WITH' ? 1.5 : 1;
+                    
+                    let width = baseWidth + (strength * typeMultiplier);
+                    
                     const isInPath = highlightedPaths.some(path => 
                       path.relationships.some(rel => 
                         rel.source === link.source && rel.target === link.target
                       )
                     );
-                    return isInPath ? baseWidth * 2 : baseWidth;
+                    return isInPath ? width * 2 : width;
                   }}
                   linkDirectionalArrowLength={6}
                   linkDirectionalArrowRelPos={1}
@@ -636,13 +667,45 @@ export const EnhancedNeo4jGraphVisualization: React.FC<EnhancedNeo4jGraphVisuali
                 <div className="space-y-4">
                   <div>
                     <h4 className="font-medium text-slate-100 mb-2">{selectedNode.name}</h4>
-                    <div className="flex flex-wrap gap-1">
+                    <div className="flex flex-wrap gap-1 mb-3">
                       {selectedNode.labels.map((label, index) => (
                         <Badge key={index} variant="outline" className="text-xs border-slate-500 text-slate-200 bg-slate-800/30">
                           {label}
                         </Badge>
                       ))}
                     </div>
+                    
+                    {/* Importance Score */}
+                    {selectedNode.importance && (
+                      <div className="mb-3">
+                        <div className="flex items-center justify-between mb-1">
+                          <span className="text-sm text-slate-400">Importance</span>
+                          <span className="text-sm text-cyan-400">{(selectedNode.importance).toFixed(1)}</span>
+                        </div>
+                        <div className="w-full bg-slate-700 rounded-full h-2">
+                          <div 
+                            className="bg-cyan-400 h-2 rounded-full transition-all duration-300" 
+                            style={{ width: `${((selectedNode.importance) / 5) * 100}%` }}
+                          />
+                        </div>
+                      </div>
+                    )}
+                    
+                    {/* Context Information */}
+                    {selectedNode.context && (
+                      <div className="mb-3">
+                        <span className="text-sm text-slate-400">Context:</span>
+                        <p className="text-sm text-slate-300 mt-1">{selectedNode.context}</p>
+                      </div>
+                    )}
+                    
+                    {/* Description */}
+                    {selectedNode.description && (
+                      <div className="mb-3">
+                        <span className="text-sm text-slate-400">Description:</span>
+                        <p className="text-sm text-slate-300 mt-1">{selectedNode.description}</p>
+                      </div>
+                    )}
                   </div>
                   
                   <div>

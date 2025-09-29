@@ -1119,6 +1119,41 @@ async def test_graph_endpoint() -> Dict[str, Any]:
         "timestamp": datetime.utcnow().isoformat()
     }
 
+@router.get("/graph/debug")
+async def debug_graph_endpoint() -> Dict[str, Any]:
+    """Debug endpoint to test enhanced node processing."""
+    try:
+        # Test the helper functions
+        test_node_data = {
+            "right_type": "autonomy",
+            "priority": 1,
+            "description": "Test description"
+        }
+        test_labels = ["ConsciousnessRights"]
+        
+        # Test the functions
+        name = generate_meaningful_node_name(test_node_data, test_labels)
+        importance = calculate_node_importance(test_node_data, {"labels": test_labels, "total_connections": 5})
+        context = generate_node_context(test_node_data, test_labels)
+        description = generate_node_description(test_node_data, test_labels)
+        
+        return {
+            "status": "success",
+            "test_results": {
+                "name": name,
+                "importance": importance,
+                "context": context,
+                "description": description
+            },
+            "timestamp": datetime.utcnow().isoformat()
+        }
+    except Exception as e:
+        return {
+            "status": "error",
+            "error": str(e),
+            "timestamp": datetime.utcnow().isoformat()
+        }
+
 # All graph endpoints temporarily commented out for testing
 # @router.get("/graph/nodes")
 # async def get_graph_nodes(
@@ -1149,26 +1184,37 @@ async def get_full_graph(
     try:
         from backend.utils.neo4j_production import neo4j_production
         
-        # Get nodes
+        # Get nodes with enhanced properties
         nodes_query = """
         MATCH (n) 
-        RETURN n, labels(n) as labels, id(n) as id
+        OPTIONAL MATCH (n)-[r1]->()
+        OPTIONAL MATCH (n)<-[r2]-()
+        OPTIONAL MATCH (n)-[r3]-()
+        RETURN n, labels(n) as labels, id(n) as id,
+               count(DISTINCT r1) as out_degree,
+               count(DISTINCT r2) as in_degree,
+               count(DISTINCT r3) as total_connections
         LIMIT $limit
         """
         nodes_result = neo4j_production.execute_query(nodes_query, {"limit": node_limit})
         
-        # Get relationships
+        # Get relationships with context
         rels_query = """
         MATCH (a)-[r]->(b) 
-        RETURN a, r, b, id(a) as source_id, id(b) as target_id, type(r) as rel_type
+        RETURN a, r, b, id(a) as source_id, id(b) as target_id, 
+               type(r) as rel_type,
+               labels(a) as source_labels,
+               labels(b) as target_labels
         LIMIT $limit
         """
         rels_result = neo4j_production.execute_query(rels_query, {"limit": rel_limit})
         
-        # Format nodes
+        # Format nodes with enhanced context
         nodes = []
         for record in nodes_result:
             node_data = dict(record["n"])
+            labels = record["labels"]
+            
             # Convert Neo4j DateTime objects to strings
             for key, value in node_data.items():
                 if hasattr(value, 'iso_format'):
@@ -1176,30 +1222,32 @@ async def get_full_graph(
                 elif hasattr(value, 'strftime'):
                     node_data[key] = str(value)
             
-            # Generate meaningful node name
-            node_name = (
-                node_data.get("name") or 
-                node_data.get("content") or 
-                node_data.get("title") or 
-                node_data.get("concept_id") or
-                node_data.get("state_id") or
-                node_data.get("right_type") or
-                node_data.get("decision_type") or
-                f"{record['labels'][0] if record['labels'] else 'Node'} {record['id']}"
-            )
+            # Generate meaningful node name with context
+            node_name = generate_meaningful_node_name(node_data, labels)
             
-            # Truncate if too long but preserve meaning
-            if len(node_name) > 50:
-                node_name = node_name[:47] + "..."
+            # Calculate importance score
+            importance = calculate_node_importance(node_data, record)
+            
+            # Generate context information
+            context = generate_node_context(node_data, labels)
+            
+            # Generate description
+            description = generate_node_description(node_data, labels)
             
             nodes.append({
                 "id": str(record["id"]),
-                "labels": record["labels"],
+                "labels": labels,
                 "properties": node_data,
-                "name": node_name
+                "name": node_name,
+                "importance": importance,
+                "context": context,
+                "description": description,
+                "connections": record["total_connections"],
+                "out_degree": record["out_degree"],
+                "in_degree": record["in_degree"]
             })
         
-        # Format relationships
+        # Format relationships with enhanced context
         relationships = []
         for record in rels_result:
             rel_data = dict(record["r"])
@@ -1210,12 +1258,21 @@ async def get_full_graph(
                 elif hasattr(value, 'strftime'):
                     rel_data[key] = str(value)
             
+            # Calculate relationship strength
+            strength = calculate_relationship_strength(rel_data, record)
+            
+            # Generate relationship context
+            context = generate_relationship_context(record)
+            
             relationships.append({
                 "source": str(record["source_id"]),
                 "target": str(record["target_id"]),
                 "type": record["rel_type"],
                 "properties": rel_data,
-                "strength": rel_data.get("strength", 1.0)
+                "strength": strength,
+                "context": context,
+                "source_labels": record["source_labels"],
+                "target_labels": record["target_labels"]
             })
         
         return {
@@ -1234,6 +1291,156 @@ async def get_full_graph(
     except Exception as e:
         logger.error(f"Failed to get full graph: {e}")
         raise HTTPException(status_code=500, detail=f"Failed to get full graph: {str(e)}")
+
+def generate_meaningful_node_name(node_data: dict, labels: list) -> str:
+    """Generate a meaningful name for a node based on its properties and labels."""
+    if not labels:
+        return f"Node {node_data.get('id', 'Unknown')}"
+    
+    label = labels[0]
+    
+    # Priority-based naming
+    name = (
+        node_data.get("name") or 
+        node_data.get("title") or 
+        node_data.get("content") or 
+        node_data.get("concept_id") or
+        node_data.get("state_id") or
+        node_data.get("right_type") or
+        node_data.get("decision_type")
+    )
+    
+    if not name:
+        name = f"{label} Node"
+    
+    # Add context based on node type
+    context = get_node_context(label, node_data)
+    if context:
+        return f"{name} ({context})"
+    
+    return name
+
+def get_node_context(label: str, properties: dict) -> str:
+    """Get contextual information for a node based on its type."""
+    if label == 'ConsciousnessRights':
+        return f"Right: {properties.get('right_type', 'Unknown')}"
+    elif label == 'EthicalDecision':
+        return f"Decision: {properties.get('decision_type', 'Unknown')}"
+    elif label == 'Concept':
+        return f"Concept: {properties.get('concept_id', 'Unknown')}"
+    elif label == 'MainzaState':
+        return "Consciousness State"
+    else:
+        return label
+
+def calculate_node_importance(node_data: dict, record: dict) -> float:
+    """Calculate importance score for a node."""
+    base_score = 1.0
+    
+    # Priority-based scoring
+    priority = node_data.get('priority', 1)
+    base_score += priority * 0.5
+    
+    # Connection-based scoring
+    connections = record.get('total_connections', 0)
+    base_score += min(connections * 0.1, 2.0)  # Cap at 2.0
+    
+    # Type-based scoring
+    labels = record.get('labels', [])
+    if 'MainzaState' in labels:
+        base_score += 1.0
+    elif 'ConsciousnessRights' in labels:
+        base_score += 0.8
+    elif 'EthicalDecision' in labels:
+        base_score += 0.6
+    
+    return min(base_score, 5.0)  # Cap at 5.0
+
+def generate_node_context(node_data: dict, labels: list) -> str:
+    """Generate contextual information for a node."""
+    if not labels:
+        return "Unknown type"
+    
+    label = labels[0]
+    
+    if label == 'ConsciousnessRights':
+        return f"Consciousness Right - {node_data.get('right_type', 'Unknown')}"
+    elif label == 'EthicalDecision':
+        confidence = node_data.get('confidence', 0)
+        return f"Ethical Decision - {confidence:.1%} confidence"
+    elif label == 'Concept':
+        return f"Knowledge Concept"
+    elif label == 'MainzaState':
+        return "Consciousness State"
+    else:
+        return f"{label} Node"
+
+def generate_node_description(node_data: dict, labels: list) -> str:
+    """Generate a description for a node."""
+    if not labels:
+        return "Unknown node type"
+    
+    label = labels[0]
+    
+    if label == 'ConsciousnessRights':
+        description = node_data.get('description', 'Consciousness right')
+        priority = node_data.get('priority', 1)
+        return f"{description} (Priority: {priority})"
+    elif label == 'EthicalDecision':
+        reasoning = node_data.get('reasoning', 'Ethical decision')
+        confidence = node_data.get('confidence', 0)
+        return f"{reasoning[:100]}... (Confidence: {confidence:.1%})"
+    elif label == 'Concept':
+        content = node_data.get('content', 'Concept node')
+        return content[:200] + "..." if len(content) > 200 else content
+    elif label == 'MainzaState':
+        return "Current consciousness state"
+    else:
+        return f"{label} node with {len(node_data)} properties"
+
+def calculate_relationship_strength(rel_data: dict, record: dict) -> float:
+    """Calculate strength score for a relationship."""
+    base_strength = rel_data.get("strength", 1.0)
+    
+    # Type-based strength
+    rel_type = record.get("rel_type", "RELATES_TO")
+    if rel_type == "ENABLES":
+        base_strength *= 2.0
+    elif rel_type == "CONFLICTS_WITH":
+        base_strength *= 1.5
+    elif rel_type == "DEPENDS_ON":
+        base_strength *= 1.8
+    elif rel_type == "RELATES_TO":
+        base_strength *= 1.0
+    
+    # Label-based strength
+    source_labels = record.get("source_labels", [])
+    target_labels = record.get("target_labels", [])
+    
+    # Stronger connections between important node types
+    if "MainzaState" in source_labels or "MainzaState" in target_labels:
+        base_strength *= 1.5
+    elif "ConsciousnessRights" in source_labels and "ConsciousnessRights" in target_labels:
+        base_strength *= 1.3
+    
+    return min(base_strength, 5.0)  # Cap at 5.0
+
+def generate_relationship_context(record: dict) -> str:
+    """Generate contextual information for a relationship."""
+    rel_type = record.get("rel_type", "RELATES_TO")
+    source_labels = record.get("source_labels", [])
+    target_labels = record.get("target_labels", [])
+    
+    if rel_type == "ENABLES":
+        return f"Enables connection between {source_labels[0] if source_labels else 'Node'} and {target_labels[0] if target_labels else 'Node'}"
+    elif rel_type == "CONFLICTS_WITH":
+        return f"Conflicts between {source_labels[0] if source_labels else 'Node'} and {target_labels[0] if target_labels else 'Node'}"
+    elif rel_type == "DEPENDS_ON":
+        return f"Dependency from {source_labels[0] if source_labels else 'Node'} to {target_labels[0] if target_labels else 'Node'}"
+    elif rel_type == "RELATES_TO":
+        return f"Related to {target_labels[0] if target_labels else 'Node'}"
+    else:
+        return f"{rel_type} relationship"
 
 
 @router.get("/graph/analytics")
