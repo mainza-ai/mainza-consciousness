@@ -349,6 +349,7 @@ export const ConsciousnessDashboard: React.FC<ConsciousnessDashboardProps> = ({
   }
 
   return (
+    <>
     <motion.div 
       className={cn("bg-slate-800/60 rounded-2xl p-6 shadow-lg", className)}
       initial={{ opacity: 0, y: 20 }}
@@ -510,9 +511,6 @@ export const ConsciousnessDashboard: React.FC<ConsciousnessDashboardProps> = ({
         <span>Last Reflection: {formatLastReflection(metrics.last_reflection)}</span>
       </div>
     </motion.div>
-    
-    {/* Reflection Results Modal */}
-    {showReflectionModal && reflectionResults && (
       <motion.div
         className="fixed inset-0 bg-black/50 flex items-center justify-center z-50"
         initial={{ opacity: 0 }}
@@ -598,7 +596,6 @@ export const ConsciousnessDashboard: React.FC<ConsciousnessDashboardProps> = ({
           </div>
         </motion.div>
       </motion.div>
-    )}
     
     {/* Reflection History Modal */}
     {showHistoryModal && (
@@ -711,5 +708,6 @@ export const ConsciousnessDashboard: React.FC<ConsciousnessDashboardProps> = ({
         </motion.div>
       </motion.div>
     )}
+    </>
   );
 };
