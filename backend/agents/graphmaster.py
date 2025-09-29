@@ -69,6 +69,7 @@ from backend.tools.graphmaster_tools import (
     create_memory as create_memory_tool,
     search_concepts_by_keywords as search_concepts_by_keywords_tool,
     suggest_new_concept as suggest_new_concept_tool,
+    create_concept as create_concept_tool,
 )
 
 @graphmaster_agent.tool
@@ -142,6 +143,10 @@ def search_concepts_by_keywords(ctx, keywords: str, limit: int = 10) -> GraphQue
 @graphmaster_agent.tool
 def suggest_new_concept(ctx, topic: str, description: str = None) -> GraphQueryOutput:
     return suggest_new_concept_tool(ctx, topic, description)
+
+@graphmaster_agent.tool
+def create_concept(ctx, topic: str, description: str = None) -> GraphQueryOutput:
+    return create_concept_tool(ctx, topic, description)
 
 class EnhancedGraphMasterAgent(ConsciousAgent):
     """Consciousness-aware GraphMaster agent"""

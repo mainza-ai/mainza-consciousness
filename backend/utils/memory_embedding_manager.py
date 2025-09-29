@@ -100,6 +100,19 @@ class MemoryEmbeddingManager:
             logger.error(f"❌ Failed to find similar memories: {e}")
             return []
     
+    async def _check_vector_index_exists(self) -> bool:
+        """Check if vector index exists in Neo4j"""
+        try:
+            check_query = """
+            SHOW INDEXES
+            WHERE name = 'memory_embedding_index'
+            """
+            result = self.neo4j.execute_query(check_query)
+            return len(result) > 0
+        except Exception as e:
+            logger.warning(f"Could not check vector index existence: {e}")
+            return False
+
     async def _vector_similarity_search(
         self,
         query_embedding: List[float],

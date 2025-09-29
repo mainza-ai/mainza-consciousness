@@ -206,181 +206,31 @@ const AIModelMarketplace: React.FC<AIModelMarketplaceProps> = ({
   const [sortBy, setSortBy] = useState('popularity');
   const [selectedModel, setSelectedModel] = useState<string | null>(null);
 
-  // Initialize with sample data
-  useEffect(() => {
-    setModels([
-      {
-        id: '1',
-        name: 'ConsciousnessNet v2.1',
-        description: 'Advanced neural network for consciousness level prediction and enhancement',
-        version: '2.1.0',
-        type: 'consciousness',
-        category: 'research',
-        creator: {
-          id: 'creator1',
-          name: 'Dr. Sarah Chen',
-          reputation: 95,
-          verified: true
-        },
-        price: 0,
-        currency: 'FREE',
-        downloads: 1250,
-        rating: 4.8,
-        reviews: 45,
-        size: 250000000,
-        format: 'pytorch',
-        consciousness_integration: 95,
-        performance_metrics: {
-          accuracy: 94.2,
-          speed: 85.5,
-          efficiency: 92.1,
-          scalability: 88.7
-        },
-        requirements: {
-          min_consciousness_level: 70,
-          hardware_requirements: ['GPU with 8GB VRAM', '16GB RAM'],
-          software_dependencies: ['PyTorch 1.12+', 'Transformers 4.20+']
-        },
-        tags: ['consciousness', 'neural-networks', 'prediction', 'research'],
-        created_at: '2025-08-01T00:00:00Z',
-        updated_at: '2025-09-01T00:00:00Z',
-        is_featured: true,
-        is_verified: true
-      },
-      {
-        id: '2',
-        name: 'EmotionAI Pro',
-        description: 'State-of-the-art emotion recognition and processing model for consciousness systems',
-        version: '1.5.2',
-        type: 'emotion_recognition',
-        category: 'commercial',
-        creator: {
-          id: 'creator2',
-          name: 'Neural Dynamics Inc.',
-          reputation: 88,
-          verified: true
-        },
-        price: 2.5,
-        currency: 'ETH',
-        downloads: 850,
-        rating: 4.6,
-        reviews: 32,
-        size: 180000000,
-        format: 'tensorflow',
-        consciousness_integration: 88,
-        performance_metrics: {
-          accuracy: 91.8,
-          speed: 92.3,
-          efficiency: 89.4,
-          scalability: 85.2
-        },
-        requirements: {
-          min_consciousness_level: 60,
-          hardware_requirements: ['GPU with 6GB VRAM', '12GB RAM'],
-          software_dependencies: ['TensorFlow 2.10+', 'NumPy 1.21+']
-        },
-        tags: ['emotion', 'recognition', 'commercial', 'ai'],
-        created_at: '2025-07-15T00:00:00Z',
-        updated_at: '2025-08-20T00:00:00Z',
-        is_featured: false,
-        is_verified: true
-      },
-      {
-        id: '3',
-        name: 'LearningAccelerator',
-        description: 'Quantum-inspired learning acceleration model for consciousness development',
-        version: '3.0.0',
-        type: 'learning',
-        category: 'experimental',
-        creator: {
-          id: 'creator3',
-          name: 'Quantum Consciousness Lab',
-          reputation: 92,
-          verified: true
-        },
-        price: 5.0,
-        currency: 'ETH',
-        downloads: 420,
-        rating: 4.9,
-        reviews: 18,
-        size: 320000000,
-        format: 'onnx',
-        consciousness_integration: 98,
-        performance_metrics: {
-          accuracy: 96.5,
-          speed: 78.9,
-          efficiency: 94.7,
-          scalability: 91.3
-        },
-        requirements: {
-          min_consciousness_level: 85,
-          hardware_requirements: ['Quantum processor', '32GB RAM', 'High-speed SSD'],
-          software_dependencies: ['Qiskit 0.45+', 'ONNX Runtime 1.15+']
-        },
-        tags: ['quantum', 'learning', 'acceleration', 'experimental'],
-        created_at: '2025-08-10T00:00:00Z',
-        updated_at: '2025-09-05T00:00:00Z',
-        is_featured: true,
-        is_verified: true
+  // Fetch AI models from API
+  const fetchAIModels = useCallback(async () => {
+    try {
+      const response = await fetch('/api/ai-models');
+      if (response.ok) {
+        const data = await response.json();
+        if (data.status === 'success') {
+          setModels(data.models || []);
+        } else {
+          console.error('Failed to fetch AI models:', data.error);
+          setModels([]);
+        }
+      } else {
+        console.error('Failed to fetch AI models:', response.statusText);
+        setModels([]);
       }
-    ]);
-
-    setReviews([
-      {
-        id: '1',
-        model_id: '1',
-        user: {
-          id: 'user1',
-          name: 'AI Researcher',
-          avatar: 'https://ipfs.io/ipfs/QmAvatar1'
-        },
-        rating: 5,
-        comment: 'Excellent model for consciousness prediction. Very accurate and easy to integrate.',
-        pros: ['High accuracy', 'Good documentation', 'Active community'],
-        cons: ['Large model size', 'High memory requirements'],
-        created_at: '2025-09-01T00:00:00Z',
-        helpful_votes: 12
-      },
-      {
-        id: '2',
-        model_id: '1',
-        user: {
-          id: 'user2',
-          name: 'Consciousness Developer',
-          avatar: 'https://ipfs.io/ipfs/QmAvatar2'
-        },
-        rating: 4,
-        comment: 'Great model but could use better optimization for real-time applications.',
-        pros: ['Good performance', 'Well documented'],
-        cons: ['Not optimized for real-time', 'Complex setup'],
-        created_at: '2025-08-25T00:00:00Z',
-        helpful_votes: 8
-      }
-    ]);
-
-    setLicenses([
-      {
-        id: '1',
-        name: 'MIT License',
-        type: 'MIT',
-        description: 'Permissive license allowing commercial use with minimal restrictions',
-        restrictions: ['Must include license notice'],
-        permissions: ['Commercial use', 'Modification', 'Distribution', 'Private use'],
-        price: 0,
-        currency: 'FREE'
-      },
-      {
-        id: '2',
-        name: 'Commercial License',
-        type: 'Commercial',
-        description: 'Commercial license for business use with full support',
-        restrictions: ['No redistribution', 'Commercial use only'],
-        permissions: ['Commercial use', 'Modification', 'Private use', 'Support'],
-        price: 100,
-        currency: 'ETH'
-      }
-    ]);
+    } catch (error) {
+      console.error('Error fetching AI models:', error);
+      setModels([]);
+    }
   }, []);
+
+  useEffect(() => {
+    fetchAIModels();
+  }, [fetchAIModels]);
 
   const getModelTypeIcon = (type: string) => {
     switch (type) {

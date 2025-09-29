@@ -291,6 +291,52 @@ def suggest_new_concept(ctx: RunContext, topic: str, description: str = None) ->
     }
     return GraphQueryOutput(result=suggestion)
 
+def create_concept(ctx: RunContext, topic: str, description: str = None) -> GraphQueryOutput:
+    """
+    Actually create a new concept in the knowledge graph.
+    """
+    concept_id = topic.lower().replace(" ", "_").replace("-", "_")
+    concept_name = topic.title()
+    
+    try:
+        # Create the concept directly in Neo4j
+        cypher = """
+        MERGE (c:Concept {concept_id: $concept_id})
+        ON CREATE SET 
+            c.name = $name,
+            c.description = $description,
+            c.created_at = timestamp(),
+            c.source = 'graphmaster_agent'
+        ON MATCH SET
+            c.last_accessed = timestamp()
+        RETURN c
+        """
+        
+        result = neo4j_unified.execute_query(cypher, {
+            "concept_id": concept_id,
+            "name": concept_name,
+            "description": description or f"Knowledge about {topic}"
+        })
+        
+        if result:
+            # Extract properties from Neo4j Node object
+            created_concept = result[0]["c"]
+            concept_properties = dict(created_concept) if hasattr(created_concept, '__dict__') else created_concept
+            
+            return GraphQueryOutput(result={
+                "status": "created",
+                "concept_id": concept_properties.get("concept_id", concept_id),
+                "name": concept_properties.get("name", concept_name),
+                "description": concept_properties.get("description", description or f"Knowledge about {topic}"),
+                "message": f"Successfully created concept '{concept_name}'"
+            })
+        else:
+            return GraphQueryOutput(result={"error": "Failed to create concept - no result returned"})
+            
+    except Exception as e:
+        logging.error(f"Failed to create concept: {e}")
+        return GraphQueryOutput(result={"error": str(e)})
+
 def create_memory(ctx: RunContext, text: str, source: str = "user", concept_id: Optional[str] = None) -> CreateMemoryOutput:
     """
     Creates a new Memory node in the graph.
