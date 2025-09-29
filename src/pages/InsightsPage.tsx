@@ -10,6 +10,7 @@ import { MetricDisplay } from '@/components/ui/metric-display';
 import { GlassCard } from '@/components/ui/glass-card';
 import { DarkButton } from '@/components/ui/dark-button';
 import { Neo4jGraphVisualization } from '@/components/Neo4jGraphVisualization';
+import EnhancedNeo4jGraphVisualization from '@/components/EnhancedNeo4jGraphVisualization';
 import RealTimeConsciousnessStream from '@/components/RealTimeConsciousnessStream';
 import InteractiveConsciousnessTimeline from '@/components/InteractiveConsciousnessTimeline';
 import AdvancedLearningAnalytics from '@/components/AdvancedLearningAnalytics';
@@ -589,9 +590,7 @@ const InsightsPage: React.FC = () => {
           </TabsContent>
 
           <TabsContent value="graph" className="space-y-6">
-            <div className="h-[600px] w-full">
-            <Neo4jGraphVisualization />
-            </div>
+            <EnhancedNeo4jGraphVisualization />
           </TabsContent>
 
           <TabsContent value="consciousness" className="space-y-6">

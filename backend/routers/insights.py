@@ -1176,11 +1176,27 @@ async def get_full_graph(
                 elif hasattr(value, 'strftime'):
                     node_data[key] = str(value)
             
+            # Generate meaningful node name
+            node_name = (
+                node_data.get("name") or 
+                node_data.get("content") or 
+                node_data.get("title") or 
+                node_data.get("concept_id") or
+                node_data.get("state_id") or
+                node_data.get("right_type") or
+                node_data.get("decision_type") or
+                f"{record['labels'][0] if record['labels'] else 'Node'} {record['id']}"
+            )
+            
+            # Truncate if too long but preserve meaning
+            if len(node_name) > 50:
+                node_name = node_name[:47] + "..."
+            
             nodes.append({
                 "id": str(record["id"]),
                 "labels": record["labels"],
                 "properties": node_data,
-                "name": node_data.get("name", node_data.get("content", f"Node {record['id']}"))[:50]
+                "name": node_name
             })
         
         # Format relationships
@@ -1218,3 +1234,215 @@ async def get_full_graph(
     except Exception as e:
         logger.error(f"Failed to get full graph: {e}")
         raise HTTPException(status_code=500, detail=f"Failed to get full graph: {str(e)}")
+
+
+@router.get("/graph/analytics")
+async def get_graph_analytics() -> Dict[str, Any]:
+    """Get comprehensive graph analytics and metrics."""
+    try:
+        from backend.utils.neo4j_production import neo4j_production
+        
+        # Get basic graph statistics
+        stats_query = """
+        MATCH (n)
+        WITH count(n) as total_nodes
+        MATCH ()-[r]->()
+        WITH total_nodes, count(r) as total_relationships
+        RETURN total_nodes, total_relationships
+        """
+        stats_result = neo4j_production.execute_query(stats_query)
+        
+        # Get node type distribution
+        node_distribution_query = """
+        MATCH (n)
+        UNWIND labels(n) as label
+        RETURN label, count(*) as count
+        ORDER BY count DESC
+        """
+        node_dist_result = neo4j_production.execute_query(node_distribution_query)
+        
+        # Get relationship type distribution
+        rel_distribution_query = """
+        MATCH ()-[r]->()
+        RETURN type(r) as rel_type, count(*) as count
+        ORDER BY count DESC
+        """
+        rel_dist_result = neo4j_production.execute_query(rel_distribution_query)
+        
+        # Get graph density (relationships / possible relationships)
+        density_query = """
+        MATCH (n)
+        WITH count(n) as node_count
+        MATCH ()-[r]->()
+        WITH node_count, count(r) as rel_count
+        WITH node_count, rel_count, 
+             CASE WHEN node_count > 1 
+             THEN (2.0 * rel_count) / (node_count * (node_count - 1))
+             ELSE 0.0 END as density
+        RETURN node_count, rel_count, density
+        """
+        density_result = neo4j_production.execute_query(density_query)
+        
+        # Get most connected nodes (degree centrality)
+        centrality_query = """
+        MATCH (n)
+        OPTIONAL MATCH (n)-[r]-()
+        WITH n, count(r) as degree
+        RETURN n.name as name, labels(n) as labels, degree
+        ORDER BY degree DESC
+        LIMIT 10
+        """
+        centrality_result = neo4j_production.execute_query(centrality_query)
+        
+        # Get graph components (connected subgraphs)
+        components_query = """
+        CALL gds.wcc.stream('*')
+        YIELD nodeId, componentId
+        RETURN componentId, count(*) as component_size
+        ORDER BY component_size DESC
+        LIMIT 5
+        """
+        try:
+            components_result = neo4j_production.execute_query(components_query)
+        except:
+            # Fallback if GDS is not available
+            components_result = []
+        
+        return {
+            "status": "success",
+            "timestamp": datetime.utcnow().isoformat(),
+            "analytics": {
+                "basic_stats": stats_result[0] if stats_result else {},
+                "node_distribution": [{"label": r["label"], "count": r["count"]} for r in node_dist_result],
+                "relationship_distribution": [{"type": r["rel_type"], "count": r["count"]} for r in rel_dist_result],
+                "density": density_result[0] if density_result else {},
+                "top_nodes": [{"name": r["name"], "labels": r["labels"], "degree": r["degree"]} for r in centrality_result],
+                "components": [{"component_id": r["componentId"], "size": r["component_size"]} for r in components_result]
+            }
+        }
+        
+    except Exception as e:
+        logger.error(f"Failed to get graph analytics: {e}")
+        raise HTTPException(status_code=500, detail=f"Failed to get graph analytics: {str(e)}")
+
+
+@router.get("/graph/paths")
+async def get_graph_paths(
+    source_id: str,
+    target_id: str,
+    max_depth: int = 3
+) -> Dict[str, Any]:
+    """Find paths between two nodes in the graph."""
+    try:
+        from backend.utils.neo4j_production import neo4j_production
+        
+        # Find shortest paths
+        path_query = """
+        MATCH (source), (target)
+        WHERE id(source) = $source_id AND id(target) = $target_id
+        MATCH path = shortestPath((source)-[*1..$max_depth]-(target))
+        RETURN path, length(path) as path_length
+        ORDER BY path_length
+        LIMIT 10
+        """
+        paths_result = neo4j_production.execute_query(path_query, {
+            "source_id": int(source_id),
+            "target_id": int(target_id),
+            "max_depth": max_depth
+        })
+        
+        # Format paths for visualization
+        formatted_paths = []
+        for record in paths_result:
+            path = record["path"]
+            path_length = record["path_length"]
+            
+            # Extract nodes and relationships from path
+            nodes_in_path = []
+            relationships_in_path = []
+            
+            for i, node in enumerate(path.nodes):
+                nodes_in_path.append({
+                    "id": str(id(node)),
+                    "labels": list(node.labels),
+                    "properties": dict(node),
+                    "name": dict(node).get("name", f"Node {id(node)}")
+                })
+            
+            for i, rel in enumerate(path.relationships):
+                relationships_in_path.append({
+                    "source": str(id(rel.start_node)),
+                    "target": str(id(rel.end_node)),
+                    "type": rel.type,
+                    "properties": dict(rel)
+                })
+            
+            formatted_paths.append({
+                "path_length": path_length,
+                "nodes": nodes_in_path,
+                "relationships": relationships_in_path
+            })
+        
+        return {
+            "status": "success",
+            "timestamp": datetime.utcnow().isoformat(),
+            "paths": formatted_paths,
+            "source_id": source_id,
+            "target_id": target_id
+        }
+        
+    except Exception as e:
+        logger.error(f"Failed to get graph paths: {e}")
+        raise HTTPException(status_code=500, detail=f"Failed to get graph paths: {str(e)}")
+
+
+@router.get("/graph/community")
+async def get_graph_communities() -> Dict[str, Any]:
+    """Detect communities in the graph using Louvain algorithm."""
+    try:
+        from backend.utils.neo4j_production import neo4j_production
+        
+        # Use GDS Louvain algorithm if available
+        community_query = """
+        CALL gds.louvain.stream('*')
+        YIELD nodeId, communityId
+        RETURN communityId, count(*) as community_size
+        ORDER BY community_size DESC
+        """
+        
+        try:
+            communities_result = neo4j_production.execute_query(community_query)
+            return {
+                "status": "success",
+                "timestamp": datetime.utcnow().isoformat(),
+                "communities": [{"community_id": r["communityId"], "size": r["community_size"]} for r in communities_result]
+            }
+        except:
+            # Fallback: simple community detection based on connected components
+            fallback_query = """
+            MATCH (n)
+            WITH collect(n) as nodes
+            CALL apoc.path.subgraphAll(nodes[0], {maxLevel: 3})
+            YIELD nodes as component_nodes
+            RETURN size(component_nodes) as community_size
+            ORDER BY community_size DESC
+            LIMIT 10
+            """
+            try:
+                fallback_result = neo4j_production.execute_query(fallback_query)
+                return {
+                    "status": "success",
+                    "timestamp": datetime.utcnow().isoformat(),
+                    "communities": [{"community_id": i, "size": r["community_size"]} for i, r in enumerate(fallback_result)]
+                }
+            except:
+                return {
+                    "status": "success",
+                    "timestamp": datetime.utcnow().isoformat(),
+                    "communities": [],
+                    "note": "Community detection not available"
+                }
+        
+    except Exception as e:
+        logger.error(f"Failed to get graph communities: {e}")
+        raise HTTPException(status_code=500, detail=f"Failed to get graph communities: {str(e)}")
