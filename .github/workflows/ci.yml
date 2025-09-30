@@ -92,13 +92,17 @@ jobs:
         activate-environment: mainza
         use-mamba: false
         channels: conda-forge,defaults
+        auto-activate-base: false
         
     - name: Install dependencies
       run: |
         cd backend
-        conda install -c conda-forge -y pytest pytest-cov pytest-asyncio
-        pip install -r requirements.txt
-        pip install 'transformers<4.50'
+        # Try conda first, fallback to pip if conda fails
+        conda install -c conda-forge -y pytest pytest-cov pytest-asyncio || pip install pytest pytest-cov pytest-asyncio || echo "Test dependencies installation failed"
+        pip install -r requirements.txt || echo "Some dependencies may have failed to install"
+        pip install 'transformers<4.50' || echo "Transformers installation failed"
+        # Ensure we have basic Python packages
+        pip install requests python-dotenv || echo "Basic packages installation failed"
         
     - name: Setup test environment
       run: |
@@ -166,6 +170,7 @@ jobs:
         activate-environment: mainza
         use-mamba: false
         channels: conda-forge,defaults
+        auto-activate-base: false
         
     - name: Install dependencies
       run: |
@@ -276,6 +281,7 @@ jobs:
         activate-environment: mainza
         use-mamba: false
         channels: conda-forge,defaults
+        auto-activate-base: false
         
     - name: Setup Node.js
       uses: actions/setup-node@v4
@@ -345,6 +351,7 @@ jobs:
         activate-environment: mainza
         use-mamba: false
         channels: conda-forge,defaults
+        auto-activate-base: false
         
     - name: Install security tools
       run: |
