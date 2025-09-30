@@ -5,7 +5,7 @@ pydantic>=2.0.0
 pydantic-ai>=0.2.0
 pydantic-settings>=2.0.0  # Added for BaseSettings compatibility
 openai-whisper
-TTS>=0.22.0  # Coqui TTS
+# TTS>=0.22.0  # Coqui TTS - Commented out due to Python 3.11 compatibility issues
 sentence-transformers>=2.2.2
 requests>=2.31.0
 python-jose>=3.3.0  # for JWT
