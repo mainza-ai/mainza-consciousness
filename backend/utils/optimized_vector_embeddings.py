@@ -9,14 +9,47 @@ from typing import List, Dict, Any, Optional, Tuple
 from datetime import datetime, timedelta
 import numpy as np
 from neo4j import GraphDatabase
-from neo4j_graphrag.embeddings import OpenAIEmbeddings, SentenceTransformerEmbeddings
+from neo4j_graphrag.embeddings import SentenceTransformerEmbeddings
 from neo4j_graphrag.indexes import create_vector_index, upsert_vectors
 from neo4j_graphrag.retrievers import VectorRetriever
 from neo4j_graphrag.types import EntityType
 import json
 import hashlib
+import ollama
+import os
 
 logger = logging.getLogger(__name__)
+
+class OllamaEmbeddings:
+    """Custom Ollama embeddings wrapper for compatibility with Neo4j GraphRAG"""
+    
+    def __init__(self, model: str, base_url: str = None):
+        self.model = model
+        self.base_url = base_url or os.getenv('OLLAMA_BASE_URL', 'http://host.docker.internal:11434')
+        self.client = ollama.Client(host=self.base_url)
+    
+    def embed_documents(self, texts: List[str]) -> List[List[float]]:
+        """Embed a list of documents"""
+        embeddings = []
+        for text in texts:
+            try:
+                response = self.client.embeddings(model=self.model, prompt=text)
+                embeddings.append(response['embedding'])
+            except Exception as e:
+                logger.error(f"Error generating embedding for text: {e}")
+                # Return zero vector as fallback
+                embeddings.append([0.0] * 768)  # Default dimension for nomic-embed-text
+        return embeddings
+    
+    def embed_query(self, text: str) -> List[float]:
+        """Embed a single query"""
+        try:
+            response = self.client.embeddings(model=self.model, prompt=text)
+            return response['embedding']
+        except Exception as e:
+            logger.error(f"Error generating embedding for query: {e}")
+            # Return zero vector as fallback
+            return [0.0] * 768  # Default dimension for nomic-embed-text
 
 class OptimizedVectorEmbeddings:
     """
@@ -43,24 +76,28 @@ class OptimizedVectorEmbeddings:
     def _initialize_embedding_models(self):
         """Initialize multiple embedding models for different use cases"""
         try:
-            # Primary model for general embeddings
-            self.embedding_models["primary"] = OpenAIEmbeddings(
-                model="text-embedding-3-large",
-                dimensions=3072
+            # Get the default embedding model from environment
+            default_model = os.getenv('DEFAULT_EMBEDDING_MODEL', 'nomic-embed-text:latest')
+            ollama_base_url = os.getenv('OLLAMA_BASE_URL', 'http://host.docker.internal:11434')
+            
+            # Primary model for general embeddings using Ollama
+            self.embedding_models["primary"] = OllamaEmbeddings(
+                model=default_model,
+                base_url=ollama_base_url
             )
             
-            # Fast model for real-time applications
+            # Fast model for real-time applications using SentenceTransformers as fallback
             self.embedding_models["fast"] = SentenceTransformerEmbeddings(
                 model="all-MiniLM-L6-v2"
             )
             
-            # Specialized model for consciousness-related content
-            self.embedding_models["consciousness"] = OpenAIEmbeddings(
-                model="text-embedding-3-small",
-                dimensions=1536
+            # Specialized model for consciousness-related content using Ollama
+            self.embedding_models["consciousness"] = OllamaEmbeddings(
+                model=default_model,
+                base_url=ollama_base_url
             )
             
-            logger.info("Embedding models initialized successfully")
+            logger.info(f"Embedding models initialized successfully with Ollama model: {default_model}")
             
         except Exception as e:
             logger.error(f"Error initializing embedding models: {e}")
@@ -74,7 +111,7 @@ class OptimizedVectorEmbeddings:
                 index_name="consciousness_embeddings",
                 label="ConsciousnessMemory",
                 embedding_property="embedding",
-                dimensions=1536,
+                dimensions=768,
                 similarity_fn="cosine"
             )
             
@@ -83,7 +120,7 @@ class OptimizedVectorEmbeddings:
                 index_name="agent_memory_embeddings",
                 label="AgentMemory",
                 embedding_property="embedding",
-                dimensions=3072,
+                dimensions=768,
                 similarity_fn="cosine"
             )
             
@@ -92,7 +129,7 @@ class OptimizedVectorEmbeddings:
                 index_name="concept_embeddings",
                 label="Concept",
                 embedding_property="embedding",
-                dimensions=1536,
+                dimensions=768,
                 similarity_fn="cosine"
             )
             
@@ -101,7 +138,7 @@ class OptimizedVectorEmbeddings:
                 index_name="cross_agent_embeddings",
                 label="CrossAgentLearning",
                 embedding_property="embedding",
-                dimensions=3072,
+                dimensions=768,
                 similarity_fn="cosine"
             )
             
@@ -116,14 +153,22 @@ class OptimizedVectorEmbeddings:
                                  similarity_fn: str):
         """Create a vector index with optimized settings"""
         try:
-            create_vector_index(
-                self.driver,
-                index_name,
-                label=label,
-                embedding_property=embedding_property,
-                dimensions=dimensions,
-                similarity_fn=similarity_fn
-            )
+            # Create vector index using direct Cypher query to avoid parameterized index name issues
+            cypher_query = f"""
+            CREATE VECTOR INDEX {index_name} IF NOT EXISTS
+            FOR (n:{label}) ON n.{embedding_property}
+            OPTIONS {{
+              indexConfig: {{
+                `vector.dimensions`: {dimensions},
+                `vector.similarity_function`: '{similarity_fn}'
+              }}
+            }}
+            """
+            
+            # Execute the query directly
+            with self.driver.session() as session:
+                session.run(cypher_query)
+            
             self.vector_indexes[index_name] = {
                 "label": label,
                 "property": embedding_property,

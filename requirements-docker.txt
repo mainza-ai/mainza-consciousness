@@ -35,3 +35,4 @@ networkx>=3.1.0
 # RAG Memory System Optimization Dependencies
 neo4j-graphrag>=0.1.0
 redis>=4.5.0
+ollama>=0.1.0
