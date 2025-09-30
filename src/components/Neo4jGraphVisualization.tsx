@@ -66,6 +66,7 @@ export const Neo4jGraphVisualization: React.FC<Neo4jGraphVisualizationProps> = (
   const [showLabels, setShowLabels] = useState(true);
   const [nodeLimit, setNodeLimit] = useState(50);
   const [relLimit, setRelLimit] = useState(100);
+  const [graphEndpoint, setGraphEndpoint] = useState('comprehensive');
   
   const graphRef = useRef<any>(null);
 
@@ -78,7 +79,12 @@ export const Neo4jGraphVisualization: React.FC<Neo4jGraphVisualizationProps> = (
       setLoading(true);
       setError(null);
       
-      const response = await fetch(`/api/insights/graph/full?node_limit=${nodeLimit}&rel_limit=${relLimit}`);
+      const endpoint = graphEndpoint === 'complete' ? 'complete' : 
+                      graphEndpoint === 'comprehensive' ? 'comprehensive' : 'full';
+      const url = graphEndpoint === 'complete' ? 
+        '/api/insights/graph/complete' : 
+        `/api/insights/graph/${endpoint}?node_limit=${nodeLimit}&rel_limit=${relLimit}`;
+      const response = await fetch(url);
       console.log('Response status:', response.status);
       
       if (!response.ok) {
@@ -100,7 +106,7 @@ export const Neo4jGraphVisualization: React.FC<Neo4jGraphVisualizationProps> = (
     } finally {
       setLoading(false);
     }
-  }, [nodeLimit, relLimit]);
+  }, [nodeLimit, relLimit, graphEndpoint]);
 
   // Transform and filter graph data for react-force-graph-2d
   const filteredGraphData = React.useMemo(() => {
@@ -155,7 +161,14 @@ export const Neo4jGraphVisualization: React.FC<Neo4jGraphVisualizationProps> = (
       target: String(rel.target || ''),
       type: rel.type || 'RELATES_TO',
       properties: rel.properties || {},
-      strength: typeof rel.strength === 'number' ? rel.strength : 1.0
+      strength: typeof rel.strength === 'number' ? rel.strength : 1.0,
+      // Enhanced visual properties for better relationship display
+      strokeWidth: Math.max(1, Math.min(5, (rel.strength || 1) * 2)),
+      strokeOpacity: Math.max(0.4, Math.min(1, (rel.strength || 1))),
+      // Add relationship context for tooltips
+      context: rel.context || '',
+      sourceLabels: rel.source_labels || [],
+      targetLabels: rel.target_labels || []
     })).filter(link => link.source && link.target);
 
     console.log('Transformed graph data:', { 
@@ -359,6 +372,21 @@ export const Neo4jGraphVisualization: React.FC<Neo4jGraphVisualizationProps> = (
             />
           </div>
 
+          {/* Graph Endpoint Selector */}
+          <div className="flex items-center gap-2">
+            <label className="text-sm text-slate-300">Data:</label>
+            <Select value={graphEndpoint} onValueChange={setGraphEndpoint}>
+              <SelectTrigger className="w-32 bg-slate-800/50 border-slate-600 text-slate-200">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="full">Full</SelectItem>
+                <SelectItem value="comprehensive">Comprehensive</SelectItem>
+                <SelectItem value="complete">Complete</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+
           {/* View Controls */}
           <div className="flex items-center gap-2">
             <Button
@@ -418,20 +446,27 @@ export const Neo4jGraphVisualization: React.FC<Neo4jGraphVisualizationProps> = (
                   graphData={filteredGraphData}
                   nodeLabel={(node: any) => showLabels ? node.name : ''}
                   nodeColor={getNodeColor}
-                  nodeVal={(node: any) => Math.sqrt(node.labels?.length || 1) * 3}
+                  nodeVal={(node: any) => Math.sqrt((node.connections || 1) + 1) * 4}
                   linkColor={getLinkColor}
-                  linkWidth={(link: any) => Math.sqrt(link.strength || 1) * 2}
-                linkDirectionalArrowLength={6}
-                linkDirectionalArrowRelPos={1}
-                onNodeClick={handleNodeClick}
-                cooldownTicks={50}
-                d3AlphaDecay={0.05}
-                d3VelocityDecay={0.4}
-                enableZoomInteraction={true}
-                enablePanInteraction={true}
-                enableNodeDrag={true}
-                width={800}
-                height={400}
+                  linkWidth={(link: any) => link.strokeWidth || Math.sqrt(link.strength || 1) * 2}
+                  linkOpacity={(link: any) => link.strokeOpacity || 0.6}
+                  linkDirectionalArrowLength={8}
+                  linkDirectionalArrowRelPos={1}
+                  linkDirectionalArrowColor={(link: any) => getLinkColor(link)}
+                  linkLabel={(link: any) => `${link.type}: ${link.context || 'No context'}`}
+                  onNodeClick={handleNodeClick}
+                  onLinkClick={(link: any) => {
+                    console.log('Link clicked:', link);
+                    setSelectedNode(null);
+                  }}
+                  cooldownTicks={100}
+                  d3AlphaDecay={0.02}
+                  d3VelocityDecay={0.3}
+                  enableZoomInteraction={true}
+                  enablePanInteraction={true}
+                  enableNodeDrag={true}
+                  width={800}
+                  height={400}
                 nodeCanvasObject={(node: any, ctx: any, globalScale: any) => {
                   const label = node.name;
                   const fontSize = 12/globalScale;

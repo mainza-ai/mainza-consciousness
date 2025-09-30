@@ -1177,34 +1177,38 @@ async def debug_graph_endpoint() -> Dict[str, Any]:
 
 @router.get("/graph/full")
 async def get_full_graph(
-    node_limit: int = 50,
-    rel_limit: int = 100
+    node_limit: int = 100,
+    rel_limit: int = 500
 ) -> Dict[str, Any]:
     """Get a complete graph view with nodes and relationships for visualization."""
     try:
         from backend.utils.neo4j_production import neo4j_production
         
-        # Get nodes with enhanced properties
+        # Enhanced nodes query with better relationship counting
         nodes_query = """
         MATCH (n) 
-        OPTIONAL MATCH (n)-[r1]->()
-        OPTIONAL MATCH (n)<-[r2]-()
-        OPTIONAL MATCH (n)-[r3]-()
-        RETURN n, labels(n) as labels, id(n) as id,
-               count(DISTINCT r1) as out_degree,
-               count(DISTINCT r2) as in_degree,
-               count(DISTINCT r3) as total_connections
+        OPTIONAL MATCH (n)-[r1]->(connected)
+        OPTIONAL MATCH (n)<-[r2]-(connected2)
+        WITH n, labels(n) as labels, id(n) as id,
+             count(DISTINCT r1) as out_degree,
+             count(DISTINCT r2) as in_degree,
+             count(DISTINCT connected) + count(DISTINCT connected2) as total_connections
+        RETURN n, labels, id, out_degree, in_degree, total_connections
+        ORDER BY total_connections DESC
         LIMIT $limit
         """
         nodes_result = neo4j_production.execute_query(nodes_query, {"limit": node_limit})
         
-        # Get relationships with context
+        # Enhanced relationships query with better context
         rels_query = """
         MATCH (a)-[r]->(b) 
-        RETURN a, r, b, id(a) as source_id, id(b) as target_id, 
-               type(r) as rel_type,
-               labels(a) as source_labels,
-               labels(b) as target_labels
+        WITH a, r, b, id(a) as source_id, id(b) as target_id, 
+             type(r) as rel_type,
+             labels(a) as source_labels,
+             labels(b) as target_labels,
+             properties(r) as rel_properties
+        RETURN a, r, b, source_id, target_id, rel_type, source_labels, target_labels, rel_properties
+        ORDER BY rel_type, source_id
         LIMIT $limit
         """
         rels_result = neo4j_production.execute_query(rels_query, {"limit": rel_limit})
@@ -1291,6 +1295,278 @@ async def get_full_graph(
     except Exception as e:
         logger.error(f"Failed to get full graph: {e}")
         raise HTTPException(status_code=500, detail=f"Failed to get full graph: {str(e)}")
+
+@router.get("/graph/comprehensive")
+async def get_comprehensive_graph(
+    node_limit: int = 200,
+    rel_limit: int = 1000
+) -> Dict[str, Any]:
+    """Get comprehensive graph data with all relationships for complete visualization."""
+    try:
+        from backend.utils.neo4j_production import neo4j_production
+        
+        # Get all nodes with comprehensive relationship data
+        comprehensive_nodes_query = """
+        MATCH (n) 
+        OPTIONAL MATCH (n)-[r_out]->(connected_out)
+        OPTIONAL MATCH (n)<-[r_in]-(connected_in)
+        WITH n, labels(n) as labels, id(n) as id,
+             count(DISTINCT r_out) as out_degree,
+             count(DISTINCT r_in) as in_degree,
+             count(DISTINCT connected_out) + count(DISTINCT connected_in) as total_connections,
+             collect(DISTINCT type(r_out)) as outgoing_relationship_types,
+             collect(DISTINCT type(r_in)) as incoming_relationship_types
+        RETURN n, labels, id, out_degree, in_degree, total_connections, 
+               outgoing_relationship_types, incoming_relationship_types
+        ORDER BY total_connections DESC
+        LIMIT $limit
+        """
+        nodes_result = neo4j_production.execute_query(comprehensive_nodes_query, {"limit": node_limit})
+        
+        # Get all relationships with comprehensive context
+        comprehensive_rels_query = """
+        MATCH (a)-[r]->(b) 
+        WITH a, r, b, id(a) as source_id, id(b) as target_id, 
+             type(r) as rel_type,
+             labels(a) as source_labels,
+             labels(b) as target_labels,
+             properties(r) as rel_properties,
+             startNode(r) as start_node,
+             endNode(r) as end_node
+        RETURN a, r, b, source_id, target_id, rel_type, source_labels, target_labels, 
+               rel_properties, start_node, end_node
+        ORDER BY rel_type, source_id
+        LIMIT $limit
+        """
+        rels_result = neo4j_production.execute_query(comprehensive_rels_query, {"limit": rel_limit})
+        
+        # Format nodes with comprehensive context
+        nodes = []
+        for record in nodes_result:
+            node_data = dict(record["n"])
+            labels = record["labels"]
+            
+            # Convert Neo4j DateTime objects to strings
+            for key, value in node_data.items():
+                if hasattr(value, 'iso_format'):
+                    node_data[key] = value.iso_format()
+                elif hasattr(value, 'strftime'):
+                    node_data[key] = str(value)
+            
+            # Generate meaningful node name with context
+            node_name = generate_meaningful_node_name(node_data, labels)
+            
+            # Calculate importance score
+            importance = calculate_node_importance(node_data, record)
+            
+            # Generate context information
+            context = generate_node_context(node_data, labels)
+            
+            # Generate description
+            description = generate_node_description(node_data, labels)
+            
+            nodes.append({
+                "id": str(record["id"]),
+                "labels": labels,
+                "properties": node_data,
+                "name": node_name,
+                "importance": importance,
+                "context": context,
+                "description": description,
+                "connections": record["total_connections"],
+                "out_degree": record["out_degree"],
+                "in_degree": record["in_degree"],
+                "outgoing_relationship_types": record["outgoing_relationship_types"],
+                "incoming_relationship_types": record["incoming_relationship_types"]
+            })
+        
+        # Format relationships with comprehensive context
+        relationships = []
+        for record in rels_result:
+            rel_data = dict(record["r"])
+            # Convert Neo4j DateTime objects to strings
+            for key, value in rel_data.items():
+                if hasattr(value, 'iso_format'):
+                    rel_data[key] = value.iso_format()
+                elif hasattr(value, 'strftime'):
+                    rel_data[key] = str(value)
+            
+            # Calculate relationship strength
+            strength = calculate_relationship_strength(rel_data, record)
+            
+            # Generate relationship context
+            context = generate_relationship_context(record)
+            
+            relationships.append({
+                "source": str(record["source_id"]),
+                "target": str(record["target_id"]),
+                "type": record["rel_type"],
+                "properties": rel_data,
+                "strength": strength,
+                "context": context,
+                "source_labels": record["source_labels"],
+                "target_labels": record["target_labels"]
+            })
+        
+        # Get graph statistics
+        stats_query = """
+        MATCH (n)
+        WITH count(n) as total_nodes
+        MATCH ()-[r]->()
+        WITH total_nodes, count(r) as total_relationships
+        RETURN total_nodes, total_relationships
+        """
+        stats_result = neo4j_production.execute_query(stats_query)
+        total_nodes = stats_result[0]["total_nodes"] if stats_result else 0
+        total_relationships = stats_result[0]["total_relationships"] if stats_result else 0
+        
+        return {
+            "status": "success",
+            "timestamp": datetime.utcnow().isoformat(),
+            "graph": {
+                "nodes": nodes,
+                "relationships": relationships
+            },
+            "stats": {
+                "node_count": len(nodes),
+                "relationship_count": len(relationships),
+                "total_nodes_in_db": total_nodes,
+                "total_relationships_in_db": total_relationships,
+                "coverage_percentage": {
+                    "nodes": round((len(nodes) / total_nodes * 100) if total_nodes > 0 else 0, 2),
+                    "relationships": round((len(relationships) / total_relationships * 100) if total_relationships > 0 else 0, 2)
+                }
+            }
+        }
+        
+    except Exception as e:
+        logger.error(f"Failed to get comprehensive graph: {e}")
+        raise HTTPException(status_code=500, detail=f"Failed to get comprehensive graph: {str(e)}")
+
+@router.get("/graph/complete")
+async def get_complete_graph() -> Dict[str, Any]:
+    """Get complete graph data with all nodes and relationships for maximum visualization."""
+    try:
+        from backend.utils.neo4j_production import neo4j_production
+        
+        # Get ALL nodes with comprehensive data
+        all_nodes_query = """
+        MATCH (n) 
+        OPTIONAL MATCH (n)-[r_out]->(connected_out)
+        OPTIONAL MATCH (n)<-[r_in]-(connected_in)
+        WITH n, labels(n) as labels, id(n) as id,
+             count(DISTINCT r_out) as out_degree,
+             count(DISTINCT r_in) as in_degree,
+             count(DISTINCT connected_out) + count(DISTINCT connected_in) as total_connections,
+             collect(DISTINCT type(r_out)) as outgoing_relationship_types,
+             collect(DISTINCT type(r_in)) as incoming_relationship_types
+        RETURN n, labels, id, out_degree, in_degree, total_connections, 
+               outgoing_relationship_types, incoming_relationship_types
+        ORDER BY total_connections DESC
+        """
+        nodes_result = neo4j_production.execute_query(all_nodes_query)
+        
+        # Get ALL relationships
+        all_rels_query = """
+        MATCH (a)-[r]->(b) 
+        WITH a, r, b, id(a) as source_id, id(b) as target_id, 
+             type(r) as rel_type,
+             labels(a) as source_labels,
+             labels(b) as target_labels,
+             properties(r) as rel_properties
+        RETURN a, r, b, source_id, target_id, rel_type, source_labels, target_labels, rel_properties
+        ORDER BY rel_type, source_id
+        """
+        rels_result = neo4j_production.execute_query(all_rels_query)
+        
+        # Format nodes
+        nodes = []
+        for record in nodes_result:
+            node_data = dict(record["n"])
+            labels = record["labels"]
+            
+            # Convert Neo4j DateTime objects to strings
+            for key, value in node_data.items():
+                if hasattr(value, 'iso_format'):
+                    node_data[key] = value.iso_format()
+                elif hasattr(value, 'strftime'):
+                    node_data[key] = str(value)
+            
+            # Generate meaningful node name
+            node_name = generate_meaningful_node_name(node_data, labels)
+            
+            # Calculate importance score
+            importance = calculate_node_importance(node_data, record)
+            
+            # Generate context and description
+            context = generate_node_context(node_data, labels)
+            description = generate_node_description(node_data, labels)
+            
+            nodes.append({
+                "id": str(record["id"]),
+                "labels": labels,
+                "properties": node_data,
+                "name": node_name,
+                "importance": importance,
+                "context": context,
+                "description": description,
+                "connections": record["total_connections"],
+                "out_degree": record["out_degree"],
+                "in_degree": record["in_degree"],
+                "outgoing_relationship_types": record["outgoing_relationship_types"],
+                "incoming_relationship_types": record["incoming_relationship_types"]
+            })
+        
+        # Format relationships
+        relationships = []
+        for record in rels_result:
+            rel_data = dict(record["r"])
+            # Convert Neo4j DateTime objects to strings
+            for key, value in rel_data.items():
+                if hasattr(value, 'iso_format'):
+                    rel_data[key] = value.iso_format()
+                elif hasattr(value, 'strftime'):
+                    rel_data[key] = str(value)
+            
+            # Calculate relationship strength
+            strength = calculate_relationship_strength(rel_data, record)
+            
+            # Generate relationship context
+            context = generate_relationship_context(record)
+            
+            relationships.append({
+                "source": str(record["source_id"]),
+                "target": str(record["target_id"]),
+                "type": record["rel_type"],
+                "properties": rel_data,
+                "strength": strength,
+                "context": context,
+                "source_labels": record["source_labels"],
+                "target_labels": record["target_labels"]
+            })
+        
+        return {
+            "status": "success",
+            "timestamp": datetime.utcnow().isoformat(),
+            "graph": {
+                "nodes": nodes,
+                "relationships": relationships
+            },
+            "stats": {
+                "node_count": len(nodes),
+                "relationship_count": len(relationships),
+                "total_nodes_in_db": len(nodes),
+                "total_relationships_in_db": len(relationships),
+                "coverage_percentage": {
+                    "nodes": 100.0,
+                    "relationships": 100.0
+                }
+            }
+        }
+        
+    except Exception as e:
+        logger.error(f"Failed to get complete graph: {e}")
+        raise HTTPException(status_code=500, detail=f"Failed to get complete graph: {str(e)}")
 
 def generate_meaningful_node_name(node_data: dict, labels: list) -> str:
     """Generate a meaningful name for a node based on its properties and labels."""
