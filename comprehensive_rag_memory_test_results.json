@@ -1,0 +1,139 @@
+{
+  "timestamp": "2025-09-29T19:38:06.406107",
+  "tests_run": 10,
+  "tests_passed": 2,
+  "tests_failed": 8,
+  "detailed_results": [
+    {
+      "test_name": "System Health Check",
+      "passed": false,
+      "details": {
+        "status_code": 500,
+        "error": "Health check failed"
+      },
+      "timestamp": "2025-09-29T19:38:06.417552"
+    },
+    {
+      "test_name": "Optimization System Status",
+      "passed": false,
+      "details": {
+        "status_code": 500,
+        "error": "Status check failed"
+      },
+      "timestamp": "2025-09-29T19:38:06.420750"
+    },
+    {
+      "test_name": "Memory System Functionality",
+      "passed": false,
+      "details": {
+        "status_code": 404,
+        "error": "Memory storage failed"
+      },
+      "timestamp": "2025-09-29T19:38:06.423848"
+    },
+    {
+      "test_name": "Vector Embeddings System",
+      "passed": false,
+      "details": {
+        "status_code": 404,
+        "error": "Vector search failed"
+      },
+      "timestamp": "2025-09-29T19:38:06.427044"
+    },
+    {
+      "test_name": "Redis Caching System",
+      "passed": true,
+      "details": {
+        "status_code": 200,
+        "metrics_data": {
+          "status": "success",
+          "metrics": {
+            "timestamp": "2025-09-30T00:38:06.428162",
+            "redis_available": false,
+            "cache_stats": {},
+            "response_times": {},
+            "system_health": {
+              "status": "degraded",
+              "components": {
+                "neo4j": "ok",
+                "memory_system": {
+                  "overall_status": "warning",
+                  "storage": "healthy",
+                  "retrieval": "healthy",
+                  "embedding": "warning"
+                },
+                "consciousness": "unknown"
+              }
+            }
+          }
+        }
+      },
+      "timestamp": "2025-09-29T19:38:08.263939"
+    },
+    {
+      "test_name": "Performance Monitoring",
+      "passed": true,
+      "details": {
+        "status_code": 200,
+        "performance_data": {
+          "status": "success",
+          "metrics": {
+            "timestamp": "2025-09-30T00:38:08.267167",
+            "redis_available": false,
+            "cache_stats": {},
+            "response_times": {},
+            "system_health": {
+              "status": "degraded",
+              "components": {
+                "neo4j": "ok",
+                "memory_system": {
+                  "overall_status": "warning",
+                  "storage": "healthy",
+                  "retrieval": "healthy",
+                  "embedding": "warning"
+                },
+                "consciousness": "unknown"
+              }
+            }
+          }
+        }
+      },
+      "timestamp": "2025-09-29T19:38:09.963643"
+    },
+    {
+      "test_name": "Cross-Agent Learning",
+      "passed": false,
+      "details": {
+        "status_code": 404,
+        "error": "Cross-agent learning failed"
+      },
+      "timestamp": "2025-09-29T19:38:09.970114"
+    },
+    {
+      "test_name": "Memory Compression",
+      "passed": false,
+      "details": {
+        "status_code": 404,
+        "error": "Memory compression failed"
+      },
+      "timestamp": "2025-09-29T19:38:09.974852"
+    },
+    {
+      "test_name": "Agent Memory Optimization",
+      "passed": false,
+      "details": {
+        "status_code": 404,
+        "error": "Agent memory optimization failed"
+      },
+      "timestamp": "2025-09-29T19:38:09.979135"
+    },
+    {
+      "test_name": "End-to-End Integration",
+      "passed": false,
+      "details": {
+        "error": "Memory storage failed: 404"
+      },
+      "timestamp": "2025-09-29T19:38:09.983336"
+    }
+  ]
+}

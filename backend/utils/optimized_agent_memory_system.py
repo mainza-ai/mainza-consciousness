@@ -878,3 +878,44 @@ class OptimizedAgentMemorySystem:
             "consolidation_threshold": self.consolidation_threshold,
             "learning_threshold": self.learning_threshold
         }
+
+    async def optimize_cross_agent_learning(self) -> Dict[str, Any]:
+        """Optimize cross-agent learning system"""
+        try:
+            # Run cross-agent learning optimization
+            await self.learn_from_cross_agent_interactions()
+            
+            # Optimize learning thresholds
+            self.learning_threshold = max(0.1, self.learning_threshold - 0.05)
+            
+            return {
+                "optimization_type": "cross_agent_learning",
+                "learning_threshold": self.learning_threshold,
+                "cross_agent_learning_completed": True,
+                "timestamp": datetime.now().isoformat()
+            }
+        except Exception as e:
+            logger.error(f"Error optimizing cross-agent learning: {e}")
+            return {"status": "error", "message": str(e)}
+
+    async def optimize_agent_memory(self) -> Dict[str, Any]:
+        """Optimize agent memory system"""
+        try:
+            # Run memory consolidation for all agents
+            consolidation_results = []
+            for agent_id in self.agent_memories.keys():
+                result = await self.consolidate_agent_memory(agent_id)
+                consolidation_results.append(result)
+            
+            # Optimize consolidation threshold
+            self.consolidation_threshold = max(0.1, self.consolidation_threshold - 0.05)
+            
+            return {
+                "optimization_type": "agent_memory",
+                "consolidation_threshold": self.consolidation_threshold,
+                "consolidation_results": consolidation_results,
+                "timestamp": datetime.now().isoformat()
+            }
+        except Exception as e:
+            logger.error(f"Error optimizing agent memory: {e}")
+            return {"status": "error", "message": str(e)}

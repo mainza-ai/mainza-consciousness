@@ -469,6 +469,126 @@ class OptimizedMainzaSystem:
             
         except Exception as e:
             logger.error(f"Error in periodic optimization: {e}")
+
+    async def optimize_memory_storage(self) -> Dict[str, Any]:
+        """Optimize memory storage system"""
+        try:
+            if not self.initialized:
+                await self.initialize()
+            
+            # Run memory storage optimization
+            result = await self.memory_compression.optimize_storage()
+            self.optimization_stats["memory_compressions"] += 1
+            
+            return {
+                "status": "success",
+                "optimization_type": "memory_storage",
+                "result": result,
+                "timestamp": datetime.now().isoformat()
+            }
+        except Exception as e:
+            logger.error(f"Error optimizing memory storage: {e}")
+            return {"status": "error", "message": str(e)}
+
+    async def optimize_memory_retrieval(self) -> Dict[str, Any]:
+        """Optimize memory retrieval system"""
+        try:
+            if not self.initialized:
+                await self.initialize()
+            
+            # Run memory retrieval optimization
+            result = await self.vector_embeddings.optimize_retrieval()
+            self.optimization_stats["vector_optimizations"] += 1
+            
+            return {
+                "status": "success",
+                "optimization_type": "memory_retrieval",
+                "result": result,
+                "timestamp": datetime.now().isoformat()
+            }
+        except Exception as e:
+            logger.error(f"Error optimizing memory retrieval: {e}")
+            return {"status": "error", "message": str(e)}
+
+    async def optimize_vector_embeddings(self) -> Dict[str, Any]:
+        """Optimize vector embeddings system"""
+        try:
+            if not self.initialized:
+                await self.initialize()
+            
+            # Run vector embeddings optimization
+            result = await self.vector_embeddings.optimize_embeddings()
+            self.optimization_stats["vector_optimizations"] += 1
+            
+            return {
+                "status": "success",
+                "optimization_type": "vector_embeddings",
+                "result": result,
+                "timestamp": datetime.now().isoformat()
+            }
+        except Exception as e:
+            logger.error(f"Error optimizing vector embeddings: {e}")
+            return {"status": "error", "message": str(e)}
+
+    async def optimize_cross_agent_learning(self) -> Dict[str, Any]:
+        """Optimize cross-agent learning system"""
+        try:
+            if not self.initialized:
+                await self.initialize()
+            
+            # Run cross-agent learning optimization
+            result = await self.agent_memory.optimize_cross_agent_learning()
+            self.optimization_stats["agent_optimizations"] += 1
+            
+            return {
+                "status": "success",
+                "optimization_type": "cross_agent_learning",
+                "result": result,
+                "timestamp": datetime.now().isoformat()
+            }
+        except Exception as e:
+            logger.error(f"Error optimizing cross-agent learning: {e}")
+            return {"status": "error", "message": str(e)}
+
+    async def optimize_memory_compression(self) -> Dict[str, Any]:
+        """Optimize memory compression system"""
+        try:
+            if not self.initialized:
+                await self.initialize()
+            
+            # Run memory compression optimization
+            result = await self.memory_compression.optimize_compression()
+            self.optimization_stats["memory_compressions"] += 1
+            
+            return {
+                "status": "success",
+                "optimization_type": "memory_compression",
+                "result": result,
+                "timestamp": datetime.now().isoformat()
+            }
+        except Exception as e:
+            logger.error(f"Error optimizing memory compression: {e}")
+            return {"status": "error", "message": str(e)}
+
+    async def optimize_agent_memory(self) -> Dict[str, Any]:
+        """Optimize agent memory system"""
+        try:
+            if not self.initialized:
+                await self.initialize()
+            
+            # Run agent memory optimization
+            result = await self.agent_memory.optimize_agent_memory()
+            self.optimization_stats["agent_optimizations"] += 1
+            
+            return {
+                "status": "success",
+                "optimization_type": "agent_memory",
+                "result": result,
+                "timestamp": datetime.now().isoformat()
+            }
+        except Exception as e:
+            logger.error(f"Error optimizing agent memory: {e}")
+            return {"status": "error", "message": str(e)}
     
     async def shutdown(self):
         """Shutdown all optimization systems"""
@@ -506,16 +626,16 @@ async def get_optimized_system(neo4j_driver=None, redis_url: str = None, config:
     
     return _optimized_system
 
-async def optimize_system_performance() -> Dict[str, Any]:
+async def optimize_system_performance(neo4j_driver=None, redis_url: str = None, config: Dict[str, Any] = None) -> Dict[str, Any]:
     """
     Run system optimization using the global instance
     """
-    system = await get_optimized_system()
+    system = await get_optimized_system(neo4j_driver, redis_url, config)
     return await system.optimize_system_performance()
 
-async def get_system_health() -> Dict[str, Any]:
+async def get_system_health(neo4j_driver=None, redis_url: str = None, config: Dict[str, Any] = None) -> Dict[str, Any]:
     """
     Get system health using the global instance
     """
-    system = await get_optimized_system()
+    system = await get_optimized_system(neo4j_driver, redis_url, config)
     return await system.get_system_health_report()

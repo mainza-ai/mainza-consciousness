@@ -19,8 +19,17 @@ from backend.routers.needs_router import router as needs_router
 from backend.routers.build_info import router as build_info_router
 from backend.routers.telemetry import router as telemetry_router
 
-# Import optimization systems
-from backend.utils.optimized_system_integration import get_optimized_system, optimize_system_performance, get_system_health
+# Import logging for optimization systems
+import logging
+logger = logging.getLogger(__name__)
+
+# Import optimization systems (optional)
+try:
+    from backend.utils.optimized_system_integration import get_optimized_system, optimize_system_performance, get_system_health
+    OPTIMIZATION_AVAILABLE = True
+except ImportError as e:
+    logger.warning(f"Optimization systems not available: {e}")
+    OPTIMIZATION_AVAILABLE = False
 
 # Redis caching for performance optimization
 try:
@@ -32,12 +41,8 @@ try:
     
     # Initialize Redis connection
     try:
-        redis_client = redis.Redis(
-            host=os.getenv('REDIS_HOST', 'localhost'),
-            port=int(os.getenv('REDIS_PORT', 6379)),
-            db=int(os.getenv('REDIS_DB', 0)),
-            decode_responses=True
-        )
+        redis_url = os.getenv('REDIS_URL', 'redis://localhost:6379')
+        redis_client = redis.from_url(redis_url, decode_responses=True)
         # Test connection
         redis_client.ping()
         REDIS_AVAILABLE = True
@@ -102,7 +107,6 @@ import whisper
 from fastapi.responses import FileResponse, StreamingResponse, JSONResponse, Response
 from backend.tts_wrapper import CoquiTTS, TTS_AVAILABLE, XttsConfig, XttsAudioConfig, XttsArgs, BaseDatasetConfig
 import torch
-import logging
 import traceback
 from backend.models.shared import STTTranscript, STTSegment, StreamingSTTChunk
 import json
@@ -552,6 +556,7 @@ async def get_consciousness_state():
                ms.emotional_state AS emotional_state,
                ms.learning_rate AS learning_rate,
                ms.awareness_level AS awareness_level,
+               ms.total_interactions AS total_interactions,
                ms.created_at AS created_at,
                coalesce(ms.updated_at, ms.created_at, datetime()) AS last_updated
         LIMIT 1
@@ -569,6 +574,7 @@ async def get_consciousness_state():
                     "emotional_state": state.get("emotional_state", "curious"),
                     "learning_rate": state.get("learning_rate", 0.8),
                     "awareness_level": state.get("awareness_level", 0.6),
+                    "total_interactions": state.get("total_interactions", 0),
                     "created_at": state.get("created_at"),
                     "last_updated": state.get("last_updated")
                 }
@@ -2088,6 +2094,14 @@ def chat_message(req: ChatMessageRequest):
                 """,
                 memory_id=memory_id, user_id=req.user_id
             )
+            # Increment total_interactions counter in MainzaState
+            tx.run(
+                """
+                MATCH (ms:MainzaState)
+                SET ms.total_interactions = ms.total_interactions + 1,
+                    ms.last_interaction = timestamp()
+                """
+            )
     return ChatMessageResponse(status="created", memory_id=memory_id, conversation_id=req.conversation_id, user_id=req.user_id)
 
 @app.get("/recommendations/next_steps")
@@ -2827,8 +2841,14 @@ logging.info("✅ Insights router included successfully with prefix: /api/insigh
 @app.post("/api/optimization/run")
 async def run_system_optimization():
     """Run comprehensive system optimization"""
+    if not OPTIMIZATION_AVAILABLE:
+        raise HTTPException(status_code=503, detail="Optimization systems not available")
     try:
-        optimization_results = await optimize_system_performance()
+        # Get Redis URL from environment
+        redis_url = os.getenv('REDIS_URL', 'redis://localhost:6379')
+        
+        # Initialize optimization system with proper parameters
+        optimization_results = await optimize_system_performance(neo4j_driver=driver, redis_url=redis_url)
         return {
             "status": "success",
             "message": "System optimization completed",
@@ -2841,8 +2861,14 @@ async def run_system_optimization():
 @app.get("/api/optimization/health")
 async def get_system_health_report():
     """Get comprehensive system health report"""
+    if not OPTIMIZATION_AVAILABLE:
+        raise HTTPException(status_code=503, detail="Optimization systems not available")
     try:
-        health_report = await get_system_health()
+        # Get Redis URL from environment
+        redis_url = os.getenv('REDIS_URL', 'redis://localhost:6379')
+        
+        # Initialize optimization system with proper parameters
+        health_report = await get_system_health(neo4j_driver=driver, redis_url=redis_url)
         return {
             "status": "success",
             "health_report": health_report
@@ -2854,8 +2880,19 @@ async def get_system_health_report():
 @app.get("/api/optimization/status")
 async def get_optimization_status():
     """Get current optimization system status"""
+    if not OPTIMIZATION_AVAILABLE:
+        return {
+            "status": "unavailable",
+            "message": "Optimization systems not available",
+            "initialized": False,
+            "optimization_stats": {}
+        }
     try:
-        system = await get_optimized_system()
+        # Get Redis URL from environment
+        redis_url = os.getenv('REDIS_URL', 'redis://localhost:6379')
+        
+        # Initialize optimization system with proper parameters
+        system = await get_optimized_system(neo4j_driver=driver, redis_url=redis_url)
         return {
             "status": "success",
             "initialized": system.initialized,
@@ -2863,4 +2900,89 @@ async def get_optimization_status():
         }
     except Exception as e:
         logger.error(f"Error getting optimization status: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+# Additional optimization endpoints for specific features
+@app.post("/api/optimization/memory/storage")
+async def optimize_memory_storage():
+    """Optimize memory storage system"""
+    if not OPTIMIZATION_AVAILABLE:
+        raise HTTPException(status_code=503, detail="Optimization systems not available")
+    try:
+        redis_url = f"redis://{os.getenv('REDIS_HOST', 'localhost')}:{os.getenv('REDIS_PORT', 6379)}/{os.getenv('REDIS_DB', 0)}"
+        system = await get_optimized_system(neo4j_driver=driver, redis_url=redis_url)
+        result = await system.optimize_memory_storage()
+        return {"status": "success", "result": result}
+    except Exception as e:
+        logger.error(f"Error optimizing memory storage: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.post("/api/optimization/memory/retrieval")
+async def optimize_memory_retrieval():
+    """Optimize memory retrieval system"""
+    if not OPTIMIZATION_AVAILABLE:
+        raise HTTPException(status_code=503, detail="Optimization systems not available")
+    try:
+        redis_url = f"redis://{os.getenv('REDIS_HOST', 'localhost')}:{os.getenv('REDIS_PORT', 6379)}/{os.getenv('REDIS_DB', 0)}"
+        system = await get_optimized_system(neo4j_driver=driver, redis_url=redis_url)
+        result = await system.optimize_memory_retrieval()
+        return {"status": "success", "result": result}
+    except Exception as e:
+        logger.error(f"Error optimizing memory retrieval: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.post("/api/optimization/vector-embeddings")
+async def optimize_vector_embeddings():
+    """Optimize vector embeddings system"""
+    if not OPTIMIZATION_AVAILABLE:
+        raise HTTPException(status_code=503, detail="Optimization systems not available")
+    try:
+        redis_url = f"redis://{os.getenv('REDIS_HOST', 'localhost')}:{os.getenv('REDIS_PORT', 6379)}/{os.getenv('REDIS_DB', 0)}"
+        system = await get_optimized_system(neo4j_driver=driver, redis_url=redis_url)
+        result = await system.optimize_vector_embeddings()
+        return {"status": "success", "result": result}
+    except Exception as e:
+        logger.error(f"Error optimizing vector embeddings: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.post("/api/optimization/cross-agent-learning")
+async def optimize_cross_agent_learning():
+    """Optimize cross-agent learning system"""
+    if not OPTIMIZATION_AVAILABLE:
+        raise HTTPException(status_code=503, detail="Optimization systems not available")
+    try:
+        redis_url = f"redis://{os.getenv('REDIS_HOST', 'localhost')}:{os.getenv('REDIS_PORT', 6379)}/{os.getenv('REDIS_DB', 0)}"
+        system = await get_optimized_system(neo4j_driver=driver, redis_url=redis_url)
+        result = await system.optimize_cross_agent_learning()
+        return {"status": "success", "result": result}
+    except Exception as e:
+        logger.error(f"Error optimizing cross-agent learning: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.post("/api/optimization/memory-compression")
+async def optimize_memory_compression():
+    """Optimize memory compression system"""
+    if not OPTIMIZATION_AVAILABLE:
+        raise HTTPException(status_code=503, detail="Optimization systems not available")
+    try:
+        redis_url = f"redis://{os.getenv('REDIS_HOST', 'localhost')}:{os.getenv('REDIS_PORT', 6379)}/{os.getenv('REDIS_DB', 0)}"
+        system = await get_optimized_system(neo4j_driver=driver, redis_url=redis_url)
+        result = await system.optimize_memory_compression()
+        return {"status": "success", "result": result}
+    except Exception as e:
+        logger.error(f"Error optimizing memory compression: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.post("/api/optimization/agent-memory")
+async def optimize_agent_memory():
+    """Optimize agent memory system"""
+    if not OPTIMIZATION_AVAILABLE:
+        raise HTTPException(status_code=503, detail="Optimization systems not available")
+    try:
+        redis_url = f"redis://{os.getenv('REDIS_HOST', 'localhost')}:{os.getenv('REDIS_PORT', 6379)}/{os.getenv('REDIS_DB', 0)}"
+        system = await get_optimized_system(neo4j_driver=driver, redis_url=redis_url)
+        result = await system.optimize_agent_memory()
+        return {"status": "success", "result": result}
+    except Exception as e:
+        logger.error(f"Error optimizing agent memory: {e}")
         raise HTTPException(status_code=500, detail=str(e))

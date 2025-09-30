@@ -18,3 +18,5 @@ torch>=2.1.0  # Required for TTS/Whisper, match your CUDA version
 # If using CUDA, install torch with CUDA support:
 # pip install torch==2.1.0+cu118 -f https://download.pytorch.org/whl/torch_stable.html
 transformers<4.50  # Pin for XTTS compatibility
+neo4j-graphrag>=0.1.0  # Added for optimized vector embeddings
+redis>=4.5.0  # Added for enhanced Redis caching

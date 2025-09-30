@@ -1609,7 +1609,7 @@ async def get_conversation_context(user_id: str) -> dict:
     return {"recent_activities": [], "activity_count": 0}
 
 async def store_conversation_turn(user_id: str, query: str, response: str, agent_name: str):
-    """Store conversation turn in Neo4j"""
+    """Store conversation turn in Neo4j and increment total_interactions counter"""
     try:
         from backend.utils.neo4j_production import neo4j_production
         
@@ -1625,11 +1625,17 @@ async def store_conversation_turn(user_id: str, query: str, response: str, agent
         CREATE (u)-[:HAD_CONVERSATION]->(ct)
         
         WITH ct
-        // Link to current consciousness state
+        // Link to current consciousness state and increment total_interactions
         OPTIONAL MATCH (ms:MainzaState)
         FOREACH (state IN CASE WHEN ms IS NOT NULL THEN [ms] ELSE [] END |
             CREATE (ct)-[:DURING_CONSCIOUSNESS_STATE]->(state)
         )
+        
+        WITH ct
+        // Increment total_interactions counter in MainzaState
+        MATCH (ms:MainzaState)
+        SET ms.total_interactions = ms.total_interactions + 1,
+            ms.last_interaction = timestamp()
         
         RETURN ct.turn_id AS turn_id
         """
@@ -1643,7 +1649,7 @@ async def store_conversation_turn(user_id: str, query: str, response: str, agent
         }
         
         result = neo4j_production.execute_write_query(cypher, data)
-        logging.debug(f"✅ Stored conversation turn: {result}")
+        logging.debug(f"✅ Stored conversation turn and incremented total_interactions: {result}")
         
     except Exception as e:
         logging.error(f"❌ Failed to store conversation turn: {e}")

@@ -431,3 +431,45 @@ class OptimizedVectorEmbeddings:
         except Exception as e:
             logger.error(f"Error cleaning up cache: {e}")
             raise
+
+    async def optimize_retrieval(self) -> Dict[str, Any]:
+        """Optimize memory retrieval system"""
+        try:
+            # Optimize retrieval by improving cache and indexing
+            await self.cleanup_cache(max_age_hours=12)
+            
+            # Optimize similarity search parameters
+            self.similarity_threshold = max(0.1, self.similarity_threshold - 0.05)
+            
+            return {
+                "optimization_type": "memory_retrieval",
+                "similarity_threshold": self.similarity_threshold,
+                "cache_cleaned": True,
+                "timestamp": datetime.now().isoformat()
+            }
+        except Exception as e:
+            logger.error(f"Error optimizing memory retrieval: {e}")
+            return {"status": "error", "message": str(e)}
+
+    async def optimize_embeddings(self) -> Dict[str, Any]:
+        """Optimize vector embeddings system"""
+        try:
+            # Optimize embedding generation and storage
+            await self.initialize_index()
+            
+            # Clean up cache and optimize performance
+            await self.cleanup_cache(max_age_hours=6)
+            
+            # Update performance metrics
+            metrics = self.get_performance_metrics()
+            
+            return {
+                "optimization_type": "vector_embeddings",
+                "index_initialized": True,
+                "cache_optimized": True,
+                "performance_metrics": metrics,
+                "timestamp": datetime.now().isoformat()
+            }
+        except Exception as e:
+            logger.error(f"Error optimizing vector embeddings: {e}")
+            return {"status": "error", "message": str(e)}

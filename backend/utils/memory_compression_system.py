@@ -597,3 +597,40 @@ class MemoryCompressionSystem:
             "similarity_threshold": self.similarity_threshold,
             "compression_threshold": self.compression_threshold
         }
+
+    async def optimize_storage(self) -> Dict[str, Any]:
+        """Optimize memory storage system"""
+        try:
+            # Run comprehensive memory compression
+            compression_result = await self.compress_memory_system(CompressionStrategy.HYBRID)
+            
+            # Run deduplication
+            dedup_result = await self.deduplicate_memories()
+            
+            return {
+                "compression": compression_result,
+                "deduplication": dedup_result,
+                "optimization_type": "memory_storage",
+                "timestamp": datetime.now().isoformat()
+            }
+        except Exception as e:
+            logger.error(f"Error optimizing memory storage: {e}")
+            return {"status": "error", "message": str(e)}
+
+    async def optimize_compression(self) -> Dict[str, Any]:
+        """Optimize memory compression system"""
+        try:
+            # Run compression with different strategies
+            results = {}
+            for strategy in CompressionStrategy:
+                result = await self.compress_memory_system(strategy)
+                results[strategy.value] = result
+            
+            return {
+                "compression_results": results,
+                "optimization_type": "memory_compression",
+                "timestamp": datetime.now().isoformat()
+            }
+        except Exception as e:
+            logger.error(f"Error optimizing memory compression: {e}")
+            return {"status": "error", "message": str(e)}

@@ -31,3 +31,7 @@ plotly>=5.15.0
 dash>=2.14.0
 networkx>=3.1.0
 # 🔧 Context7 Architecture Compliance - Requirements Updated
+
+# RAG Memory System Optimization Dependencies
+neo4j-graphrag>=0.1.0
+redis>=4.5.0

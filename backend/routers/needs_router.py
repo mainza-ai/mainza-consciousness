@@ -191,12 +191,12 @@ async def update_need_progress(request: NeedUpdateRequest):
 @router.post("/interact")
 async def record_need_interaction(request: NeedInteractionRequest):
     """
-    Record user interaction with a need
+    Record user interaction with a need and increment total_interactions counter
     """
     try:
         logger.info(f"👆 Recording need interaction: {request.interaction_type} for {request.need_id}")
         
-        # Record interaction in database
+        # Record interaction in database and increment total_interactions
         query = """
         MATCH (n:Need {need_id: $need_id})
         CREATE (i:NeedInteraction {
@@ -207,6 +207,12 @@ async def record_need_interaction(request: NeedInteractionRequest):
             timestamp: datetime($timestamp)
         })
         CREATE (n)-[:HAS_INTERACTION]->(i)
+        
+        // Increment total_interactions counter in MainzaState
+        MATCH (ms:MainzaState)
+        SET ms.total_interactions = ms.total_interactions + 1,
+            ms.last_interaction = timestamp()
+        
         RETURN i
         """
         
