@@ -251,8 +251,9 @@ class InMemoryCache:
 class RedisCache:
     """Redis-based distributed cache (fallback to in-memory when Redis unavailable)"""
     
-    def __init__(self, redis_url: str = "redis://localhost:6379", default_ttl: int = 3600):
-        self.redis_url = redis_url
+    def __init__(self, redis_url: str = None, default_ttl: int = 3600):
+        import os
+        self.redis_url = redis_url or os.getenv('REDIS_URL', 'redis://redis:6379')
         self.default_ttl = default_ttl
         self.redis_client = None
         self.metrics = PerformanceMetrics()
