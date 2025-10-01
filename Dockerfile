@@ -22,11 +22,12 @@ RUN apt-get update && apt-get install -y \
 WORKDIR /app
 
 # Copy requirements first for better caching
-COPY requirements-docker.txt ./
+# Use lightweight requirements for CI/CD to avoid disk space issues
+COPY requirements-docker-ci.txt ./requirements.txt
 
 # Install Python dependencies (this layer will be cached if requirements don't change)
 RUN pip install --upgrade pip && \
-    pip install --no-cache-dir -r requirements-docker.txt
+    pip install --no-cache-dir -r requirements.txt
 
 # Copy backend source code (this layer will be rebuilt when source changes)
 COPY backend/ ./backend/

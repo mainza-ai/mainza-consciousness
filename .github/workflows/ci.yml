@@ -426,12 +426,14 @@ jobs:
         push: false
         load: true
         tags: mainza/backend:test
+        platforms: linux/amd64
         build-args: |
           CACHE_BUST=${{ steps.meta.outputs.cache-bust }}
           BUILD_DATE=${{ steps.meta.outputs.build-date }}
           GIT_COMMIT=${{ steps.meta.outputs.git-commit }}
         cache-from: type=gha,scope=backend
         cache-to: type=gha,mode=max,scope=backend
+        outputs: type=docker
         
     - name: Build frontend image
       uses: docker/build-push-action@v5
