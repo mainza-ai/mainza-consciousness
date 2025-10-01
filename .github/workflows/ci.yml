@@ -424,6 +424,7 @@ jobs:
         context: .
         file: ./Dockerfile
         push: false
+        load: true
         tags: mainza/backend:test
         build-args: |
           CACHE_BUST=${{ steps.meta.outputs.cache-bust }}
@@ -438,6 +439,7 @@ jobs:
         context: .
         file: ./Dockerfile.frontend
         push: false
+        load: true
         tags: mainza/frontend:test
         build-args: |
           CACHE_BUST=${{ steps.meta.outputs.cache-bust }}
