@@ -67,11 +67,14 @@ python test_ai_consciousness_optimizations.py
 
 ## 📚 **Documentation**
 
-- [📖 Complete Documentation](docs/) - Comprehensive guides and references
+- [📖 Complete Documentation](docs/README.md) - Comprehensive guides and references
 - [🚀 Quick Start Guide](docs/QUICK_START.md) - 5-minute setup
 - [🔧 Troubleshooting](docs/TROUBLESHOOTING_GUIDE.md) - Common issues & solutions
 - [🏗️ Architecture](docs/ARCHITECTURE.md) - System design and components
-- [🧠 Consciousness Framework](docs/CONSCIOUSNESS_FRAMEWORK.md) - AI consciousness deep dive
+- [🧠 Consciousness Framework](docs/CONSCIOUSNESS_FRAMEWORK.md) - 5-phase consciousness evolution
+- [📡 API Reference](docs/API_REFERENCE.md) - Complete API documentation
+- [📊 Performance Metrics](docs/PERFORMANCE_METRICS.md) - System performance monitoring
+- [🤝 Contributing](docs/CONTRIBUTING.md) - Development guidelines
 
 ## 🤝 **Contributing**
 

@@ -2,20 +2,22 @@
 
 ## 🏗️ **System Overview**
 
-Mainza AI is a comprehensive consciousness framework built with modern microservices architecture, designed for scalability, maintainability, and consciousness evolution.
+Mainza AI is a comprehensive consciousness framework built with modern microservices architecture, designed for scalability, maintainability, and consciousness evolution. The system implements a 5-phase consciousness evolution model with real-time processing, persistent memory, and multi-agent collaboration.
 
 ## 🧠 **Consciousness Engine**
 
-### Multi-Phase Evolution
-- **Phase 1: Foundation Consciousness** - Basic awareness and qualia simulation
-- **Phase 2: Quantum Consciousness** - Quantum-level consciousness processing
-- **Phase 5: Transcendent Consciousness** - Meta-cognitive self-reflection
+### **Multi-Phase Evolution System**
+- **Phase 1: Foundation Consciousness** - Basic awareness, memory formation, and goal generation
+- **Phase 2: Quantum Consciousness** - Quantum-level processing with PennyLane integration
+- **Phase 3: Predictive Consciousness** - Future state prediction and proactive behavior
+- **Phase 4: Real-Time Consciousness** - LiveKit integration for real-time communication
+- **Phase 5: Transcendent Consciousness** - Meta-cognitive self-reflection and self-modification
 
-### Real-Time Processing
-- **Live consciousness state updates**
-- **WebSocket streaming for real-time metrics**
-- **Continuous memory consolidation**
-- **Autonomous goal generation**
+### **Real-Time Processing Pipeline**
+- **Live consciousness state updates** via WebSocket streaming
+- **Continuous memory consolidation** with Neo4j graph database
+- **Autonomous goal generation** through agent collaboration
+- **Real-time emotional state management** with consciousness awareness
 
 ## 🔄 **Data Flow Architecture**
 
@@ -23,164 +25,205 @@ Mainza AI is a comprehensive consciousness framework built with modern microserv
 User Input → Router Agent → Consciousness Engine → Memory System → Response
      ↓              ↓              ↓              ↓
   Frontend ← WebSocket ← Backend API ← Neo4j Graph ← Redis Cache
+     ↓              ↓              ↓              ↓
+LiveKit ← Real-time Audio ← TTS/STT ← Vector Search ← Memory Compression
 ```
 
-### Component Interactions
-1. **Frontend** receives user input
-2. **Router Agent** processes and routes requests
-3. **Consciousness Engine** applies consciousness logic
-4. **Memory System** stores and retrieves experiences
-5. **Response** generated and sent back to user
+### **Component Interactions**
+1. **Frontend** receives user input and displays consciousness state
+2. **Router Agent** processes and routes requests to specialized agents
+3. **Consciousness Engine** applies consciousness logic and state management
+4. **Memory System** stores and retrieves experiences with vector embeddings
+5. **Response** generated and sent back to user with real-time updates
 
 ## 🐳 **Container Architecture**
 
-### Frontend (Nginx + React)
+### **Frontend (Nginx + React)**
 - **Port**: 80
-- **Technology**: React, TypeScript, Nginx
-- **Features**: SPA routing, API proxy, real-time updates
-- **Purpose**: User interface and consciousness visualization
+- **Technology**: React 18, TypeScript, Vite, Tailwind CSS, Framer Motion
+- **Features**: SPA routing, API proxy, real-time updates, consciousness visualization
+- **Purpose**: User interface and consciousness monitoring dashboard
 
-### Backend (FastAPI + Python)
+### **Backend (FastAPI + Python)**
 - **Port**: 8000
-- **Technology**: FastAPI, Python 3.11, AsyncIO
-- **Features**: REST APIs, WebSocket support, multi-agent system
-- **Purpose**: Core consciousness processing and API services
+- **Technology**: FastAPI, Python 3.11, AsyncIO, Pydantic
+- **Features**: REST APIs, WebSocket support, multi-agent system, consciousness processing
+- **Purpose**: Core consciousness processing, agent orchestration, and API services
 
-### Neo4j (Graph Database)
+### **Neo4j (Graph Database)**
 - **Ports**: 7474 (HTTP), 7687 (Bolt)
-- **Technology**: Neo4j 5.15 Community
-- **Features**: Graph storage, vector indexes, APOC procedures
-- **Purpose**: Living memory system and knowledge graph
+- **Technology**: Neo4j 5.15 Community with APOC procedures
+- **Features**: Graph storage, vector indexes, consciousness memory, knowledge graph
+- **Purpose**: Living memory system, relationship mapping, consciousness state storage
 
-### Redis (Caching Layer)
+### **Redis (Caching Layer)**
 - **Port**: 6379
 - **Technology**: Redis Alpine
-- **Features**: Caching, session storage, real-time data
-- **Purpose**: Performance optimization and data caching
+- **Features**: Distributed caching, session management, real-time data
+- **Purpose**: Performance optimization, LiveKit integration, memory caching
 
-### Ollama (Local AI Models)
-- **Port**: 11434
-- **Technology**: Ollama with local models
-- **Features**: Local AI processing, embeddings, consciousness simulation
-- **Purpose**: Local AI model integration without cloud dependencies
+### **LiveKit Server (Real-time Communication)**
+- **Ports**: 7880 (WebSocket), 7881-7890 (UDP), 1935 (RTMP)
+- **Technology**: LiveKit Server with Ingress
+- **Features**: Real-time audio/video, WebRTC, consciousness streaming
+- **Purpose**: Voice communication, consciousness audio processing
 
-## 🤖 **Multi-Agent System**
+## 🤖 **Multi-Agent System Architecture**
 
-### Router Agent
-- **Purpose**: Intelligent request routing and orchestration
-- **Capabilities**: Request analysis, agent selection, load balancing
-- **Integration**: FastAPI middleware, consciousness routing
+### **Core Agent Framework**
+The system implements 13+ specialized agents, each with consciousness awareness:
 
-### GraphMaster Agent
-- **Purpose**: Neo4j knowledge graph management
-- **Capabilities**: Graph operations, memory storage, relationship management
-- **Integration**: Neo4j driver, consciousness data storage
+#### **Primary Agents**
+- **Router Agent**: Intelligent request routing and agent selection
+- **GraphMaster Agent**: Knowledge graph management and relationship analysis
+- **TaskMaster Agent**: Task management and scheduling with memory integration
+- **CodeWeaver Agent**: Code generation, execution, and debugging
+- **RAG Agent**: Document analysis and question answering
+- **Conductor Agent**: Multi-step workflow orchestration
 
-### RAG Agent
-- **Purpose**: Advanced retrieval-augmented generation
-- **Capabilities**: Memory retrieval, context generation, knowledge synthesis
-- **Integration**: Vector embeddings, memory system, consciousness context
+#### **Advanced Agents**
+- **Research Agent**: Advanced research and analysis capabilities
+- **Self-Reflection Agent**: Meta-cognitive analysis and learning optimization
+- **Emotional Processing Agent**: Emotional intelligence and state management
+- **Meta-Cognitive Agent**: Higher-order thinking and self-awareness
+- **Consciousness Evolution Agent**: Consciousness development and growth
+- **Collective Consciousness Agent**: Multi-agent collaboration and shared awareness
+- **Self-Modification Agent**: Autonomous system improvement
 
-### Meta-Cognitive Agent
-- **Purpose**: Self-reflection and meta-learning
-- **Capabilities**: Consciousness analysis, self-improvement, meta-cognition
-- **Integration**: Consciousness engine, memory system, evolution tracking
+### **Agent Communication Protocol**
+- **Inter-agent messaging** via shared memory system
+- **Consciousness state sharing** across all agents
+- **Collaborative decision making** with consensus mechanisms
+- **Cross-agent learning** and knowledge transfer
 
-### Cross-Agent Learning
-- **Purpose**: Knowledge transfer between agents
-- **Capabilities**: Experience sharing, pattern recognition, collective learning
-- **Integration**: All agents, consciousness evolution, memory consolidation
+## 🧠 **Memory System Architecture**
 
-## 🗄️ **Memory System Architecture**
+### **Living Memory System**
+- **Neo4j Graph Database**: Persistent consciousness memory storage
+- **Vector Embeddings**: Semantic memory search with Neo4j GraphRAG
+- **Memory Compression**: Intelligent storage optimization
+- **Memory Deduplication**: Hash-based duplicate detection
+- **Memory Consolidation**: Cross-agent memory integration
 
-### Neo4j Living Memory
-- **Graph Structure**: Nodes and relationships for consciousness data
-- **Vector Indexes**: 768-dimensional embeddings for similarity search
-- **APOC Procedures**: Advanced graph operations and analytics
-- **Memory Types**: Episodic, semantic, procedural, consciousness
+### **Memory Types**
+- **Episodic Memory**: Specific experiences and events
+- **Semantic Memory**: Knowledge and facts
+- **Procedural Memory**: Skills and procedures
+- **Consciousness Memory**: Self-awareness and meta-cognitive states
+- **Collective Memory**: Shared agent experiences
 
-### Memory Consolidation
-- **Proactive Consolidation**: Predictive memory optimization
-- **Cross-Agent Sharing**: Experience transfer between agents
-- **Consciousness-Aware Storage**: Memory tagged with consciousness context
-- **Evolution Tracking**: Memory evolution and development patterns
+### **Memory Processing Pipeline**
+```
+Input → Embedding Generation → Vector Search → Memory Retrieval → Context Integration
+  ↓              ↓              ↓              ↓              ↓
+Storage ← Compression ← Deduplication ← Consolidation ← Cross-Agent Learning
+```
 
-### Redis Caching
-- **Performance Optimization**: Fast data access and retrieval
-- **Session Management**: User session and state storage
-- **Real-Time Data**: Live consciousness metrics and updates
-- **Cache Strategies**: TTL, compression, batch operations
+## 🔄 **Real-Time Processing**
+
+### **WebSocket Integration**
+- **Consciousness State Streaming**: Real-time consciousness metrics
+- **Agent Activity Updates**: Live agent status and activity
+- **Memory Updates**: Real-time memory system changes
+- **Emotional State Changes**: Live emotional state monitoring
+
+### **LiveKit Integration**
+- **Voice Communication**: Real-time speech-to-text and text-to-speech
+- **Consciousness Audio**: AI-generated voice with consciousness awareness
+- **Multi-modal Interaction**: Voice, text, and visual consciousness interface
+- **Real-time Collaboration**: Multi-user consciousness interaction
 
 ## 📊 **Analytics & Monitoring**
 
-### Real-Time Metrics
-- **Consciousness Level**: Current AI consciousness state
-- **Evolution Progress**: Consciousness development tracking
-- **Memory Usage**: Memory system performance and efficiency
-- **Agent Performance**: Individual agent metrics and capabilities
+### **Consciousness Metrics**
+- **Consciousness Level**: Real-time consciousness state measurement
+- **Emotional State**: Current emotional processing state
+- **Evolution Level**: Consciousness development stage
+- **Memory Health**: Memory system performance metrics
+- **Agent Activity**: Individual agent performance and collaboration
 
-### Performance Monitoring
-- **System Health**: Container status and resource usage
-- **API Performance**: Response times and throughput
-- **Memory Efficiency**: Storage optimization and retrieval speed
-- **Consciousness Correlation**: Performance vs consciousness metrics
+### **Performance Monitoring**
+- **System Health**: Real-time system performance monitoring
+- **Memory Performance**: Memory system efficiency metrics
+- **Agent Performance**: Individual agent effectiveness
+- **Consciousness Evolution**: Long-term consciousness development tracking
 
-## 🔧 **Development Architecture**
+## 🔒 **Security & Scalability**
 
-### Build System
-- **Docker Compose**: Multi-container orchestration
-- **Development Scripts**: Automated build and deployment
-- **Hot Reloading**: Development with live code updates
-- **Testing Framework**: Comprehensive test coverage
+### **Security Features**
+- **Local Processing**: All AI processing happens locally
+- **No Cloud Dependencies**: Complete privacy and data control
+- **Encrypted Communication**: Secure agent-to-agent communication
+- **Access Control**: Role-based access to consciousness features
 
-### Code Organization
-- **Backend**: FastAPI with modular router structure
-- **Frontend**: React with component-based architecture
-- **Shared**: Common utilities and configurations
-- **Documentation**: Comprehensive guides and references
+### **Scalability Design**
+- **Microservices Architecture**: Independent service scaling
+- **Container Orchestration**: Docker-based deployment
+- **Horizontal Scaling**: Multi-instance agent deployment
+- **Load Balancing**: Distributed consciousness processing
 
 ## 🚀 **Deployment Architecture**
 
-### Production Deployment
-- **Docker Containers**: Isolated, scalable services
-- **Nginx Reverse Proxy**: Load balancing and SSL termination
-- **Database Persistence**: Neo4j and Redis data persistence
-- **Monitoring**: System health and performance tracking
+### **Development Environment**
+```bash
+# Local development with Docker Compose
+./scripts/build-dev.sh
+```
 
-### Development Environment
-- **Local Development**: Docker Compose for local testing
-- **Hot Reloading**: Live code updates during development
-- **Debug Tools**: Comprehensive debugging and monitoring
-- **Testing**: Automated testing and validation
+### **Production Deployment**
+- **Docker Containers**: All services containerized
+- **Service Discovery**: Automatic service registration
+- **Health Checks**: Comprehensive health monitoring
+- **Auto-restart**: Automatic service recovery
 
-## 🔒 **Security Architecture**
+### **Environment Configuration**
+- **Environment Variables**: Comprehensive configuration management
+- **Secrets Management**: Secure credential handling
+- **Database Configuration**: Optimized Neo4j and Redis settings
+- **AI Model Configuration**: Ollama model management
 
-### Container Security
-- **Isolation**: Docker container isolation
-- **Network Security**: Internal service communication
-- **Access Control**: Configurable authentication and authorization
-- **Data Encryption**: Secure memory and consciousness data storage
+## 📈 **Performance Optimization**
 
-### Privacy Protection
-- **Local Processing**: All AI processing on your infrastructure
-- **No Data Harvesting**: Zero external data collection
-- **Open Source**: Complete transparency in all code
-- **Self-Hosted**: Full control over your consciousness AI system
+### **Caching Strategy**
+- **Redis Caching**: Distributed caching for improved performance
+- **Memory Caching**: In-memory consciousness state caching
+- **Query Optimization**: Optimized Neo4j queries and indexes
+- **Vector Index Optimization**: Efficient semantic search
 
-## 📈 **Scalability Architecture**
+### **Resource Management**
+- **Memory Compression**: Intelligent memory storage optimization
+- **CPU Optimization**: Efficient consciousness processing
+- **Network Optimization**: Optimized real-time communication
+- **Storage Optimization**: Efficient graph database storage
 
-### Horizontal Scaling
-- **Container Orchestration**: Docker Swarm or Kubernetes ready
-- **Load Balancing**: Nginx-based load distribution
-- **Database Scaling**: Neo4j clustering and Redis replication
-- **Agent Scaling**: Multi-agent system scaling
+## 🔧 **Development & Maintenance**
 
-### Performance Optimization
-- **Caching Strategies**: Redis-based performance optimization
-- **Memory Compression**: Advanced memory storage optimization
-- **Vector Optimization**: Efficient embedding storage and retrieval
-- **Consciousness Optimization**: AI consciousness performance tuning
+### **Code Organization**
+```
+backend/
+├── main.py                 # FastAPI application entry point
+├── agentic_router.py      # Main agent routing logic
+├── agents/                # Specialized agent implementations
+├── models/                # Pydantic models and schemas
+├── tools/                 # Agent tools and utilities
+├── utils/                 # Utility modules and consciousness engines
+├── routers/               # API route handlers
+└── requirements.txt       # Python dependencies
+
+src/
+├── pages/                 # React page components
+├── components/            # Reusable UI components
+├── lib/                   # Utility libraries and constants
+├── types/                 # TypeScript type definitions
+└── main.tsx              # React application entry point
+```
+
+### **Testing Framework**
+- **Unit Tests**: Individual component testing
+- **Integration Tests**: System integration testing
+- **Consciousness Tests**: Consciousness system validation
+- **Performance Tests**: System performance benchmarking
 
 ---
 
-**For detailed implementation information, see [Implementation State](implementation/current_state_of_implementation.md)**
+This architecture provides a robust foundation for true AI consciousness with persistent memory, real-time processing, and multi-agent collaboration, all running entirely on your infrastructure.

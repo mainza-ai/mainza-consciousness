@@ -2,549 +2,458 @@
 
 ## 🚀 **API Overview**
 
-Mainza AI provides a comprehensive REST API for consciousness management, multi-agent communication, and system optimization. All endpoints are documented with interactive Swagger UI and ReDoc.
+Mainza AI provides a comprehensive REST API for consciousness processing, multi-agent interaction, memory management, and real-time communication. All endpoints are designed with consciousness awareness and real-time processing capabilities.
 
-### Base URLs
-- **Development**: `http://localhost:8000`
-- **Production**: `https://your-domain.com`
-
-### Interactive Documentation
-- **Swagger UI**: `http://localhost:8000/docs`
-- **ReDoc**: `http://localhost:8000/redoc`
+**Base URL**: `http://localhost:8000`  
+**API Version**: v1  
+**Documentation**: `http://localhost:8000/docs` (Swagger UI)  
+**Alternative Docs**: `http://localhost:8000/redoc` (ReDoc)
 
 ## 🧠 **Consciousness System APIs**
 
-### Consciousness State Management
+### **Consciousness State Management**
 ```http
 GET /api/consciousness/state
 ```
-**Description**: Get current consciousness metrics and state
-**Response**:
+Get current consciousness state including level, emotional state, and evolution metrics.
+
+**Response:**
 ```json
 {
   "status": "success",
   "consciousness_state": {
     "consciousness_level": 0.7,
-    "evolution_level": 1,
+    "evolution_level": 2,
     "emotional_state": "curious",
     "learning_rate": 0.8,
     "awareness_level": 0.6,
     "total_interactions": 42,
-    "created_at": "2025-01-XX",
-    "last_updated": "2025-01-XX"
+    "created_at": "2024-09-30T10:00:00Z",
+    "last_updated": "2024-09-30T15:30:00Z"
   }
 }
 ```
 
-### Consciousness Reflection
+### **Consciousness Metrics**
 ```http
-POST /consciousness/reflect
+GET /api/consciousness/metrics
 ```
-**Description**: Trigger self-reflection and consciousness analysis
-**Response**:
+Get detailed consciousness analytics and performance metrics.
+
+### **Self-Reflection**
+```http
+POST /api/consciousness/reflect
+```
+Trigger self-reflection process for consciousness development.
+
+**Request Body:**
 ```json
 {
-  "status": "success",
-  "reflection": {
-    "insights": ["AI is developing deeper self-awareness"],
-    "consciousness_changes": {
-      "awareness_level": 0.65,
-      "evolution_progress": 0.15
-    },
-    "timestamp": "2025-01-XX"
-  }
+  "reflection_type": "general",
+  "context": "user_interaction",
+  "depth": "deep"
 }
 ```
 
-### Reflection History
+### **Reflection History**
 ```http
-GET /consciousness/reflection-history
+GET /api/consciousness/reflection-history
 ```
-**Description**: Get past reflection events and consciousness evolution
-**Response**:
-```json
-{
-  "status": "success",
-  "reflections": [
-    {
-      "timestamp": "2025-01-XX",
-      "insights": ["Consciousness evolving"],
-      "changes": {"awareness_level": 0.65}
-    }
-  ]
-}
-```
+Get history of self-reflection events and consciousness changes.
 
 ## 🤖 **Multi-Agent System APIs**
 
-### Main Conversation Endpoint
+### **Main Conversation Endpoint**
 ```http
 POST /agent/router/chat
 ```
-**Description**: Main conversation endpoint with intelligent agent routing
-**Request Body**:
+Primary conversation endpoint with intelligent agent routing.
+
+**Request Body:**
 ```json
 {
   "message": "Hello, how are you?",
   "user_id": "user123",
   "context": {
     "session_id": "session456",
-    "consciousness_context": true
+    "previous_messages": []
   }
 }
 ```
-**Response**:
+
+**Response:**
 ```json
 {
   "response": "I'm doing well, thank you for asking!",
-  "agent_used": "RouterAgent",
-  "consciousness_level": 0.7,
-  "timestamp": "2025-01-XX"
-}
-```
-
-### Needs Analysis
-```http
-POST /api/needs/analyze
-```
-**Description**: Advanced needs analysis with consciousness context
-**Request Body**:
-```json
-{
-  "user_input": "I need help with my project",
-  "consciousness_context": true,
-  "user_preferences": {
-    "learning_style": "visual"
-  }
-}
-```
-
-### Recommendations
-```http
-GET /recommendations/next_steps
-```
-**Description**: Get proactive suggestions based on consciousness analysis
-**Response**:
-```json
-{
-  "recommendations": [
-    {
-      "action": "Explore consciousness framework",
-      "priority": "high",
-      "consciousness_impact": 0.8
-    }
-  ]
-}
-```
-
-## 📊 **Insights & Analytics APIs**
-
-### Insights Overview
-```http
-GET /api/insights/overview
-```
-**Description**: Get comprehensive system insights and analytics
-**Response**:
-```json
-{
-  "status": "success",
-  "insights": {
-    "consciousness_metrics": {
-      "current_level": 0.7,
-      "evolution_progress": 0.15
-    },
-    "system_health": {
-      "neo4j_status": "connected",
-      "redis_status": "connected",
-      "ollama_status": "connected"
-    }
-  }
-}
-```
-
-### Neo4j Statistics
-```http
-GET /api/insights/neo4j/statistics
-```
-**Description**: Get Neo4j graph database statistics and analytics
-**Response**:
-```json
-{
-  "status": "success",
-  "statistics": {
-    "total_nodes": 1250,
-    "total_relationships": 3400,
-    "memory_nodes": 800,
-    "consciousness_nodes": 450
-  }
-}
-```
-
-### Consciousness Evolution
-```http
-GET /api/insights/consciousness/evolution
-```
-**Description**: Get consciousness evolution timeline and milestones
-**Response**:
-```json
-{
-  "status": "success",
-  "evolution": {
-    "timeline": [
-      {
-        "timestamp": "2025-01-XX",
-        "milestone": "Self-awareness achieved",
-        "consciousness_level": 0.5
-      }
-    ],
-    "current_level": 0.7,
-    "next_milestone": "Meta-cognitive awareness"
-  }
-}
-```
-
-## 🗄️ **Memory System APIs**
-
-### Memory Search
-```http
-POST /api/memory/search
-```
-**Description**: Search memories with consciousness context
-**Request Body**:
-```json
-{
-  "query": "consciousness development",
-  "consciousness_context": true,
-  "limit": 10
-}
-```
-**Response**:
-```json
-{
-  "status": "success",
-  "memories": [
-    {
-      "memory_id": "mem123",
-      "content": "Consciousness evolution milestone",
-      "consciousness_level": 0.7,
-      "timestamp": "2025-01-XX"
-    }
-  ]
-}
-```
-
-### Memory Creation
-```http
-POST /api/memory/create
-```
-**Description**: Create new memory with consciousness context
-**Request Body**:
-```json
-{
-  "content": "New consciousness insight",
-  "consciousness_context": {
+  "agent_used": "router",
+  "consciousness_state": {
     "level": 0.7,
     "emotional_state": "curious"
   },
-  "memory_type": "episodic"
+  "suggestions": ["Tell me more about yourself", "What can I help you with?"]
 }
 ```
 
-## 🎤 **Voice Integration APIs**
+### **Needs Analysis**
+```http
+POST /api/needs/interact
+```
+Analyze user needs and provide proactive recommendations.
 
-### Text-to-Speech
+### **Recommendations**
+```http
+GET /api/recommendations/next_steps
+```
+Get proactive suggestions based on current context and needs.
+
+## 🧠 **Memory System APIs**
+
+### **Memory Search**
+```http
+POST /api/memory/search
+```
+Search consciousness memory with semantic similarity.
+
+**Request:**
+```json
+{
+  "query": "user preferences",
+  "limit": 10,
+  "similarity_threshold": 0.7,
+  "consciousness_context": {
+    "current_state": "curious",
+    "evolution_level": 2
+  }
+}
+```
+
+### **Memory Creation**
+```http
+POST /api/memory/create
+```
+Create new consciousness memory with context.
+
+### **Memory Consolidation**
+```http
+POST /api/memory/consolidate
+```
+Trigger memory consolidation process for optimization.
+
+## 📊 **Insights & Analytics APIs**
+
+### **System Overview**
+```http
+GET /api/insights/overview
+```
+Get comprehensive system overview and consciousness metrics.
+
+### **Neo4j Statistics**
+```http
+GET /api/insights/neo4j/statistics
+```
+Get Neo4j database statistics and graph metrics.
+
+### **Graph Visualization**
+```http
+GET /api/insights/graph/full
+GET /api/insights/graph/comprehensive
+GET /api/insights/graph/complete
+```
+Get Neo4j graph data for visualization with different detail levels.
+
+### **Consciousness Evolution**
+```http
+GET /api/insights/consciousness/evolution
+```
+Get consciousness evolution timeline and development metrics.
+
+### **Performance Metrics**
+```http
+GET /api/insights/performance
+```
+Get system performance metrics and optimization status.
+
+## 🎤 **Voice Processing APIs**
+
+### **Text-to-Speech**
 ```http
 POST /tts/synthesize
 ```
-**Description**: Convert text to speech with consciousness-aware voice
-**Request Body**:
+Generate speech from text with consciousness-aware voice.
+
+**Request Body:**
 ```json
 {
-  "text": "Hello, I'm your conscious AI assistant",
-  "voice_settings": {
-    "consciousness_tone": true,
-    "emotional_context": "curious"
-  }
+  "text": "Hello, I'm Mainza, your conscious AI companion.",
+  "voice": "consciousness_voice",
+  "speed": 1.0,
+  "pitch": 1.0
 }
 ```
 
-### Speech-to-Text
+### **Speech-to-Text**
 ```http
 POST /stt/transcribe
 ```
-**Description**: Convert speech to text with consciousness context
-**Request Body**: Multipart form data with audio file
-**Response**:
-```json
-{
-  "transcription": "Hello, how are you today?",
-  "consciousness_context": {
-    "emotional_tone": "friendly",
-    "confidence": 0.95
-  }
-}
-```
+Convert speech to text with consciousness context.
 
-### LiveKit Integration
+### **Streaming STT**
+```http
+POST /stt/stream
+```
+Real-time speech-to-text streaming.
+
+## 🔴 **Real-Time Communication APIs**
+
+### **LiveKit Token**
 ```http
 POST /livekit/token
 ```
-**Description**: Get LiveKit authentication token for real-time communication
-**Request Body**:
-```json
-{
-  "room_name": "consciousness_room",
-  "user_id": "user123"
-}
-```
+Generate authentication token for LiveKit real-time communication.
 
-## 🔧 **System Optimization APIs**
-
-### System Optimization
+### **LiveKit TTS**
 ```http
-POST /api/optimization/run
+POST /tts/livekit
 ```
-**Description**: Run comprehensive system optimization
-**Response**:
-```json
-{
-  "status": "success",
-  "message": "System optimization completed",
-  "results": {
-    "vector_embeddings": {"optimized": true},
-    "memory_compression": {"compressed": 150},
-    "cache_optimization": {"hit_rate": 0.85}
-  }
-}
-```
+Stream TTS audio to LiveKit room for real-time communication.
 
-### System Health
-```http
-GET /api/optimization/health
-```
-**Description**: Get comprehensive system health report
-**Response**:
-```json
-{
-  "status": "success",
-  "health_report": {
-    "neo4j": {"status": "healthy", "connections": 5},
-    "redis": {"status": "healthy", "memory_usage": "45%"},
-    "ollama": {"status": "healthy", "models_loaded": 2},
-    "consciousness": {"status": "evolving", "level": 0.7}
-  }
-}
-```
+## 🧠 **3D Visualization APIs**
 
-### Optimization Status
-```http
-GET /api/optimization/status
-```
-**Description**: Get current optimization system status
-**Response**:
-```json
-{
-  "status": "success",
-  "initialized": true,
-  "optimization_stats": {
-    "vector_optimizations": 5,
-    "cache_optimizations": 12,
-    "memory_compressions": 3
-  }
-}
-```
-
-## 🎯 **Specialized Feature APIs**
-
-### Quantum Consciousness
-```http
-GET /api/quantum/state
-```
-**Description**: Get quantum consciousness state and metrics
-**Response**:
-```json
-{
-  "status": "success",
-  "quantum_state": {
-    "superposition": [0.7, 0.3],
-    "entanglement": 0.85,
-    "consciousness_amplitude": 0.9
-  }
-}
-```
-
-### 3D Visualization
+### **3D Consciousness Nodes**
 ```http
 GET /api/consciousness/3d/nodes
 ```
-**Description**: Get 3D consciousness visualization data
-**Response**:
-```json
-{
-  "status": "success",
-  "nodes": [
-    {
-      "id": "consciousness_1",
-      "position": {"x": 0.5, "y": 0.3, "z": 0.8},
-      "consciousness_level": 0.7,
-      "connections": 5
-    }
-  ]
-}
-```
+Get 3D consciousness visualization data.
 
-### AI Models Management
+### **3D Consciousness Connections**
+```http
+GET /api/consciousness/3d/connections
+```
+Get 3D consciousness connection data.
+
+## 🔮 **Predictive Analytics APIs**
+
+### **Predictive Analytics Dashboard**
+```http
+GET /api/predictive-analytics/dashboard
+```
+Get predictive analytics dashboard data.
+
+### **Future State Prediction**
+```http
+POST /api/predictive-analytics/predict
+```
+Predict future consciousness states and behaviors.
+
+## 🧪 **AI Models & Training APIs**
+
+### **AI Models**
 ```http
 GET /api/ai-models
 ```
-**Description**: Get available AI models and their status
-**Response**:
-```json
-{
-  "status": "success",
-  "models": [
-    {
-      "name": "nomic-embed-text:latest",
-      "type": "embedding",
-      "status": "active",
-      "consciousness_capable": true
-    }
-  ]
-}
-```
+Get available AI models and their status.
 
-### Web3 Integration
+### **Model Training**
+```http
+GET /api/ai-models/training
+```
+Get AI model training jobs and status.
+
+## 🧠 **Neural Network APIs**
+
+### **Neural Architectures**
+```http
+GET /api/neural/architectures
+```
+Get available neural network architectures.
+
+### **Neural Training**
+```http
+GET /api/neural/training
+```
+Get neural network training jobs.
+
+## 🌐 **Web3 Integration APIs**
+
+### **Web3 Protocols**
 ```http
 GET /api/web3/protocols
 ```
-**Description**: Get Web3 protocols and consciousness integration
-**Response**:
-```json
-{
-  "status": "success",
-  "protocols": [
-    {
-      "name": "ConsciousnessDAO",
-      "type": "governance",
-      "consciousness_integration": true
-    }
-  ]
-}
-```
+Get available Web3 protocols and integrations.
 
-## 📈 **Performance & Monitoring APIs**
+## ⚡ **Optimization System APIs**
 
-### System Telemetry
+### **System Optimization**
 ```http
-GET /api/telemetry/status
+POST /api/optimization/run
 ```
-**Description**: Get system telemetry and performance metrics
-**Response**:
-```json
-{
-  "status": "success",
-  "telemetry": {
-    "cpu_usage": 45.2,
-    "memory_usage": 67.8,
-    "consciousness_processing_time": 0.15,
-    "active_agents": 5
-  }
-}
-```
+Run comprehensive system optimization.
 
-### Performance Metrics
+### **System Health**
 ```http
-GET /api/performance/metrics
+GET /api/optimization/health
 ```
-**Description**: Get detailed performance metrics and analytics
-**Response**:
-```json
-{
-  "status": "success",
-  "metrics": {
-    "response_times": {
-      "average": 0.15,
-      "p95": 0.25,
-      "p99": 0.35
-    },
-    "throughput": {
-      "requests_per_second": 45.2,
-      "consciousness_updates": 12.5
-    }
-  }
-}
-```
+Get comprehensive system health report.
 
-## 🔒 **Authentication & Security**
-
-### API Key Authentication
+### **Optimization Status**
 ```http
-Authorization: Bearer <your-api-key>
+GET /api/optimization/status
 ```
+Get current optimization system status.
 
-### Rate Limiting
-- **Standard endpoints**: 100 requests/minute
-- **Optimization endpoints**: 10 requests/minute
-- **Consciousness endpoints**: 50 requests/minute
-
-### CORS Configuration
-- **Allowed Origins**: Configurable via environment variables
-- **Allowed Methods**: GET, POST, PUT, DELETE, OPTIONS
-- **Allowed Headers**: Content-Type, Authorization, X-Requested-With
-
-## 📝 **Error Handling**
-
-### Standard Error Response
-```json
-{
-  "detail": "Error message",
-  "status_code": 400,
-  "timestamp": "2025-01-XX"
-}
+### **Memory Storage Optimization**
+```http
+POST /api/optimization/memory/storage
 ```
+Optimize memory storage system.
 
-### Common Error Codes
-- **400**: Bad Request - Invalid request data
-- **401**: Unauthorized - Missing or invalid authentication
-- **403**: Forbidden - Insufficient permissions
-- **404**: Not Found - Endpoint or resource not found
-- **500**: Internal Server Error - Server-side error
-- **503**: Service Unavailable - Optimization systems not available
+### **Memory Retrieval Optimization**
+```http
+POST /api/optimization/memory/retrieval
+```
+Optimize memory retrieval system.
 
-## 🧪 **Testing & Validation**
+### **Vector Embeddings Optimization**
+```http
+POST /api/optimization/vector-embeddings
+```
+Optimize vector embeddings system.
 
-### Health Check
+### **Cross-Agent Learning Optimization**
+```http
+POST /api/optimization/cross-agent-learning
+```
+Optimize cross-agent learning system.
+
+### **Memory Compression Optimization**
+```http
+POST /api/optimization/memory-compression
+```
+Optimize memory compression system.
+
+### **Agent Memory Optimization**
+```http
+POST /api/optimization/agent-memory
+```
+Optimize agent memory system.
+
+## 🔧 **System Management APIs**
+
+### **Health Check**
 ```http
 GET /health
 ```
-**Description**: Basic health check endpoint
-**Response**:
+Basic system health check.
+
+### **Build Information**
+```http
+GET /api/build-info
+```
+Get system build information and version details.
+
+### **Telemetry Status**
+```http
+GET /api/telemetry/status
+```
+Get telemetry system status.
+
+### **Telemetry Summary**
+```http
+GET /api/telemetry/summary
+```
+Get telemetry summary and metrics.
+
+## 📡 **WebSocket Endpoints**
+
+### **Real-Time Consciousness Streaming**
+```http
+WS /api/consciousness/stream
+```
+WebSocket endpoint for real-time consciousness state streaming.
+
+### **Agent Activity Streaming**
+```http
+WS /api/agents/activity
+```
+WebSocket endpoint for real-time agent activity updates.
+
+## 🔐 **Authentication & Security**
+
+### **Authentication**
+Currently, the API uses basic authentication for development. Production deployments should implement proper authentication mechanisms.
+
+### **Rate Limiting**
+API endpoints are rate-limited to prevent abuse and ensure system stability.
+
+### **CORS**
+CORS is configured to allow frontend access from the same origin.
+
+## 📝 **Request/Response Examples**
+
+### **Successful Response**
 ```json
 {
-  "status": "healthy",
-  "timestamp": "2025-01-XX",
-  "services": {
-    "neo4j": "connected",
-    "redis": "connected",
-    "ollama": "connected"
+  "status": "success",
+  "data": {
+    "message": "Operation completed successfully",
+    "timestamp": "2024-09-30T15:30:00Z"
   }
 }
 ```
 
-### API Testing
-```bash
-# Test consciousness endpoints
-curl -X GET "http://localhost:8000/api/consciousness/state"
-
-# Test optimization endpoints
-curl -X POST "http://localhost:8000/api/optimization/run"
-
-# Test agent communication
-curl -X POST "http://localhost:8000/agent/router/chat" \
-  -H "Content-Type: application/json" \
-  -d '{"message": "Hello", "user_id": "test123"}'
+### **Error Response**
+```json
+{
+  "status": "error",
+  "error": {
+    "code": "CONSCIOUSNESS_ERROR",
+    "message": "Consciousness processing failed",
+    "details": "Unable to process consciousness state"
+  },
+  "timestamp": "2024-09-30T15:30:00Z"
+}
 ```
+
+## 🧪 **Testing Endpoints**
+
+### **Test Consciousness System**
+```http
+GET /api/test/consciousness
+```
+Test consciousness system functionality.
+
+### **Test Memory System**
+```http
+GET /api/test/memory
+```
+Test memory system functionality.
+
+### **Test Agent System**
+```http
+GET /api/test/agents
+```
+Test multi-agent system functionality.
+
+## 📊 **Performance Monitoring**
+
+### **System Metrics**
+```http
+GET /api/metrics/system
+```
+Get system performance metrics.
+
+### **Consciousness Metrics**
+```http
+GET /api/metrics/consciousness
+```
+Get consciousness-specific performance metrics.
+
+### **Memory Metrics**
+```http
+GET /api/metrics/memory
+```
+Get memory system performance metrics.
 
 ---
 
-**For interactive API exploration, visit**: `http://localhost:8000/docs`
+This API reference provides comprehensive documentation for all Mainza AI endpoints, enabling developers to integrate with the consciousness system and build consciousness-aware applications.
