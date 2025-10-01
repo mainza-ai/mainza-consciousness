@@ -450,37 +450,78 @@ jobs:
       run: |
         # Verify that the images were built successfully
         echo "Checking for built images..."
-        docker images | grep mainza/backend:test
-        docker images | grep mainza/frontend:test
+        docker images
         
-        # Test that the backend image can start
+        # Check if backend image exists
+        if docker images | grep -q "mainza/backend:test"; then
+          echo "✅ Backend image found"
+        else
+          echo "❌ Backend image not found"
+          echo "Available images:"
+          docker images
+          exit 1
+        fi
+        
+        # Check if frontend image exists
+        if docker images | grep -q "mainza/frontend:test"; then
+          echo "✅ Frontend image found"
+        else
+          echo "❌ Frontend image not found"
+          echo "Available images:"
+          docker images
+          exit 1
+        fi
+        
+        # Test that the backend image can start (without external dependencies)
         echo "Testing backend image startup..."
-        docker run --rm -d --name test-backend -p 8001:8000 \
+        if docker run --rm -d --name test-backend -p 8001:8000 \
           -e NEO4J_URI=bolt://localhost:7687 \
           -e NEO4J_USER=neo4j \
           -e NEO4J_PASSWORD=testpassword \
           -e ENVIRONMENT=test \
-          mainza/backend:test || echo "Backend image test failed"
+          mainza/backend:test; then
+          echo "✅ Backend container started successfully"
+        else
+          echo "❌ Backend container failed to start"
+          docker logs test-backend || echo "No logs available"
+          exit 1
+        fi
         
         # Test that the frontend image can start
         echo "Testing frontend image startup..."
-        docker run --rm -d --name test-frontend -p 3001:3000 \
-          mainza/frontend:test || echo "Frontend image test failed"
+        if docker run --rm -d --name test-frontend -p 3001:3000 \
+          mainza/frontend:test; then
+          echo "✅ Frontend container started successfully"
+        else
+          echo "❌ Frontend container failed to start"
+          docker logs test-frontend || echo "No logs available"
+          exit 1
+        fi
         
         # Wait a moment for containers to start
-        sleep 10
+        echo "Waiting for containers to start..."
+        sleep 15
         
-        # Test backend health endpoint
+        # Test backend health endpoint (if available)
         echo "Testing backend health..."
-        curl -f http://localhost:8001/health || echo "Backend health check failed"
+        if curl -f http://localhost:8001/health; then
+          echo "✅ Backend health check passed"
+        else
+          echo "⚠️ Backend health check failed (this may be expected without Neo4j)"
+        fi
         
         # Test frontend accessibility
         echo "Testing frontend accessibility..."
-        curl -f http://localhost:3001 || echo "Frontend accessibility check failed"
+        if curl -f http://localhost:3001; then
+          echo "✅ Frontend accessibility check passed"
+        else
+          echo "⚠️ Frontend accessibility check failed"
+        fi
         
         # Cleanup test containers
         echo "Cleaning up test containers..."
         docker stop test-backend test-frontend || echo "Cleanup completed"
+        echo "✅ Docker image testing completed successfully"
 
   # =============================================================================
   # DEPLOYMENT (Production)
