@@ -456,23 +456,27 @@ jobs:
         echo "Checking for built images..."
         docker images
         
-        # Check if backend image exists
-        if docker images | grep -q "mainza/backend:test"; then
+        # Check if backend image exists using docker image inspect
+        if docker image inspect mainza/backend:test >/dev/null 2>&1; then
           echo "✅ Backend image found"
         else
           echo "❌ Backend image not found"
           echo "Available images:"
           docker images
+          echo "Searching for backend image..."
+          docker images | grep mainza || echo "No mainza images found"
           exit 1
         fi
         
-        # Check if frontend image exists
-        if docker images | grep -q "mainza/frontend:test"; then
+        # Check if frontend image exists using docker image inspect
+        if docker image inspect mainza/frontend:test >/dev/null 2>&1; then
           echo "✅ Frontend image found"
         else
           echo "❌ Frontend image not found"
           echo "Available images:"
           docker images
+          echo "Searching for frontend image..."
+          docker images | grep mainza || echo "No mainza images found"
           exit 1
         fi
         
