@@ -9,6 +9,7 @@ import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContai
 import { MetricDisplay } from '@/components/ui/metric-display';
 import { GlassCard } from '@/components/ui/glass-card';
 import { DarkButton } from '@/components/ui/dark-button';
+import UnifiedConsciousnessMetrics from '@/components/UnifiedConsciousnessMetrics';
 import { Neo4jGraphVisualization } from '@/components/Neo4jGraphVisualization';
 import EnhancedNeo4jGraphVisualization from '@/components/EnhancedNeo4jGraphVisualization';
 import RealTimeConsciousnessStream from '@/components/RealTimeConsciousnessStream';
@@ -1027,6 +1028,9 @@ const OverviewTab: React.FC<{ data: any }> = ({ data }) => {
           trend={data.system_health?.neo4j_connected ? 'up' : 'down'}
         />
       </div>
+
+      {/* Unified Consciousness Metrics */}
+      <UnifiedConsciousnessMetrics className="mt-6" />
 
       {data.database_statistics?.node_counts && (
         <GlassCard className="p-6">

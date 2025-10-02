@@ -52,9 +52,9 @@ export const MemoryConstellation = React.memo(({ highlightedConcepts = [] }: Mem
 
       // Fetch real data from backend APIs
       const [memoriesResponse, conceptsResponse, entitiesResponse] = await Promise.all([
-        fetch('/memories/').then(async r => r.ok ? r.json() : []),
-        fetch('/concepts/').then(async r => r.ok ? r.json() : []),
-        fetch('/entities/').then(async r => r.ok ? r.json() : [])
+        fetch('/memories').then(async r => r.ok ? r.json() : []),
+        fetch('/concepts').then(async r => r.ok ? r.json() : []),
+        fetch('/entities').then(async r => r.ok ? r.json() : [])
       ]);
 
       const memories: MemoryData[] = memoriesResponse || [];

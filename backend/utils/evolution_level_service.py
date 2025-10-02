@@ -30,10 +30,10 @@ async def get_full_context() -> Dict[str, Any]:
     }
 
 
-def _read_stored_from_neo4j() -> Dict[str, Any]:
+async def _read_stored_from_neo4j() -> Dict[str, Any]:
     try:
-        from backend.utils.neo4j_production import neo4j_production
-        rec = neo4j_production.execute_query(
+        from backend.utils.unified_database_manager import unified_database_manager
+        rec = await unified_database_manager.execute_query(
             """
             MATCH (ms:MainzaState {state_id: 'mainza-state-1'})
             RETURN ms.evolution_level AS evolution_level,
@@ -74,7 +74,7 @@ async def get_current_level(context: Optional[Dict[str, Any]] = None) -> Dict[st
     if context is None:
         context = await get_full_context()
 
-    stored_info = _read_stored_from_neo4j()
+    stored_info = await _read_stored_from_neo4j()
     stored = stored_info.get("stored")
     stored_ts = stored_info.get("stored_ts")
 

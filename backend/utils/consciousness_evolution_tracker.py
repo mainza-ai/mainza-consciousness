@@ -30,7 +30,7 @@ class ConsciousnessEvolutionTracker:
             })
             """
             
-            self.neo4j.execute_query(
+            await self.neo4j.execute_query(
                 query,
                 parameters={
                     'type': milestone_data.get('type', 'general'),
@@ -65,7 +65,7 @@ class ConsciousnessEvolutionTracker:
             ORDER BY m.timestamp DESC
             """.format(days=days)
             
-            result = self.neo4j.execute_query(query)
+            result = await self.neo4j.execute_query(query)
             
             timeline = []
             for data in result:
@@ -109,7 +109,7 @@ class ConsciousnessEvolutionTracker:
             LIMIT 10
             """
             
-            result = self.neo4j.execute_query(query)
+            result = await self.neo4j.execute_query(query)
             
             milestones = []
             for data in result:
@@ -149,7 +149,7 @@ class ConsciousnessEvolutionTracker:
             ORDER BY frequency DESC
             """.format(days=days)
             
-            result = self.neo4j.execute_query(query)
+            result = await self.neo4j.execute_query(query)
             
             distribution = []
             total = sum(data["frequency"] for data in result) if result else 1

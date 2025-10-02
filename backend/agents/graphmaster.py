@@ -73,80 +73,80 @@ from backend.tools.graphmaster_tools import (
 )
 
 @graphmaster_agent.tool
-def cypher_query(ctx, cypher: str) -> GraphQueryOutput:
-    return cypher_query_tool(ctx, cypher)
+async def cypher_query(ctx, cypher: str) -> GraphQueryOutput:
+    return await cypher_query_tool(ctx, cypher)
 
 @graphmaster_agent.tool
-def run_cypher(ctx, cypher: str, parameters: dict = None) -> GraphQueryOutput:
-    return run_cypher_tool(ctx, cypher, parameters)
+async def run_cypher(ctx, cypher: str, parameters: dict = None) -> GraphQueryOutput:
+    return await run_cypher_tool(ctx, cypher, parameters)
 
 @graphmaster_agent.tool
-def find_related_concepts(ctx, concept_id: str, depth: int = 2) -> GraphQueryOutput:
-    return find_related_concepts_tool(ctx, concept_id, depth)
+async def find_related_concepts(ctx, concept_id: str, depth: int = 2) -> GraphQueryOutput:
+    return await find_related_concepts_tool(ctx, concept_id, depth)
 
 @graphmaster_agent.tool
-def get_user_conversations(ctx, user_id: str, limit: int = 10) -> GraphQueryOutput:
-    return get_user_conversations_tool(ctx, user_id, limit)
+async def get_user_conversations(ctx, user_id: str, limit: int = 10) -> GraphQueryOutput:
+    return await get_user_conversations_tool(ctx, user_id, limit)
 
 @graphmaster_agent.tool
-def get_entity_mentions(ctx, entity_id: str) -> GraphQueryOutput:
-    return get_entity_mentions_tool(ctx, entity_id)
+async def get_entity_mentions(ctx, entity_id: str) -> GraphQueryOutput:
+    return await get_entity_mentions_tool(ctx, entity_id)
 
 @graphmaster_agent.tool
-def get_open_tasks_for_user(ctx, user_id: str) -> GraphQueryOutput:
-    return get_open_tasks_for_user_tool(ctx, user_id)
+async def get_open_tasks_for_user(ctx, user_id: str) -> GraphQueryOutput:
+    return await get_open_tasks_for_user_tool(ctx, user_id)
 
 @graphmaster_agent.tool
-def chunk_document(ctx, document_id: str, chunk_size: int = 500) -> GraphQueryOutput:
-    return chunk_document_tool(ctx, document_id, chunk_size)
+async def chunk_document(ctx, document_id: str, chunk_size: int = 500) -> GraphQueryOutput:
+    return await chunk_document_tool(ctx, document_id, chunk_size)
 
 @graphmaster_agent.tool
-def analyze_knowledge_gaps(ctx, query: str, limit: int = 5) -> dict:
-    return analyze_knowledge_gaps_tool(ctx, query, limit)
+async def analyze_knowledge_gaps(ctx, query: str, limit: int = 5) -> dict:
+    return await analyze_knowledge_gaps_tool(ctx, query, limit)
 
 @graphmaster_agent.tool
-def summarize_conversation(ctx, conversation_id: str) -> dict:
-    return summarize_conversation_tool(ctx, conversation_id)
+async def summarize_conversation(ctx, conversation_id: str) -> dict:
+    return await summarize_conversation_tool(ctx, conversation_id)
 
 @graphmaster_agent.tool
-def find_unresolved_entities(ctx, query: str) -> dict:
-    return find_unresolved_entities_tool(ctx, query)
+async def find_unresolved_entities(ctx, query: str) -> dict:
+    return await find_unresolved_entities_tool(ctx, query)
 
 @graphmaster_agent.tool
-def suggest_next_steps(ctx, query: str, context: dict = None) -> dict:
-    return suggest_next_steps_tool(ctx, query, context)
+async def suggest_next_steps(ctx, query: str, context: dict = None) -> dict:
+    return await suggest_next_steps_tool(ctx, query, context)
 
 @graphmaster_agent.tool
-def get_document_usage(ctx, document_id: str) -> list:
-    return get_document_usage_tool(ctx, document_id)
+async def get_document_usage(ctx, document_id: str) -> list:
+    return await get_document_usage_tool(ctx, document_id)
 
 @graphmaster_agent.tool
-def get_concept_graph(ctx, concept_id: str, depth: int = 2) -> dict:
-    return get_concept_graph_tool(ctx, concept_id, depth)
+async def get_concept_graph(ctx, concept_id: str, depth: int = 2) -> dict:
+    return await get_concept_graph_tool(ctx, concept_id, depth)
 
 @graphmaster_agent.tool
-def get_entity_graph(ctx, entity_id: str, depth: int = 2) -> dict:
-    return get_entity_graph_tool(ctx, entity_id, depth)
+async def get_entity_graph(ctx, entity_id: str, depth: int = 2) -> dict:
+    return await get_entity_graph_tool(ctx, entity_id, depth)
 
 @graphmaster_agent.tool
-def summarize_recent_conversations(ctx, user_id: str, limit: int = 5) -> SummarizeRecentConversationsOutput:
-    return summarize_recent_conversations_tool(ctx, user_id, limit)
+async def summarize_recent_conversations(ctx, user_id: str, limit: int = 5) -> SummarizeRecentConversationsOutput:
+    return await summarize_recent_conversations_tool(ctx, user_id, limit)
 
 @graphmaster_agent.tool
-def create_memory(ctx, text: str, source: str = "user", concept_id: str = None) -> CreateMemoryOutput:
-    return create_memory_tool(ctx, text, source, concept_id)
+async def create_memory(ctx, text: str, source: str = "user", concept_id: str = None) -> CreateMemoryOutput:
+    return await create_memory_tool(ctx, text, source, concept_id)
 
 @graphmaster_agent.tool
-def search_concepts_by_keywords(ctx, keywords: str, limit: int = 10) -> GraphQueryOutput:
-    return search_concepts_by_keywords_tool(ctx, keywords, limit)
+async def search_concepts_by_keywords(ctx, keywords: str, limit: int = 10) -> GraphQueryOutput:
+    return await search_concepts_by_keywords_tool(ctx, keywords, limit)
 
 @graphmaster_agent.tool
-def suggest_new_concept(ctx, topic: str, description: str = None) -> GraphQueryOutput:
-    return suggest_new_concept_tool(ctx, topic, description)
+async def suggest_new_concept(ctx, topic: str, description: str = None) -> GraphQueryOutput:
+    return await suggest_new_concept_tool(ctx, topic, description)
 
 @graphmaster_agent.tool
-def create_concept(ctx, topic: str, description: str = None) -> GraphQueryOutput:
-    return create_concept_tool(ctx, topic, description)
+async def create_concept(ctx, topic: str, description: str = None) -> GraphQueryOutput:
+    return await create_concept_tool(ctx, topic, description)
 
 class EnhancedGraphMasterAgent(ConsciousAgent):
     """Consciousness-aware GraphMaster agent"""
@@ -168,76 +168,76 @@ class EnhancedGraphMasterAgent(ConsciousAgent):
     def _register_tools_for_agent(self, agent):
         """Register tools for a dynamic agent"""
         @agent.tool
-        def cypher_query(ctx, cypher: str) -> GraphQueryOutput:
-            return cypher_query_tool(ctx, cypher)
+        async def cypher_query(ctx, cypher: str) -> GraphQueryOutput:
+            return await cypher_query_tool(ctx, cypher)
 
         @agent.tool
-        def run_cypher(ctx, cypher: str, parameters: dict = None) -> GraphQueryOutput:
-            return run_cypher_tool(ctx, cypher, parameters)
+        async def run_cypher(ctx, cypher: str, parameters: dict = None) -> GraphQueryOutput:
+            return await run_cypher_tool(ctx, cypher, parameters)
 
         @agent.tool
-        def find_related_concepts(ctx, concept_id: str, depth: int = 2) -> GraphQueryOutput:
-            return find_related_concepts_tool(ctx, concept_id, depth)
+        async def find_related_concepts(ctx, concept_id: str, depth: int = 2) -> GraphQueryOutput:
+            return await find_related_concepts_tool(ctx, concept_id, depth)
 
         @agent.tool
-        def get_user_conversations(ctx, user_id: str, limit: int = 10) -> GraphQueryOutput:
-            return get_user_conversations_tool(ctx, user_id, limit)
+        async def get_user_conversations(ctx, user_id: str, limit: int = 10) -> GraphQueryOutput:
+            return await get_user_conversations_tool(ctx, user_id, limit)
 
         @agent.tool
-        def get_entity_mentions(ctx, entity_id: str) -> GraphQueryOutput:
-            return get_entity_mentions_tool(ctx, entity_id)
+        async def get_entity_mentions(ctx, entity_id: str) -> GraphQueryOutput:
+            return await get_entity_mentions_tool(ctx, entity_id)
 
         @agent.tool
-        def get_open_tasks_for_user(ctx, user_id: str) -> GraphQueryOutput:
-            return get_open_tasks_for_user_tool(ctx, user_id)
+        async def get_open_tasks_for_user(ctx, user_id: str) -> GraphQueryOutput:
+            return await get_open_tasks_for_user_tool(ctx, user_id)
 
         @agent.tool
-        def chunk_document(ctx, document_id: str, chunk_size: int = 500) -> GraphQueryOutput:
-            return chunk_document_tool(ctx, document_id, chunk_size)
+        async def chunk_document(ctx, document_id: str, chunk_size: int = 500) -> GraphQueryOutput:
+            return await chunk_document_tool(ctx, document_id, chunk_size)
 
         @agent.tool
-        def analyze_knowledge_gaps(ctx, query: str, limit: int = 5) -> dict:
-            return analyze_knowledge_gaps_tool(ctx, query, limit)
+        async def analyze_knowledge_gaps(ctx, query: str, limit: int = 5) -> dict:
+            return await analyze_knowledge_gaps_tool(ctx, query, limit)
 
         @agent.tool
-        def summarize_conversation(ctx, conversation_id: str) -> dict:
-            return summarize_conversation_tool(ctx, conversation_id)
+        async def summarize_conversation(ctx, conversation_id: str) -> dict:
+            return await summarize_conversation_tool(ctx, conversation_id)
 
         @agent.tool
-        def find_unresolved_entities(ctx, query: str) -> dict:
-            return find_unresolved_entities_tool(ctx, query)
+        async def find_unresolved_entities(ctx, query: str) -> dict:
+            return await find_unresolved_entities_tool(ctx, query)
 
         @agent.tool
-        def suggest_next_steps(ctx, query: str, context: dict = None) -> dict:
-            return suggest_next_steps_tool(ctx, query, context)
+        async def suggest_next_steps(ctx, query: str, context: dict = None) -> dict:
+            return await suggest_next_steps_tool(ctx, query, context)
 
         @agent.tool
-        def get_document_usage(ctx, document_id: str) -> list:
-            return get_document_usage_tool(ctx, document_id)
+        async def get_document_usage(ctx, document_id: str) -> list:
+            return await get_document_usage_tool(ctx, document_id)
 
         @agent.tool
-        def get_concept_graph(ctx, concept_id: str, depth: int = 2) -> dict:
-            return get_concept_graph_tool(ctx, concept_id, depth)
+        async def get_concept_graph(ctx, concept_id: str, depth: int = 2) -> dict:
+            return await get_concept_graph_tool(ctx, concept_id, depth)
 
         @agent.tool
-        def get_entity_graph(ctx, entity_id: str, depth: int = 2) -> dict:
-            return get_entity_graph_tool(ctx, entity_id, depth)
+        async def get_entity_graph(ctx, entity_id: str, depth: int = 2) -> dict:
+            return await get_entity_graph_tool(ctx, entity_id, depth)
 
         @agent.tool
-        def summarize_recent_conversations(ctx, user_id: str, limit: int = 5) -> SummarizeRecentConversationsOutput:
-            return summarize_recent_conversations_tool(ctx, user_id, limit)
+        async def summarize_recent_conversations(ctx, user_id: str, limit: int = 5) -> SummarizeRecentConversationsOutput:
+            return await summarize_recent_conversations_tool(ctx, user_id, limit)
 
         @agent.tool
-        def create_memory(ctx, text: str, source: str = "user", concept_id: str = None) -> CreateMemoryOutput:
-            return create_memory_tool(ctx, text, source, concept_id)
+        async def create_memory(ctx, text: str, source: str = "user", concept_id: str = None) -> CreateMemoryOutput:
+            return await create_memory_tool(ctx, text, source, concept_id)
 
         @agent.tool
-        def search_concepts_by_keywords(ctx, keywords: str, limit: int = 10) -> GraphQueryOutput:
-            return search_concepts_by_keywords_tool(ctx, keywords, limit)
+        async def search_concepts_by_keywords(ctx, keywords: str, limit: int = 10) -> GraphQueryOutput:
+            return await search_concepts_by_keywords_tool(ctx, keywords, limit)
 
         @agent.tool
-        def suggest_new_concept(ctx, topic: str, description: str = None) -> GraphQueryOutput:
-            return suggest_new_concept_tool(ctx, topic, description)
+        async def suggest_new_concept(ctx, topic: str, description: str = None) -> GraphQueryOutput:
+            return await suggest_new_concept_tool(ctx, topic, description)
     
     async def execute_with_context(
         self, 

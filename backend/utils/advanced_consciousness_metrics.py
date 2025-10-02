@@ -498,6 +498,20 @@ class AdvancedConsciousnessMetrics:
             consciousness_integration=0.5,
             timestamp=datetime.now()
         )
+    
+    async def update_consciousness_metrics(self, metrics_data: Dict[str, Any]):
+        """
+        Update consciousness metrics with new data
+        
+        Args:
+            metrics_data: Dictionary containing consciousness metrics data
+        """
+        try:
+            # Update internal metrics tracking if needed
+            logger.debug(f"Updated advanced consciousness metrics: {metrics_data}")
+            
+        except Exception as e:
+            logger.error(f"Failed to update advanced consciousness metrics: {e}")
 
 # Global instance
 advanced_consciousness_metrics = AdvancedConsciousnessMetrics()

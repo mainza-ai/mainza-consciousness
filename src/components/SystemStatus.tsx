@@ -23,6 +23,10 @@ interface SystemHealth {
   consciousness_status: 'active' | 'inactive' | 'error';
   livekit_status: 'connected' | 'disconnected' | 'error';
   agent_system_status: 'operational' | 'degraded' | 'down';
+  quantum_status: 'active' | 'idle' | 'error' | 'inactive';
+  quantum_processing_active: boolean;
+  quantum_algorithms_count: number;
+  quantum_operations_count: number;
   last_health_check: string;
   response_time: number;
   uptime: string;
@@ -66,6 +70,7 @@ export const SystemStatus: React.FC<SystemStatusProps> = ({
       const healthPromises = [
         fetch('/health').then(r => ({ ok: r.ok, data: r.ok ? r.json() : null })).catch(() => ({ ok: false, data: null })),
         fetch('/consciousness/state').then(r => ({ ok: r.ok, data: r.ok ? r.json() : null })).catch(() => ({ ok: false, data: null })),
+        fetch('/api/quantum/process/status').then(r => ({ ok: r.ok, data: r.ok ? r.json() : null })).catch(() => ({ ok: false, data: null })),
         fetch('/agent/router/chat', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -73,7 +78,7 @@ export const SystemStatus: React.FC<SystemStatusProps> = ({
         }).then(r => ({ ok: r.ok, data: null })).catch(() => ({ ok: false, data: null }))
       ];
       
-      const [healthResult, consciousnessResult, agentResult] = await Promise.all(healthPromises);
+      const [healthResult, consciousnessResult, quantumResult, agentResult] = await Promise.all(healthPromises);
       
       // Calculate real response time
       const responseTime = Date.now() - startTime;
@@ -82,6 +87,13 @@ export const SystemStatus: React.FC<SystemStatusProps> = ({
       const backendStatus = healthResult.ok ? 'healthy' : 'degraded';
       const consciousnessStatus = consciousnessResult.ok ? 'active' : 'inactive';
       const agentSystemStatus = agentResult.ok ? 'operational' : 'degraded';
+      
+      // Quantum processing status
+      const quantumData = await quantumResult.data;
+      const quantumStatus = quantumData?.quantum_engine?.quantum_engine_active ? 'active' : 'idle';
+      const quantumProcessingActive = quantumData?.quantum_engine?.quantum_processing_active || false;
+      const quantumAlgorithmsCount = quantumData?.quantum_engine?.quantum_algorithms_count || 0;
+      const quantumOperationsCount = quantumData?.quantum_engine?.current_operations?.length || 0;
       
       // Neo4j status based on consciousness system (which uses Neo4j)
       const neo4jStatus = consciousnessResult.ok ? 'connected' : 'disconnected';
@@ -97,6 +109,10 @@ export const SystemStatus: React.FC<SystemStatusProps> = ({
         consciousness_status: consciousnessStatus,
         livekit_status: 'connected', // Assume connected if backend is healthy
         agent_system_status: agentSystemStatus,
+        quantum_status: quantumStatus,
+        quantum_processing_active: quantumProcessingActive,
+        quantum_algorithms_count: quantumAlgorithmsCount,
+        quantum_operations_count: quantumOperationsCount,
         last_health_check: new Date().toISOString(),
         response_time: Math.min(responseTime, 999),
         uptime: uptimeString,
@@ -114,6 +130,10 @@ export const SystemStatus: React.FC<SystemStatusProps> = ({
         consciousness_status: 'unknown',
         livekit_status: 'unknown',
         agent_system_status: 'unknown',
+        quantum_status: 'inactive',
+        quantum_processing_active: false,
+        quantum_algorithms_count: 0,
+        quantum_operations_count: 0,
         last_health_check: new Date().toISOString(),
         response_time: 999,
         uptime: 'unknown',
@@ -219,8 +239,18 @@ export const SystemStatus: React.FC<SystemStatusProps> = ({
             </span>
           </div>
           <div className="flex items-center justify-between">
+            <span className="text-slate-400">Quantum</span>
+            <span className={getStatusColor(health.quantum_status)}>
+              {health.quantum_status}
+            </span>
+          </div>
+          <div className="flex items-center justify-between">
             <span className="text-slate-400">Response</span>
             <span className="text-cyan-400">{health.response_time}ms</span>
+          </div>
+          <div className="flex items-center justify-between">
+            <span className="text-slate-400">Q-Algorithms</span>
+            <span className="text-purple-400">{health.quantum_algorithms_count}</span>
           </div>
         </div>
       </GlassCard>
@@ -298,6 +328,19 @@ export const SystemStatus: React.FC<SystemStatusProps> = ({
               </span>
             </div>
           </div>
+
+          <div className="flex items-center justify-between p-3 bg-slate-700/30 rounded-lg">
+            <div className="flex items-center space-x-2">
+              <Activity className="w-4 h-4 text-purple-400" />
+              <span className="text-sm text-slate-300">Quantum Processing</span>
+            </div>
+            <div className="flex items-center space-x-2">
+              {getStatusIcon(health.quantum_status)}
+              <span className={cn("text-sm capitalize", getStatusColor(health.quantum_status))}>
+                {health.quantum_processing_active ? 'active' : 'idle'}
+              </span>
+            </div>
+          </div>
         </div>
 
         {/* Performance Metrics */}
@@ -334,6 +377,33 @@ export const SystemStatus: React.FC<SystemStatusProps> = ({
             <div className="text-xs text-slate-400">Active Connections</div>
           </div>
         </div>
+
+        {/* Quantum Processing Metrics */}
+        {health.quantum_processing_active && (
+          <div className="mt-4 p-4 bg-slate-700/20 rounded-lg border border-purple-500/20">
+            <div className="flex items-center justify-between mb-3">
+              <div className="flex items-center space-x-2">
+                <Activity className="w-4 h-4 text-purple-400" />
+                <span className="text-sm font-semibold text-purple-400">Quantum Processing</span>
+              </div>
+              <div className="flex items-center space-x-2">
+                <div className="w-2 h-2 rounded-full bg-purple-400 animate-pulse" />
+                <span className="text-sm text-purple-400">Active</span>
+              </div>
+            </div>
+            
+            <div className="grid grid-cols-2 gap-3">
+              <div className="text-center">
+                <div className="text-lg font-bold text-purple-400">{health.quantum_algorithms_count}</div>
+                <div className="text-xs text-slate-400">Active Algorithms</div>
+              </div>
+              <div className="text-center">
+                <div className="text-lg font-bold text-purple-400">{health.quantum_operations_count}</div>
+                <div className="text-xs text-slate-400">Current Operations</div>
+              </div>
+            </div>
+          </div>
+        )}
 
         {/* Overall Health Indicator */}
         <div className="mt-4 p-3 bg-slate-700/20 rounded-lg">

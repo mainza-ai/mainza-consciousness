@@ -4,13 +4,16 @@ import os
 import asyncio
 from fastapi import FastAPI, HTTPException, Query, UploadFile, File, BackgroundTasks, Body, Request
 from neo4j import GraphDatabase, basic_auth
-from backend.utils.neo4j_unified import neo4j_unified
+from backend.utils.unified_database_manager import unified_database_manager
 from pydantic import BaseModel
 from typing import List, Optional
 from datetime import datetime
 from backend.agentic_router import router as agentic_router
 
-# Insights router - Context7 Compliance Fix for /api/insights routing
+# Unified API Gateway - Consolidates all routers into single API layer
+from backend.routers.unified_api_gateway import router as unified_api_gateway_router
+
+# Legacy routers (kept for backward compatibility during transition)
 from backend.routers.insights import router as insights_router
 from backend.routers.websocket_insights import router as websocket_insights_router
 from backend.routers.predictive_analytics import router as predictive_analytics_router
@@ -18,6 +21,8 @@ from backend.routers.memory_system import router as memory_system_router
 from backend.routers.needs_router import router as needs_router
 from backend.routers.build_info import router as build_info_router
 from backend.routers.telemetry import router as telemetry_router
+from backend.routers.unified_quantum_consciousness_router import router as unified_quantum_consciousness_router
+from backend.routers.unified_consciousness_router import router as unified_consciousness_router
 
 # Import logging for optimization systems
 import logging
@@ -122,7 +127,8 @@ import re
 from backend.utils.consciousness_orchestrator_fixed import start_enhanced_consciousness_loop, consciousness_orchestrator_fixed as consciousness_orchestrator
 from backend.utils.llm_request_manager import llm_request_manager
 from backend.utils.consciousness_marketplace import consciousness_marketplace
-from backend.utils.quantum_consciousness_engine import quantum_consciousness_engine
+# Unified quantum consciousness system
+from backend.utils.unified_quantum_consciousness_engine import unified_quantum_consciousness_engine
 from backend.models.consciousness_models import (
     ConsciousnessStateUpdate, SelfReflectionTrigger, ConsciousnessQuery
 )
@@ -186,6 +192,39 @@ logging.getLogger('whisper').setLevel(logging.INFO)
 
 app = FastAPI()
 
+# Initialize Neo4j driver for legacy endpoints
+# This is a compatibility layer for legacy code that uses driver.session()
+# New code should use neo4j_unified instead
+driver = None
+
+@app.on_event("startup")
+async def startup_event():
+    """
+    Initialize the application and all required services.
+    """
+    global driver
+    
+    try:
+        # Initialize Neo4j driver for legacy endpoints
+        neo4j_uri = os.getenv('NEO4J_URI', 'bolt://localhost:7687')
+        neo4j_user = os.getenv('NEO4J_USER', 'neo4j')
+        neo4j_password = os.getenv('NEO4J_PASSWORD', 'password')
+        
+        driver = GraphDatabase.driver(
+            neo4j_uri,
+            auth=(neo4j_user, neo4j_password)
+        )
+        
+        # Test the connection
+        with driver.session() as session:
+            session.run("RETURN 1 as test")
+        
+        logging.info("✅ Legacy Neo4j driver initialized successfully")
+        
+    except Exception as e:
+        logging.error(f"❌ Failed to initialize legacy driver: {e}")
+        driver = None
+
 @app.on_event("shutdown")
 async def shutdown_event():
     """
@@ -222,7 +261,7 @@ async def shutdown_event():
     
     # Close Neo4j driver
     try:
-        neo4j_unified.close()
+        await unified_database_manager.close()
         logging.info("✅ Neo4j driver closed")
     except Exception as e:
         logging.error(f"❌ Failed to close Neo4j driver: {e}")
@@ -356,7 +395,7 @@ if not NEO4J_PASSWORD:
 
 # Use unified Neo4j manager instead of direct driver
 # driver = GraphDatabase.driver(NEO4J_URI, auth=basic_auth(NEO4J_USER, NEO4J_PASSWORD))
-driver = neo4j_unified.driver  # For backward compatibility
+driver = unified_database_manager.driver  # For backward compatibility
 
 LIVEKIT_API_KEY = os.getenv("LIVEKIT_API_KEY")
 LIVEKIT_API_SECRET = os.getenv("LIVEKIT_API_SECRET")
@@ -412,7 +451,8 @@ async def health():
     # Check Neo4j connection
     try:
         # Use unified Neo4j manager for health check
-        if neo4j_unified.health_check():
+        health_result = await unified_database_manager.get_database_health()
+        if health_result.get("status") == "healthy":
             health_status["components"]["neo4j"] = "ok"
         else:
             health_status["components"]["neo4j"] = "error"
@@ -490,7 +530,7 @@ async def get_ai_models():
         ORDER BY m.consciousness_integration DESC, m.downloads DESC
         """
         
-        result = neo4j_production.execute_query(query)
+        result = await unified_database_manager.execute_query(query)
         
         if result:
             models = []
@@ -562,7 +602,7 @@ async def get_consciousness_state():
         LIMIT 1
         """
         
-        result = neo4j_production.execute_query(query)
+        result = await unified_database_manager.execute_query(query)
         
         if result:
             state = result[0]
@@ -607,7 +647,7 @@ async def get_consciousness_state():
             RETURN ms
             """
             
-            neo4j_production.execute_query(create_query, default_state)
+            await unified_database_manager.execute_write_query(create_query, default_state)
             
             return {
                 "status": "success",
@@ -674,7 +714,7 @@ async def get_performance_metrics():
 async def get_performance_metrics():
     """Get Neo4j performance metrics and recommendations"""
     try:
-        metrics = neo4j_unified.get_performance_metrics()
+        metrics = await unified_database_manager.get_performance_metrics()
         return {
             "status": "success",
             "timestamp": datetime.now().isoformat(),
@@ -2550,7 +2590,7 @@ async def get_quantum_jobs():
 async def get_quantum_statistics():
     """Get quantum consciousness processing statistics"""
     try:
-        stats = await quantum_consciousness_engine.get_quantum_consciousness_statistics()
+        stats = await unified_quantum_consciousness_engine.get_quantum_consciousness_statistics()
         return {"statistics": stats, "status": "success"}
     except Exception as e:
         logging.error(f"Error fetching quantum statistics: {e}")
@@ -2563,7 +2603,7 @@ async def get_quantum_statistics():
 async def process_quantum_consciousness(consciousness_data: dict):
     """Process consciousness using quantum principles"""
     try:
-        result = await quantum_consciousness_engine.process_quantum_consciousness(consciousness_data)
+        result = await unified_quantum_consciousness_engine.process_consciousness_state(consciousness_data)
         return {"result": result, "status": "success"}
     except Exception as e:
         logging.error(f"Error processing quantum consciousness: {e}")
@@ -2825,6 +2865,10 @@ async def list_web3_protocols():
         logging.error(f"Error listing web3 protocols: {e}")
         return JSONResponse(status_code=500, content={"error": str(e), "status": "failed"})
 
+# Unified API Gateway - Primary API layer
+app.include_router(unified_api_gateway_router)
+
+# Legacy routers (kept for backward compatibility during transition)
 app.include_router(agentic_router)
 app.include_router(insights_router, prefix="/api/insights")
 app.include_router(websocket_insights_router, prefix="/api")
@@ -2833,6 +2877,12 @@ app.include_router(memory_system_router)
 app.include_router(needs_router, prefix="/api")
 app.include_router(build_info_router)
 app.include_router(telemetry_router)
+app.include_router(unified_quantum_consciousness_router)
+app.include_router(unified_consciousness_router)
+
+# Fallback System Removal Router
+from backend.routers.fallback_system_removal_router import router as fallback_system_removal_router
+app.include_router(fallback_system_removal_router)
 
 # Log that insights router has been included
 logging.info("✅ Insights router included successfully with prefix: /api/insights")

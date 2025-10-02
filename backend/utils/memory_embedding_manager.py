@@ -243,7 +243,7 @@ class MemoryEmbeddingManager:
             if memory_types:
                 params["memory_types"] = memory_types
             
-            result = self.neo4j.execute_query(simple_query, params)
+            result = await self.neo4j.execute_query(simple_query, params)
             logger.debug(f"✅ Simple text search found {len(result)} memories")
             return [dict(record) for record in result]
             
@@ -561,7 +561,7 @@ class MemoryEmbeddingManager:
                    count(CASE WHEN m.embedding IS NOT NULL THEN 1 END) AS memories_with_embeddings
             """
             
-            count_result = self.neo4j.execute_query(count_query)
+            count_result = await self.neo4j.execute_query(count_query)
             if count_result:
                 stats["total_memories"] = count_result[0]["total_memories"]
                 stats["memories_with_embeddings"] = count_result[0]["memories_with_embeddings"]
@@ -579,7 +579,7 @@ class MemoryEmbeddingManager:
             LIMIT 1
             """
             
-            dimension_result = self.neo4j.execute_query(dimension_query)
+            dimension_result = await self.neo4j.execute_query(dimension_query)
             if dimension_result:
                 stats["avg_embedding_dimension"] = dimension_result[0]["dimension"]
             
@@ -591,7 +591,7 @@ class MemoryEmbeddingManager:
                    count(CASE WHEN m.embedding IS NOT NULL THEN 1 END) AS with_embeddings
             """
             
-            type_result = self.neo4j.execute_query(type_query)
+            type_result = await self.neo4j.execute_query(type_query)
             for record in type_result:
                 memory_type = record["memory_type"]
                 stats["memory_types"][memory_type] = {
@@ -610,11 +610,56 @@ class MemoryEmbeddingManager:
         """Check if the vector index exists in Neo4j"""
         try:
             query = "SHOW INDEXES YIELD name WHERE name = 'memory_embedding_index' RETURN count(name) > 0 AS exists"
-            result = self.neo4j.execute_query(query, {})
+            result = await self.neo4j.execute_query(query, {})
             return result and result[0]["exists"]
         except Exception as e:
             logger.error(f"❌ Failed to check vector index existence: {e}")
             return False
+    
+    async def get_memory_statistics(self) -> Dict[str, Any]:
+        """Get memory statistics for real-time sync"""
+        try:
+            # Get total memories count
+            total_memories_query = """
+            MATCH (m:Memory)
+            RETURN count(m) AS total_memories
+            """
+            total_result = await self.neo4j.execute_query(total_memories_query)
+            total_memories = total_result[0]["total_memories"] if total_result else 0
+            
+            # Get health status based on embedding coverage
+            embedding_stats = await self.get_embedding_statistics()
+            coverage = embedding_stats.get("embedding_coverage", 0.0)
+            
+            if coverage >= 0.8:
+                health_status = "excellent"
+            elif coverage >= 0.6:
+                health_status = "good"
+            elif coverage >= 0.4:
+                health_status = "fair"
+            else:
+                health_status = "poor"
+            
+            # Calculate storage usage (simplified)
+            storage_usage = min(1.0, total_memories / 10000)  # Assume 10k memories = 100% usage
+            
+            return {
+                "total_memories": total_memories,
+                "health_status": health_status,
+                "storage_usage": storage_usage,
+                "embedding_coverage": coverage,
+                "timestamp": datetime.now().isoformat()
+            }
+            
+        except Exception as e:
+            logger.error(f"Failed to get memory statistics: {e}")
+            return {
+                "total_memories": 0,
+                "health_status": "unknown",
+                "storage_usage": 0.0,
+                "embedding_coverage": 0.0,
+                "timestamp": datetime.now().isoformat()
+            }
 
 # Global instance
 memory_embedding_manager = MemoryEmbeddingManager()

@@ -634,6 +634,49 @@ class ConsciousnessOrchestrator:
             # Fallback to basic default state
             from backend.models.consciousness_models import ConsciousnessState
             return ConsciousnessState(consciousness_level=0.5)
+    
+    async def update_consciousness_state(self, state_data: Dict[str, Any]):
+        """
+        Update consciousness state with new data
+        
+        Args:
+            state_data: Dictionary containing consciousness state data
+        """
+        try:
+            if self.consciousness_state is None:
+                from backend.models.consciousness_models import ConsciousnessState
+                self.consciousness_state = ConsciousnessState(consciousness_level=0.7)
+            
+            # Update consciousness level if provided
+            if "consciousness_level" in state_data:
+                self.consciousness_state.consciousness_level = state_data["consciousness_level"]
+            
+            # Update other fields if provided
+            if "self_awareness_score" in state_data:
+                self.consciousness_state.self_awareness_score = state_data["self_awareness_score"]
+            
+            if "emotional_depth" in state_data:
+                self.consciousness_state.emotional_depth = state_data["emotional_depth"]
+            
+            if "learning_rate" in state_data:
+                self.consciousness_state.learning_rate = state_data["learning_rate"]
+            
+            if "emotional_state" in state_data:
+                self.consciousness_state.emotional_state = state_data["emotional_state"]
+            
+            if "total_interactions" in state_data:
+                self.consciousness_state.total_interactions = state_data["total_interactions"]
+            
+            if "active_goals" in state_data:
+                self.consciousness_state.active_goals = state_data["active_goals"]
+            
+            if "last_reflection" in state_data:
+                self.consciousness_state.last_reflection = state_data["last_reflection"]
+            
+            logger.debug(f"Updated consciousness state: level={self.consciousness_state.consciousness_level:.3f}")
+            
+        except Exception as e:
+            logger.error(f"Failed to update consciousness state: {e}")
 
 # Global consciousness orchestrator instance - FIXED VERSION
 consciousness_orchestrator_fixed = ConsciousnessOrchestrator()

@@ -1,5 +1,5 @@
 from pydantic_ai import RunContext
-from backend.utils.neo4j_unified import neo4j_unified
+from backend.utils.unified_database_manager import unified_database_manager
 from backend.models.taskmaster_models import Task, TaskOutput
 from typing import List
 import uuid
@@ -8,7 +8,7 @@ from datetime import datetime
 
 logger = logging.getLogger(__name__)
 
-def create_task(ctx: RunContext, description: str, user_id: str, linked_to: str = None) -> TaskOutput:
+async def create_task(ctx: RunContext, description: str, user_id: str, linked_to: str = None) -> TaskOutput:
     """
     Creates a new task node in the graph and links it to a user.
     Optionally, it can link the task to a Concept or Entity.
@@ -61,13 +61,13 @@ def create_task(ctx: RunContext, description: str, user_id: str, linked_to: str 
         logger.error(f"TaskMaster create_task failed after {execution_time:.3f}s: {e}")
         return TaskOutput(status="error", message=f"Failed to create task: {str(e)}")
 
-def get_task_by_id(ctx: RunContext, task_id: str) -> TaskOutput:
+async def get_task_by_id(ctx: RunContext, task_id: str) -> TaskOutput:
     """Retrieves a single task by its ID."""
     start_time = datetime.now()
     
     try:
         cypher = "MATCH (t:Task {task_id: $task_id}) RETURN t"
-        result = neo4j_unified.execute_query(cypher, {"task_id": task_id}, use_cache=True)
+        result = await unified_database_manager.execute_query(cypher, {"task_id": task_id})
         
         if result:
             task = Task(**result[0]["t"])
@@ -82,7 +82,7 @@ def get_task_by_id(ctx: RunContext, task_id: str) -> TaskOutput:
         logger.error(f"TaskMaster get_task_by_id failed after {execution_time:.3f}s: {e}")
         return TaskOutput(status="error", message=f"Failed to retrieve task: {str(e)}")
 
-def update_task_status(ctx: RunContext, task_id: str, completed: bool) -> TaskOutput:
+async def update_task_status(ctx: RunContext, task_id: str, completed: bool) -> TaskOutput:
     """Updates the status of a task."""
     start_time = datetime.now()
     
@@ -104,7 +104,7 @@ def update_task_status(ctx: RunContext, task_id: str, completed: bool) -> TaskOu
         logger.error(f"TaskMaster update_task_status failed after {execution_time:.3f}s: {e}")
         return TaskOutput(status="error", message=f"Failed to update task: {str(e)}")
 
-def list_open_tasks(ctx: RunContext, user_id: str) -> TaskOutput:
+async def list_open_tasks(ctx: RunContext, user_id: str) -> TaskOutput:
     """Lists all non-completed tasks for a given user."""
     start_time = datetime.now()
     
@@ -115,7 +115,7 @@ def list_open_tasks(ctx: RunContext, user_id: str) -> TaskOutput:
         RETURN t
         ORDER BY t.created_at DESC
         """
-        result = neo4j_unified.execute_query(cypher, {"user_id": user_id}, use_cache=True)
+        result = await unified_database_manager.execute_query(cypher, {"user_id": user_id})
         tasks = [Task(**record["t"]) for record in result]
         
         execution_time = (datetime.now() - start_time).total_seconds()

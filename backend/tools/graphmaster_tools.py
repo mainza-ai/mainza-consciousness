@@ -1,4 +1,4 @@
-from backend.utils.neo4j_unified import neo4j_unified
+from backend.utils.unified_database_manager import unified_database_manager
 from backend.utils.embedding import get_embedding
 from backend.models.graphmaster_models import *
 from pydantic_ai import RunContext
@@ -11,11 +11,11 @@ logger = logging.getLogger(__name__)
 
 # Place all @graphmaster_agent.tool functions here, e.g.:
 # @graphmaster_agent.tool
-def cypher_query(ctx: RunContext, cypher: str) -> GraphQueryOutput:
+async def cypher_query(ctx: RunContext, cypher: str) -> GraphQueryOutput:
     """Execute Cypher query using unified Neo4j manager with caching and monitoring"""
     start_time = datetime.now()
     try:
-        records = neo4j_unified.execute_query(cypher, use_cache=True)
+        records = await unified_database_manager.execute_query(cypher)
         execution_time = (datetime.now() - start_time).total_seconds()
         logger.debug(f"GraphMaster cypher_query executed in {execution_time:.3f}s")
         return GraphQueryOutput(result={"cypher": cypher, "result": records, "execution_time_ms": round(execution_time * 1000, 2)})
@@ -24,11 +24,11 @@ def cypher_query(ctx: RunContext, cypher: str) -> GraphQueryOutput:
         logger.error(f"GraphMaster cypher_query failed after {execution_time:.3f}s: {e}")
         return GraphQueryOutput(result={"cypher": cypher, "error": str(e), "execution_time_ms": round(execution_time * 1000, 2)})
 
-def run_cypher(ctx: RunContext, cypher: str, parameters: dict = None) -> GraphQueryOutput:
+async def run_cypher(ctx: RunContext, cypher: str, parameters: dict = None) -> GraphQueryOutput:
     """Execute parameterized Cypher query using unified Neo4j manager"""
     start_time = datetime.now()
     try:
-        records = neo4j_unified.execute_query(cypher, parameters or {}, use_cache=True)
+        records = await unified_database_manager.execute_query(cypher, parameters or {})
         execution_time = (datetime.now() - start_time).total_seconds()
         logger.debug(f"GraphMaster run_cypher executed in {execution_time:.3f}s")
         return GraphQueryOutput(result={"cypher": cypher, "result": records, "execution_time_ms": round(execution_time * 1000, 2)})
@@ -37,7 +37,7 @@ def run_cypher(ctx: RunContext, cypher: str, parameters: dict = None) -> GraphQu
         logger.error(f"GraphMaster run_cypher failed after {execution_time:.3f}s: {e}")
         return GraphQueryOutput(result={"cypher": cypher, "error": str(e), "execution_time_ms": round(execution_time * 1000, 2)})
 
-def find_related_concepts(ctx: RunContext, concept_id: str, depth: int = 2) -> GraphQueryOutput:
+async def find_related_concepts(ctx: RunContext, concept_id: str, depth: int = 2) -> GraphQueryOutput:
     # Fix: Neo4j doesn't allow parameter variables in relationship patterns
     # Use f-string formatting for depth parameter (safe since it's an integer)
     cypher = (
@@ -45,50 +45,50 @@ def find_related_concepts(ctx: RunContext, concept_id: str, depth: int = 2) -> G
         "RETURN DISTINCT related.concept_id AS concept_id, related.name AS name"
     )
     try:
-        records = neo4j_unified.execute_query(cypher, {"concept_id": concept_id, "depth": depth})
+        records = await unified_database_manager.execute_query(cypher, {"concept_id": concept_id, "depth": depth})
         return GraphQueryOutput(result=records)
     except Exception as e:
         return GraphQueryOutput(result={"error": str(e)})
 
-def get_user_conversations(ctx: RunContext, user_id: str, limit: int = 10) -> GraphQueryOutput:
+async def get_user_conversations(ctx: RunContext, user_id: str, limit: int = 10) -> GraphQueryOutput:
     cypher = (
         "MATCH (u:User {user_id: $user_id})<-[:DISCUSSED_IN]-(m:Memory)-[:DISCUSSED_IN]->(c:Conversation) "
         "RETURN DISTINCT c.conversation_id AS conversation_id, c.started_at AS started_at "
         "ORDER BY c.started_at DESC LIMIT $limit"
     )
     try:
-        records = neo4j_unified.execute_query(cypher, {"user_id": user_id, "limit": limit})
+        records = await unified_database_manager.execute_query(cypher, {"user_id": user_id, "limit": limit})
         return GraphQueryOutput(result=records)
     except Exception as e:
         return GraphQueryOutput(result={"error": str(e)})
 
-def get_entity_mentions(ctx: RunContext, entity_id: str) -> GraphQueryOutput:
+async def get_entity_mentions(ctx: RunContext, entity_id: str) -> GraphQueryOutput:
     cypher = (
         "MATCH (e:Entity {entity_id: $entity_id})<-[:MENTIONS]-(c:Conversation) "
         "RETURN c.conversation_id AS conversation_id, c.started_at AS started_at"
     )
     try:
-        records = neo4j_unified.execute_query(cypher, {"entity_id": entity_id})
+        records = await unified_database_manager.execute_query(cypher, {"entity_id": entity_id})
         return GraphQueryOutput(result=records)
     except Exception as e:
         return GraphQueryOutput(result={"error": str(e)})
 
-def get_open_tasks_for_user(ctx: RunContext, user_id: str) -> GraphQueryOutput:
+async def get_open_tasks_for_user(ctx: RunContext, user_id: str) -> GraphQueryOutput:
     cypher = (
         "MATCH (u:User {user_id: $user_id})<-[:ASSIGNED_TO]-(t:Task) "
         "WHERE coalesce(t.completed, false) = false "
         "RETURN t"
     )
     try:
-        records = neo4j_unified.execute_query(cypher, {"user_id": user_id})
+        records = await unified_database_manager.execute_query(cypher, {"user_id": user_id})
         return GraphQueryOutput(result=records)
     except Exception as e:
         return GraphQueryOutput(result={"error": str(e)})
 
-def chunk_document(ctx: RunContext, document_id: str, chunk_size: int = 500) -> GraphQueryOutput:
+async def chunk_document(ctx: RunContext, document_id: str, chunk_size: int = 500) -> GraphQueryOutput:
     cypher_get = "MATCH (d:Document {document_id: $document_id}) RETURN d.text AS text"
     try:
-        doc_result = neo4j_unified.execute_query(cypher_get, {"document_id": document_id})
+        doc_result = await unified_database_manager.execute_query(cypher_get, {"document_id": document_id})
         if not doc_result or not doc_result[0].get("text"):
             return GraphQueryOutput(result={"error": "Document not found or has no text property"})
         
@@ -104,7 +104,7 @@ def chunk_document(ctx: RunContext, document_id: str, chunk_size: int = 500) -> 
                 "CREATE (ch:Chunk {chunk_id: $chunk_id, text: $chunk_text, embedding: $embedding})-[:DERIVED_FROM]->(d) "
                 "RETURN ch"
             )
-            result = neo4j_unified.execute_query(cypher_create, {
+            result = await unified_database_manager.execute_query(cypher_create, {
                 "document_id": document_id, 
                 "chunk_id": chunk_id, 
                 "chunk_text": chunk_text, 
@@ -117,43 +117,43 @@ def chunk_document(ctx: RunContext, document_id: str, chunk_size: int = 500) -> 
     except Exception as e:
         return GraphQueryOutput(result={"error": str(e)})
 
-def analyze_knowledge_gaps(ctx: RunContext, mainza_state_id: str) -> GraphQueryOutput:
+async def analyze_knowledge_gaps(ctx: RunContext, mainza_state_id: str) -> GraphQueryOutput:
     cypher = (
         "MATCH (ms:MainzaState {state_id: $mainza_state_id})-[:NEEDS_TO_LEARN]->(c:Concept) "
         "RETURN c.concept_id AS concept_id, c.name AS name"
     )
     try:
-        records = neo4j_unified.execute_query(cypher, {"mainza_state_id": mainza_state_id})
+        records = await unified_database_manager.execute_query(cypher, {"mainza_state_id": mainza_state_id})
         return GraphQueryOutput(result=records)
     except Exception as e:
         return GraphQueryOutput(result={"error": str(e)})
 
-def summarize_conversation(ctx: RunContext, conversation_id: str):
+async def summarize_conversation(ctx: RunContext, conversation_id: str):
     cypher = (
         "MATCH (m:Memory)-[:DISCUSSED_IN]->(c:Conversation {conversation_id: $conversation_id}) "
         "RETURN m.text AS text ORDER BY m.memory_id"
     )
     try:
-        records = neo4j_unified.execute_query(cypher, {"conversation_id": conversation_id})
+        records = await unified_database_manager.execute_query(cypher, {"conversation_id": conversation_id})
         texts = [record["text"] for record in records if record.get("text")]
         summary = "\n".join(texts)
         return {"conversation_id": conversation_id, "summary": summary}
     except Exception as e:
         return {"error": str(e)}
 
-def find_unresolved_entities(ctx: RunContext):
+async def find_unresolved_entities(ctx: RunContext):
     cypher = (
         "MATCH (e:Entity)<-[:MENTIONS]-(c:Conversation) "
         "WHERE NOT (e)-[:RELATES_TO]->(:Concept) "
         "RETURN DISTINCT e.entity_id AS entity_id, e.name AS name"
     )
     try:
-        records = neo4j_unified.execute_query(cypher)
+        records = await unified_database_manager.execute_query(cypher)
         return records
     except Exception as e:
         return {"error": str(e)}
 
-def suggest_next_steps(ctx: RunContext, user_id: str):
+async def suggest_next_steps(ctx: RunContext, user_id: str):
     logging.debug(f"[TOOL] suggest_next_steps called with user_id={user_id}")
     suggestions = []
     unresolved_entities = find_unresolved_entities(ctx)
@@ -189,7 +189,7 @@ def suggest_next_steps(ctx: RunContext, user_id: str):
         "RETURN a.concept_id AS a_id, a.name AS a_name, b.concept_id AS b_id, b.name AS b_name LIMIT 1"
     )
     try:
-        curiosity_result = neo4j_unified.execute_query(cypher_curiosity)
+        curiosity_result = await unified_database_manager.execute_query(cypher_curiosity)
         logging.debug(f"[TOOL] curiosity_result: {curiosity_result}")
         if curiosity_result:
             suggestions.append({
@@ -208,26 +208,26 @@ def suggest_next_steps(ctx: RunContext, user_id: str):
     logging.debug(f"[TOOL] Final suggestions: {suggestions}")
     return {"suggestions": suggestions}
 
-def get_document_usage(ctx: RunContext, document_id: str):
+async def get_document_usage(ctx: RunContext, document_id: str):
     cypher = (
         "MATCH (d:Document {document_id: $document_id})<-[:MENTIONS]-(c:Conversation) "
         "OPTIONAL MATCH (m:Memory)-[:DERIVED_FROM]->(d) "
         "RETURN c.conversation_id AS conversation_id, m.memory_id AS memory_id, m.text AS memory_text"
     )
     try:
-        records = neo4j_unified.execute_query(cypher, {"document_id": document_id})
+        records = await unified_database_manager.execute_query(cypher, {"document_id": document_id})
         return records
     except Exception as e:
         return {"error": str(e)}
 
-def get_concept_graph(ctx: RunContext, concept_id: str, depth: int = 2):
+async def get_concept_graph(ctx: RunContext, concept_id: str, depth: int = 2):
     # Fix: Neo4j doesn't allow parameter variables in relationship patterns
     cypher = (
         f"MATCH (c:Concept {{concept_id: $concept_id}})-[r*1..{depth}]-(n) "
         "RETURN c, r, n"
     )
     try:
-        records = neo4j_unified.execute_query(cypher, {"concept_id": concept_id, "depth": depth})
+        records = await unified_database_manager.execute_query(cypher, {"concept_id": concept_id, "depth": depth})
         nodes = set()
         rels = []
         for record in records:
@@ -238,14 +238,14 @@ def get_concept_graph(ctx: RunContext, concept_id: str, depth: int = 2):
     except Exception as e:
         return {"error": str(e)}
 
-def get_entity_graph(ctx: RunContext, entity_id: str, depth: int = 2):
+async def get_entity_graph(ctx: RunContext, entity_id: str, depth: int = 2):
     # Fix: Neo4j doesn't allow parameter variables in relationship patterns
     cypher = (
         f"MATCH (e:Entity {{entity_id: $entity_id}})-[r*1..{depth}]-(n) "
         "RETURN e, r, n"
     )
     try:
-        records = neo4j_unified.execute_query(cypher, {"entity_id": entity_id, "depth": depth})
+        records = await unified_database_manager.execute_query(cypher, {"entity_id": entity_id, "depth": depth})
         nodes = set()
         rels = []
         for record in records:
@@ -256,7 +256,7 @@ def get_entity_graph(ctx: RunContext, entity_id: str, depth: int = 2):
     except Exception as e:
         return {"error": str(e)}
 
-def search_concepts_by_keywords(ctx: RunContext, keywords: str, limit: int = 10) -> GraphQueryOutput:
+async def search_concepts_by_keywords(ctx: RunContext, keywords: str, limit: int = 10) -> GraphQueryOutput:
     """
     Search for concepts by keywords using text matching and similarity.
     Returns concepts that match the search terms.
@@ -270,12 +270,12 @@ def search_concepts_by_keywords(ctx: RunContext, keywords: str, limit: int = 10)
         "LIMIT $limit"
     )
     try:
-        records = neo4j_unified.execute_query(cypher, {"keywords": keywords, "limit": limit})
+        records = await unified_database_manager.execute_query(cypher, {"keywords": keywords, "limit": limit})
         return GraphQueryOutput(result=records)
     except Exception as e:
         return GraphQueryOutput(result={"error": str(e)})
 
-def suggest_new_concept(ctx: RunContext, topic: str, description: str = None) -> GraphQueryOutput:
+async def suggest_new_concept(ctx: RunContext, topic: str, description: str = None) -> GraphQueryOutput:
     """
     Suggest creating a new concept for a topic not found in the knowledge graph.
     Returns a structured suggestion for concept creation.
@@ -291,7 +291,7 @@ def suggest_new_concept(ctx: RunContext, topic: str, description: str = None) ->
     }
     return GraphQueryOutput(result=suggestion)
 
-def create_concept(ctx: RunContext, topic: str, description: str = None) -> GraphQueryOutput:
+async def create_concept(ctx: RunContext, topic: str, description: str = None) -> GraphQueryOutput:
     """
     Actually create a new concept in the knowledge graph.
     """
@@ -312,7 +312,7 @@ def create_concept(ctx: RunContext, topic: str, description: str = None) -> Grap
         RETURN c
         """
         
-        result = neo4j_unified.execute_query(cypher, {
+        result = await unified_database_manager.execute_query(cypher, {
             "concept_id": concept_id,
             "name": concept_name,
             "description": description or f"Knowledge about {topic}"
@@ -337,7 +337,7 @@ def create_concept(ctx: RunContext, topic: str, description: str = None) -> Grap
         logging.error(f"Failed to create concept: {e}")
         return GraphQueryOutput(result={"error": str(e)})
 
-def create_memory(ctx: RunContext, text: str, source: str = "user", concept_id: Optional[str] = None) -> CreateMemoryOutput:
+async def create_memory(ctx: RunContext, text: str, source: str = "user", concept_id: Optional[str] = None) -> CreateMemoryOutput:
     """
     Creates a new Memory node in the graph.
     Optionally links it to an existing Concept node.
@@ -349,7 +349,7 @@ def create_memory(ctx: RunContext, text: str, source: str = "user", concept_id: 
             "CREATE (m:Memory {memory_id: $memory_id, text: $text, source: $source, created_at: timestamp()}) "
             "RETURN m"
         )
-        result = neo4j_unified.execute_query(cypher_create_memory, {
+        result = await unified_database_manager.execute_query(cypher_create_memory, {
             "memory_id": memory_id, 
             "text": text, 
             "source": source
@@ -365,7 +365,7 @@ def create_memory(ctx: RunContext, text: str, source: str = "user", concept_id: 
                 "CREATE (m)-[:RELATES_TO]->(c) "
                 "RETURN c"
             )
-            result = neo4j_unified.execute_query(cypher_link_concept, {
+            result = await unified_database_manager.execute_query(cypher_link_concept, {
                 "memory_id": memory_id, 
                 "concept_id": concept_id
             })
@@ -382,7 +382,7 @@ def create_memory(ctx: RunContext, text: str, source: str = "user", concept_id: 
         logging.error(f"Failed to create memory: {e}")
         raise
 
-def summarize_recent_conversations(ctx: RunContext, user_id: str, limit: int = 5) -> SummarizeRecentConversationsOutput:
+async def summarize_recent_conversations(ctx: RunContext, user_id: str, limit: int = 5) -> SummarizeRecentConversationsOutput:
     """
     Summarizes recent conversations for a given user, returning an overall summary
     and a list of individual conversation summaries.
@@ -398,7 +398,7 @@ def summarize_recent_conversations(ctx: RunContext, user_id: str, limit: int = 5
     conversation_summaries = []
     
     try:
-        records = neo4j_unified.execute_query(cypher, {"user_id": user_id, "limit": limit})
+        records = await unified_database_manager.execute_query(cypher, {"user_id": user_id, "limit": limit})
 
         if not records:
             return SummarizeRecentConversationsOutput(summary="No recent conversations found.", conversations=[])

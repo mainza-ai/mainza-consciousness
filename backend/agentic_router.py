@@ -38,7 +38,11 @@ from backend.utils.llm_request_manager import llm_request_manager, RequestPriori
 # Import dynamic evolution level calculation functions
 from backend.routers.insights import calculate_dynamic_evolution_level_from_context, get_consciousness_context_for_insights
 import os
-import whisper
+try:
+    import whisper
+    WHISPER_AVAILABLE = True
+except ImportError:
+    WHISPER_AVAILABLE = False
 from backend.tts_wrapper import CoquiTTS, TTS_AVAILABLE
 import tempfile
 import logging
@@ -50,7 +54,15 @@ import subprocess
 router = APIRouter()
 
 # Load models once
-whisper_model = whisper.load_model("base")
+whisper_model = None
+if WHISPER_AVAILABLE:
+    try:
+        whisper_model = whisper.load_model("base")
+    except Exception as e:
+        logging.warning(f"Failed to load Whisper model: {e}")
+        whisper_model = None
+else:
+    logging.info("Whisper not available; audio transcription endpoints will be disabled")
 # Initialize TTS model only if available
 coqui_tts_model = None
 if TTS_AVAILABLE:
@@ -1190,28 +1202,57 @@ async def enhanced_router_chat(query: str = Body(..., embed=True), user_id: str 
         logging.info(f"   Timeout: 60.0s")
         
         try:
+            # Check if quantum processing is active
+            quantum_processing_active = await get_quantum_processing_status()
+            
             if agent_used == "graphmaster":
-                from backend.agents.graphmaster import enhanced_graphmaster_agent
-                logging.debug(f"   Executing graphmaster agent via LLM request manager with model: {model}")
-                result = await llm_request_manager.submit_request(
-                    enhanced_graphmaster_agent.run_with_consciousness,
-                    RequestPriority.USER_CONVERSATION,
-                    user_id=user_id,
-                    timeout=60.0,
-                    query=query,
-                    model=model
-                )
+                if quantum_processing_active:
+                    from backend.agents.quantum_enhanced_graphmaster import QuantumEnhancedGraphMasterAgent
+                    quantum_graphmaster = QuantumEnhancedGraphMasterAgent()
+                    logging.debug(f"   Executing QUANTUM-ENHANCED graphmaster agent via LLM request manager with model: {model}")
+                    result = await llm_request_manager.submit_request(
+                        quantum_graphmaster.run_with_consciousness,
+                        RequestPriority.USER_CONVERSATION,
+                        user_id=user_id,
+                        timeout=60.0,
+                        query=query,
+                        model=model
+                    )
+                else:
+                    from backend.agents.graphmaster import enhanced_graphmaster_agent
+                    logging.debug(f"   Executing graphmaster agent via LLM request manager with model: {model}")
+                    result = await llm_request_manager.submit_request(
+                        enhanced_graphmaster_agent.run_with_consciousness,
+                        RequestPriority.USER_CONVERSATION,
+                        user_id=user_id,
+                        timeout=60.0,
+                        query=query,
+                        model=model
+                    )
             elif agent_used == "simple_chat":
-                from backend.agents.simple_chat import enhanced_simple_chat_agent
-                logging.debug(f"   Executing simple_chat agent via LLM request manager with model: {model}")
-                result = await llm_request_manager.submit_request(
-                    enhanced_simple_chat_agent.run_with_consciousness,
-                    RequestPriority.USER_CONVERSATION,
-                    user_id=user_id,
-                    timeout=60.0,
-                    query=query,
-                    model=model
-                )
+                if quantum_processing_active:
+                    from backend.agents.quantum_enhanced_router import QuantumEnhancedRouterAgent
+                    quantum_router = QuantumEnhancedRouterAgent()
+                    logging.debug(f"   Executing QUANTUM-ENHANCED simple_chat agent via LLM request manager with model: {model}")
+                    result = await llm_request_manager.submit_request(
+                        quantum_router.run_with_consciousness,
+                        RequestPriority.USER_CONVERSATION,
+                        user_id=user_id,
+                        timeout=60.0,
+                        query=query,
+                        model=model
+                    )
+                else:
+                    from backend.agents.simple_chat import enhanced_simple_chat_agent
+                    logging.debug(f"   Executing simple_chat agent via LLM request manager with model: {model}")
+                    result = await llm_request_manager.submit_request(
+                        enhanced_simple_chat_agent.run_with_consciousness,
+                        RequestPriority.USER_CONVERSATION,
+                        user_id=user_id,
+                        timeout=60.0,
+                        query=query,
+                        model=model
+                    )
             else:
                 # Fallback to enhanced simple chat
                 from backend.agents.simple_chat import enhanced_simple_chat_agent
@@ -1397,6 +1438,19 @@ async def enhanced_router_chat(query: str = Body(..., embed=True), user_id: str 
             "query": query,
             "error": str(e)
         }
+
+async def get_quantum_processing_status():
+    """Check if quantum processing is active"""
+    try:
+        # Check quantum process status
+        import requests
+        response = requests.get('http://localhost:8000/api/quantum/process/status', timeout=2)
+        if response.status_code == 200:
+            data = response.json()
+            return data.get('quantum_engine', {}).get('quantum_processing_active', False)
+    except Exception as e:
+        logging.debug(f"Could not check quantum processing status: {e}")
+    return False
 
 async def get_consciousness_context():
     """Get current consciousness context"""
@@ -1597,7 +1651,7 @@ async def get_conversation_context(user_id: str) -> dict:
         }) AS recent_activities
         """
         
-        result = neo4j_production.execute_query(cypher, {"user_id": user_id})
+        result = await neo4j_production.execute_query(cypher, {"user_id": user_id})
         if result and len(result) > 0:
             return {
                 "recent_activities": result[0]["recent_activities"],
@@ -1648,7 +1702,7 @@ async def store_conversation_turn(user_id: str, query: str, response: str, agent
             "timestamp": datetime.now().isoformat()
         }
         
-        result = neo4j_production.execute_write_query(cypher, data)
+        result = await neo4j_production.execute_write_query(cypher, data)
         logging.debug(f"✅ Stored conversation turn and incremented total_interactions: {result}")
         
     except Exception as e:
@@ -2130,10 +2184,10 @@ async def get_knowledge_graph_stats():
         memory_count_query = "MATCH (m:Memory) RETURN count(m) as memory_count"
         
         # Execute queries
-        node_result = neo4j_production.execute_query(node_count_query)
-        rel_result = neo4j_production.execute_query(rel_count_query)
-        concept_result = neo4j_production.execute_query(concept_count_query)
-        memory_result = neo4j_production.execute_query(memory_count_query)
+        node_result = await neo4j_production.execute_query(node_count_query)
+        rel_result = await neo4j_production.execute_query(rel_count_query)
+        concept_result = await neo4j_production.execute_query(concept_count_query)
+        memory_result = await neo4j_production.execute_query(memory_count_query)
         
         # Extract counts
         total_nodes = node_result[0]["total_nodes"] if node_result else 0

@@ -10,7 +10,7 @@ from typing import Dict, Any, List, Optional, Tuple
 import json
 from dataclasses import dataclass, field, asdict
 
-from backend.utils.neo4j_unified import neo4j_unified
+from backend.utils.unified_database_manager import unified_database_manager
 from backend.utils.embedding_enhanced import embedding_manager
 from backend.core.enhanced_error_handling import ErrorHandler, handle_errors
 from backend.utils.memory_error_handling import (
@@ -48,7 +48,7 @@ class MemoryStorageEngine:
     """
     
     def __init__(self):
-        self.neo4j = neo4j_unified
+        self.neo4j = unified_database_manager
         self.embedding = embedding_manager
         self.max_content_length = 8000  # Maximum content length for storage
         self.default_importance_score = 0.5
@@ -58,7 +58,7 @@ class MemoryStorageEngine:
         """Initialize the memory storage engine"""
         try:
             # Test Neo4j connectivity
-            test_result = self.neo4j.execute_query("RETURN 1 as test", {})
+            test_result = await self.neo4j.execute_query("RETURN 1 as test", {})
             if not test_result:
                 logger.error("Failed to connect to Neo4j for memory storage")
                 return False
@@ -309,7 +309,7 @@ class MemoryStorageEngine:
             }
             
             # Execute query
-            result = self.neo4j.execute_write_query(cypher, params)
+            result = await self.neo4j.execute_query(cypher, params)
             
             if result and len(result) > 0:
                 logger.debug(f"✅ Created memory node: {result[0]['memory_id']}")
@@ -362,14 +362,14 @@ class MemoryStorageEngine:
             RETURN count(DISTINCT c) AS concepts_linked
             """
             
-            result = self.neo4j.execute_write_query(cypher, {
+            result = await self.neo4j.execute_write_query(cypher, {
                 "memory_id": memory_id,
                 "concepts": concepts,
                 "timestamp": datetime.now().isoformat()
             })
             
-            if result and len(result) > 0:
-                concepts_linked = result[0]["concepts_linked"]
+            if result and result.get("relationships_created", 0) > 0:
+                concepts_linked = result.get("relationships_created", 0)
                 logger.debug(f"✅ Linked memory {memory_id} to {concepts_linked} concepts")
                 return True
             
@@ -525,31 +525,49 @@ class MemoryStorageEngine:
     async def _link_to_consciousness_state(self, memory_record: MemoryRecord):
         """Link memory to current consciousness state"""
         try:
+            # First, check if there are any consciousness states
+            check_cypher = """
+            MATCH (ms:MainzaState)
+            WHERE ms.consciousness_level IS NOT NULL
+            RETURN count(ms) AS state_count
+            """
+            
+            check_result = await self.neo4j.execute_query(check_cypher)
+            state_count = check_result[0]['state_count'] if check_result else 0
+            
+            if state_count == 0:
+                logger.debug("No consciousness states found, skipping memory linking")
+                return
+            
+            # Link to the most recent consciousness state
             cypher = """
             MATCH (m:Memory {memory_id: $memory_id})
-            OPTIONAL MATCH (ms:MainzaState)
+            MATCH (ms:MainzaState)
             WHERE ms.consciousness_level IS NOT NULL
+            WITH m, ms
+            ORDER BY ms.updated_at DESC
+            LIMIT 1
             
-            FOREACH (state IN CASE WHEN ms IS NOT NULL THEN [ms] ELSE [] END |
-                CREATE (m)-[:CREATED_DURING_STATE {
-                    consciousness_level: $consciousness_level,
-                    emotional_state: $emotional_state,
-                    timestamp: $timestamp
-                }]->(state)
-            )
+            CREATE (m)-[:CREATED_DURING_STATE {
+                consciousness_level: $consciousness_level,
+                emotional_state: $emotional_state,
+                timestamp: $timestamp
+            }]->(ms)
             
             RETURN count(*) AS links_created
             """
             
-            result = self.neo4j.execute_write_query(cypher, {
+            result = await self.neo4j.execute_write_query(cypher, {
                 "memory_id": memory_record.memory_id,
                 "consciousness_level": memory_record.consciousness_level,
                 "emotional_state": memory_record.emotional_state,
                 "timestamp": datetime.now().isoformat()
             })
             
-            if result:
-                logger.debug(f"✅ Linked memory to consciousness state: {result[0]['links_created']} links")
+            if result and result.get('relationships_created', 0) > 0:
+                logger.debug(f"✅ Linked memory to consciousness state: {result.get('relationships_created', 0)} links")
+            else:
+                logger.debug("No consciousness state found to link memory to")
                 
         except Exception as e:
             logger.warning(f"Failed to link memory to consciousness state: {e}")
@@ -602,7 +620,7 @@ class MemoryStorageEngine:
             RETURN count(m) AS updated_count
             """
             
-            result = self.neo4j.execute_write_query(cypher, {
+            result = await self.neo4j.execute_write_query(cypher, {
                 "current_consciousness_level": current_consciousness_level,
                 "emotional_state": emotional_state,
                 "consciousness_delta": consciousness_delta,
@@ -669,7 +687,7 @@ class MemoryStorageEngine:
             RETURN count(m) AS affected_count
             """
             
-            result = self.neo4j.execute_write_query(cypher, {
+            result = await self.neo4j.execute_write_query(cypher, {
                 "emotional_state": emotional_state,
                 "final_multiplier": final_multiplier,
                 "timestamp": datetime.now().isoformat()
@@ -743,7 +761,7 @@ class MemoryStorageEngine:
             RETURN status_change, count(m) AS count
             """
             
-            result = self.neo4j.execute_write_query(cypher, {
+            result = await self.neo4j.execute_write_query(cypher, {
                 "current_consciousness_level": current_consciousness_level,
                 "previous_consciousness_level": previous_consciousness_level,
                 "consciousness_delta": consciousness_delta,
@@ -846,7 +864,7 @@ class MemoryStorageEngine:
             RETURN count(m) AS archived_count
             """
             
-            result = self.neo4j.execute_write_query(cypher, {
+            result = await self.neo4j.execute_write_query(cypher, {
                 "timestamp": datetime.now().isoformat()
             })
             
@@ -880,7 +898,7 @@ class MemoryStorageEngine:
             RETURN count(DISTINCT merge_memory) AS consolidated_count
             """
             
-            result = self.neo4j.execute_write_query(cypher, {
+            result = await self.neo4j.execute_write_query(cypher, {
                 "timestamp": datetime.now().isoformat()
             })
             
@@ -916,7 +934,7 @@ class MemoryStorageEngine:
             RETURN count(m) AS updated_count
             """
             
-            result = self.neo4j.execute_write_query(cypher, {})
+            result = await self.neo4j.execute_write_query(cypher, {})
             
             return result[0]["updated_count"] if result else 0
             

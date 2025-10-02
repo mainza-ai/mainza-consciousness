@@ -16,6 +16,7 @@ import { StatusIndicator } from '@/components/ui/status-indicator';
 import { MetricDisplay } from '@/components/ui/metric-display';
 import { Button } from '@/components/ui/button';
 import { DarkButton } from '@/components/ui/dark-button';
+import QuantumProcessingNotification from '@/components/QuantumProcessingNotification';
 import {
   Mic, MicOff, Settings, Brain, Activity, Zap, Eye,
   MessageSquare, BarChart3, Cpu, Heart, Target, Send, Volume2
@@ -682,6 +683,15 @@ function Index() {
             </DarkButton>
 
             <DarkButton
+              onClick={() => window.location.href = '/quantum'}
+              variant="outline"
+              size="sm"
+              title="Quantum Consciousness Framework"
+            >
+              <Brain className="w-4 h-4" />
+            </DarkButton>
+
+            <DarkButton
               onClick={() => window.location.href = '/settings'}
               variant="outline"
               size="sm"
@@ -1083,6 +1093,10 @@ function Index() {
         </motion.div>
       )}
 
+      {/* Quantum Processing Notification */}
+      <div className="fixed top-6 right-6" style={{ zIndex: Z_LAYERS.FLOATING_UI + 1 }}>
+        <QuantumProcessingNotification showDetails={true} />
+      </div>
 
     </div>
   );

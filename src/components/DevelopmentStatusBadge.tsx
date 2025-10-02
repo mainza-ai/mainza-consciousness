@@ -1,9 +1,9 @@
 import React from 'react';
 import { Badge } from '@/components/ui/badge';
-import { Clock, Wrench, AlertCircle } from 'lucide-react';
+import { Clock, Wrench, AlertCircle, CheckCircle } from 'lucide-react';
 
 interface DevelopmentStatusBadgeProps {
-  status: 'coming-soon' | 'in-development' | 'partial-data' | 'mock-data';
+  status: 'coming-soon' | 'in-development' | 'partial-data' | 'mock-data' | 'real-data';
   className?: string;
 }
 
@@ -40,6 +40,13 @@ const DevelopmentStatusBadge: React.FC<DevelopmentStatusBadgeProps> = ({
           text: 'Mock Data',
           variant: 'secondary' as const,
           className: 'bg-red-500/20 text-red-300 border-red-400/30'
+        };
+      case 'real-data':
+        return {
+          icon: CheckCircle,
+          text: 'Live Data',
+          variant: 'secondary' as const,
+          className: 'bg-green-500/20 text-green-300 border-green-400/30'
         };
       default:
         return {

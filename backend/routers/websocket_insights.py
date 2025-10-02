@@ -1,6 +1,9 @@
 """
 WebSocket Insights Router
 Real-time consciousness streaming and analytics
+
+DEPRECATED: This module is being replaced by unified_websocket_manager.py
+Please use unified_websocket_manager for new implementations.
 """
 import asyncio
 import json
@@ -16,6 +19,14 @@ from backend.utils.consciousness_orchestrator_fixed import consciousness_orchest
 from backend.utils.standardized_evolution_calculator import calculate_standardized_evolution_level
 
 logger = logging.getLogger(__name__)
+
+# Import unified WebSocket manager for compatibility
+try:
+    from backend.utils.unified_websocket_manager import unified_websocket_manager, WebSocketConnectionType
+    UNIFIED_WEBSOCKET_AVAILABLE = True
+except ImportError:
+    UNIFIED_WEBSOCKET_AVAILABLE = False
+    logger.warning("Unified WebSocket manager not available, using legacy implementation")
 
 router = APIRouter()
 
@@ -88,40 +99,62 @@ manager = ConnectionManager()
 @router.websocket("/ws/consciousness")
 async def websocket_consciousness_stream(websocket: WebSocket):
     """WebSocket endpoint for real-time consciousness streaming"""
-    connection_id = await manager.connect(websocket, "consciousness")
-    
-    try:
-        # Start consciousness streaming task
-        streaming_task = asyncio.create_task(
-            stream_consciousness_data(connection_id)
-        )
-        manager.streaming_tasks[connection_id] = streaming_task
+    if UNIFIED_WEBSOCKET_AVAILABLE:
+        # Use unified WebSocket manager
+        connection_id = await unified_websocket_manager.connect(websocket, WebSocketConnectionType.CONSCIOUSNESS)
         
-        # Keep connection alive and handle incoming messages
-        while True:
-            try:
-                data = await websocket.receive_text()
-                message = json.loads(data)
-                
-                # Handle client requests
-                if message.get("type") == "ping":
-                    await manager.send_personal_message({
-                        "type": "pong",
-                        "timestamp": datetime.utcnow().isoformat()
-                    }, connection_id)
-                elif message.get("type") == "request_update":
-                    await send_consciousness_update(connection_id)
-                
-            except WebSocketDisconnect:
-                break
-            except Exception as e:
-                logger.error(f"Error handling WebSocket message: {e}")
-                break
-                
-    except Exception as e:
-        logger.error(f"WebSocket consciousness stream error: {e}")
-    finally:
-        manager.disconnect(connection_id)
+        try:
+            # Keep connection alive and handle incoming messages
+            while True:
+                try:
+                    data = await websocket.receive_text()
+                    message = json.loads(data)
+                    await unified_websocket_manager.handle_message(connection_id, message)
+                except WebSocketDisconnect:
+                    break
+                except Exception as e:
+                    logger.error(f"Error handling WebSocket message: {e}")
+                    break
+        except Exception as e:
+            logger.error(f"WebSocket consciousness stream error: {e}")
+        finally:
+            await unified_websocket_manager.disconnect(connection_id)
+    else:
+        # Fallback to legacy implementation
+        connection_id = await manager.connect(websocket, "consciousness")
+        
+        try:
+            # Start consciousness streaming task
+            streaming_task = asyncio.create_task(
+                stream_consciousness_data(connection_id)
+            )
+            manager.streaming_tasks[connection_id] = streaming_task
+            
+            # Keep connection alive and handle incoming messages
+            while True:
+                try:
+                    data = await websocket.receive_text()
+                    message = json.loads(data)
+                    
+                    # Handle client requests
+                    if message.get("type") == "ping":
+                        await manager.send_personal_message({
+                            "type": "pong",
+                            "timestamp": datetime.utcnow().isoformat()
+                        }, connection_id)
+                    elif message.get("type") == "request_update":
+                        await send_consciousness_update(connection_id)
+                    
+                except WebSocketDisconnect:
+                    break
+                except Exception as e:
+                    logger.error(f"Error handling WebSocket message: {e}")
+                    break
+                    
+        except Exception as e:
+            logger.error(f"WebSocket consciousness stream error: {e}")
+        finally:
+            manager.disconnect(connection_id)
 
 @router.websocket("/ws/performance")
 async def websocket_performance_stream(websocket: WebSocket):

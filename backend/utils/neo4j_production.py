@@ -6,6 +6,9 @@ Addresses all critical issues from the code review:
 - Query performance monitoring
 - Security enhancements
 - Health monitoring and metrics
+
+DEPRECATED: This module is being replaced by unified_database_manager.py
+Please use unified_database_manager for new implementations.
 """
 import os
 import logging
@@ -21,6 +24,14 @@ from datetime import datetime, timedelta
 import json
 
 logger = logging.getLogger(__name__)
+
+# Import unified database manager for compatibility
+try:
+    from backend.utils.unified_database_manager import unified_database_manager
+    UNIFIED_DATABASE_AVAILABLE = True
+except ImportError:
+    UNIFIED_DATABASE_AVAILABLE = False
+    logger.warning("Unified database manager not available, using legacy implementation")
 
 class CircuitBreakerState(Enum):
     CLOSED = "closed"
@@ -478,11 +489,18 @@ class Neo4jProductionManager:
         
         return optimization_results
 
-# Global production instance
-neo4j_production = Neo4jProductionManager()
+# Global production instance - Use unified database manager if available
+if UNIFIED_DATABASE_AVAILABLE:
+    # Use unified database manager for new implementations
+    neo4j_production = unified_database_manager
+    logger.info("Using unified database manager for Neo4j operations")
+else:
+    # Fallback to legacy implementation
+    neo4j_production = Neo4jProductionManager()
+    logger.warning("Using legacy Neo4j manager - consider upgrading to unified database manager")
 
 # Backward compatibility
-driver = neo4j_production.driver
+driver = neo4j_production.driver if hasattr(neo4j_production, 'driver') else None
 
 # Cleanup on module exit
 import atexit

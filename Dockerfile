@@ -22,8 +22,8 @@ RUN apt-get update && apt-get install -y \
 WORKDIR /app
 
 # Copy requirements first for better caching
-# Use lightweight requirements for CI/CD to avoid disk space issues
-COPY requirements-docker-ci.txt ./requirements.txt
+# Use production requirements to include ML/audio deps (whisper, torch, etc.)
+COPY requirements-docker.txt ./requirements.txt
 
 # Install Python dependencies (this layer will be cached if requirements don't change)
 RUN pip install --upgrade pip && \

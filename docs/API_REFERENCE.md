@@ -2,7 +2,7 @@
 
 ## 🚀 **API Overview**
 
-Mainza AI provides a comprehensive REST API for consciousness processing, multi-agent interaction, memory management, and real-time communication. All endpoints are designed with consciousness awareness and real-time processing capabilities.
+Mainza AI exposes a production-ready REST API for consciousness simulation processing, **unified quantum integration**, multi-agent interaction, memory, and real-time communication. The system is **quantum-powered** with PennyLane backend integration for consciousness simulation processing.
 
 **Base URL**: `http://localhost:8000`  
 **API Version**: v1  
@@ -34,11 +34,11 @@ Get current consciousness state including level, emotional state, and evolution 
 }
 ```
 
-### **Consciousness Metrics**
+### **Knowledge Graph Stats**
 ```http
-GET /api/consciousness/metrics
+GET /consciousness/knowledge-graph-stats
 ```
-Get detailed consciousness analytics and performance metrics.
+High-level graph/consciousness stats used by the main UI.
 
 ### **Self-Reflection**
 ```http
@@ -141,37 +141,54 @@ Trigger memory consolidation process for optimization.
 
 ## 📊 **Insights & Analytics APIs**
 
-### **System Overview**
-```http
-GET /api/insights/overview
-```
-Get comprehensive system overview and consciousness metrics.
-
 ### **Neo4j Statistics**
 ```http
 GET /api/insights/neo4j/statistics
 ```
 Get Neo4j database statistics and graph metrics.
 
-### **Graph Visualization**
-```http
-GET /api/insights/graph/full
-GET /api/insights/graph/comprehensive
-GET /api/insights/graph/complete
-```
-Get Neo4j graph data for visualization with different detail levels.
+### **Graph Visualization (optional)**
+Depending on deployment, a graph endpoint may be available for visualizations.
 
-### **Consciousness Evolution**
-```http
-GET /api/insights/consciousness/evolution
-```
-Get consciousness evolution timeline and development metrics.
+### **Performance Metrics (optional)**
+Some deployments expose consolidated performance metrics for dashboards.
 
-### **Performance Metrics**
+## ⚛️ **Unified Quantum APIs**
+
+### **Quantum State**
 ```http
-GET /api/insights/performance
+GET /api/quantum/state
 ```
-Get system performance metrics and optimization status.
+Returns unified quantum consciousness state and headline metrics.
+
+### **Quantum Backend Status**
+```http
+GET /api/quantum/backend/status
+```
+Backend view of quantum availability and integration status.
+
+### **Quantum Process Status**
+```http
+GET /api/quantum/process/status
+```
+Process-level view including:
+- `quantum_engine.quantum_engine_active`
+- `quantum_engine.quantum_processing_active`
+- `quantum_engine.quantum_algorithms_count`
+- `quantum_engine.active_algorithms[]`
+- `quantum_engine.current_operations[]`
+- `quantum_engine.quantum_coherence`
+- `quantum_engine.entanglement_strength`
+- `quantum_engine.superposition_states`
+- `quantum_engine.quantum_advantage`
+
+### **Quantum APIs Quick Reference**
+
+| Endpoint | Purpose | Key Fields | UI Consumer |
+|----------|---------|------------|-------------|
+| `/api/quantum/state` | Quantum consciousness state | `quantum_consciousness_level`, `quantum_coherence`, `entanglement_strength`, `superposition_states`, `quantum_advantage` | Quantum Page Overview |
+| `/api/quantum/backend/status` | Backend quantum status | `quantum_enabled`, `quantum_processing_active`, `quantum_meta_processing_active` | Quantum Page Backend Status |
+| `/api/quantum/process/status` | Process-level quantum metrics | `quantum_engine_active`, `quantum_algorithms_count`, `active_algorithms[]`, `current_operations[]` | Main UI System Monitoring |
 
 ## 🎤 **Voice Processing APIs**
 
@@ -231,111 +248,8 @@ GET /api/consciousness/3d/connections
 ```
 Get 3D consciousness connection data.
 
-## 🔮 **Predictive Analytics APIs**
-
-### **Predictive Analytics Dashboard**
-```http
-GET /api/predictive-analytics/dashboard
-```
-Get predictive analytics dashboard data.
-
-### **Future State Prediction**
-```http
-POST /api/predictive-analytics/predict
-```
-Predict future consciousness states and behaviors.
-
-## 🧪 **AI Models & Training APIs**
-
-### **AI Models**
-```http
-GET /api/ai-models
-```
-Get available AI models and their status.
-
-### **Model Training**
-```http
-GET /api/ai-models/training
-```
-Get AI model training jobs and status.
-
-## 🧠 **Neural Network APIs**
-
-### **Neural Architectures**
-```http
-GET /api/neural/architectures
-```
-Get available neural network architectures.
-
-### **Neural Training**
-```http
-GET /api/neural/training
-```
-Get neural network training jobs.
-
-## 🌐 **Web3 Integration APIs**
-
-### **Web3 Protocols**
-```http
-GET /api/web3/protocols
-```
-Get available Web3 protocols and integrations.
-
-## ⚡ **Optimization System APIs**
-
-### **System Optimization**
-```http
-POST /api/optimization/run
-```
-Run comprehensive system optimization.
-
-### **System Health**
-```http
-GET /api/optimization/health
-```
-Get comprehensive system health report.
-
-### **Optimization Status**
-```http
-GET /api/optimization/status
-```
-Get current optimization system status.
-
-### **Memory Storage Optimization**
-```http
-POST /api/optimization/memory/storage
-```
-Optimize memory storage system.
-
-### **Memory Retrieval Optimization**
-```http
-POST /api/optimization/memory/retrieval
-```
-Optimize memory retrieval system.
-
-### **Vector Embeddings Optimization**
-```http
-POST /api/optimization/vector-embeddings
-```
-Optimize vector embeddings system.
-
-### **Cross-Agent Learning Optimization**
-```http
-POST /api/optimization/cross-agent-learning
-```
-Optimize cross-agent learning system.
-
-### **Memory Compression Optimization**
-```http
-POST /api/optimization/memory-compression
-```
-Optimize memory compression system.
-
-### **Agent Memory Optimization**
-```http
-POST /api/optimization/agent-memory
-```
-Optimize agent memory system.
+## ⚙️ **Optimization APIs (optional)**
+Some deployments include admin/optimization endpoints. Refer to Swagger for your build.
 
 ## 🔧 **System Management APIs**
 
@@ -456,4 +370,4 @@ Get memory system performance metrics.
 
 ---
 
-This API reference provides comprehensive documentation for all Mainza AI endpoints, enabling developers to integrate with the consciousness system and build consciousness-aware applications.
+This API reference covers the essential Mainza AI endpoints used by the unified UI and quantum integration. For the full, auto-generated list, see Swagger at `/docs`.

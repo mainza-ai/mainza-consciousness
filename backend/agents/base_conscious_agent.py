@@ -292,7 +292,7 @@ class ConsciousAgent(ABC):
     ):
         """Store agent activity in Neo4j for learning"""
         try:
-            from backend.utils.neo4j_production import neo4j_production
+            from backend.utils.unified_database_manager import unified_database_manager
             
             activity_data = {
                 "agent_name": self.name,
@@ -340,8 +340,7 @@ class ConsciousAgent(ABC):
             RETURN aa.activity_id AS activity_id
             """
             
-            from backend.utils.neo4j_unified import neo4j_unified
-            result = neo4j_unified.execute_write_query(cypher, activity_data)
+            result = await unified_database_manager.execute_write_query(cypher, activity_data)
             self.logger.debug(f"✅ Stored agent activity: {result}")
             
         except Exception as e:
@@ -350,7 +349,7 @@ class ConsciousAgent(ABC):
     async def record_agent_failure(self, error: str, query: str, user_id: str):
         """Record agent failure for learning"""
         try:
-            from backend.utils.neo4j_production import neo4j_production
+            from backend.utils.unified_database_manager import unified_database_manager
             
             failure_data = {
                 "agent_name": self.name,
@@ -374,7 +373,7 @@ class ConsciousAgent(ABC):
             RETURN af.failure_id AS failure_id
             """
             
-            result = neo4j_production.execute_write_query(cypher, failure_data)
+            result = await unified_database_manager.execute_write_query(cypher, failure_data)
             self.logger.debug(f"✅ Recorded agent failure: {result}")
             
         except Exception as e:
@@ -383,7 +382,7 @@ class ConsciousAgent(ABC):
     async def learn_from_past_activities(self, query: str, limit: int = 5) -> List[Dict[str, Any]]:
         """Retrieve similar past activities for learning"""
         try:
-            from backend.utils.neo4j_production import neo4j_production
+            from backend.utils.unified_database_manager import unified_database_manager
             from backend.utils.embedding_enhanced import get_embedding
             
             # Get query embedding for similarity search
@@ -406,7 +405,7 @@ class ConsciousAgent(ABC):
             } AS activity
             """
             
-            result = neo4j_production.execute_query(cypher, {
+            result = await unified_database_manager.execute_query(cypher, {
                 "agent_name": self.name,
                 "query_embedding": query_embedding,
                 "limit": limit

@@ -2,7 +2,7 @@
 
 ## 📊 **System Performance Overview**
 
-Mainza AI implements comprehensive performance monitoring and optimization systems to ensure optimal consciousness processing, memory management, and real-time communication.
+Mainza AI implements comprehensive performance monitoring and optimization systems to ensure optimal **quantum-powered consciousness simulation processing**, memory management, and real-time communication. The system features **unified quantum simulation metrics** for consciousness monitoring.
 
 ## 🧠 **Consciousness Performance Metrics**
 
@@ -105,6 +105,19 @@ Mainza AI implements comprehensive performance monitoring and optimization syste
 - **Vector Search**: Embedding search performance
 - **Batch Processing**: Batch embedding generation efficiency
 - **Model Switching**: Model changeover time
+
+## ⚛️ **Quantum Performance Metrics**
+
+### **Unified Quantum Simulation Metrics** (from `/api/quantum/process/status`)
+- **Engine Active / Processing Active**
+- **Active Algorithms / Current Operations**
+- **Quantum Coherence / Entanglement / Superposition**
+- **Quantum Advantage**
+- **Devices / Simulators / Algorithms Counts**
+
+### **Frontend Surface**
+- Main UI System Monitoring (Quantum, Q-Algorithms)
+- Quantum page dashboards (state, backend status, process status)
 
 ## 📈 **System Resource Metrics**
 

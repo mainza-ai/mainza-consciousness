@@ -6,6 +6,9 @@ Consolidates all Neo4j operations with production-ready features:
 - Query caching
 - Performance monitoring
 - Error handling and resilience
+
+DEPRECATED: This module is being replaced by unified_database_manager.py
+Please use unified_database_manager for new implementations.
 """
 import os
 import logging
@@ -25,6 +28,14 @@ from neo4j.exceptions import ServiceUnavailable, TransientError, ClientError
 from cachetools import TTLCache
 
 logger = logging.getLogger(__name__)
+
+# Import unified database manager for compatibility
+try:
+    from backend.utils.unified_database_manager import unified_database_manager
+    UNIFIED_DATABASE_AVAILABLE = True
+except ImportError:
+    UNIFIED_DATABASE_AVAILABLE = False
+    logger.warning("Unified database manager not available, using legacy implementation")
 
 class CircuitBreakerState(Enum):
     CLOSED = "closed"
@@ -525,11 +536,18 @@ class UnifiedNeo4jManager:
             'circuit_breaker_failures': self.circuit_breaker.failure_count
         }
 
-# Global instance
-neo4j_unified = UnifiedNeo4jManager()
+# Global instance - Use unified database manager if available
+if UNIFIED_DATABASE_AVAILABLE:
+    # Use unified database manager for new implementations
+    neo4j_unified = unified_database_manager
+    logger.info("Using unified database manager for Neo4j operations")
+else:
+    # Fallback to legacy implementation
+    neo4j_unified = UnifiedNeo4jManager()
+    logger.warning("Using legacy Neo4j manager - consider upgrading to unified database manager")
 
 # Backward compatibility
-driver = neo4j_unified.driver
+driver = neo4j_unified.driver if hasattr(neo4j_unified, 'driver') else None
 
 # Cleanup on module exit
 import atexit

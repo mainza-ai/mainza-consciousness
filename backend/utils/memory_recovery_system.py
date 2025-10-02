@@ -253,7 +253,7 @@ class MemoryRecoverySystem:
                 params["offset"] = offset
                 
                 memories = await self.retry_with_exponential_backoff(
-                    self.neo4j.execute_query_async,
+                    self.neo4j.execute_query,
                     "validate_memory_batch",
                     query=query,
                     parameters=params
@@ -580,7 +580,7 @@ class MemoryRecoverySystem:
             params["repair_timestamp"] = datetime.now().isoformat()
             
             result = await self.retry_with_exponential_backoff(
-                self.neo4j.execute_write_query_async,
+                self.neo4j.execute_write_query,
                 "repair_memory",
                 query=query,
                 parameters=params
@@ -663,7 +663,7 @@ class MemoryRecoverySystem:
             """
             
             result = await self.retry_with_exponential_backoff(
-                self.neo4j.execute_write_query_async,
+                self.neo4j.execute_write_query,
                 "create_memory_backup",
                 query=backup_query,
                 parameters=params
@@ -710,7 +710,7 @@ class MemoryRecoverySystem:
             """
             
             result = await self.retry_with_exponential_backoff(
-                self.neo4j.execute_write_query_async,
+                self.neo4j.execute_write_query,
                 "cleanup_old_backups",
                 query=cleanup_query,
                 parameters={"cutoff_date": cutoff_date.isoformat()}
@@ -815,7 +815,7 @@ class MemoryRecoverySystem:
             params["restore_timestamp"] = datetime.now().isoformat()
             
             result = await self.retry_with_exponential_backoff(
-                self.neo4j.execute_write_query_async,
+                self.neo4j.execute_write_query,
                 "restore_from_backup",
                 query=restore_query,
                 parameters=params
@@ -908,7 +908,7 @@ class MemoryRecoverySystem:
             """
             
             result = await self.retry_with_exponential_backoff(
-                self.neo4j.execute_query_async,
+                self.neo4j.execute_query,
                 "detect_duplicate_memories",
                 query=duplicate_query,
                 parameters=params
@@ -938,7 +938,7 @@ class MemoryRecoverySystem:
 
             # Test Neo4j connection
             await self.retry_with_exponential_backoff(
-                self.neo4j.execute_query_async,
+                self.neo4j.execute_query,
                 "test_connection",
                 query="RETURN 1",
                 parameters={}

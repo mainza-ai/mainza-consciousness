@@ -7,7 +7,7 @@ Following Context7 MCP standards for production-grade implementation
 import logging
 from typing import Dict, Any, List, Optional, Tuple
 from datetime import datetime, timedelta
-from backend.utils.neo4j_production import neo4j_production
+from backend.utils.unified_database_manager import unified_database_manager
 from backend.utils.embedding_enhanced import get_embedding
 from backend.core.performance_optimization import PerformanceOptimizer
 from backend.core.enhanced_error_handling import ErrorHandler, ErrorSeverity, handle_errors
@@ -209,7 +209,7 @@ class KnowledgeIntegrationManager:
             } AS conversation
             """
             
-            result = neo4j_production.execute_query(cypher, {
+            result = await unified_database_manager.execute_query(cypher, {
                 "user_id": user_id,
                 "limit": limit
             })
@@ -258,7 +258,7 @@ class KnowledgeIntegrationManager:
             LIMIT 15
             """
             
-            result = neo4j_production.execute_query(cypher, {
+            result = await unified_database_manager.execute_query(cypher, {
                 "query_terms": query_terms,
                 "depth": depth
             })
@@ -311,7 +311,7 @@ class KnowledgeIntegrationManager:
             """
             
             # Get conversation turn memories
-            conversation_result = neo4j_production.execute_query(cypher, {
+            conversation_result = await unified_database_manager.execute_query(cypher, {
                 "user_id": user_id,
                 "query_terms": query_terms,
                 "limit": limit
@@ -341,7 +341,7 @@ class KnowledgeIntegrationManager:
             LIMIT $limit
             """
             
-            memory_result = neo4j_production.execute_query(memory_cypher, {
+            memory_result = await unified_database_manager.execute_query(memory_cypher, {
                 "user_id": user_id,
                 "query_terms": query_terms,
                 "limit": limit
@@ -390,7 +390,7 @@ class KnowledgeIntegrationManager:
             } AS patterns
             """
             
-            result = neo4j_production.execute_query(cypher, {"user_id": user_id})
+            result = await unified_database_manager.execute_query(cypher, {"user_id": user_id})
             
             return result[0]["patterns"] if result else {}
             

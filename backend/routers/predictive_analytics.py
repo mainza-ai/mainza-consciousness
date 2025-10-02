@@ -1,6 +1,9 @@
 """
 Predictive Analytics Router
 WebSocket and REST endpoints for predictive analytics and AI insights
+
+DEPRECATED: WebSocket functionality is being replaced by unified_websocket_manager.py
+Please use unified_websocket_manager for new WebSocket implementations.
 """
 
 from fastapi import APIRouter, WebSocket, WebSocketDisconnect, HTTPException, Depends
@@ -17,6 +20,14 @@ from backend.utils.ai_insights_engine import ai_insights_engine, AIInsight
 from backend.utils.insights_calculation_engine import InsightsCalculationEngine
 
 logger = logging.getLogger(__name__)
+
+# Import unified WebSocket manager for compatibility
+try:
+    from backend.utils.unified_websocket_manager import unified_websocket_manager, WebSocketConnectionType
+    UNIFIED_WEBSOCKET_AVAILABLE = True
+except ImportError:
+    UNIFIED_WEBSOCKET_AVAILABLE = False
+    logger.warning("Unified WebSocket manager not available, using legacy implementation")
 
 router = APIRouter()
 
@@ -178,32 +189,54 @@ predictive_manager = PredictiveAnalyticsManager()
 @router.websocket("/ws/insights")
 async def websocket_insights(websocket: WebSocket):
     """WebSocket endpoint for AI insights streaming"""
-    await predictive_manager.connect(websocket, "insights")
-    
-    try:
-        while True:
-            # Keep connection alive and send periodic updates
-            await asyncio.sleep(30)  # Send updates every 30 seconds
-            
-            # Generate insights
-            try:
-                # Get current consciousness data
-                consciousness_data = await predictive_manager.insights_engine.get_consciousness_insights()
+    if UNIFIED_WEBSOCKET_AVAILABLE:
+        # Use unified WebSocket manager
+        connection_id = await unified_websocket_manager.connect(websocket, WebSocketConnectionType.INTEGRATED)
+        
+        try:
+            # Keep connection alive and handle incoming messages
+            while True:
+                try:
+                    data = await websocket.receive_text()
+                    message = json.loads(data)
+                    await unified_websocket_manager.handle_message(connection_id, message)
+                except WebSocketDisconnect:
+                    break
+                except Exception as e:
+                    logger.error(f"Error handling WebSocket message: {e}")
+                    break
+        except Exception as e:
+            logger.error(f"WebSocket insights error: {e}")
+        finally:
+            await unified_websocket_manager.disconnect(connection_id)
+    else:
+        # Fallback to legacy implementation
+        await predictive_manager.connect(websocket, "insights")
+        
+        try:
+            while True:
+                # Keep connection alive and send periodic updates
+                await asyncio.sleep(30)  # Send updates every 30 seconds
                 
-                # Generate AI insights
-                insights = await ai_insights_engine.analyze_consciousness_data(consciousness_data)
-                
-                if insights:
-                    await predictive_manager.broadcast_insights(insights)
+                # Generate insights
+                try:
+                    # Get current consciousness data
+                    consciousness_data = await predictive_manager.insights_engine.get_consciousness_insights()
                     
-            except Exception as e:
-                logger.error(f"Error generating insights: {e}")
+                    # Generate AI insights
+                    insights = await ai_insights_engine.analyze_consciousness_data(consciousness_data)
+                    
+                    if insights:
+                        await predictive_manager.broadcast_insights(insights)
+                        
+                except Exception as e:
+                    logger.error(f"Error generating insights: {e}")
                 
-    except WebSocketDisconnect:
-        predictive_manager.disconnect(websocket, "insights")
-    except Exception as e:
-        logger.error(f"WebSocket insights error: {e}")
-        predictive_manager.disconnect(websocket, "insights")
+        except WebSocketDisconnect:
+            predictive_manager.disconnect(websocket, "insights")
+        except Exception as e:
+            logger.error(f"WebSocket insights error: {e}")
+            predictive_manager.disconnect(websocket, "insights")
 
 @router.websocket("/ws/predictions")
 async def websocket_predictions(websocket: WebSocket):

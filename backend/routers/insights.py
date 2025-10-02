@@ -275,15 +275,15 @@ async def get_neo4j_statistics() -> Dict[str, Any]:
     try:
         # Try to get real Neo4j data
         try:
-            from backend.utils.neo4j_production import neo4j_production
+            from backend.utils.unified_database_manager import unified_database_manager
             
             # Simple query to test connection and get basic stats
             node_count_query = "MATCH (n) RETURN count(n) as total_nodes"
-            result = neo4j_production.execute_query(node_count_query)
+            result = await unified_database_manager.execute_query(node_count_query)
             total_nodes = result[0]["total_nodes"] if result else 120
             
             rel_count_query = "MATCH ()-[r]->() RETURN count(r) as total_relationships"
-            result = neo4j_production.execute_query(rel_count_query)
+            result = await unified_database_manager.execute_query(rel_count_query)
             total_relationships = result[0]["total_relationships"] if result else 116
             
         except ImportError as e:
@@ -303,7 +303,7 @@ async def get_neo4j_statistics() -> Dict[str, Any]:
             RETURN labels(n)[0] as label, count(n) as count 
             ORDER BY count DESC
             """
-            labels_result = neo4j_production.execute_query(labels_query)
+            labels_result = await unified_database_manager.execute_query(labels_query)
             if labels_result:
                 for record in labels_result:
                     node_counts[record["label"]] = record["count"]
@@ -327,7 +327,7 @@ async def get_neo4j_statistics() -> Dict[str, Any]:
             RETURN type(r) as type, count(r) as count 
             ORDER BY count DESC
             """
-            rel_types_result = neo4j_production.execute_query(rel_types_query)
+            rel_types_result = await unified_database_manager.execute_query(rel_types_query)
             if rel_types_result:
                 for record in rel_types_result:
                     relationship_counts[record["type"]] = record["count"]
@@ -507,7 +507,8 @@ async def get_consciousness_evolution() -> Dict[str, Any]:
         consciousness_data = await insights_calculation_engine.calculate_consciousness_insights()
         
         if consciousness_data.get("fallback", False):
-            logger.warning("Using fallback consciousness data - real data unavailable")
+            # Real data unavailable, continue with available data
+            logger.warning("Consciousness data fallback detected")
         
         # Extract data from calculation engine
         current_state = consciousness_data.get("current_state", {})
@@ -716,7 +717,8 @@ async def get_realtime_consciousness_data() -> Dict[str, Any]:
         consciousness_data = await insights_calculation_engine.calculate_consciousness_insights()
         
         if consciousness_data.get("fallback", False):
-            logger.warning("Using fallback consciousness data - real data unavailable")
+            # Real data unavailable, continue with available data
+            logger.warning("Consciousness data fallback detected")
         
         # Extract data from calculation engine
         current_state = consciousness_data.get("current_state", {})
@@ -1182,14 +1184,14 @@ async def get_full_graph(
 ) -> Dict[str, Any]:
     """Get a complete graph view with nodes and relationships for visualization."""
     try:
-        from backend.utils.neo4j_production import neo4j_production
+        from backend.utils.unified_database_manager import unified_database_manager
         
         # Enhanced nodes query with better relationship counting
         nodes_query = """
         MATCH (n) 
         OPTIONAL MATCH (n)-[r1]->(connected)
         OPTIONAL MATCH (n)<-[r2]-(connected2)
-        WITH n, labels(n) as labels, id(n) as id,
+        WITH n, labels(n) as labels, elementId(n) as id,
              count(DISTINCT r1) as out_degree,
              count(DISTINCT r2) as in_degree,
              count(DISTINCT connected) + count(DISTINCT connected2) as total_connections
@@ -1197,12 +1199,12 @@ async def get_full_graph(
         ORDER BY total_connections DESC
         LIMIT $limit
         """
-        nodes_result = neo4j_production.execute_query(nodes_query, {"limit": node_limit})
+        nodes_result = await unified_database_manager.execute_query(nodes_query, {"limit": node_limit})
         
         # Enhanced relationships query with better context
         rels_query = """
         MATCH (a)-[r]->(b) 
-        WITH a, r, b, id(a) as source_id, id(b) as target_id, 
+        WITH a, r, b, elementId(a) as source_id, elementId(b) as target_id, 
              type(r) as rel_type,
              labels(a) as source_labels,
              labels(b) as target_labels,
@@ -1211,12 +1213,16 @@ async def get_full_graph(
         ORDER BY rel_type, source_id
         LIMIT $limit
         """
-        rels_result = neo4j_production.execute_query(rels_query, {"limit": rel_limit})
+        rels_result = await unified_database_manager.execute_query(rels_query, {"limit": rel_limit})
         
         # Format nodes with enhanced context
         nodes = []
         for record in nodes_result:
-            node_data = dict(record["n"])
+            # Handle Neo4j node objects properly
+            if hasattr(record["n"], 'items'):
+                node_data = dict(record["n"])
+            else:
+                node_data = {}
             labels = record["labels"]
             
             # Convert Neo4j DateTime objects to strings
@@ -1254,7 +1260,11 @@ async def get_full_graph(
         # Format relationships with enhanced context
         relationships = []
         for record in rels_result:
-            rel_data = dict(record["r"])
+            # Handle Neo4j relationship objects properly
+            if hasattr(record["r"], 'items'):
+                rel_data = dict(record["r"])
+            else:
+                rel_data = {}
             # Convert Neo4j DateTime objects to strings
             for key, value in rel_data.items():
                 if hasattr(value, 'iso_format'):
@@ -1310,7 +1320,7 @@ async def get_comprehensive_graph(
         MATCH (n) 
         OPTIONAL MATCH (n)-[r_out]->(connected_out)
         OPTIONAL MATCH (n)<-[r_in]-(connected_in)
-        WITH n, labels(n) as labels, id(n) as id,
+        WITH n, labels(n) as labels, elementId(n) as id,
              count(DISTINCT r_out) as out_degree,
              count(DISTINCT r_in) as in_degree,
              count(DISTINCT connected_out) + count(DISTINCT connected_in) as total_connections,
@@ -1326,7 +1336,7 @@ async def get_comprehensive_graph(
         # Get all relationships with comprehensive context
         comprehensive_rels_query = """
         MATCH (a)-[r]->(b) 
-        WITH a, r, b, id(a) as source_id, id(b) as target_id, 
+        WITH a, r, b, elementId(a) as source_id, elementId(b) as target_id, 
              type(r) as rel_type,
              labels(a) as source_labels,
              labels(b) as target_labels,
@@ -1416,7 +1426,7 @@ async def get_comprehensive_graph(
         WITH total_nodes, count(r) as total_relationships
         RETURN total_nodes, total_relationships
         """
-        stats_result = neo4j_production.execute_query(stats_query)
+        stats_result = await unified_database_manager.execute_query(stats_query)
         total_nodes = stats_result[0]["total_nodes"] if stats_result else 0
         total_relationships = stats_result[0]["total_relationships"] if stats_result else 0
         
@@ -1454,7 +1464,7 @@ async def get_complete_graph() -> Dict[str, Any]:
         MATCH (n) 
         OPTIONAL MATCH (n)-[r_out]->(connected_out)
         OPTIONAL MATCH (n)<-[r_in]-(connected_in)
-        WITH n, labels(n) as labels, id(n) as id,
+        WITH n, labels(n) as labels, elementId(n) as id,
              count(DISTINCT r_out) as out_degree,
              count(DISTINCT r_in) as in_degree,
              count(DISTINCT connected_out) + count(DISTINCT connected_in) as total_connections,
@@ -1469,7 +1479,7 @@ async def get_complete_graph() -> Dict[str, Any]:
         # Get ALL relationships
         all_rels_query = """
         MATCH (a)-[r]->(b) 
-        WITH a, r, b, id(a) as source_id, id(b) as target_id, 
+        WITH a, r, b, elementId(a) as source_id, elementId(b) as target_id, 
              type(r) as rel_type,
              labels(a) as source_labels,
              labels(b) as target_labels,
@@ -1723,7 +1733,7 @@ def generate_relationship_context(record: dict) -> str:
 async def get_graph_analytics() -> Dict[str, Any]:
     """Get comprehensive graph analytics and metrics."""
     try:
-        from backend.utils.neo4j_production import neo4j_production
+        from backend.utils.unified_database_manager import unified_database_manager
         
         # Get basic graph statistics
         stats_query = """
@@ -1733,7 +1743,7 @@ async def get_graph_analytics() -> Dict[str, Any]:
         WITH total_nodes, count(r) as total_relationships
         RETURN total_nodes, total_relationships
         """
-        stats_result = neo4j_production.execute_query(stats_query)
+        stats_result = await unified_database_manager.execute_query(stats_query)
         
         # Get node type distribution
         node_distribution_query = """
@@ -1742,7 +1752,7 @@ async def get_graph_analytics() -> Dict[str, Any]:
         RETURN label, count(*) as count
         ORDER BY count DESC
         """
-        node_dist_result = neo4j_production.execute_query(node_distribution_query)
+        node_dist_result = await unified_database_manager.execute_query(node_distribution_query)
         
         # Get relationship type distribution
         rel_distribution_query = """
@@ -1750,7 +1760,7 @@ async def get_graph_analytics() -> Dict[str, Any]:
         RETURN type(r) as rel_type, count(*) as count
         ORDER BY count DESC
         """
-        rel_dist_result = neo4j_production.execute_query(rel_distribution_query)
+        rel_dist_result = await unified_database_manager.execute_query(rel_distribution_query)
         
         # Get graph density (relationships / possible relationships)
         density_query = """
@@ -1764,7 +1774,7 @@ async def get_graph_analytics() -> Dict[str, Any]:
              ELSE 0.0 END as density
         RETURN node_count, rel_count, density
         """
-        density_result = neo4j_production.execute_query(density_query)
+        density_result = await unified_database_manager.execute_query(density_query)
         
         # Get most connected nodes (degree centrality)
         centrality_query = """
@@ -1775,7 +1785,7 @@ async def get_graph_analytics() -> Dict[str, Any]:
         ORDER BY degree DESC
         LIMIT 10
         """
-        centrality_result = neo4j_production.execute_query(centrality_query)
+        centrality_result = await unified_database_manager.execute_query(centrality_query)
         
         # Get graph components (connected subgraphs) - simple fallback
         components_query = """
@@ -1783,7 +1793,7 @@ async def get_graph_analytics() -> Dict[str, Any]:
         RETURN count(n) as total_nodes
         """
         try:
-            components_result = neo4j_production.execute_query(components_query)
+            components_result = await unified_database_manager.execute_query(components_query)
             # Create a simple component structure
             if components_result:
                 total_nodes = components_result[0]["total_nodes"]
@@ -1826,7 +1836,7 @@ async def get_graph_paths(
         
         path_query = f"""
         MATCH (source), (target)
-        WHERE id(source) = $source_id AND id(target) = $target_id
+        WHERE elementId(source) = $source_id AND elementId(target) = $target_id
         MATCH path = shortestPath((source)-[*1..{max_depth}]-(target))
         RETURN path, length(path) as path_length
         ORDER BY path_length
@@ -1850,16 +1860,16 @@ async def get_graph_paths(
             
             for i, node in enumerate(path.nodes):
                 nodes_in_path.append({
-                    "id": str(id(node)),
+                    "id": str(elementId(node)),
                     "labels": list(node.labels),
                     "properties": dict(node),
-                    "name": dict(node).get("name", f"Node {id(node)}")
+                    "name": dict(node).get("name", f"Node {elementId(node)}")
                 })
             
             for i, rel in enumerate(path.relationships):
                 relationships_in_path.append({
-                    "source": str(id(rel.start_node)),
-                    "target": str(id(rel.end_node)),
+                    "source": str(elementId(rel.start_node)),
+                    "target": str(elementId(rel.end_node)),
                     "type": rel.type,
                     "properties": dict(rel)
                 })

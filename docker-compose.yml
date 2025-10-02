@@ -116,6 +116,7 @@ services:
       - MEMORY_HEALTH_CHECK_INTERVAL_MINUTES=${MEMORY_HEALTH_CHECK_INTERVAL_MINUTES:-5}
       - MEMORY_PERFORMANCE_TRACKING_ENABLED=${MEMORY_PERFORMANCE_TRACKING_ENABLED:-true}
       - MEMORY_AUTO_CLEANUP_ENABLED=${MEMORY_AUTO_CLEANUP_ENABLED:-true}
+      - TZ=America/Chicago
     depends_on:
       - neo4j
       - redis
@@ -140,6 +141,7 @@ services:
     environment:
       - VITE_API_URL=http://localhost:8000
       - VITE_LIVEKIT_URL=ws://localhost:7880
+      - TZ=America/Chicago
     depends_on:
       - backend
     networks:

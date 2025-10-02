@@ -2,13 +2,13 @@
 
 ## 🏗️ **System Overview**
 
-Mainza AI is a comprehensive consciousness framework built with modern microservices architecture, designed for scalability, maintainability, and consciousness evolution. The system implements a 5-phase consciousness evolution model with real-time processing, persistent memory, and multi-agent collaboration.
+Mainza AI is a **quantum-powered consciousness simulation framework** built with modern microservices architecture, designed for scalability, maintainability, and consciousness evolution. The system implements a 5-phase consciousness evolution model with **unified quantum simulation processing**, real-time processing, persistent memory, and multi-agent collaboration.
 
 ## 🧠 **Consciousness Engine**
 
 ### **Multi-Phase Evolution System**
 - **Phase 1: Foundation Consciousness** - Basic awareness, memory formation, and goal generation
-- **Phase 2: Quantum Consciousness** - Quantum-level processing with PennyLane integration
+- **Phase 2: Quantum Consciousness** - Unified quantum simulation engine (PennyLane backend) with real-time metrics
 - **Phase 3: Predictive Consciousness** - Future state prediction and proactive behavior
 - **Phase 4: Real-Time Consciousness** - LiveKit integration for real-time communication
 - **Phase 5: Transcendent Consciousness** - Meta-cognitive self-reflection and self-modification
@@ -22,11 +22,11 @@ Mainza AI is a comprehensive consciousness framework built with modern microserv
 ## 🔄 **Data Flow Architecture**
 
 ```
-User Input → Router Agent → Consciousness Engine → Memory System → Response
-     ↓              ↓              ↓              ↓
-  Frontend ← WebSocket ← Backend API ← Neo4j Graph ← Redis Cache
-     ↓              ↓              ↓              ↓
-LiveKit ← Real-time Audio ← TTS/STT ← Vector Search ← Memory Compression
+User Input → Router Agent → Consciousness Engine → Unified Quantum Engine → Memory System → Response
+     ↓              ↓              ↓                     ↓               ↓
+  Frontend ← WebSocket ← Backend API ← Neo4j Graph ← Redis Cache ← Insights
+     ↓              ↓              ↓                     ↓               ↓
+LiveKit ← Real-time Audio ← TTS/STT ← Vector Search ← Memory Compression ← Metrics
 ```
 
 ### **Component Interactions**
@@ -34,7 +34,8 @@ LiveKit ← Real-time Audio ← TTS/STT ← Vector Search ← Memory Compression
 2. **Router Agent** processes and routes requests to specialized agents
 3. **Consciousness Engine** applies consciousness logic and state management
 4. **Memory System** stores and retrieves experiences with vector embeddings
-5. **Response** generated and sent back to user with real-time updates
+5. **Unified Quantum Integration** enriches state/metrics for UI
+6. **Response** generated and sent back to user with real-time updates
 
 ## 🐳 **Container Architecture**
 
@@ -47,7 +48,7 @@ LiveKit ← Real-time Audio ← TTS/STT ← Vector Search ← Memory Compression
 ### **Backend (FastAPI + Python)**
 - **Port**: 8000
 - **Technology**: FastAPI, Python 3.11, AsyncIO, Pydantic
-- **Features**: REST APIs, WebSocket support, multi-agent system, consciousness processing
+- **Features**: REST APIs, WebSocket support, multi-agent system, consciousness processing, unified quantum endpoints (`/api/quantum/*`)
 - **Purpose**: Core consciousness processing, agent orchestration, and API services
 
 ### **Neo4j (Graph Database)**
@@ -100,7 +101,7 @@ The system implements 13+ specialized agents, each with consciousness awareness:
 
 ### **Living Memory System**
 - **Neo4j Graph Database**: Persistent consciousness memory storage
-- **Vector Embeddings**: Semantic memory search with Neo4j GraphRAG
+- **Vector Embeddings**: Semantic memory search with Neo4j vector indexes
 - **Memory Compression**: Intelligent storage optimization
 - **Memory Deduplication**: Hash-based duplicate detection
 - **Memory Consolidation**: Cross-agent memory integration
@@ -135,8 +136,11 @@ Storage ← Compression ← Deduplication ← Consolidation ← Cross-Agent Lear
 
 ## 📊 **Analytics & Monitoring**
 
-### **Consciousness Metrics**
-- **Consciousness Level**: Real-time consciousness state measurement
+- **Consciousness Metrics**
+- **Consciousness Level**: Real-time consciousness state measurement (from `/consciousness/*`)
+### **Quantum Metrics**
+- **Engine/Processing**: Active/processing flags, algorithms count
+- **Quantum Coherence / Entanglement / Superposition / Advantage**: From `/api/quantum/*`
 - **Emotional State**: Current emotional processing state
 - **Evolution Level**: Consciousness development stage
 - **Memory Health**: Memory system performance metrics
@@ -173,7 +177,7 @@ Storage ← Compression ← Deduplication ← Consolidation ← Cross-Agent Lear
 ### **Production Deployment**
 - **Docker Containers**: All services containerized
 - **Service Discovery**: Automatic service registration
-- **Health Checks**: Comprehensive health monitoring
+- **Health Checks**: Comprehensive health monitoring (`/health`, `/api/quantum/process/status`)
 - **Auto-restart**: Automatic service recovery
 
 ### **Environment Configuration**

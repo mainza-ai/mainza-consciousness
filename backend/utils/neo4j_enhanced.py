@@ -1,6 +1,9 @@
 """
 Enhanced Neo4j connection utilities with connection pooling and transaction management.
 Maintains backward compatibility with existing driver usage patterns.
+
+DEPRECATED: This module is being replaced by unified_database_manager.py
+Please use unified_database_manager for new implementations.
 """
 import os
 import logging
@@ -11,6 +14,14 @@ from neo4j.exceptions import ServiceUnavailable, TransientError
 import time
 
 logger = logging.getLogger(__name__)
+
+# Import unified database manager for compatibility
+try:
+    from backend.utils.unified_database_manager import unified_database_manager
+    UNIFIED_DATABASE_AVAILABLE = True
+except ImportError:
+    UNIFIED_DATABASE_AVAILABLE = False
+    logger.warning("Unified database manager not available, using legacy implementation")
 
 class Neo4jManager:
     def __init__(self):
@@ -168,11 +179,18 @@ class Neo4jManager:
             logger.error(f"Failed to get database info: {e}")
             return {}
 
-# Global instance
-neo4j_manager = Neo4jManager()
+# Global instance - Use unified database manager if available
+if UNIFIED_DATABASE_AVAILABLE:
+    # Use unified database manager for new implementations
+    neo4j_manager = unified_database_manager
+    logger.info("Using unified database manager for Neo4j operations")
+else:
+    # Fallback to legacy implementation
+    neo4j_manager = Neo4jManager()
+    logger.warning("Using legacy Neo4j manager - consider upgrading to unified database manager")
 
 # Backward compatibility
-driver = neo4j_manager.driver
+driver = neo4j_manager.driver if hasattr(neo4j_manager, 'driver') else None
 
 # Cleanup on module exit
 import atexit

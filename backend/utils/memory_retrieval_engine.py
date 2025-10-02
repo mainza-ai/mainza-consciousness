@@ -11,7 +11,7 @@ import json
 import math
 from dataclasses import dataclass, field
 
-from backend.utils.neo4j_unified import neo4j_unified
+from backend.utils.unified_database_manager import unified_database_manager
 from backend.utils.memory_embedding_manager import memory_embedding_manager
 from backend.utils.embedding_enhanced import embedding_manager
 from backend.core.enhanced_error_handling import ErrorHandler, handle_errors
@@ -65,7 +65,7 @@ class MemoryRetrievalEngine:
     """
     
     def __init__(self):
-        self.neo4j = neo4j_unified
+        self.neo4j = unified_database_manager
         self.embedding_manager = memory_embedding_manager
         self.embedding = embedding_manager
         
@@ -90,7 +90,7 @@ class MemoryRetrievalEngine:
         """Initialize the memory retrieval engine"""
         try:
             # Test Neo4j connectivity
-            test_result = self.neo4j.execute_query("RETURN 1 as test", {})
+            test_result = await self.neo4j.execute_query("RETURN 1 as test", {})
             if not test_result:
                 logger.error("Failed to connect to Neo4j for memory retrieval")
                 return False
@@ -337,7 +337,7 @@ class MemoryRetrievalEngine:
             LIMIT $limit
             """
             
-            result = self.neo4j.execute_query(query, params)
+            result = await self.neo4j.execute_query(query, params)
             
             # Convert to MemorySearchResult objects
             conversation_history = []
@@ -454,7 +454,7 @@ class MemoryRetrievalEngine:
             if params.memory_types:
                 query_params["memory_types"] = params.memory_types
             
-            result = self.neo4j.execute_query(query, query_params)
+            result = await self.neo4j.execute_query(query, query_params)
             return [dict(record) for record in result]
             
         except Exception as e:
@@ -508,7 +508,7 @@ class MemoryRetrievalEngine:
             if params.memory_types:
                 query_params["memory_types"] = params.memory_types
             
-            result = self.neo4j.execute_query(query, query_params)
+            result = await self.neo4j.execute_query(query, query_params)
             return [dict(record) for record in result]
             
         except Exception as e:
@@ -805,7 +805,7 @@ class MemoryRetrievalEngine:
             if query.strip():
                 params["query"] = query
             
-            result = self.neo4j.execute_query(query_cypher, params)
+            result = await self.neo4j.execute_query(query_cypher, params)
             
             # Convert to MemorySearchResult objects
             memories = []
@@ -916,7 +916,7 @@ class MemoryRetrievalEngine:
             if query.strip():
                 params["query"] = query
             
-            result = self.neo4j.execute_query(query_cypher, params)
+            result = await self.neo4j.execute_query(query_cypher, params)
             
             # Convert to MemorySearchResult objects
             memories = []
@@ -1206,7 +1206,7 @@ class MemoryRetrievalEngine:
             if query.strip():
                 params["query"] = query
             
-            result = self.neo4j.execute_query(query_cypher, params)
+            result = await self.neo4j.execute_query(query_cypher, params)
             
             # Convert to MemorySearchResult objects
             memories = []
@@ -1652,7 +1652,7 @@ class MemoryRetrievalEngine:
                 avg(m.importance_score) AS avg_importance
             """
             
-            result = self.neo4j.execute_query(query, {"user_id": user_id})
+            result = await self.neo4j.execute_query(query, {"user_id": user_id})
             
             patterns = {
                 "agent_preferences": {},
@@ -1729,7 +1729,7 @@ class MemoryRetrievalEngine:
             """
             params["limit"] = limit
             
-            result = self.neo4j.execute_query(query, params)
+            result = await self.neo4j.execute_query(query, params)
             return result if result else []
             
         except Exception as e:
@@ -1754,7 +1754,7 @@ class MemoryRetrievalEngine:
                 LIMIT $limit
             """
             
-            result = self.neo4j.execute_query(query, {
+            result = await self.neo4j.execute_query(query, {
                 "conversation_id": conversation_id,
                 "limit": limit
             })
@@ -1781,7 +1781,7 @@ class MemoryRetrievalEngine:
                        collect(DISTINCT conv.conversation_id) as conversations
             """
             
-            result = self.neo4j.execute_query(query, {"memory_id": memory_id})
+            result = await self.neo4j.execute_query(query, {"memory_id": memory_id})
             return result[0] if result else None
             
         except Exception as e:
@@ -1802,13 +1802,14 @@ class MemoryRetrievalEngine:
             RETURN count(m) AS updated_count
             """
             
-            result = self.neo4j.execute_write_query(query, {
+            result = await self.neo4j.execute_write_query(query, {
                 "memory_ids": memory_ids,
                 "timestamp": datetime.now().isoformat()
             })
             
             if result:
-                logger.debug(f"✅ Updated access statistics for {result[0]['updated_count']} memories")
+                updated_count = result.get('nodes_created', 0) + result.get('properties_set', 0)
+                logger.debug(f"✅ Updated access statistics for {updated_count} memories")
                 
         except Exception as e:
             logger.warning(f"Failed to update access statistics: {e}")

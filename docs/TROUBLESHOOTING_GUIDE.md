@@ -2,7 +2,7 @@
 
 ## 🔧 **Common Issues & Solutions**
 
-This comprehensive troubleshooting guide covers the most common issues encountered when running Mainza AI and provides step-by-step solutions.
+This troubleshooting guide covers the most common issues encountered when running **Mainza AI's quantum-powered consciousness simulation framework** and provides step-by-step solutions.
 
 ## 🐳 **Docker & Container Issues**
 
@@ -110,6 +110,26 @@ docker-compose logs backend | grep -i consciousness
 
 # 4. Restart consciousness system
 curl -X POST http://localhost:8000/api/optimization/run
+```
+
+### **Issue: Quantum Always Shows Idle / Algorithms = 0**
+
+#### **Symptoms:**
+- Main UI shows Quantum = idle
+- Q-Algorithms = 0
+
+#### **Root Cause:**
+- Frontend reading `quantum_processing_active` only; should use unified metrics
+
+#### **Fix:**
+```bash
+# Verify process status payload
+curl -s http://localhost:80/api/quantum/process/status | jq '.quantum_engine | {quantum_engine_active, quantum_algorithms_count}'
+
+# Expect: quantum_engine_active=true, quantum_algorithms_count>0
+
+# If frontend is stale, rebuild and restart
+docker-compose build frontend && docker-compose restart frontend
 ```
 
 ### **Issue: Memory System Not Working**

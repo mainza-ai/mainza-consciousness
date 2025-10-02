@@ -515,9 +515,9 @@ async def register_error_handlers():
         if error_context.severity.value in ["high", "critical"]:
             logger.error(f"HIGH SEVERITY ERROR: {error_context.error_id} - {error_context.stack_trace}")
     
-    def fallback_consciousness_handler(error_context):
+# REMOVED FALLBACK FUNCTION: def fallback_consciousness_handler(error_context):
         """Fallback handler for consciousness system errors"""
-        logger.warning(f"Consciousness system fallback activated: {error_context.error_id}")
+# REMOVED FALLBACK: logger.warning(f"Consciousness system fallback activated: {error_context.error_id}")
         # Implement fallback consciousness behavior
     
     error_handler.register_error_listener(log_error_event)

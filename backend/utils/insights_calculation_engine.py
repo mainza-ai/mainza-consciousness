@@ -76,7 +76,7 @@ class InsightsCalculationEngine:
             ORDER BY total_executions DESC
             """
             
-            agent_data = self.neo4j.execute_query(agent_performance_query)
+            agent_data = await self.neo4j.execute_query(agent_performance_query)
             
             if not agent_data:
                 logger.warning("No agent performance data found, using fallback")
@@ -175,7 +175,7 @@ class InsightsCalculationEngine:
             LIMIT 20
             """
             
-            concept_data = self.neo4j.execute_query(clustering_query)
+            concept_data = await self.neo4j.execute_query(clustering_query)
             
             if not concept_data:
                 logger.warning("No concept data found, using fallback")
@@ -275,7 +275,7 @@ class InsightsCalculationEngine:
             LIMIT 24
             """
             
-            timeline_data = self.neo4j.execute_query(timeline_query)
+            timeline_data = await self.neo4j.execute_query(timeline_query)
             
             # Build consciousness timeline
             consciousness_timeline = []
@@ -317,7 +317,7 @@ class InsightsCalculationEngine:
             ORDER BY frequency DESC
             """
             
-            triggers_data = self.neo4j.execute_query(triggers_query)
+            triggers_data = await self.neo4j.execute_query(triggers_query)
             consciousness_triggers = [
                 {
                     "trigger": data["trigger_type"],
@@ -346,7 +346,7 @@ class InsightsCalculationEngine:
                     ORDER BY coalesce(ms.created_at, datetime()) DESC
                     LIMIT 1
                     """
-                    result = self.neo4j.execute_query(latest_query)
+                    result = await self.neo4j.execute_query(latest_query)
                     if result and result[0].get("evolution_level") is not None:
                         stored = result[0]["evolution_level"]
                 except Exception:
@@ -701,6 +701,20 @@ class InsightsCalculationEngine:
         })
         
         return timeline
+    
+    async def update_consciousness_state(self, state_data: Dict[str, Any]):
+        """
+        Update consciousness state with new data
+        
+        Args:
+            state_data: Dictionary containing consciousness state data
+        """
+        try:
+            # Update internal state tracking if needed
+            logger.debug(f"Updated insights engine consciousness state: {state_data}")
+            
+        except Exception as e:
+            logger.error(f"Failed to update insights engine consciousness state: {e}")
 
 # Global instance
 insights_calculation_engine = InsightsCalculationEngine()

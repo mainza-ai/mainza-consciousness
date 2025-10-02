@@ -298,7 +298,7 @@ class EnhancedLLMExecutor:
             RETURN em.metric_id AS metric_id
             """
             
-            result = neo4j_production.execute_write_query(cypher, metrics_data)
+            result = await neo4j_production.execute_write_query(cypher, metrics_data)
             logger.debug(f"✅ Stored execution metrics: {result}")
             
         except Exception as e:

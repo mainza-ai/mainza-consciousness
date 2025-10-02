@@ -583,7 +583,8 @@ class PerformanceOptimizer:
             try:
                 await self.redis_cache.connect()
             except Exception as e:
-                logger.warning(f"Redis cache not available, using fallback: {e}")
+                # Redis cache not available, continue without it
+                logger.warning(f"Redis cache not available: {e}")
         
         # Start memory optimization
         if self.level == PerformanceLevel.MAXIMUM:

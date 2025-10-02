@@ -460,7 +460,7 @@ class MemoryContextBuilder:
             LIMIT 15
             """
             
-            result = self.neo4j.execute_query(cypher, {"memory_ids": memory_ids})
+            result = await self.neo4j.execute_query(cypher, {"memory_ids": memory_ids})
             
             return [record["concept"] for record in result] if result else []
             
