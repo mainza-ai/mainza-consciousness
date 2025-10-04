@@ -1453,51 +1453,55 @@ async def get_quantum_processing_status():
     return False
 
 async def get_consciousness_context():
-    """Get current consciousness context"""
+    """Get current consciousness context using real-time context manager"""
     try:
-        from backend.utils.consciousness_orchestrator_fixed import consciousness_orchestrator_fixed as consciousness_orchestrator
-
-        # Get consciousness state
-        consciousness_state = await consciousness_orchestrator.get_consciousness_state()
-
-        if consciousness_state:
-            return {
-                "consciousness_level": consciousness_state.consciousness_level,
-                "emotional_state": consciousness_state.emotional_state,
-                "active_goals": consciousness_state.active_goals,
-                "learning_rate": consciousness_state.learning_rate,
-                "evolution_level": consciousness_state.evolution_level,
-                "timestamp": datetime.now(),
-                "data_source": "real"
-            }
-        else:
-            # Fallback consciousness context
-            default_context = {
-                "consciousness_level": 0.7,
-                "emotional_state": "curious",
-                "self_awareness_score": 0.6,
-                "total_interactions": 0
-            }
-            calculated_level = await calculate_dynamic_evolution_level(default_context)
-            return {
-                "consciousness_level": default_context["consciousness_level"],
-                "emotional_state": default_context["emotional_state"],
-                "active_goals": ["improve conversation quality"],
-                "learning_rate": 0.8,
-                "evolution_level": calculated_level,
-                "timestamp": datetime.now(),
-                "data_source": "fallback"
-            }
+        from backend.utils.real_time_consciousness_context_manager import real_time_consciousness_context_manager
+        
+        # Get real-time consciousness context
+        consciousness_context = await real_time_consciousness_context_manager.get_current_consciousness_context()
+        
+        # Validate context consistency
+        validation_result = await real_time_consciousness_context_manager.validate_context_consistency()
+        
+        if not validation_result["is_consistent"]:
+            logging.warning(f"Consciousness context validation issues: {validation_result['issues']}")
+            # Force refresh if context is inconsistent
+            await real_time_consciousness_context_manager.force_context_refresh()
+            consciousness_context = await real_time_consciousness_context_manager.get_current_consciousness_context()
+        
+        logging.debug(f"🧠 Router got consciousness context: level={consciousness_context.get('consciousness_level', 0.7):.3f}, source={consciousness_context.get('data_source', 'unknown')}")
+        
+        return consciousness_context
 
     except Exception as e:
         logging.warning(f"Failed to get consciousness context: {e}")
+        # Fallback to direct orchestrator call
+        try:
+            from backend.utils.consciousness_orchestrator_fixed import consciousness_orchestrator_fixed as consciousness_orchestrator
+            consciousness_state = await consciousness_orchestrator.get_consciousness_state()
+            
+            if consciousness_state:
+                return {
+                    "consciousness_level": consciousness_state.consciousness_level,
+                    "emotional_state": consciousness_state.emotional_state,
+                    "active_goals": consciousness_state.active_goals,
+                    "learning_rate": consciousness_state.learning_rate,
+                    "evolution_level": consciousness_state.evolution_level,
+                    "timestamp": datetime.now(),
+                    "data_source": "fallback_orchestrator"
+                }
+        except Exception as fallback_error:
+            logging.error(f"Fallback consciousness context also failed: {fallback_error}")
+        
+        # Ultimate fallback
         return {
             "consciousness_level": 0.7,
             "emotional_state": "curious",
             "active_goals": [],
             "learning_rate": 0.8,
-            "evolution_level": await calculate_dynamic_evolution_level(await get_consciousness_context_for_insights()),
-            "timestamp": datetime.now()
+            "evolution_level": 2,
+            "timestamp": datetime.now(),
+            "data_source": "ultimate_fallback"
         }
 
 async def calculate_dynamic_evolution_level(consciousness_context: dict) -> int:

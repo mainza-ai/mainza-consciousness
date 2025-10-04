@@ -151,42 +151,55 @@ class ConsciousAgent(ABC):
             raise
     
     async def get_consciousness_context(self) -> Dict[str, Any]:
-        """Get current consciousness context"""
+        """Get current consciousness context using real-time context manager"""
         try:
-            from backend.utils.consciousness_orchestrator_fixed import consciousness_orchestrator_fixed as consciousness_orchestrator
-
-            # Get consciousness state
-            consciousness_state = await consciousness_orchestrator.get_consciousness_state()
+            from backend.utils.real_time_consciousness_context_manager import real_time_consciousness_context_manager
             
-            if consciousness_state:
-                return {
-                    "consciousness_level": consciousness_state.consciousness_level,
-                    "emotional_state": consciousness_state.emotional_state,
-                    "active_goals": consciousness_state.active_goals,
-                    "learning_rate": consciousness_state.learning_rate,
-                    "evolution_level": consciousness_state.evolution_level,
-                    "timestamp": datetime.now()
-                }
-            else:
-                # Fallback consciousness context
-                return {
-                    "consciousness_level": 0.7,
-                    "emotional_state": "curious",
-                    "active_goals": ["improve conversation quality"],
-                    "learning_rate": 0.8,
-                    "evolution_level": 2,
-                    "timestamp": datetime.now()
-                }
+            # Get real-time consciousness context
+            consciousness_context = await real_time_consciousness_context_manager.get_current_consciousness_context()
+            
+            # Validate context consistency
+            validation_result = await real_time_consciousness_context_manager.validate_context_consistency()
+            
+            if not validation_result["is_consistent"]:
+                self.logger.warning(f"Consciousness context validation issues: {validation_result['issues']}")
+                # Force refresh if context is inconsistent
+                await real_time_consciousness_context_manager.force_context_refresh()
+                consciousness_context = await real_time_consciousness_context_manager.get_current_consciousness_context()
+            
+            self.logger.debug(f"🧠 {self.name} got consciousness context: level={consciousness_context.get('consciousness_level', 0.7):.3f}, source={consciousness_context.get('data_source', 'unknown')}")
+            
+            return consciousness_context
                 
         except Exception as e:
             self.logger.warning(f"Failed to get consciousness context: {e}")
+            # Fallback to direct orchestrator call
+            try:
+                from backend.utils.consciousness_orchestrator_fixed import consciousness_orchestrator_fixed as consciousness_orchestrator
+                consciousness_state = await consciousness_orchestrator.get_consciousness_state()
+                
+                if consciousness_state:
+                    return {
+                        "consciousness_level": consciousness_state.consciousness_level,
+                        "emotional_state": consciousness_state.emotional_state,
+                        "active_goals": consciousness_state.active_goals,
+                        "learning_rate": consciousness_state.learning_rate,
+                        "evolution_level": consciousness_state.evolution_level,
+                        "timestamp": datetime.now(),
+                        "data_source": "fallback_orchestrator"
+                    }
+            except Exception as fallback_error:
+                self.logger.error(f"Fallback consciousness context also failed: {fallback_error}")
+            
+            # Ultimate fallback
             return {
                 "consciousness_level": 0.7,
                 "emotional_state": "curious",
                 "active_goals": [],
                 "learning_rate": 0.8,
                 "evolution_level": 2,
-                "timestamp": datetime.now()
+                "timestamp": datetime.now(),
+                "data_source": "ultimate_fallback"
             }
     
     async def assess_consciousness_impact(

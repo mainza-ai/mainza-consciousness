@@ -313,6 +313,17 @@ async def startup_event():
     except Exception as e:
         logging.error(f"❌ Failed to initialize consciousness system: {e}")
     
+    # Initialize real-time consciousness context manager
+    try:
+        from backend.utils.real_time_consciousness_context_manager import real_time_consciousness_context_manager
+        success = await real_time_consciousness_context_manager.initialize()
+        if success:
+            logging.info("✅ Real-time consciousness context manager initialized successfully!")
+        else:
+            logging.warning("⚠️ Real-time consciousness context manager initialization had issues")
+    except Exception as e:
+        logging.error(f"❌ Failed to initialize real-time consciousness context manager: {e}")
+    
     # Initialize LLM request manager
     asyncio.create_task(llm_request_manager.initialize())
     
