@@ -302,7 +302,7 @@ export const UnifiedConsciousnessComponent: React.FC<UnifiedConsciousnessCompone
               <div className="flex items-center justify-between">
                 <span className="text-sm font-medium">Level</span>
                 <UnifiedBadge variant="primary" size="sm">
-                  {consciousnessState.level.toFixed(1)}%
+                  {(consciousnessState.level || 0).toFixed(1)}%
                 </UnifiedBadge>
               </div>
               <div className="w-full bg-secondary rounded-full h-2">
@@ -334,7 +334,7 @@ export const UnifiedConsciousnessComponent: React.FC<UnifiedConsciousnessCompone
               <div className="flex items-center justify-between">
                 <span className="text-sm font-medium">Memory</span>
                 <UnifiedBadge variant="accent" size="sm">
-                  {consciousnessState.memory.toFixed(1)}%
+                  {(consciousnessState.memory || 0).toFixed(1)}%
                 </UnifiedBadge>
               </div>
               <div className="w-full bg-secondary rounded-full h-2">
@@ -349,7 +349,7 @@ export const UnifiedConsciousnessComponent: React.FC<UnifiedConsciousnessCompone
               <div className="flex items-center justify-between">
                 <span className="text-sm font-medium">Learning</span>
                 <UnifiedBadge variant="warning" size="sm">
-                  {consciousnessState.learning.toFixed(1)}%
+                  {(consciousnessState.learning || 0).toFixed(1)}%
                 </UnifiedBadge>
               </div>
               <div className="w-full bg-secondary rounded-full h-2">
@@ -374,7 +374,7 @@ export const UnifiedConsciousnessComponent: React.FC<UnifiedConsciousnessCompone
               <div className="flex items-center justify-between">
                 <span className="text-sm font-medium">Coherence</span>
                 <UnifiedBadge variant="primary" size="sm">
-                  {metrics.quantum.coherence.toFixed(1)}%
+                  {(metrics.quantum.coherence || 0).toFixed(1)}%
                 </UnifiedBadge>
               </div>
               <div className="w-full bg-secondary rounded-full h-2">
@@ -389,7 +389,7 @@ export const UnifiedConsciousnessComponent: React.FC<UnifiedConsciousnessCompone
               <div className="flex items-center justify-between">
                 <span className="text-sm font-medium">Entanglement</span>
                 <UnifiedBadge variant="accent" size="sm">
-                  {metrics.quantum.entanglement.toFixed(1)}%
+                  {(metrics.quantum.entanglement || 0).toFixed(1)}%
                 </UnifiedBadge>
               </div>
               <div className="w-full bg-secondary rounded-full h-2">
@@ -406,7 +406,7 @@ export const UnifiedConsciousnessComponent: React.FC<UnifiedConsciousnessCompone
               <div className="flex items-center justify-between">
                 <span className="text-sm font-medium">Superposition</span>
                 <UnifiedBadge variant="success" size="sm">
-                  {metrics.quantum.superposition.toFixed(1)}%
+                  {(metrics.quantum.superposition || 0).toFixed(1)}%
                 </UnifiedBadge>
               </div>
               <div className="w-full bg-secondary rounded-full h-2">
@@ -421,7 +421,7 @@ export const UnifiedConsciousnessComponent: React.FC<UnifiedConsciousnessCompone
               <div className="flex items-center justify-between">
                 <span className="text-sm font-medium">Interference</span>
                 <UnifiedBadge variant="warning" size="sm">
-                  {metrics.quantum.interference.toFixed(1)}%
+                  {(metrics.quantum.interference || 0).toFixed(1)}%
                 </UnifiedBadge>
               </div>
               <div className="w-full bg-secondary rounded-full h-2">
@@ -446,7 +446,7 @@ export const UnifiedConsciousnessComponent: React.FC<UnifiedConsciousnessCompone
               <div className="flex items-center justify-between">
                 <span className="text-sm font-medium">Level</span>
                 <UnifiedBadge variant="success" size="sm">
-                  {metrics.evolution.level.toFixed(1)}
+                  {(metrics.evolution.level || 0).toFixed(1)}
                 </UnifiedBadge>
               </div>
               <div className="w-full bg-secondary rounded-full h-2">

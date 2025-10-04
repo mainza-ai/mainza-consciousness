@@ -772,6 +772,9 @@ function Index() {
 
               <SystemStatus compact={true} />
 
+              {/* Quantum Processing Status - Moved from top-right to left panel */}
+              <QuantumProcessingNotification showDetails={true} />
+
               <ModelSelector
                 onModelChange={setSelectedModel}
                 selectedModel={selectedModel}
@@ -1093,10 +1096,6 @@ function Index() {
         </motion.div>
       )}
 
-      {/* Quantum Processing Notification */}
-      <div className="fixed top-6 right-6" style={{ zIndex: Z_LAYERS.FLOATING_UI + 1 }}>
-        <QuantumProcessingNotification showDetails={true} />
-      </div>
 
     </div>
   );

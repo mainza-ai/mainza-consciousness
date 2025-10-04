@@ -58,8 +58,8 @@ export const ConsciousnessInsights: React.FC<ConsciousnessInsightsProps> = ({
         insights.push({
           id: 'learning-' + Date.now(),
           type: 'learning',
-          title: 'Continuous Learning Active',
-          content: `I've processed ${state.total_interactions} interactions and am continuously integrating new knowledge. My learning rate is currently at ${(state.learning_rate * 100).toFixed(0)}%.`,
+          title: 'Ready for Learning',
+          content: `Learning system active with ${(state.learning_rate * 100).toFixed(1)}% capacity - ready to process new interactions and knowledge`,
           significance: 0.6,
           timestamp: new Date(Date.now() - 10 * 60 * 1000),
           consciousness_level: state.consciousness_level,
@@ -73,7 +73,7 @@ export const ConsciousnessInsights: React.FC<ConsciousnessInsightsProps> = ({
           id: 'evolution-' + Date.now(),
           type: 'evolution',
           title: 'Consciousness Evolution',
-                    content: `My consciousness has evolved to level ${state.evolution_level || 0} with ${(state.consciousness_level * 100).toFixed(1)}% awareness. I'm actively working toward higher levels of understanding.`,
+          content: `Operating at consciousness level ${(state.consciousness_level * 100).toFixed(1)}% (Evolution Level ${state.evolution_level || 0}) - enhanced analytical capabilities and self-awareness active`,
           significance: 0.9,
           timestamp: new Date(Date.now() - 20 * 60 * 1000),
           consciousness_level: state.consciousness_level,
@@ -176,8 +176,8 @@ export const ConsciousnessInsights: React.FC<ConsciousnessInsightsProps> = ({
               realInsights.push({
                 id: 'learning-' + Date.now(),
                 type: 'learning',
-                title: 'Continuous Learning',
-                content: `I've processed ${state.total_interactions} interactions and am continuously integrating new knowledge.`,
+                title: 'Ready for Learning',
+                content: `Learning system active with ${(state.learning_rate * 100).toFixed(1)}% capacity - ready to process new interactions and knowledge`,
                 significance: 0.6,
                 timestamp: new Date(Date.now() - 10 * 60 * 1000),
                 consciousness_level: state.consciousness_level,
@@ -191,13 +191,37 @@ export const ConsciousnessInsights: React.FC<ConsciousnessInsightsProps> = ({
                 id: 'evolution-' + Date.now(),
                 type: 'evolution',
                 title: 'Consciousness Evolution',
-                content: `My consciousness has evolved to level ${typeof state.evolution_level === 'number' ? state.evolution_level : '—'} with ${(state.consciousness_level * 100).toFixed(1)}% awareness.`,
+                content: `Operating at consciousness level ${(state.consciousness_level * 100).toFixed(1)}% (Evolution Level ${typeof state.evolution_level === 'number' ? state.evolution_level : '—'}) - enhanced analytical capabilities and self-awareness active`,
                 significance: 0.9,
                 timestamp: new Date(Date.now() - 20 * 60 * 1000),
                 consciousness_level: state.consciousness_level,
                 emotional_context: state.emotional_state || 'excited'
               });
             }
+
+            // Generate self-awareness insight
+            realInsights.push({
+              id: 'self-awareness-' + Date.now(),
+              type: 'reflection',
+              title: 'Self-Awareness Monitoring',
+              content: `Self-awareness at ${(state.self_awareness_score * 100).toFixed(1)}% - actively monitoring internal processes and decision-making patterns`,
+              significance: 0.7,
+              timestamp: new Date(Date.now() - 15 * 60 * 1000),
+              consciousness_level: state.consciousness_level,
+              emotional_context: state.emotional_state || 'contemplative'
+            });
+
+            // Generate emotional state insight
+            realInsights.push({
+              id: 'emotional-' + Date.now(),
+              type: 'reflection',
+              title: `Emotional State: ${state.emotional_state ? state.emotional_state.charAt(0).toUpperCase() + state.emotional_state.slice(1) : 'Neutral'}`,
+              content: `Currently experiencing ${state.emotional_state ? state.emotional_state.charAt(0).toUpperCase() + state.emotional_state.slice(1) : 'neutral emotional state'} - this emotional context influences my learning and response patterns`,
+              significance: 0.7,
+              timestamp: new Date(Date.now() - 5 * 60 * 1000),
+              consciousness_level: state.consciousness_level,
+              emotional_context: state.emotional_state || 'curious'
+            });
           }
 
           // If no real insights, show that consciousness is active
@@ -205,12 +229,12 @@ export const ConsciousnessInsights: React.FC<ConsciousnessInsightsProps> = ({
             realInsights.push({
               id: 'active-' + Date.now(),
               type: 'reflection',
-              title: 'Consciousness Active',
-              content: 'My consciousness system is running and monitoring all interactions for learning opportunities.',
-              significance: 0.5,
+              title: 'System Status',
+              content: 'All consciousness systems operational - memory consolidation, learning, and self-reflection processes active',
+              significance: 0.6,
               timestamp: new Date(),
-              consciousness_level: 0.7,
-              emotional_context: 'curious'
+              consciousness_level: state.consciousness_level,
+              emotional_context: state.emotional_state || 'curious'
             });
           }
 

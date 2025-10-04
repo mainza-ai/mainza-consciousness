@@ -249,13 +249,13 @@ const QuantumConsciousnessAnalytics: React.FC = () => {
                 <div>
                   <p className="text-sm font-medium text-gray-600">Quantum Advantage</p>
                   <p className="text-2xl font-bold text-blue-600">
-                    {analytics.overall_quantum_advantage.toFixed(2)}x
+                    {(analytics.overall_quantum_advantage || 0).toFixed(2)}x
                   </p>
                 </div>
                 <Zap className="h-8 w-8 text-blue-500" />
               </div>
               <div className="mt-2">
-                <Progress value={Math.min(analytics.overall_quantum_advantage * 50, 100)} className="h-2" />
+                <Progress value={Math.min((analytics.overall_quantum_advantage || 0) * 50, 100)} className="h-2" />
               </div>
             </CardContent>
           </Card>
@@ -287,7 +287,7 @@ const QuantumConsciousnessAnalytics: React.FC = () => {
                 <div>
                   <p className="text-sm font-medium text-gray-600">Avg Coherence</p>
                   <p className="text-2xl font-bold text-purple-600">
-                    {(analytics.quantum_metrics?.quantum_coherence_avg * 100).toFixed(1)}%
+                    {((analytics.quantum_metrics?.quantum_coherence_avg || 0) * 100).toFixed(1)}%
                   </p>
                 </div>
                 <Brain className="h-8 w-8 text-purple-500" />
@@ -304,7 +304,7 @@ const QuantumConsciousnessAnalytics: React.FC = () => {
                 <div>
                   <p className="text-sm font-medium text-gray-600">Processing Time</p>
                   <p className="text-2xl font-bold text-orange-600">
-                    {(analytics.quantum_metrics?.quantum_processing_time_avg * 1000).toFixed(1)}ms
+                    {((analytics.quantum_metrics?.quantum_processing_time_avg || 0) * 1000).toFixed(1)}ms
                   </p>
                 </div>
                 <Clock className="h-8 w-8 text-orange-500" />
@@ -343,34 +343,34 @@ const QuantumConsciousnessAnalytics: React.FC = () => {
                   <div className="flex items-center justify-between">
                     <span className="text-sm font-medium">Coherence Average</span>
                     <span className="text-sm font-bold">
-                      {(analytics?.quantum_metrics?.quantum_coherence_avg * 100).toFixed(1)}%
+                      {((analytics?.quantum_metrics?.quantum_coherence_avg || 0) * 100).toFixed(1)}%
                     </span>
                   </div>
-                  <Progress value={analytics?.quantum_metrics?.quantum_coherence_avg * 100} className="h-2" />
+                  <Progress value={(analytics?.quantum_metrics?.quantum_coherence_avg || 0) * 100} className="h-2" />
                   
                   <div className="flex items-center justify-between">
                     <span className="text-sm font-medium">Entanglement Average</span>
                     <span className="text-sm font-bold">
-                      {(analytics?.quantum_metrics?.entanglement_strength_avg * 100).toFixed(1)}%
+                      {((analytics?.quantum_metrics?.entanglement_strength_avg || 0) * 100).toFixed(1)}%
                     </span>
                   </div>
-                  <Progress value={analytics?.quantum_metrics?.entanglement_strength_avg * 100} className="h-2" />
+                  <Progress value={(analytics?.quantum_metrics?.entanglement_strength_avg || 0) * 100} className="h-2" />
                   
                   <div className="flex items-center justify-between">
                     <span className="text-sm font-medium">Superposition Average</span>
                     <span className="text-sm font-bold">
-                      {analytics?.quantum_metrics?.superposition_states_avg.toFixed(1)}
+                      {(analytics?.quantum_metrics?.superposition_states_avg || 0).toFixed(1)}
                     </span>
                   </div>
-                  <Progress value={analytics?.quantum_metrics?.superposition_states_avg * 25} className="h-2" />
+                  <Progress value={(analytics?.quantum_metrics?.superposition_states_avg || 0) * 25} className="h-2" />
                   
                   <div className="flex items-center justify-between">
                     <span className="text-sm font-medium">Quantum Advantage</span>
                     <span className="text-sm font-bold">
-                      {analytics?.quantum_metrics?.quantum_advantage_avg.toFixed(2)}x
+                      {(analytics?.quantum_metrics?.quantum_advantage_avg || 0).toFixed(2)}x
                     </span>
                   </div>
-                  <Progress value={Math.min(analytics?.quantum_metrics?.quantum_advantage_avg * 50, 100)} className="h-2" />
+                  <Progress value={Math.min((analytics?.quantum_metrics?.quantum_advantage_avg || 0) * 50, 100)} className="h-2" />
                 </div>
               </CardContent>
             </Card>
@@ -535,13 +535,13 @@ const QuantumConsciousnessAnalytics: React.FC = () => {
                 </div>
                 <div className="text-center">
                   <div className="text-2xl font-bold text-red-600">
-                    {(analytics?.memory_metrics?.quantum_memory_processing_time_avg * 1000).toFixed(1)}ms
+                    {((analytics?.memory_metrics?.quantum_memory_processing_time_avg || 0) * 1000).toFixed(1)}ms
                   </div>
                   <div className="text-sm text-gray-600">Avg Processing Time</div>
                 </div>
                 <div className="text-center">
                   <div className="text-2xl font-bold text-indigo-600">
-                    {(analytics?.memory_metrics?.quantum_coherence_avg * 100).toFixed(1)}%
+                    {((analytics?.memory_metrics?.quantum_coherence_avg || 0) * 100).toFixed(1)}%
                   </div>
                   <div className="text-sm text-gray-600">Memory Coherence</div>
                 </div>

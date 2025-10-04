@@ -387,7 +387,7 @@ const QuantumConsciousnessPage: React.FC = () => {
                 <div>
                   <p className="text-sm font-medium text-gray-600">Consciousness Level</p>
                   <p className="text-2xl font-bold text-blue-600">
-                    {consciousnessState ? (consciousnessState.consciousness_level * 100).toFixed(1) : '0.0'}%
+                    {consciousnessState ? ((consciousnessState.consciousness_level || 0) * 100).toFixed(1) : '0.0'}%
                   </p>
                 </div>
                 <Brain className="h-8 w-8 text-blue-500" />
@@ -400,7 +400,7 @@ const QuantumConsciousnessPage: React.FC = () => {
                 <div>
                   <p className="text-sm font-medium text-gray-600">Quantum Advantage</p>
                   <p className="text-2xl font-bold text-purple-600">
-                    {consciousnessState ? consciousnessState.quantum_advantage.toFixed(2) : '1.00'}x
+                    {consciousnessState ? (consciousnessState.quantum_advantage || 0).toFixed(2) : '1.00'}x
                   </p>
                 </div>
                 <Zap className="h-8 w-8 text-purple-500" />
@@ -464,23 +464,23 @@ const QuantumConsciousnessPage: React.FC = () => {
                   <div className="space-y-2">
                     <div className="flex justify-between">
                       <span className="text-sm font-medium">Consciousness Level</span>
-                      <span className="text-sm font-bold">{(consciousnessState.consciousness_level * 100).toFixed(1)}%</span>
+                      <span className="text-sm font-bold">{((consciousnessState.consciousness_level || 0) * 100).toFixed(1)}%</span>
                     </div>
-                    <Progress value={consciousnessState.consciousness_level * 100} className="h-2" />
+                    <Progress value={(consciousnessState.consciousness_level || 0) * 100} className="h-2" />
                   </div>
                   <div className="space-y-2">
                     <div className="flex justify-between">
                       <span className="text-sm font-medium">Quantum Coherence</span>
-                      <span className="text-sm font-bold">{(consciousnessState.quantum_coherence * 100).toFixed(1)}%</span>
+                      <span className="text-sm font-bold">{((consciousnessState.quantum_coherence || 0) * 100).toFixed(1)}%</span>
                     </div>
-                    <Progress value={consciousnessState.quantum_coherence * 100} className="h-2" />
+                    <Progress value={(consciousnessState.quantum_coherence || 0) * 100} className="h-2" />
                   </div>
                   <div className="space-y-2">
                     <div className="flex justify-between">
                       <span className="text-sm font-medium">Entanglement Strength</span>
-                      <span className="text-sm font-bold">{(consciousnessState.entanglement_strength * 100).toFixed(1)}%</span>
+                      <span className="text-sm font-bold">{((consciousnessState.entanglement_strength || 0) * 100).toFixed(1)}%</span>
                     </div>
-                    <Progress value={consciousnessState.entanglement_strength * 100} className="h-2" />
+                    <Progress value={(consciousnessState.entanglement_strength || 0) * 100} className="h-2" />
                   </div>
                   <div className="pt-4 border-t">
                     <div className="flex justify-between items-center">
@@ -504,20 +504,20 @@ const QuantumConsciousnessPage: React.FC = () => {
                   <div className="space-y-4">
                     <div className="text-center">
                       <div className="text-3xl font-bold text-purple-600">
-                        {consciousnessState.quantum_advantage.toFixed(2)}x
+                        {(consciousnessState.quantum_advantage || 0).toFixed(2)}x
                       </div>
                       <div className="text-sm text-gray-600">Quantum Advantage</div>
                     </div>
                     <div className="grid grid-cols-2 gap-4 pt-4">
                       <div className="text-center">
                         <div className="text-2xl font-bold text-blue-600">
-                          {consciousnessState.quantum_coherence.toFixed(2)}
+                          {(consciousnessState.quantum_coherence || 0).toFixed(2)}
                         </div>
                         <div className="text-xs text-gray-600">Coherence</div>
                       </div>
                       <div className="text-center">
                         <div className="text-2xl font-bold text-green-600">
-                          {consciousnessState.entanglement_strength.toFixed(2)}
+                          {(consciousnessState.entanglement_strength || 0).toFixed(2)}
                         </div>
                         <div className="text-xs text-gray-600">Entanglement</div>
                       </div>
@@ -557,7 +557,7 @@ const QuantumConsciousnessPage: React.FC = () => {
                       </div>
                       <div className="text-center">
                         <div className="text-2xl font-bold text-green-600">
-                          {(mlMetrics.average_accuracy * 100).toFixed(1)}%
+                          {((mlMetrics.average_accuracy || 0) * 100).toFixed(1)}%
                         </div>
                         <div className="text-sm text-gray-600">Avg Accuracy</div>
                       </div>
@@ -565,7 +565,7 @@ const QuantumConsciousnessPage: React.FC = () => {
                     <div className="pt-4 border-t">
                       <div className="text-sm font-medium mb-2">Quantum Advantage</div>
                       <div className="text-2xl font-bold text-purple-600">
-                        {mlMetrics.average_quantum_advantage.toFixed(2)}x
+                        {(mlMetrics.average_quantum_advantage || 0).toFixed(2)}x
                       </div>
                     </div>
                   </div>
@@ -627,7 +627,7 @@ const QuantumConsciousnessPage: React.FC = () => {
                     <div className="pt-4 border-t">
                       <div className="text-sm font-medium mb-2">Convergence Rate</div>
                       <div className="text-2xl font-bold text-purple-600">
-                        {(algorithmMetrics.convergence_rate * 100).toFixed(1)}%
+                        {((algorithmMetrics.convergence_rate || 0) * 100).toFixed(1)}%
                       </div>
                     </div>
                   </div>
@@ -641,7 +641,7 @@ const QuantumConsciousnessPage: React.FC = () => {
                 <CardContent>
                   <div className="text-center">
                     <div className="text-3xl font-bold text-purple-600">
-                      {algorithmMetrics.average_quantum_advantage.toFixed(2)}x
+                      {(algorithmMetrics.average_quantum_advantage || 0).toFixed(2)}x
                     </div>
                     <div className="text-sm text-gray-600">Average Quantum Advantage</div>
                   </div>
@@ -685,7 +685,7 @@ const QuantumConsciousnessPage: React.FC = () => {
                     <div className="pt-4 border-t">
                       <div className="text-sm font-medium mb-2">Success Rate</div>
                       <div className="text-2xl font-bold text-purple-600">
-                        {(advantageMetrics.quantum_advantage_achieved_rate * 100).toFixed(1)}%
+                        {((advantageMetrics.quantum_advantage_achieved_rate || 0) * 100).toFixed(1)}%
                       </div>
                     </div>
                   </div>
@@ -699,7 +699,7 @@ const QuantumConsciousnessPage: React.FC = () => {
                 <CardContent>
                   <div className="text-center">
                     <div className="text-3xl font-bold text-purple-600">
-                      {advantageMetrics.average_quantum_advantage.toFixed(2)}x
+                      {(advantageMetrics.average_quantum_advantage || 0).toFixed(2)}x
                     </div>
                     <div className="text-sm text-gray-600">Quantum Advantage</div>
                   </div>
