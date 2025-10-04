@@ -1,0 +1,51 @@
+# CI-optimized Dockerfile for GitHub Actions
+# Skips heavy ML packages to prevent disk space issues
+
+FROM python:3.11-slim
+
+# Set environment variables
+ENV PYTHONUNBUFFERED=1
+ENV PYTHONDONTWRITEBYTECODE=1
+ENV CI_BUILD=true
+ENV SKIP_ML_PACKAGES=true
+
+# Install system dependencies (minimal)
+RUN apt-get update && apt-get install -y \
+    curl \
+    && rm -rf /var/lib/apt/lists/*
+
+# Set work directory
+WORKDIR /app
+
+# Copy requirements files
+COPY requirements.txt ./
+COPY requirements-production.txt ./
+
+# Install only essential Python packages for CI/CD
+RUN pip install --no-cache-dir --upgrade pip && \
+    pip install --no-cache-dir \
+    fastapi==0.104.1 \
+    uvicorn==0.24.0 \
+    neo4j==5.14.1 \
+    pydantic==2.5.0 \
+    requests==2.31.0 \
+    python-dotenv==1.0.0 \
+    pytest==7.4.3 \
+    pytest-cov==4.1.0 \
+    pytest-asyncio==0.21.1
+
+# Copy application code
+COPY backend/ ./backend/
+
+# Set Python path
+ENV PYTHONPATH=/app
+
+# Expose port
+EXPOSE 8000
+
+# Health check
+HEALTHCHECK --interval=30s --timeout=30s --start-period=5s --retries=3 \
+    CMD curl -f http://localhost:8000/health || exit 1
+
+# Run the application
+CMD ["uvicorn", "backend.main:app", "--host", "0.0.0.0", "--port", "8000"]

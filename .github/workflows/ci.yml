@@ -97,16 +97,21 @@ jobs:
     - name: Install dependencies
       run: |
         cd backend
-        # Try conda first, fallback to pip if conda fails
-        conda install -c conda-forge -y pytest pytest-cov pytest-asyncio || pip install pytest pytest-cov pytest-asyncio || echo "Test dependencies installation failed"
-        # Install core dependencies first
-        pip install fastapi uvicorn neo4j pydantic requests python-dotenv || echo "Core dependencies installation failed"
-        # Install remaining dependencies, skipping problematic ones
-        pip install -r requirements.txt || echo "Some dependencies may have failed to install"
-        # Skip heavy ML packages for CI/CD
-        echo "Skipping TTS and other heavy ML packages for CI/CD compatibility"
-        # Ensure we have basic Python packages
-        pip install requests python-dotenv || echo "Basic packages installation failed"
+        # Install only essential dependencies for CI/CD
+        pip install --no-cache-dir fastapi uvicorn neo4j pydantic requests python-dotenv pytest pytest-cov pytest-asyncio
+        # Skip heavy ML packages and CUDA dependencies for CI/CD
+        echo "Skipping heavy ML packages (TTS, CUDA, transformers) for CI/CD compatibility"
+        # Create minimal requirements for CI/CD
+        echo "fastapi==0.104.1" > requirements-ci.txt
+        echo "uvicorn==0.24.0" >> requirements-ci.txt
+        echo "neo4j==5.14.1" >> requirements-ci.txt
+        echo "pydantic==2.5.0" >> requirements-ci.txt
+        echo "requests==2.31.0" >> requirements-ci.txt
+        echo "python-dotenv==1.0.0" >> requirements-ci.txt
+        echo "pytest==7.4.3" >> requirements-ci.txt
+        echo "pytest-cov==4.1.0" >> requirements-ci.txt
+        echo "pytest-asyncio==0.21.1" >> requirements-ci.txt
+        pip install --no-cache-dir -r requirements-ci.txt
         
     - name: Setup test environment
       run: |
@@ -181,13 +186,10 @@ jobs:
     - name: Install dependencies
       run: |
         cd backend
-        conda install -c conda-forge -y pytest pytest-asyncio || pip install pytest pytest-asyncio
-        # Install core dependencies first
-        pip install fastapi uvicorn neo4j pydantic requests python-dotenv
-        # Install remaining dependencies, skipping problematic ones
-        pip install -r requirements.txt || echo "Some dependencies may have failed to install"
-        # Skip heavy ML packages for CI/CD
-        echo "Skipping TTS and other heavy ML packages for CI/CD compatibility"
+        # Install only essential dependencies for CI/CD
+        pip install --no-cache-dir fastapi uvicorn neo4j pydantic requests python-dotenv pytest pytest-asyncio
+        # Skip heavy ML packages and CUDA dependencies for CI/CD
+        echo "Skipping heavy ML packages (TTS, CUDA, transformers) for CI/CD compatibility"
         
     - name: Setup consciousness test environment
       run: |
@@ -304,9 +306,10 @@ jobs:
       run: |
         npm ci
         cd backend
-        conda install -c conda-forge -y pytest pytest-asyncio
-        pip install -r requirements.txt
-        pip install 'transformers<4.50'
+        # Install only essential dependencies for CI/CD
+        pip install --no-cache-dir fastapi uvicorn neo4j pydantic requests python-dotenv pytest pytest-asyncio
+        # Skip heavy ML packages and CUDA dependencies for CI/CD
+        echo "Skipping heavy ML packages (TTS, CUDA, transformers) for CI/CD compatibility"
         
     - name: Setup integration test environment
       run: |
@@ -411,6 +414,18 @@ jobs:
     - name: Set up Docker Buildx
       uses: docker/setup-buildx-action@v3
       
+    - name: Clean up disk space
+      run: |
+        echo "Cleaning up disk space before Docker build..."
+        # Remove unnecessary packages and cache
+        sudo apt-get clean
+        sudo apt-get autoremove -y
+        # Clean Docker cache
+        docker system prune -f
+        # Show available disk space
+        df -h
+        echo "Disk cleanup completed"
+        
     - name: Get build metadata
       id: meta
       run: |
@@ -418,11 +433,11 @@ jobs:
         echo "git-commit=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
         echo "cache-bust=$(date +%s)" >> $GITHUB_OUTPUT
       
-    - name: Build backend image
+    - name: Build backend image (CI-optimized)
       uses: docker/build-push-action@v5
       with:
         context: .
-        file: ./Dockerfile
+        file: ./Dockerfile.ci
         push: false
         load: true
         tags: mainza/backend:test
