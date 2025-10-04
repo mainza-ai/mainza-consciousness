@@ -17,11 +17,7 @@ RUN apt-get update && apt-get install -y \
 # Set work directory
 WORKDIR /app
 
-# Copy requirements files
-COPY requirements.txt ./
-COPY requirements-production.txt ./
-
-# Install only essential Python packages for CI/CD
+# Install only essential Python packages for CI/CD (no external requirements files)
 RUN pip install --no-cache-dir --upgrade pip && \
     pip install --no-cache-dir \
     fastapi==0.104.1 \
