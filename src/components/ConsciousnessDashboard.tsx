@@ -56,8 +56,12 @@ export const ConsciousnessDashboard: React.FC<ConsciousnessDashboardProps> = ({
       
       const data = await response.json();
       
-      if (data.status === 'success') {
+      if (data.status === 'success' && data.consciousness_state) {
         setMetrics(data.consciousness_state);
+        setError(null);
+        setLastUpdate(new Date());
+      } else if (data.status === 'success' && data.data) {
+        setMetrics(data.data);
         setError(null);
         setLastUpdate(new Date());
       } else {

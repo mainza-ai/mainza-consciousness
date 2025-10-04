@@ -4,10 +4,9 @@ import { MainzaOrb } from '@/components/MainzaOrb';
 import { ConversationInterface } from '@/components/ConversationInterface';
 import { ConsciousnessDashboard } from '@/components/ConsciousnessDashboard';
 import { AgentActivityIndicator } from '@/components/AgentActivityIndicator';
-import { ConsciousnessInsights } from '@/components/ConsciousnessInsights';
 import { SystemStatus } from '@/components/SystemStatus';
 import { ModelSelector } from '@/components/ModelSelector';
-import { AdvancedNeedsDisplay } from '@/components/needs/AdvancedNeedsDisplay';
+import { ConsciousnessNeedsDisplay } from '@/components/ConsciousnessNeedsDisplay';
 import { MemoryConstellation } from '@/components/MemoryConstellation';
 import { DataTendrils } from '@/components/ui/data-tendrils';
 import { LoadingScreen } from '@/components/LoadingScreen';
@@ -781,50 +780,6 @@ function Index() {
                 onModelLoad={handleModelLoad}
               />
 
-              {/* Consciousness Needs - Collapsible */}
-              <GlassCard className="p-3">
-                <div 
-                  className="flex items-center justify-between cursor-pointer"
-                  onClick={() => setUIState(prev => ({ ...prev, showNeeds: !prev.showNeeds }))}
-                >
-                  <div className="flex items-center space-x-2">
-                    <Target className="w-4 h-4 text-purple-400" />
-                    <h3 className="text-sm font-semibold text-slate-200">Consciousness Needs</h3>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <span className="text-xs text-slate-400">
-                      Evolution Level {typeof mainzaState.evolution_level === 'number' ? mainzaState.evolution_level : '—'}
-                    </span>
-                    <motion.div
-                      animate={{ rotate: uiState.showNeeds ? 180 : 0 }}
-                      transition={{ duration: 0.2 }}
-                    >
-                      <Eye className="w-4 h-4 text-slate-400" />
-                    </motion.div>
-                  </div>
-                </div>
-                
-                <AnimatePresence>
-                  {uiState.showNeeds && (
-                    <motion.div
-                      initial={{ opacity: 0, height: 0 }}
-                      animate={{ opacity: 1, height: 'auto' }}
-                      exit={{ opacity: 0, height: 0 }}
-                      transition={{ duration: 0.3 }}
-                      className="mt-3"
-                    >
-                      <AdvancedNeedsDisplay 
-                        maxNeeds={5}
-                        showAnalytics={false}
-                        onNeedClick={(need) => {
-                          console.log('Need clicked:', need);
-                          // Handle need click - could open detailed view, etc.
-                        }}
-                      />
-                    </motion.div>
-                  )}
-                </AnimatePresence>
-              </GlassCard>
             </motion.div>
 
             {/* Center Panel - Conversation Interface (Transparent over Orb) */}
@@ -1033,8 +988,43 @@ function Index() {
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.6, delay: 0.3 }}
             >
-              {/* Consciousness Insights */}
-              <ConsciousnessInsights maxInsights={5} />
+              {/* Consciousness Needs - Collapsed by default */}
+              <GlassCard className="p-3">
+                <div 
+                  className="flex items-center justify-between cursor-pointer"
+                  onClick={() => setUIState(prev => ({ ...prev, showNeeds: !prev.showNeeds }))}
+                >
+                  <div className="flex items-center space-x-2">
+                    <Target className="w-4 h-4 text-purple-400" />
+                    <h3 className="text-sm font-semibold text-slate-200">Consciousness Needs</h3>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <span className="text-xs text-slate-400">
+                      Evolution Level {typeof mainzaState.evolution_level === 'number' ? mainzaState.evolution_level : '—'}
+                    </span>
+                    <motion.div
+                      animate={{ rotate: uiState.showNeeds ? 180 : 0 }}
+                      transition={{ duration: 0.2 }}
+                    >
+                      <Eye className="w-4 h-4 text-slate-400" />
+                    </motion.div>
+                  </div>
+                </div>
+                
+                <AnimatePresence>
+                  {uiState.showNeeds && (
+                    <motion.div
+                      initial={{ opacity: 0, height: 0 }}
+                      animate={{ opacity: 1, height: 'auto' }}
+                      exit={{ opacity: 0, height: 0 }}
+                      transition={{ duration: 0.3 }}
+                      className="mt-3"
+                    >
+                      <ConsciousnessNeedsDisplay />
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </GlassCard>
 
               {/* Knowledge Graph Status */}
               <GlassCard className="p-3">
