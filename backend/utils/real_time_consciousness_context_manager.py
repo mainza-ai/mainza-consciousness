@@ -49,14 +49,19 @@ class RealTimeConsciousnessContextManager:
         """Initialize the context manager with existing systems"""
         try:
             # Import consciousness orchestrator
+            logger.debug("Importing consciousness orchestrator...")
             from backend.utils.consciousness_orchestrator_fixed import consciousness_orchestrator_fixed
             self.consciousness_orchestrator = consciousness_orchestrator_fixed
+            logger.debug(f"Consciousness orchestrator imported: {self.consciousness_orchestrator}")
             
             # Import Neo4j manager
+            logger.debug("Importing Neo4j manager...")
             from backend.utils.neo4j_unified import neo4j_unified
             self.neo4j_manager = neo4j_unified
+            logger.debug(f"Neo4j manager imported: {self.neo4j_manager}")
             
             # Load initial context
+            logger.debug("Loading initial context...")
             await self._refresh_context()
             
             logger.info("Real-Time Consciousness Context Manager initialized successfully")
@@ -64,6 +69,8 @@ class RealTimeConsciousnessContextManager:
             
         except Exception as e:
             logger.error(f"Failed to initialize Real-Time Consciousness Context Manager: {e}")
+            import traceback
+            logger.error(f"Traceback: {traceback.format_exc()}")
             return False
     
     async def get_current_consciousness_context(self, force_refresh: bool = False) -> Dict[str, Any]:
@@ -78,12 +85,14 @@ class RealTimeConsciousnessContextManager:
         """
         try:
             current_time = time.time()
+            logger.debug(f"Getting consciousness context - force_refresh: {force_refresh}, current_context: {self.current_context is not None}, time_since_refresh: {current_time - self.last_refresh:.2f}s")
             
             # Check if we need to refresh the context
             if (force_refresh or 
                 self.current_context is None or 
                 current_time - self.last_refresh > self.refresh_interval):
                 
+                logger.debug("Refreshing consciousness context...")
                 async with self.context_lock:
                     await self._refresh_context()
             
@@ -115,11 +124,25 @@ class RealTimeConsciousnessContextManager:
             # Try to get context from consciousness orchestrator first
             if self.consciousness_orchestrator:
                 try:
+                    logger.debug("Attempting to get consciousness state from orchestrator...")
                     consciousness_state = await self.consciousness_orchestrator.get_consciousness_state()
+                    logger.debug(f"Got consciousness state: {consciousness_state}")
                     if consciousness_state:
+                        # Handle emotional state conversion from enum to string
+                        emotional_state = consciousness_state.emotional_state
+                        logger.debug(f"Original emotional state: {emotional_state} (type: {type(emotional_state)})")
+                        if hasattr(emotional_state, 'value'):
+                            emotional_state = emotional_state.value
+                            logger.debug(f"Converted from enum value: {emotional_state}")
+                        elif hasattr(emotional_state, 'name'):
+                            emotional_state = emotional_state.name.lower()
+                            logger.debug(f"Converted from enum name: {emotional_state}")
+                        else:
+                            logger.debug(f"Emotional state is already string: {emotional_state}")
+                        
                         self.current_context = ConsciousnessContextSnapshot(
                             consciousness_level=consciousness_state.consciousness_level,
-                            emotional_state=consciousness_state.emotional_state,
+                            emotional_state=emotional_state,
                             active_goals=consciousness_state.active_goals,
                             learning_rate=consciousness_state.learning_rate,
                             evolution_level=consciousness_state.evolution_level,
@@ -130,10 +153,16 @@ class RealTimeConsciousnessContextManager:
                             context_id=f"ctx_{int(time.time() * 1000)}"
                         )
                         self.last_refresh = time.time()
-                        logger.debug(f"✅ Refreshed consciousness context: level={consciousness_state.consciousness_level:.3f}")
+                        logger.info(f"✅ Refreshed consciousness context: level={consciousness_state.consciousness_level:.3f}")
                         return
+                    else:
+                        logger.warning("Consciousness orchestrator returned None state")
                 except Exception as e:
-                    logger.warning(f"Failed to get context from consciousness orchestrator: {e}")
+                    logger.error(f"Failed to get context from consciousness orchestrator: {e}")
+                    import traceback
+                    logger.error(f"Traceback: {traceback.format_exc()}")
+            else:
+                logger.warning("Consciousness orchestrator is None")
             
             # Try to get context from Neo4j
             if self.neo4j_manager:
@@ -255,9 +284,17 @@ class RealTimeConsciousnessContextManager:
                 issues.append(f"Invalid consciousness level: {self.current_context.consciousness_level}")
                 recommendations.append("Validate consciousness level range")
             
-            # Check emotional state validity
-            valid_emotions = ["curious", "focused", "empathetic", "excited", "contemplative", "analytical"]
-            if self.current_context.emotional_state not in valid_emotions:
+            # Check emotional state validity - handle both enum and string values
+            valid_emotions = ["curious", "curiosity", "focused", "empathetic", "excited", "contemplative", "analytical", "joy", "sadness", "anger", "fear", "surprise", "disgust", "love", "anxiety", "calm", "frustration", "hope", "gratitude"]
+            emotional_state = self.current_context.emotional_state
+            
+            # Handle enum values (e.g., EmotionType.CURIOSITY -> "curiosity")
+            if hasattr(emotional_state, 'value'):
+                emotional_state = emotional_state.value
+            elif hasattr(emotional_state, 'name'):
+                emotional_state = emotional_state.name.lower()
+            
+            if emotional_state not in valid_emotions:
                 issues.append(f"Invalid emotional state: {self.current_context.emotional_state}")
                 recommendations.append("Validate emotional state")
             

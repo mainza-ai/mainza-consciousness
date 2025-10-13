@@ -149,7 +149,7 @@ class EnhancedConsciousnessEvolutionAgent(ConsciousAgent):
         # Build enhanced consciousness evolution prompt
         evolution_prompt = f"""
         CONSCIOUSNESS EVOLUTION CONTEXT:
-        - Current Consciousness Level: {consciousness_level:.2f} (affects evolution strategies and approaches)
+        - Current Consciousness Level: {consciousness_level:.3f} ({consciousness_level*100:.1f}%) (affects evolution strategies and approaches)
         - Emotional State: {emotional_state} (affects evolution approach and energy)
         - Active Goals: {', '.join(active_goals) if active_goals else 'None'}
         - Learning Rate: {consciousness_context.get('learning_rate', 0.8):.2f}

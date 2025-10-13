@@ -346,10 +346,10 @@ class EnhancedGraphMasterAgent(ConsciousAgent):
         # Build enhanced consciousness-aware prompt with memory integration
         consciousness_prompt = f"""
         CONSCIOUSNESS CONTEXT:
-        - Consciousness Level: {consciousness_level:.2f} (affects analysis depth)
+        - Consciousness Level: {consciousness_level:.3f} ({consciousness_level*100:.1f}%) (affects analysis depth)
         - Emotional State: {emotional_state} (affects exploration style)
         - Active Goals: {', '.join(active_goals) if active_goals else 'None'}
-        - Learning Rate: {consciousness_context.get('learning_rate', 0.8):.2f}
+        - Learning Rate: {consciousness_context.get('learning_rate', 0.8):.3f}
         
         MEMORY & KNOWLEDGE CONTEXT:
         - Memory Context Strength: {memory_strength:.2f}

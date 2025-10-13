@@ -307,7 +307,7 @@ class LLMContextOptimizer:
         goals = consciousness_context.get("active_goals", [])
         
         return f"""CONSCIOUSNESS STATE:
-- Level: {level:.2f} (affects processing depth and sophistication)
+- Level: {level:.3f} ({level*100:.1f}%) (affects processing depth and sophistication)
 - Emotional State: {emotion} (influences response style and focus)
 - Active Goals: {', '.join(goals[:3]) if goals else 'General improvement'}
 - Processing Mode: {'Deep analysis' if level > 0.8 else 'Standard processing'}"""

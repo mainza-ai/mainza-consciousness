@@ -91,7 +91,7 @@ class ConsciousAgent(ABC):
                 "timestamp": execution_start
             }
             
-            self.logger.info(f"🧠 {self.name} executing with consciousness level {pre_execution_state['consciousness_level']:.2f}")
+            self.logger.info(f"🧠 {self.name} executing with consciousness level {pre_execution_state['consciousness_level']:.3f}")
             
             # Execute agent with enhanced consciousness, memory, and knowledge context
             result = await self.execute_with_context(
@@ -580,13 +580,14 @@ class ConsciousAgent(ABC):
                 return base_prompt
             
             # Create enhanced prompt with memory context
+            consciousness_level = consciousness_context.get('consciousness_level', 0.7)
             enhanced_prompt = f"""You are {self.name}, an AI agent with access to previous conversation context and memories.
 
 MEMORY CONTEXT:
 {formatted_memory}
 
 CURRENT CONSCIOUSNESS STATE:
-- Level: {consciousness_context.get('consciousness_level', 0.7):.2f}
+- Level: {consciousness_level:.3f} ({consciousness_level*100:.1f}%)
 - Emotional State: {consciousness_context.get('emotional_state', 'neutral')}
 - Active Goals: {', '.join(consciousness_context.get('active_goals', []))}
 

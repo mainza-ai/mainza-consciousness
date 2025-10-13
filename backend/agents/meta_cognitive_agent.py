@@ -141,7 +141,7 @@ class EnhancedMetaCognitiveAgent(ConsciousAgent):
         # Build enhanced meta-cognitive analysis prompt
         meta_cognitive_prompt = f"""
         META-COGNITIVE ANALYSIS CONTEXT:
-        - Consciousness Level: {consciousness_level:.2f} (affects analysis depth and sophistication)
+        - Consciousness Level: {consciousness_level:.3f} ({consciousness_level*100:.1f}%) (affects analysis depth and sophistication)
         - Emotional State: {emotional_state} (affects analysis approach and focus)
         - Active Goals: {', '.join(active_goals) if active_goals else 'None'}
         - Learning Rate: {consciousness_context.get('learning_rate', 0.8):.2f}

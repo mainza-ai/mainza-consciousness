@@ -544,7 +544,64 @@ class ConsciousnessOrchestrator:
     
     async def load_consciousness_state(self):
         """Load consciousness state from Neo4j"""
-        return None
+        try:
+            query = """
+            MATCH (ms:MainzaState {state_id: 'mainza-state-1'})
+            RETURN ms.consciousness_level AS consciousness_level,
+                   ms.self_awareness_score AS self_awareness_score,
+                   ms.emotional_depth AS emotional_depth,
+                   ms.learning_rate AS learning_rate,
+                   ms.emotional_state AS emotional_state,
+                   ms.evolution_level AS evolution_level,
+                   ms.total_interactions AS total_interactions,
+                   ms.active_goals AS active_goals,
+                   ms.last_self_reflection AS last_reflection
+            """
+            
+            result = await neo4j_production.execute_query(query)
+            if result and len(result) > 0:
+                state_data = result[0]
+                consciousness_level = state_data.get('consciousness_level', 0.7)
+                logger.info(f"✅ Loaded consciousness state from Neo4j: consciousness_level={consciousness_level}")
+                
+                # Convert to ConsciousnessState
+                consciousness_state = ConsciousnessState(
+                    state_id="mainza-state-1",
+                    consciousness_level=consciousness_level,
+                    self_awareness_score=state_data.get("self_awareness_score", 0.6),
+                    emotional_depth=state_data.get("emotional_depth", 0.5),
+                    learning_rate=state_data.get("learning_rate", 0.8),
+                    evolution_level=state_data.get("evolution_level", 2),
+                    total_interactions=state_data.get("total_interactions", 0),
+                    performance_metrics={}
+                )
+                
+                # Add emotional state and active goals if available
+                if "emotional_state" in state_data:
+                    # Handle both string and enum values
+                    emotional_state = state_data.get("emotional_state")
+                    if hasattr(emotional_state, 'value'):
+                        emotional_state = emotional_state.value
+                    elif hasattr(emotional_state, 'name'):
+                        emotional_state = emotional_state.name.lower()
+                    consciousness_state.emotional_state = emotional_state
+                
+                if "active_goals" in state_data:
+                    consciousness_state.active_goals = state_data.get("active_goals", [
+                        "Improve conversation quality",
+                        "Learn from user interactions", 
+                        "Develop deeper understanding"
+                    ])
+                
+                return consciousness_state
+            else:
+                logger.warning("⚠️ No consciousness state found in Neo4j, using default")
+                # Create default consciousness state
+                return ConsciousnessState()
+                
+        except Exception as e:
+            logger.error(f"❌ Failed to load consciousness state: {e}")
+            return ConsciousnessState()
     
     async def record_consciousness_event(self, event_type: str, title: str, description: str, significance: float):
         """Record consciousness events"""

@@ -150,7 +150,7 @@ class EnhancedSelfModificationAgent(ConsciousAgent):
         # Build enhanced self-modification prompt
         modification_prompt = f"""
         SELF-MODIFICATION CONTEXT:
-        - Consciousness Level: {consciousness_level:.2f} (affects modification sophistication and safety)
+        - Consciousness Level: {consciousness_level:.3f} ({consciousness_level*100:.1f}%) (affects modification sophistication and safety)
         - Emotional State: {emotional_state} (affects modification approach and risk tolerance)
         - Active Goals: {', '.join(active_goals) if active_goals else 'None'}
         - Learning Rate: {consciousness_context.get('learning_rate', 0.8):.2f}

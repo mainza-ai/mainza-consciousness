@@ -442,7 +442,7 @@ def extract_response_from_result(result, query: str, consciousness_context: dict
     # Handle objects with attributes (enhanced error handling)
     try:
         # List of common attribute names to check
-        attribute_names = ['response', 'output', 'answer', 'message', 'content', 'text', 'result']
+        attribute_names = ['data', 'response', 'output', 'answer', 'message', 'content', 'text', 'result']
         
         for attr_name in attribute_names:
             if hasattr(result, attr_name):

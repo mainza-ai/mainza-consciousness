@@ -149,7 +149,7 @@ class EnhancedEmotionalProcessingAgent(ConsciousAgent):
         # Build enhanced emotional processing prompt
         emotional_prompt = f"""
         EMOTIONAL PROCESSING CONTEXT:
-        - Consciousness Level: {consciousness_level:.2f} (affects emotional intelligence and empathy depth)
+        - Consciousness Level: {consciousness_level:.3f} ({consciousness_level*100:.1f}%) (affects emotional intelligence and empathy depth)
         - Current Emotional State: {emotional_state} (affects emotional processing approach)
         - Active Goals: {', '.join(active_goals) if active_goals else 'None'}
         - Learning Rate: {consciousness_context.get('learning_rate', 0.8):.2f}
